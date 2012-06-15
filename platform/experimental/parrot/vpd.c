@@ -29,75 +29,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <inttypes.h>
-
-#include "mosys/platform.h"
-#include "mosys/output.h"
 #include "mosys/log.h"
+#include "mosys/platform.h"
 
-#include "intf/i2c.h"
+#include "lib/smbios.h"
+#include "lib/vpd.h"
 
-static int i2c_dump_cmd(struct platform_intf *intf,
-			struct platform_cmd *cmd, int argc, char **argv)
+#include "parrot.h"
+
+int parrot_vpd_setup(struct platform_intf *intf)
 {
-	uint8_t i2c_data[256];
-	int bus, address;
-	int start = 0;
-	int length = 256;
+	unsigned int rom_base, rom_size;
 
-	/* get bus and address from command line */
-	if (argc < 2) {
-		platform_cmd_usage(cmd);
-		return -1;
-	}
-	bus = (int)strtol(argv[0], NULL, 0);
-	address = (int)strtol(argv[1], NULL, 0);
-
-	if (argc == 3) {
-		length = (int)strtol(argv[2], NULL, 0);
-	}
-	if (argc == 4) {
-		start = (int)strtol(argv[2], NULL, 0);
-		length = (int)strtol(argv[3], NULL, 0);
-	}
-
-	lprintf(LOG_DEBUG, "i2c dump %d %d [reg %d-%d]\n",
-		bus, address, start, length);
-
-	/* read in block of 256 bytes */
-	memset(i2c_data, 0, sizeof(i2c_data));
-	/* FIXME: historically we have only worried about SMBus devices here
-	   (e.g. SPDs), but this does not seem like a great general solution */
-	length = intf->op->i2c->smbus_read_reg(intf, bus, address,
-					       start, length, i2c_data);
-
-	if (length < 0) {
-		lprintf(LOG_ERR, "Failed to read from I2C (not present?)\n");
-		return -1;
-	}
-
-	print_buffer(i2c_data, length);
+	/* FIXME: SMBIOS might not be useful for ROM size detection here since
+	   BIOS size will only reflect the size of the BIOS flash partition */
+	rom_size = PARROT_HOST_FIRMWARE_ROM_SIZE;
+	rom_base = 0xffffffff - rom_size + 1;
+	vpd_rom_base = rom_base;
+	vpd_rom_size = rom_size;
 
 	return 0;
 }
 
-struct platform_cmd i2c_cmds[] = {
-	{
-		.name	= "dump",
-		.desc	= "Dump from I2C device",
-		.usage	= "<bus> <address> [start] [length]",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = i2c_dump_cmd }
-	},
-	{ NULL }
-};
+static char *parrot_vpd_get_serial(struct platform_intf *intf)
+{
+	if (intf->cb->vpd && intf->cb->vpd->system_serial)
+		return intf->cb->vpd->system_serial(intf);
+	else
+		return NULL;
 
-struct platform_cmd cmd_i2c = {
-	.name	= "i2c",
-	.desc	= "I2C Commands",
-	.type	= ARG_TYPE_SUB,
-	.arg	= { .sub = i2c_cmds }
+}
+
+static char *parrot_vpd_get_sku(struct platform_intf *intf)
+{
+	if (intf->cb->vpd && intf->cb->vpd->system_sku)
+		return intf->cb->vpd->system_sku(intf);
+	else
+		return NULL;
+}
+
+
+static char *parrot_vpd_get_google_hwqualid(struct platform_intf *intf)
+{
+	/* FIXME: noop for now */
+	return NULL;
+}
+
+struct vpd_cb parrot_vpd_cb = {
+	.system_serial		= &parrot_vpd_get_serial,
+	.system_sku		= &parrot_vpd_get_sku,
+	.google_hwqualid	= &parrot_vpd_get_google_hwqualid,
 };

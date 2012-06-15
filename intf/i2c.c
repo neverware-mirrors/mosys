@@ -38,6 +38,7 @@
 #include <inttypes.h>
 #include <string.h>
 #include <dirent.h>
+#include <sys/ioctl.h>
 
 #include "mosys/alloc.h"
 #include "mosys/globals.h"
@@ -155,21 +156,66 @@ static void i2c_close_dev(struct platform_intf *intf)
 	free((char *)intf->op->i2c->dev_root);
 }
 
-/*
- * i2c_read_reg  -  Read bytes from a register addressable I2C device
- *
- * @intf:       platform interface
- * @bus:        I2C bus/adapter
- * @address:    I2C slave address
- * @reg:        I2C register offset
- * @length:     number of bytes to read (1-255)
- * @data:       data buffer
- *
- * returns number of bytes read
- * returns <0 to indicate failure
- */
-static int i2c_read_reg(struct platform_intf *intf,
-                        int bus, int address, int reg, int length, void *data)
+static int i2c_transfer(struct platform_intf *intf, int bus, int address,
+			const void *outdata, int outsize,
+			const void *indata, int insize)
+{
+	int ret = -1;
+	struct i2c_rdwr_ioctl_data data;
+	struct i2c_msg *msg = NULL;
+	int handle, fd;
+
+	/* open connection to i2c slave */
+	handle = i2c_open_dev(intf, bus, address);
+	if (handle < 0)
+		return -1;
+	fd = i2c_handles[handle].fd;
+
+	data.nmsgs = 0;
+
+	if (outsize) {
+		msg = mosys_realloc(msg, sizeof(*msg) * (data.nmsgs + 1));
+		msg[data.nmsgs].addr = address;
+		msg[data.nmsgs].flags = 0;
+		msg[data.nmsgs].len = outsize;
+		msg[data.nmsgs].buf = (char *)outdata;
+		data.nmsgs++;
+	}
+
+	if (insize) {
+		msg = mosys_realloc(msg, sizeof(*msg) * (data.nmsgs + 1));
+		msg[data.nmsgs].addr = address;
+		msg[data.nmsgs].flags = I2C_M_RD;
+		msg[data.nmsgs].len = insize;
+		msg[data.nmsgs].buf = (char *)indata;
+		data.nmsgs++;
+	}
+
+	data.msgs = msg;
+	/* send command to EC and read answer */
+#if defined (__linux__)
+	/* ioctl returns negative errno, else the number of messages executed */
+	ret = ioctl(fd, I2C_RDWR, &data);
+#else
+	ret = -ENOSYS;
+#endif
+
+	if (ret < 0) {
+		lperror(LOG_ERR, "i2c transfer failed");
+		ret = -1;
+	} else if (ret != data.nmsgs) {
+		lprintf(LOG_ERR, "ioctl executed wrong number of messages\n");
+		ret = -1;
+	} else {
+		ret = 0;
+	}
+
+	free(msg);
+	return ret;
+}
+
+static int smbus_read_reg(struct platform_intf *intf, int bus,
+			  int address, int reg, int length, void *data)
 {
 	int handle, fd, i;
 	int32_t result;
@@ -234,25 +280,13 @@ static int i2c_read_reg(struct platform_intf *intf,
 }
 
 /*
- * i2c_read16_dev  -  Read bytes from I2C device using 16-bit register offset
- *
- * @intf:       platform interface
- * @bus:        I2C bus/adapter
- * @address:    I2C slave address
- * @reg:        I2C register offset (16-bit)
- * @length:     number of bytes to read (1-255)
- * @data:       data buffer
- *
- * returns number of bytes read
- * returns <0 to indicate failure
- *
  * We can't actually use i2c_smbus_read_block_data() because the driver
  * doesn't know how to do the 2-byte address write. So we do the best we can
  * by performing the address write once, then calling i2c_smbus_read_byte()
  * repeatedly to keep the overhead to a minimum.
  */
-static int i2c_read16_dev(struct platform_intf *intf,
-                          int bus, int address, int reg, int length, void *data)
+static int smbus_read16_dev(struct platform_intf *intf, int bus,
+			    int address, int reg, int length, void *data)
 {
 	uint8_t hi, lo;
 	int fd, handle, i;
@@ -297,20 +331,8 @@ static int i2c_read16_dev(struct platform_intf *intf,
 	return i;
 }
 
-/*
- * i2c_read_raw  -  read byte(s) from device without register addressing
- *
- * @intf:       platform interface
- * @bus:        I2C bus/adapter
- * @address:    I2C slave address
- * @length:	number of bytes to read
- * @data:       data buffer
- *
- * returns number of bytes read
- * returns <0 to indicate failure
- */
-static int i2c_read_raw(struct platform_intf *intf,
-                        int bus, int address, int length, void *data)
+static int smbus_read_raw(struct platform_intf *intf,
+			  int bus, int address, int length, void *data)
 {
 	int result, count;
 	int fd, handle;
@@ -342,22 +364,8 @@ static int i2c_read_raw(struct platform_intf *intf,
 	return count;
 }
 
-/*
- * i2c_write_reg  -  Write bytes to I2C slave address
- *
- * @intf:       platform interface
- * @bus:        I2C bus/adapter
- * @address:    I2C slave address
- * @reg:        I2C register offset
- * @length:     number of bytes to read (1-255)
- * @data:       data buffer
- *
- * returns number of bytes written
- * returns <0 to indicate error
- */
-static int i2c_write_reg(struct platform_intf *intf,
-                         int bus,
-                         int address, int reg, int length, const void *data)
+static int smbus_write_reg(struct platform_intf *intf, int bus,
+			   int address, int reg, int length, const void *data)
 {
 	int handle, fd, i;
 	int32_t result;
@@ -394,22 +402,12 @@ static int i2c_write_reg(struct platform_intf *intf,
 }
 
 /*
- * i2c_write16_buf  -  Write a buffer to I2C slave address using 16-bit offset
- *
- * @handle:     I2C device handle
- * @reg:        I2C register offset (16-bit)
- * @dp:         data buffer
- * @len:        number of bytes to write (1-32)
- *
- * returns number of bytes written
- * returns <0 to indicate error
- *
  * The LSByte of the 16-bit register offset is sent as the first byte of
  * the transfer buffer. Note the driver won't let us transfer more than
  * 32 bytes, and since we're using one data byte as the low byte of the
  * offset address, we have to perform the write in 31-byte chunks. Ugh.
  */
-static int i2c_write16_buf(int handle, int reg, const uint8_t *dp, int len)
+static int smbus_write16_buf(int handle, int reg, const uint8_t *dp, int len)
 {
 	uint8_t buf[32];
 	int32_t result;
@@ -450,23 +448,9 @@ static int i2c_write16_buf(int handle, int reg, const uint8_t *dp, int len)
 	return result;
 }
 
-/*
- * i2c_write16_dev  -  Write bytes to I2C slave address using 16-bit reg offset
- *
- * @intf:       platform interface
- * @bus:        I2C bus/adapter
- * @address:    I2C slave address
- * @reg:        I2C register offset (16-bit)
- * @length:     number of bytes to read (1-255)
- * @data:       data buffer
- *
- * returns number of bytes written
- * returns <0 to indicate error
- *
- */
-static int i2c_write16_dev(struct platform_intf *intf,
-                           int bus, int address, int reg,
-                           int length, const void *data)
+static int smbus_write16_dev(struct platform_intf *intf,
+			     int bus, int address, int reg,
+			     int length, const void *data)
 {
 	int handle, written = 0;
 	const uint8_t *data_ptr = (uint8_t *)data;
@@ -479,12 +463,12 @@ static int i2c_write16_dev(struct platform_intf *intf,
 
 	if (length == 0) {
 		/* useful for setting internal address counters in devices */
-		written = i2c_write16_buf(handle, reg, NULL, 0);
+		written = smbus_write16_buf(handle, reg, NULL, 0);
 	}
 
 	while (length) {
 		buf_len = __min(length, 31);
-		count = i2c_write16_buf(handle, reg, data_ptr, buf_len);
+		count = smbus_write16_buf(handle, reg, data_ptr, buf_len);
 		if (count != buf_len)
 			return written;
 		length -= count;
@@ -496,7 +480,7 @@ static int i2c_write16_dev(struct platform_intf *intf,
 			return written;
 
 		buf_len = 1;
-		count = i2c_write16_buf(handle, reg, data_ptr, buf_len);
+		count = smbus_write16_buf(handle, reg, data_ptr, buf_len);
 		if (count != buf_len)
 			return written;
 		length -= buf_len;
@@ -507,19 +491,8 @@ static int i2c_write16_dev(struct platform_intf *intf,
 	return written;
 }
 
-/*
- * i2c_write_raw  -  write byte(s) to device without register addressing
- *
- * @intf:       platform interface
- * @bus:        I2C bus/adapter
- * @address:    I2C slave address
- * @data:       data buffer
- *
- * returns number of bytes written
- * returns <0 to indicate failure
- */
-static int i2c_write_raw(struct platform_intf *intf,
-                         int bus, int address, int length, void *data)
+static int smbus_write_raw(struct platform_intf *intf,
+			   int bus, int address, int length, void *data)
 {
 	int handle, fd, count;
 	int32_t result;
@@ -549,16 +522,6 @@ static int i2c_write_raw(struct platform_intf *intf,
 	return count;
 }
 
-/*
- * i2c_find_driver - Determine if i2c driver is loaded by scanning
- * /proc/modules.
- *
- * @intf:	Platform interface
- * @module: 	The name of the module to search for
- *
- * returns 0 if the module is not found or if /proc/modules does not exist
- * returns > 0 if the module is found
- */
 static int i2c_find_driver(struct platform_intf *intf, const char *module)
 {
 	char *path;
@@ -584,16 +547,6 @@ static int i2c_find_driver(struct platform_intf *intf, const char *module)
 	return ret;
 }
 
-/*
- * i2c_match_bus_name  -  Look for bus name
- *
- * @intf:	platform interface
- * @name:	bus name
- * @bus:	bus number
- *
- * returns 1 if bus name does match
- * returns 0 if bus name does not match
- */
 static int i2c_match_bus_name(struct platform_intf *intf,
                               int bus, const char *name)
 {
@@ -625,15 +578,9 @@ static int i2c_match_bus_name(struct platform_intf *intf,
  * i2c_find_dir - Find a /sys directory or directories for a device's
  * description as printed in the /sys/bus/i2c/devices/<bus-addr>/name file.
  * All matching descriptions are inserted into a linked list.
- *
- * @intf:	Platform interface
- * @name: 	The device name to search for, eg "eeprom"
- *
- * returns the head of a linked list of matching devices if found.
- * returns NULL if no device found or if an error has occured.
  */
-static struct ll_node *i2c_find_dir(struct platform_intf *intf,
-                                    const char *name)
+static struct ll_node *i2c_find_sysfs_dir(struct platform_intf *intf,
+					  const char *name)
 {
 	char *path;
 	char s[32];
@@ -699,15 +646,16 @@ static int i2c_setup_dev(struct platform_intf *intf)
 
 /* I2C operations based on Linux /dev interface */
 struct i2c_intf i2c_dev_intf = {
-	.setup  	= i2c_setup_dev,
-	.destroy	= i2c_close_dev,
-	.read_reg	= i2c_read_reg,
-	.write_reg	= i2c_write_reg,
-	.read16		= i2c_read16_dev,
-	.write16	= i2c_write16_dev,
-	.read_raw	= i2c_read_raw,
-	.write_raw	= i2c_write_raw,
-	.find_driver	= i2c_find_driver,
-	.find_dir	= i2c_find_dir,
-	.match_bus	= i2c_match_bus_name,
+	.setup  		= i2c_setup_dev,
+	.destroy		= i2c_close_dev,
+	.i2c_transfer		= i2c_transfer,
+	.smbus_read_reg		= smbus_read_reg,
+	.smbus_write_reg	= smbus_write_reg,
+	.smbus_read16		= smbus_read16_dev,
+	.smbus_write16		= smbus_write16_dev,
+	.smbus_read_raw		= smbus_read_raw,
+	.smbus_write_raw	= smbus_write_raw,
+	.find_driver		= i2c_find_driver,
+	.find_sysfs_dir		= i2c_find_sysfs_dir,
+	.match_bus		= i2c_match_bus_name,
 };

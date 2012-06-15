@@ -29,75 +29,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef EXPERIMENTAL_PARROT_H__
+#define EXPERIMENTAL_PARROT_H__
+
 #include <inttypes.h>
-
 #include "mosys/platform.h"
-#include "mosys/output.h"
-#include "mosys/log.h"
 
-#include "intf/i2c.h"
+#define PARROT_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
 
-static int i2c_dump_cmd(struct platform_intf *intf,
-			struct platform_cmd *cmd, int argc, char **argv)
-{
-	uint8_t i2c_data[256];
-	int bus, address;
-	int start = 0;
-	int length = 256;
+/* platform callbacks */
+extern struct eeprom_cb parrot_eeprom_cb;	/* eeprom.c */
+extern struct memory_cb parrot_memory_cb;	/* memory.c */
+extern struct nvram_cb parrot_nvram_cb;		/* nvram.c */
+extern struct sys_cb parrot_sys_cb;		/* sys.c */
+extern struct vpd_cb parrot_vpd_cb;		/* vpd.c */
 
-	/* get bus and address from command line */
-	if (argc < 2) {
-		platform_cmd_usage(cmd);
-		return -1;
-	}
-	bus = (int)strtol(argv[0], NULL, 0);
-	address = (int)strtol(argv[1], NULL, 0);
+/* functions called by setup routines */
+extern int parrot_vpd_setup(struct platform_intf *intf);
+extern int parrot_eeprom_setup(struct platform_intf *intf);
 
-	if (argc == 3) {
-		length = (int)strtol(argv[2], NULL, 0);
-	}
-	if (argc == 4) {
-		start = (int)strtol(argv[2], NULL, 0);
-		length = (int)strtol(argv[3], NULL, 0);
-	}
-
-	lprintf(LOG_DEBUG, "i2c dump %d %d [reg %d-%d]\n",
-		bus, address, start, length);
-
-	/* read in block of 256 bytes */
-	memset(i2c_data, 0, sizeof(i2c_data));
-	/* FIXME: historically we have only worried about SMBus devices here
-	   (e.g. SPDs), but this does not seem like a great general solution */
-	length = intf->op->i2c->smbus_read_reg(intf, bus, address,
-					       start, length, i2c_data);
-
-	if (length < 0) {
-		lprintf(LOG_ERR, "Failed to read from I2C (not present?)\n");
-		return -1;
-	}
-
-	print_buffer(i2c_data, length);
-
-	return 0;
-}
-
-struct platform_cmd i2c_cmds[] = {
-	{
-		.name	= "dump",
-		.desc	= "Dump from I2C device",
-		.usage	= "<bus> <address> [start] [length]",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = i2c_dump_cmd }
-	},
-	{ NULL }
-};
-
-struct platform_cmd cmd_i2c = {
-	.name	= "i2c",
-	.desc	= "I2C Commands",
-	.type	= ARG_TYPE_SUB,
-	.arg	= { .sub = i2c_cmds }
-};
+#endif /* EXPERIMENTAL_PARROT_H_ */
