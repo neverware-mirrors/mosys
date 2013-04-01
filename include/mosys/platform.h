@@ -272,6 +272,13 @@ enum led_state {
 	LED_STATE_FAST,
 };
 
+enum storage_phy_speed {
+	PHY_SPEED_UNKNOWN,
+	PHY_SPEED_SATA1,
+	PHY_SPEED_SATA2,
+	PHY_SPEED_SATA3,
+};
+
 /* smbios callbacks */
 struct smbios_cb {
 	char *(*bios_vendor)(struct platform_intf *intf);
@@ -406,6 +413,14 @@ struct pci_cb {
 	                                         int bus, int dev, int func);
 };
 
+/* storage device callbacks */
+struct storage_cb {
+	const char *(*get_model_name)(struct platform_intf *intf);
+	enum storage_phy_speed (*get_phy_speed)(struct platform_intf *intf);
+	int (*set_phy_speed)(struct platform_intf *intf,
+			     enum storage_phy_speed phy_speed);
+};
+
 /* platform-specific callbacks */
 struct platform_cb {
 	struct sensor_cb *sensor; 	/* sensor callbacks */
@@ -423,6 +438,7 @@ struct platform_cb {
 	struct vpd_cb *vpd;		/* vpd callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
 	struct hid_cb *hid;		/* hid callbacks */
+	struct storage_cb *storage;	/* storage callbacks */
 };
 
 /*
