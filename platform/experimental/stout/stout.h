@@ -42,6 +42,7 @@ extern struct ec_cb stout_ec_cb;		/* ec.c */
 extern struct eeprom_cb stout_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb stout_memory_cb;	/* memory.c */
 extern struct nvram_cb stout_nvram_cb;	/* nvram.c */
+extern struct storage_cb stout_storage_cb;	/* storage.c */
 extern struct sys_cb stout_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */
