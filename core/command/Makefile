@@ -10,4 +10,5 @@ obj-y		+= nvram.o
 obj-y		+= platform.o
 obj-y		+= sensor.o
 obj-y		+= smbios.o
+obj-y		+= storage.o
 obj-y		+= vpd.o
