@@ -106,6 +106,8 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_MANAGEMENT_ENGINE, "Management Engine" },
 		{ ELOG_TYPE_MANAGEMENT_ENGINE_EXT, "Management Engine Extra" },
 		{ ELOG_TYPE_LAST_POST_CODE, "Last post code in previous boot" },
+		{ ELOG_TYPE_WAKE, "Wake" },
+		{ ELOG_TYPE_SLEEP, "Sleep" },
 		{ 0x0, NULL },
 	};
 

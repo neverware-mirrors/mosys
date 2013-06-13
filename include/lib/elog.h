@@ -195,6 +195,10 @@ struct elog_event_data_me_extended {
 /* Last post code from previous boot */
 #define ELOG_TYPE_LAST_POST_CODE         0xa3
 
+/* ARM/generic versions of sleep/wake */
+#define ELOG_TYPE_SLEEP                  0xa7
+#define ELOG_TYPE_WAKE                   0xa8
+
 
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */
 /* Recovery not requested. */
