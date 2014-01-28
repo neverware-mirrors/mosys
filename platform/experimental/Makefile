@@ -8,3 +8,4 @@ obj-$(CONFIG_PLATFORM_PEACH_PIT)	+= peach_pit/
 obj-$(CONFIG_EXPERIMENTAL_SEABOARD)	+= seaboard/
 obj-$(CONFIG_EXPERIMENTAL_SLIPPY)	+= slippy/
 obj-$(CONFIG_PLATFORM_SPRING)		+= spring/
+obj-$(CONFIG_PLATFORM_SKATE)		+= skate/
