@@ -38,7 +38,7 @@
 #include "mosys/log.h"
 
 #include "drivers/gpio.h"
-#include "drivers/google/cros_ec.h"
+#include "drivers/google/gec.h"
 #include "drivers/samsung/exynos5250/gpio.h"
 
 #include "lib/elog.h"
@@ -231,18 +231,15 @@ struct eventlog_cb skate_eventlog_cb = {
 	.print_multi	= &elog_print_multi,
 	.verify		= &elog_verify,
 	.verify_header	= &elog_verify_header,
-	.add		= &elog_add_event_manually,
-	.clear		= &elog_clear_manually,
 	.fetch		= &elog_fetch_from_flash,
-	.write		= &elog_write_to_flash,
 };
 
 struct platform_cb skate_cb = {
-	.ec 		= &cros_ec_cb,
+	.ec 		= &gec_cb,
 	.eeprom 	= &skate_eeprom_cb,
 	.gpio		= &skate_gpio_cb,
 	.memory		= &skate_memory_cb,
-	.nvram		= &cros_ec_nvram_cb,
+	.nvram		= &gec_nvram_cb,
 	.sys 		= &skate_sys_cb,
 	.eventlog	= &skate_eventlog_cb,
 };

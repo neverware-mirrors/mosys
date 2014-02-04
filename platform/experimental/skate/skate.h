@@ -68,6 +68,6 @@ extern struct eeprom_cb skate_eeprom_cb;	/* eeprom.c */
 extern struct sys_cb skate_sys_cb;		/* sys.c */
 extern struct gpio_cb skate_gpio_cb;		/* gpio.c */
 extern struct memory_cb skate_memory_cb;	/* memory.c */
-extern struct nvram_cb cros_ec_nvram_cb;	/* drivers/google/cros_ec.c */
+extern struct nvram_cb gec_nvram_cb;		/* drivers/google/gec.c */
 
 #endif /* PLATFORM_SKATE_H_ */
