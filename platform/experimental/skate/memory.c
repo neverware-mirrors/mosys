@@ -40,8 +40,8 @@
 /* Each channel will be represented as a logical DIMM */
 #define SKATE_DIMM_COUNT	2
 
-/* Fake SPD data for now (based off Elpida SPD for Snow) */
-static const uint8_t fake_spd[SPD_MAX_LENGTH] = {
+/* SPD data for Elpida modules meeting Skate's spec */
+static const uint8_t elpida_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_SIZE_CRC]		= 0x92,
 	[DDR3_SPD_REG_REVISION]		= 0x10,
 	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
@@ -74,23 +74,23 @@ static const uint8_t fake_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_2] = 0x00000000,
 	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_3] = 0x00000000,
 
-	[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'F',
-	[DDR3_SPD_REG_MODULE_PART_NUM_1] = 'A',
-	[DDR3_SPD_REG_MODULE_PART_NUM_2] = 'K',
-	[DDR3_SPD_REG_MODULE_PART_NUM_3] = 'E',
-	[DDR3_SPD_REG_MODULE_PART_NUM_4] = ' ',
-	[DDR3_SPD_REG_MODULE_PART_NUM_5] = 'S',
-	[DDR3_SPD_REG_MODULE_PART_NUM_6] = 'P',
-	[DDR3_SPD_REG_MODULE_PART_NUM_7] = 'D',
-	[DDR3_SPD_REG_MODULE_PART_NUM_8] = 0,
-	[DDR3_SPD_REG_MODULE_PART_NUM_9] = 0,
-	[DDR3_SPD_REG_MODULE_PART_NUM_10] = 0,
-	[DDR3_SPD_REG_MODULE_PART_NUM_11] = 0,
-	[DDR3_SPD_REG_MODULE_PART_NUM_12] = 0,
-	[DDR3_SPD_REG_MODULE_PART_NUM_13] = 0,
-	[DDR3_SPD_REG_MODULE_PART_NUM_14] = 0,
-	[DDR3_SPD_REG_MODULE_PART_NUM_15] = 0,
-	[DDR3_SPD_REG_MODULE_PART_NUM_16] = '\0',
+	[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'E',
+	[DDR3_SPD_REG_MODULE_PART_NUM_1] = 'D',
+	[DDR3_SPD_REG_MODULE_PART_NUM_2] = 'J',
+	[DDR3_SPD_REG_MODULE_PART_NUM_3] = '4',
+	[DDR3_SPD_REG_MODULE_PART_NUM_4] = '2',
+	[DDR3_SPD_REG_MODULE_PART_NUM_5] = '1',
+	[DDR3_SPD_REG_MODULE_PART_NUM_6] = '6',
+	[DDR3_SPD_REG_MODULE_PART_NUM_7] = 'E',
+	[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'F',
+	[DDR3_SPD_REG_MODULE_PART_NUM_9] = 'B',
+	[DDR3_SPD_REG_MODULE_PART_NUM_10] = 'G',
+	[DDR3_SPD_REG_MODULE_PART_NUM_11] = '-',
+	[DDR3_SPD_REG_MODULE_PART_NUM_12] = 'G',
+	[DDR3_SPD_REG_MODULE_PART_NUM_13] = 'N',
+	[DDR3_SPD_REG_MODULE_PART_NUM_14] = '-',
+	[DDR3_SPD_REG_MODULE_PART_NUM_15] = 'F',
+	[DDR3_SPD_REG_MODULE_PART_NUM_16] = 0,
 	[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0,
 };
 
@@ -149,8 +149,8 @@ static const uint8_t micron_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_MODULE_PART_NUM_17] = 'E',
 };
 
-/* SPD data for Nanya modules meeting Skate's spec */
-static const uint8_t nanya_ddr3_1600_spd[SPD_MAX_LENGTH] = {
+/* SPD data for Hynix modules meeting Skate's spec */
+static const uint8_t hynix_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_SIZE_CRC]		= 0x92,
 	[DDR3_SPD_REG_REVISION]		= 0x12,
 	[DDR3_SPD_REG_DEVICE_TYPE]	= 0x0b,
@@ -175,7 +175,7 @@ static const uint8_t nanya_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_TWR_MIN]		= 0x78,	/* 15ns */
 	[DDR3_SPD_REG_TRCD_MIN]		= 0x6e,	/* 13.75ns */
 
-	/* Nanya is bank 4, number 11 (JEP-106) */
+	/* Hynix is bank 4, number 11 (JEP-106) */
 	[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_LSB] = 3,
 	[DDR3_SPD_REG_MODULE_MANUF_JEDEC_ID_MSB] = 11,
 
@@ -184,22 +184,22 @@ static const uint8_t nanya_ddr3_1600_spd[SPD_MAX_LENGTH] = {
 	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_2] = 0x00000000,
 	[DDR3_SPD_REG_MODULE_MANUF_SERIAL_3] = 0x00000000,
 
-	[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'N',
-	[DDR3_SPD_REG_MODULE_PART_NUM_1] = 'T',
-	[DDR3_SPD_REG_MODULE_PART_NUM_2] = '5',
+	[DDR3_SPD_REG_MODULE_PART_NUM_0] = 'H',
+	[DDR3_SPD_REG_MODULE_PART_NUM_1] = 'S',
+	[DDR3_SPD_REG_MODULE_PART_NUM_2] = 'T',
 	[DDR3_SPD_REG_MODULE_PART_NUM_3] = 'C',
-	[DDR3_SPD_REG_MODULE_PART_NUM_4] = 'C',
-	[DDR3_SPD_REG_MODULE_PART_NUM_5] = '2',
-	[DDR3_SPD_REG_MODULE_PART_NUM_6] = '5',
-	[DDR3_SPD_REG_MODULE_PART_NUM_7] = '6',
-	[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'M',
-	[DDR3_SPD_REG_MODULE_PART_NUM_9] = '1',
-	[DDR3_SPD_REG_MODULE_PART_NUM_10] = '6',
-	[DDR3_SPD_REG_MODULE_PART_NUM_11] = 'B',
+	[DDR3_SPD_REG_MODULE_PART_NUM_4] = '4',
+	[DDR3_SPD_REG_MODULE_PART_NUM_5] = 'G',
+	[DDR3_SPD_REG_MODULE_PART_NUM_6] = '6',
+	[DDR3_SPD_REG_MODULE_PART_NUM_7] = '3',
+	[DDR3_SPD_REG_MODULE_PART_NUM_8] = 'A',
+	[DDR3_SPD_REG_MODULE_PART_NUM_9] = 'F',
+	[DDR3_SPD_REG_MODULE_PART_NUM_10] = 'R',
+	[DDR3_SPD_REG_MODULE_PART_NUM_11] = '-',
 	[DDR3_SPD_REG_MODULE_PART_NUM_12] = 'P',
-	[DDR3_SPD_REG_MODULE_PART_NUM_13] = '-',
-	[DDR3_SPD_REG_MODULE_PART_NUM_14] = 'D',
-	[DDR3_SPD_REG_MODULE_PART_NUM_15] = 'I',
+	[DDR3_SPD_REG_MODULE_PART_NUM_13] = 'B',
+	[DDR3_SPD_REG_MODULE_PART_NUM_14] = 'A',
+	[DDR3_SPD_REG_MODULE_PART_NUM_15] = 0,
 	[DDR3_SPD_REG_MODULE_PART_NUM_16] = 0,
 	[DDR3_SPD_REG_MODULE_PART_NUM_17] = 0,
 };
@@ -237,7 +237,7 @@ static int skate_spd_read(struct platform_intf *intf,
 	case SKATE_CONFIG_PVT_HYNIX:
 	case SKATE_CONFIG_MP_HYNIX:
 		/* FIXME: need to add correct timings */
-		memcpy(buf, &fake_spd[reg], len);
+		memcpy(buf, &hynix_ddr3_1600_spd[reg], len);
 		rc = len;
 	case SKATE_CONFIG_PROTO_ELPIDA:
 	case SKATE_CONFIG_EVT_ELPIDA:
@@ -245,7 +245,7 @@ static int skate_spd_read(struct platform_intf *intf,
 	case SKATE_CONFIG_PVT_ELPIDA:
 	case SKATE_CONFIG_MP_ELPIDA:
 		/* FIXME: need to add correct timings */
-		memcpy(buf, &fake_spd[reg], len);
+		memcpy(buf, &elpida_ddr3_1600_spd[reg], len);
 		rc = len;
 		break;
 	default:
