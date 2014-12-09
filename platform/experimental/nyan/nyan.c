@@ -183,7 +183,8 @@ static int nyan_setup_post(struct platform_intf *intf)
 
 static int nyan_destroy(struct platform_intf *intf)
 {
-	intf->cb->ec->destroy(intf);
+	if (intf->cb->ec->destroy)
+		intf->cb->ec->destroy(intf);
 	return 0;
 }
 
