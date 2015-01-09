@@ -101,7 +101,6 @@ int nonspd_print_field(struct kv_pair *kv,
 		case SPD_DRAM_TYPE_DDR:
 		case SPD_DRAM_TYPE_DDR2:
 		case SPD_DRAM_TYPE_FBDIMM:
-		case SPD_DRAM_TYPE_LPDDR3:
 		default:
 			ret = -1;
 			break;
