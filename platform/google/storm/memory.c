@@ -54,7 +54,7 @@ enum storm_memory_config {
  */
 static int dimm_count(struct platform_intf *intf)
 {
-	/* same for whirlwind */
+	/* same for whirlwind and Arkham */
 	return STORM_DIMM_COUNT;
 }
 
@@ -63,6 +63,8 @@ static enum storm_memory_config get_memory_config(struct platform_intf *intf)
 	if (!strcmp(intf->name, "Storm"))
 		return SAMSUNG_DDR3_1600_1G;
 	else if (!strcmp(intf->name, "Whirlwind"))
+		return MICRON_DDR3L_1600_1G;
+	else if (!strcmp(intf->name, "Arkham"))
 		return MICRON_DDR3L_1600_1G;
 	return MEM_UNKNOWN;
 }
