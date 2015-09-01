@@ -35,6 +35,7 @@
 
 /* experimental */
 extern struct platform_intf platform_beltino;
+extern struct platform_intf platform_cyclone;
 extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_rambi;
@@ -117,6 +118,9 @@ struct platform_intf *platform_intf_list[] = {
 /* experimental platforms */
 #ifdef CONFIG_EXPERIMENTAL_BELTINO
 	&platform_beltino,
+#endif
+#ifdef CONFIG_PLATFORM_CYCLONE
+	&platform_cyclone,
 #endif
 #ifdef CONFIG_EXPERIMENTAL_KIEV
 	&platform_kiev,
