@@ -242,7 +242,8 @@ static int read_ram_code(struct platform_intf *intf)
 			break;
 		}
 	}
-
+ 
+	done = 1;
 	return ret;
 }
 
