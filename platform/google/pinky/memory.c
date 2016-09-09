@@ -296,6 +296,23 @@ const struct nonspd_mem_info samsung_8gbit_ddr3l_k4b8g1646q_myk0 = {
 		{ 'K', '4', 'B', '8', 'G', '1', '6', '4', '6', 'Q', '-',
 		  'M', 'Y', 'K', '0' },
 };
+const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16dp_di = {
+        .dram_type              = SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
+        .module_size_mbits      = 4096,
+	.num_ranks              = 1,
+	.device_width           = 16,
+	/* CL = 11, CWL = 8, min = 1.25ns, max <1.5ns */
+	.ddr_freq               = { DDR_667, DDR_800 },
+
+	.module_mfg_id          = { .msb = 0x0b, .lsb = 0x03 },
+	.dram_mfg_id            = { .msb = 0x0b, .lsb = 0x03 },
+
+	.serial_num             = { 0, 0, 0, 0 },
+	.part_num               =
+		{ 'N', 'T', '5', 'C', 'C', '2', '5', '6',
+		  'M', '1', '6', 'D', 'P', '-', 'D', 'I' },
+};
 
 static int pinky_dimm_count;
 static const struct nonspd_mem_info *pinky_mem_info;
@@ -379,6 +396,10 @@ static int read_ram_code(struct platform_intf *intf)
 			case 6:
 				pinky_dimm_count = 4;
 				pinky_mem_info = &samsung_4gbit_ddr3l_k4b4g1646q_hyk0;
+				break;
+		        case 0x0a:
+				pinky_dimm_count = 4;
+				pinky_mem_info = &nanya_ddr3l_nt5cc256m16dp_di;
 				break;
 			case 0x0d:
 				pinky_dimm_count = 4;
