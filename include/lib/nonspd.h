@@ -119,5 +119,6 @@ extern const struct nonspd_mem_info samsung_2gbit_lpddr3_k3qf2f20em_agce;
 extern const struct nonspd_mem_info samsung_4gbit_lpddr3_k4e6e304ee_egce;
 extern const struct nonspd_mem_info samsung_8gbit_lpddr3_k4e8e304ed_egcc;
 extern const struct nonspd_mem_info samsung_2gbit_lpddr3_k4e8e304ee_egce;
+extern const struct nonspd_mem_info samsung_lpddr3_k4e6e304eb_egcf;
 
 #endif /* LIB_NONSPD_H__ */

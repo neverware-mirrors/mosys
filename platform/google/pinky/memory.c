@@ -109,7 +109,7 @@ static int read_ram_code(struct platform_intf *intf)
 			switch (ram_code) {
 			case 0:
 				pinky_dimm_count = 1;
-				pinky_mem_info = &samsung_lpddr3_k4e8e304ee_egce;
+				pinky_mem_info = &samsung_2gbit_lpddr3_k4e8e304ee_egce;
 				break;
 			case 1:
 				pinky_dimm_count = 1;
