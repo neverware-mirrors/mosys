@@ -105,6 +105,23 @@ const struct nonspd_mem_info samsung_4gbit_lpddr3_k4e6e304ee_egce = {
 		  'E', 'G', 'C', 'E' },
 };
 
+const struct nonspd_mem_info samsung_lpddr3_k4e6e304eb_egcf = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
+
+	.module_size_mbits	= 16384,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_400, DDR_533, DDR_667, DDR_800, DDR_933},
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'K', '4', 'E', '6', 'E', '3', '0', '4', 'E', 'B', '-',
+		  'E', 'G', 'C', 'F' },
+};
+
 const struct nonspd_mem_info hynix_4gbit_lpddr3_h9ccnnnbjtmlar_nud = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR3,
         .module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
@@ -343,6 +360,10 @@ static int read_ram_code(struct platform_intf *intf)
 		case 1:
 			pinky_dimm_count = 2;
 			pinky_mem_info = &hynix_2gbit_lpddr3_h9ccnnn8gtmlar_nud;
+			break;
+		case 2:
+			pinky_dimm_count = 2;
+			pinky_mem_info = &samsung_lpddr3_k4e6e304eb_egcf;
 			break;
 		case 7:
 			pinky_dimm_count = 2;
