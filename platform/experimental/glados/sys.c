@@ -42,6 +42,11 @@ static struct valstr caroline_board_version[] = {
 	{ 0, "Proto0" },
 	{ 1, "Proto1" },
 	{ 2, "EVT" },
+	{ 3, "rev3" },
+	{ 4, "rev4" },
+	{ 5, "rev5" },
+	{ 6, "rev6" },
+	{ 7, "rev7" },
 };
 
 static const char *glados_get_version(struct platform_intf *intf)
