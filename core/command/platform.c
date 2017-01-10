@@ -91,6 +91,18 @@ static int platform_family_cmd(struct platform_intf *intf,
 	return print_platforminfo("family", intf->cb->sys->family(intf));
 }
 
+static int platform_model_cmd(struct platform_intf *intf,
+			      struct platform_cmd *cmd,
+			      int argc, char **argv)
+{
+	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->model) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	return print_platforminfo("model", intf->cb->sys->model(intf));
+}
+
 static int platform_variant_cmd(struct platform_intf *intf,
                                struct platform_cmd *cmd,
                                int argc, char **argv)
@@ -172,6 +184,12 @@ struct platform_cmd platform_cmds[] = {
 		.desc	= "Display Chassis ID",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_chassis_cmd }
+	},
+	{
+		.name	= "model",
+		.desc	= "Display Model",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = platform_model_cmd }
 	},
 	{
 		.name	= "version",
