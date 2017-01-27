@@ -313,6 +313,9 @@ struct sys_cb {
 	char *(*family)(struct platform_intf *intf);
 	char *(*variant)(struct platform_intf *intf);
 
+        /* Query an identifier for chassis. */
+        char *(*chassis)(struct platform_intf *intf);
+
 	/* firmware info */
 	char *(*firmware_vendor)(struct platform_intf *intf);
 	char *(*firmware_version)(struct platform_intf *intf);
