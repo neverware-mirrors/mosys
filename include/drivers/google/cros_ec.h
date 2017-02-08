@@ -35,11 +35,11 @@
 #define MOSYS_DRIVERS_EC_GOOGLE_H__
 
 #include "intf/i2c.h"
+#include "intf/io.h"
+#include "cros_ec_commands.h"
 
 struct eeprom;
 struct platform_intf;
-struct ec_response_get_chip_info;
-struct ec_response_flash_info;
 
 struct cros_ec_priv {
 	/* Wrapped with EC lock */
@@ -75,6 +75,8 @@ extern int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
 		         struct ec_response_flash_info *info);
 extern int cros_ec_detect(struct platform_intf *intf, struct ec_cb *ec);
 extern int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec);
+int cros_ec_pd_chip_info(struct platform_intf *intf, struct ec_cb *ec,
+			 int port);
 
 /*
  * This is intended to be used in platform-specific system callbacks (sys_cb)
