@@ -331,9 +331,31 @@ const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16dp_di = {
 		  'M', '1', '6', 'D', 'P', '-', 'D', 'I' },
 };
 
+const struct nonspd_mem_info samsung_k4b4g1646e = {
+	.dram_type              = SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
+	.module_size_mbits      = 4096,
+	.num_ranks              = 1,
+	.device_width           = 16,
+	.ddr_freq               = { DDR_400, DDR_533, DDR_667, DDR_800 },
+	.module_mfg_id          = { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id            = { .msb = 0xce, .lsb = 0x00 },
+	.serial_num             = { 0, 0, 0, 0 },
+	.part_num               =
+		{ 'K', '4', 'B', '4', 'G', '1', '6', '4', '6', 'E', '-',
+		  'B', 'Y', 'K', '0' },
+};
+
 static int pinky_dimm_count;
 static const struct nonspd_mem_info *pinky_mem_info;
-
+static int supports_tristate(struct platform_intf *intf)
+{
+	if(!strncmp(intf->name, "Jerry", 5) ||
+	   !strncmp(intf->name, "Jaq", 3) ||
+	   !strncmp(intf->name, "Mighty", 6))
+		return 0;
+	return 1;
+}
 /* read RAM code and fill in values needed by memory commands */
 static int read_ram_code(struct platform_intf *intf)
 {
@@ -403,8 +425,13 @@ static int read_ram_code(struct platform_intf *intf)
 		} else {
 			switch (ram_code) {
 			case 0:
-				pinky_dimm_count = 2;
-				pinky_mem_info = &samsung_8gbit_lpddr3_k4e8e304ed_egcc;
+				if(supports_tristate(intf)) {
+					pinky_dimm_count = 2;
+					pinky_mem_info = &samsung_8gbit_lpddr3_k4e8e304ed_egcc;
+				} else {
+					pinky_dimm_count = 4;
+					pinky_mem_info = &samsung_k4b4g1646e;
+					}
 				break;
 			case 4:
 				pinky_dimm_count = 4;
