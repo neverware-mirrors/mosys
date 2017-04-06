@@ -190,6 +190,23 @@ const struct nonspd_mem_info elpida_8gbit_lpddr3_edfa164a2ma_jd_f = {
                   'J', 'D', '-', 'F',},
 };
 
+const struct nonspd_mem_info micron_lpddr3_mt52l256m64d2pp_107wtb = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
+
+	.module_size_mbits	= 8192,
+	.num_ranks		= 1,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num		=
+	        { 'M', 'T', '5', '2', 'L', '2', '5', '6', 'M', '6', '4', 'D',
+		  '2', 'P', 'P', '-', '1', '0', '7', 'W', 'T', ':', 'B' },
+};
+
 const struct nonspd_mem_info samsung_8gbit_lpddr3_k4e8e304ed_egcc = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
@@ -417,6 +434,10 @@ static int read_ram_code(struct platform_intf *intf)
 			case 7:
 				pinky_dimm_count = 2;
 				pinky_mem_info = &elpida_8gbit_lpddr3_edfa164a2ma_jd_f;
+				break;
+			case 17:
+				pinky_dimm_count = 2;
+				pinky_mem_info = &micron_lpddr3_mt52l256m64d2pp_107wtb;
 				break;
 			default:
 				ret = -1;
