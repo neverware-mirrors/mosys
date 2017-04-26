@@ -329,7 +329,7 @@ const char *extract_customization_id_series_part(void)
 	int relock = 0;
 
 	relock = _release_lock();
-	fp = popen("vpd_get_value customization_id", "r");
+	fp = fopen("/sys/firmware/vpd/ro/customization_id", "r");
 
 	if (!fp) {
 		if (relock)
