@@ -47,6 +47,7 @@ extern struct platform_intf platform_daisy;
 extern struct platform_intf platform_fizz;
 extern struct platform_intf platform_glados;
 extern struct platform_intf platform_gru;
+extern struct platform_intf platform_kahlee;
 extern struct platform_intf platform_link;
 extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_mario;
@@ -99,6 +100,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_GRU
 	&platform_gru,
+#endif
+#ifdef CONFIG_PLATFORM_KAHLEE
+	&platform_kahlee,
 #endif
 #ifdef CONFIG_PLATFORM_LINK
 	&platform_link,

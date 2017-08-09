@@ -9,6 +9,7 @@ obj-$(CONFIG_PLATFORM_DAISY)	+= daisy/
 obj-$(CONFIG_PLATFORM_FIZZ)	+= fizz/
 obj-$(CONFIG_PLATFORM_GLADOS)	+= glados/
 obj-$(CONFIG_PLATFORM_GRU)      += gru/
+obj-$(CONFIG_PLATFORM_KAHLEE)   += kahlee/
 obj-$(CONFIG_PLATFORM_LINK)	+= link/
 obj-$(CONFIG_PLATFORM_LUMPY)	+= lumpy/
 obj-$(CONFIG_PLATFORM_MARIO)	+= mario/
