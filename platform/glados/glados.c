@@ -64,7 +64,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Cave", }, .single_sku = { .brand = "ASUL", }, },
 	{ { "Chell", }, .single_sku = { .brand = "HPZR", }, },
 	{ { "Eve", }, .single_sku = { .brand = "ZZAF", }, },
-	{ { "Poppy", } },
+	{ { "Poppy" }, .single_sku = { .brand = "LOGG", }, },
 	{ { "Glados", } },
 	{ { "Kunimitsu", }, },
 	/**
@@ -74,8 +74,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Pbody", }, },
 	{ { "Sentry", }, .single_sku = { .brand = "LEAJ", }, },
 	{ { "Skylake", }, },
-	/* TODO(hungte) Fill Soraka brand code when it's decided. */
-	{ { "Soraka", }, .single_sku = { .brand = NULL, }, },
+	{ { "Soraka", }, .single_sku = { .brand = "ARBI", }, },
 	{ { NULL }, },
 };
 
