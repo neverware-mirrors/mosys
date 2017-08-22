@@ -125,7 +125,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Reef", }, .sku_table = reef_sku_table },
 	{ { "Coral", }, .sku_table = coral_sku_table },
 
-	{ { "Pyro", }, .single_sku = { .brand = "LEAN" } },
+	{ { "Pyro", }, .single_sku = { .brand = "LEAN", .model = "pyro" } },
 	{ { "Sand", }, },
 	{ { "Snappy", }, .single_sku = { .brand = "HPZO", .model = "snappy" } },
 	{ { NULL }, },
