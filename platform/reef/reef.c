@@ -66,7 +66,7 @@ static struct sku_info
 	SKU_PORBEAGLE = { .brand = NULL, .model = "porbeagle", },
 	SKU_ROBO = { .brand = NULL, .model = "robo", },
 	SKU_WHITETIP = { .brand = NULL, .model = "whitetip", },
-	SKU_NASHER = { .brand = NULL, .model = "nasher", };
+	SKU_NASHER = { .brand = "CPPT", .model = "nasher", };
 
 /* Reference: b/35583395 */
 static struct sku_mapping reef_sku_table[] = {
