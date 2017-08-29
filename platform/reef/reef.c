@@ -58,13 +58,13 @@ static struct sku_info
 	SKU_BASKING = { .brand = "ASUN", .model = "reef", .chassis = "BASKING"},
 	/* Coral SKUs */
 	/* TODO(hungte) Fill the brand code when they are assigned. */
-	SKU_ASTRONAUT = { .brand = NULL, .model = "astronaut", },
-	SKU_SANTA = { .brand = NULL, .model = "santa", },
+	SKU_ASTRONAUT = { .brand = "CTIE", .model = "astronaut", },
+	SKU_SANTA = { .brand = "ACBE", .model = "santa", },
 	SKU_LAVA = { .brand = NULL, .model = "lava", },
 	SKU_BLUE = { .brand = NULL, .model = "blue", },
 	SKU_BRUCE = { .brand = NULL, .model = "bruce", },
 	SKU_PORBEAGLE = { .brand = NULL, .model = "porbeagle", },
-	SKU_ROBO = { .brand = NULL, .model = "robo", },
+	SKU_ROBO = { .brand = "QZUX", .model = "robo", },
 	SKU_WHITETIP = { .brand = NULL, .model = "whitetip", },
 	SKU_NASHER = { .brand = "CPPT", .model = "nasher", };
 
