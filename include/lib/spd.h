@@ -41,7 +41,9 @@
 
 #define SPD_READ          0
 #define SPD_WRITE         1
-#define SPD_MAX_LENGTH    384
+#define SPD_MAX_LENGTH    512
+#define SPD_PAGE_0        (0x6C >> 1)
+#define SPD_PAGE_1        (0x6E >> 1)
 
 /* forward declarations */
 struct kv_pair;

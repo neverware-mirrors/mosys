@@ -48,6 +48,7 @@
 
 #include "intf/i2c.h"
 
+#include "lib/ddr4.h"
 #include "lib/math.h"
 #include "lib/string.h"
 #include "lib/spd.h"
@@ -214,8 +215,10 @@ static int smbus_read_reg(struct platform_intf *intf, int bus,
 			  int address, int reg, int length, void *data)
 {
 	int handle, fd, i;
+	int ddr4_handle, ddr4_fd;
 	int32_t result;
 	static int read_words = 1;
+	int on_page_1 = 0;
 
 	if (length < 1 || length > SPD_MAX_LENGTH) {
 		lprintf(LOG_NOTICE, "Invalid I2C read length: %d\n", length);
@@ -235,6 +238,18 @@ static int smbus_read_reg(struct platform_intf *intf, int bus,
 	memset(data, 0, length);
 	i = 0;
 	while (i < length) {
+		/*
+		 * For ddr4, for offsets 256+ bytes, need to switch to
+		 * page 1 to read that data.
+		 */
+		if (i == 256 &&
+		    (((char*)data)[DDR4_SPD_REG_DEVICE_TYPE] ==
+		     SPD_DRAM_TYPE_DDR4)) {
+			ddr4_handle = i2c_open_dev(intf, bus, SPD_PAGE_1);
+			ddr4_fd = i2c_handles[ddr4_handle].fd;
+			i2c_smbus_write_byte_data(ddr4_fd, 0, 0);
+			on_page_1 = 1;
+		}
 		if (read_words && (i < length - 1)) {
 			/* Do 2-byte reads whenever possible */
 			result = i2c_smbus_read_word_data(fd, reg + i);
@@ -269,6 +284,12 @@ static int smbus_read_reg(struct platform_intf *intf, int bus,
 			memcpy(data + i, &result, 1);
 			i++;
 		}
+	}
+	if (on_page_1 == 1) {
+		ddr4_handle = i2c_open_dev(intf, bus, SPD_PAGE_0);
+		ddr4_fd = i2c_handles[ddr4_handle].fd;
+		i2c_smbus_write_byte_data(ddr4_fd, 0, 0);
+		on_page_1 = 0;
 	}
 
 	return i;
