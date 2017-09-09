@@ -156,7 +156,7 @@ static int do_cmd(const char *cmd, char *const *argv,
 			dup2(null_fd, fileno(stderr));
 		}
 
-		execv(cmd, argv);
+		execvp(cmd, argv);
 
 		lperror(LOG_ERR, "%s: Failed to run %s", __func__, cmd);
 		rc = -1;
@@ -296,18 +296,11 @@ static int append_programmer_arg(const enum programmer_target target,
    returns NULL otherwise */
 static const char *flashrom_path(void)
 {
-	static char path[PATH_MAX];
+	static char path[PATH_MAX] = "flashrom";
 	int fd;
 	int i = 0;
 	struct stat s;
 	char android_path[] = "/system/bin/flashrom";
-	char which_cmd[] = "/usr/bin/which";
-	char *args[MAX_ARRAY_SIZE];
-	int stdout_pipefd[2];
-	struct pipe pipes[] = {
-		{ PIPE_IN, fileno(stdout), stdout_pipefd, path, PATH_MAX },
-		{ PIPE_NONE, fileno(stderr) },
-	};
 
 	/* In Android, flashrom utility located in /system/bin
 	   check if file exists.  Using fstat because for some
@@ -321,26 +314,7 @@ static const char *flashrom_path(void)
 	}
 	close(fd);
 
-	/* We're not in Android, try using the `which` command. */
-	args[i++] = strdup(which_cmd);
-	args[i++] = strdup("flashrom");
-	args[i++] = NULL;
-	memset(path, 0, sizeof(path));
-	if (do_cmd(which_cmd, args, pipes, ARRAY_SIZE(pipes)) < 0) {
-		lprintf(LOG_DEBUG, "Unable to determine flashrom path\n");
-		return NULL;
-	}
-
-	for (i = 0; i < PATH_MAX; i++) {
-		if (path[i] == EOF || path[i] == '\n') {
-			path[i] = '\0';
-			break;
-		}
-	}
-
-	lprintf(LOG_DEBUG, "%s: path: \"%s\"\n", __func__, path);
-	for (i = 0; args[i] != NULL; i++)
-		free(args[i]);
+	/* We're not in Android, trust system PATH. */
 	return path;
 }
 
