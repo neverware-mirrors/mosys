@@ -59,11 +59,24 @@ static struct sku_info
 	 * updater configuration is corrected.
 	 */
 	SKU_ELECTRO = { .brand = "ACBB", .model = "reef", .chassis = "ELECTRO"},
-	SKU_BASKING = { .brand = "ASUN", .model = "reef", .chassis = "BASKING"};
+	SKU_BASKING = { .brand = "ASUN", .model = "reef", .chassis = "BASKING"},
+	/* Snappy SKUs */
+	SKU_ALAN = { .brand = "CLSF", .model = "snappy", .chassis = "ALAN"},
+	SKU_BIGDADDY = { .brand = "FQZI", .model = "snappy", .chassis = "BIGDADDY"},
+	SKU_SNAPPY = { .brand = "HPZO", .model = "snappy", .chassis = "SNAPPY"};
 /* Reference: b/35583395 */
 static struct sku_mapping reef_sku_table[] = {
 	{0, &SKU_BASKING},
 	{8, &SKU_ELECTRO},
+	{SKU_NUMBER_ANY, NULL},
+};
+
+/* Reference: b/65339688 */
+static struct sku_mapping snappy_sku_table[] = {
+	{2, &SKU_BIGDADDY},
+	{5, &SKU_BIGDADDY},
+	{7, &SKU_ALAN},
+	{8, &SKU_SNAPPY},
 	{SKU_NUMBER_ANY, NULL},
 };
 
@@ -82,7 +95,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Reef", }, .sku_table = reef_sku_table },
 	{ { "Pyro", }, .single_sku = { .brand = "LEAN", .model = "pyro" } },
 	{ { "Sand", }, },
-	{ { "Snappy", }, .single_sku = { .brand = "HPZO", .model = "snappy" } },
+	{ { "Snappy", }, .sku_table = snappy_sku_table },
 	{ { NULL }, },
 };
 #endif /* CONFIG_CROS_CONFIG */
