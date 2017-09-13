@@ -66,7 +66,8 @@ static struct sku_info
 	SKU_PORBEAGLE = { .brand = NULL, .model = "porbeagle", },
 	SKU_ROBO = { .brand = "QZUX", .model = "robo", },
 	SKU_ROBO360 = { .brand = "KABJ", .model = "robo360", },
-	SKU_WHITETIP = { .brand = NULL, .model = "whitetip", },
+	SKU_WHITETIP1 = { .brand = NULL, .model = "whitetip1", },
+	SKU_WHITETIP2 = { .brand = NULL, .model = "whitetip2", },
 	SKU_NASHER = { .brand = "CPPT", .model = "nasher", },
 	SKU_NASHER360 = { .brand = "INUT", .model = "nasher360", };
 
@@ -103,8 +104,8 @@ static struct sku_mapping coral_sku_table[] = {
 	{62, &SKU_ASTRONAUT},
 	{70, &SKU_ROBO},
 	{71, &SKU_ROBO360},
-	{126, &SKU_WHITETIP},
-	{127, &SKU_WHITETIP},
+	{126, &SKU_WHITETIP1},
+	{127, &SKU_WHITETIP2},
 	{160, &SKU_NASHER},
 	{161, &SKU_NASHER},
 	{162, &SKU_NASHER},
