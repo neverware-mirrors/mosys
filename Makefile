@@ -17,6 +17,8 @@
 
 NAME="Mosys"
 PROGRAM=mosys
+PROGRAM_STATIC=$(PROGRAM)_s
+TARGETS=$(PROGRAM) $(PROGRAM_STATIC)
 TESTPROGRAM=$(PROGRAM)_test
 
 # Mosys will use the following version format: core.major.minor-revision
@@ -444,7 +446,7 @@ endif # $(dot-config)
 # The all: target is the default when no target is given on the
 # command line.
 # This allow a user to issue only 'make' to build the primary program
-all: libcheck include/config/auto.conf $(PROGRAM)
+all: libcheck include/config/auto.conf $(TARGETS)
 
 # warn about C99 declaration after statement
 KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
@@ -630,7 +632,11 @@ CC_LDFLAGS = $(patsubst %,-Wl$(comma)%,$(LDFLAGS))
 
 $(PROGRAM): $(vmlinux-all)
 	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CC_LDFLAGS) $(MOSYS_MACROS) \
-	$(LINUXINCLUDE) -o $@ $@.c $? $(LDLIBS) 
+	$(LINUXINCLUDE) -o $@ $@.c $? $(LDLIBS)
+
+$(PROGRAM_STATIC): $(vmlinux-all)
+	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CC_LDFLAGS) $(MOSYS_MACROS) \
+	$(LINUXINCLUDE) -o $@ $(PROGRAM).c $? -static $(LDLIBS)
 
 VPD_ENCODE_DEFCONFIG	:= "vpd_encode.config"
 VPD_ENCODE_MACROS	:= -DPROGRAM=\"vpd_encode\" \
@@ -951,10 +957,10 @@ PHONY += FORCE
 FORCE:
 
 PHONY += install
-install: $(PROGRAM)
+install: $(TARGETS)
 	mkdir -p $(INSTALL_PATH)
 #	mkdir -p $(MANDIR)/man8
-	$(INSTALL) -m 0755 $(PROGRAM) $(INSTALL_PATH)
+	$(INSTALL) -m 0755 $(TARGETS) $(INSTALL_PATH)
 #	$(INSTALL) -m 0644 $(PROGRAM).8 $(MANDIR)/man8
 
 PHONY += export
