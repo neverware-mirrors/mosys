@@ -105,7 +105,7 @@ static struct sku_mapping coral_sku_table[] = {
 	{70, &SKU_ROBO},
 	{71, &SKU_ROBO360},
 	{78, &SKU_WHITETIP1},
-	{79, &SKU_WHITETIP2},
+	{82, &SKU_WHITETIP2},
 	{160, &SKU_NASHER},
 	{161, &SKU_NASHER},
 	{162, &SKU_NASHER},
