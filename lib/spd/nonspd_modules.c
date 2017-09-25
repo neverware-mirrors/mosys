@@ -220,6 +220,57 @@ const struct nonspd_mem_info hynix_lpddr3_h9ccnnnbltblar_nud = {
 		  'A', 'R', '-', 'N', 'U', 'D',},
 };
 
+const struct nonspd_mem_info micron_lpddr3_mt52l256m32d1pf_107wtb = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
+
+	.module_size_mbits	= 8192,
+	.num_ranks		= 1,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num		=
+	        { 'M', 'T', '5', '2', 'L', '2', '5', '6', 'M', '3', '2', 'D',
+		  '1', 'P', 'F', '-', '1', '0', '7', 'W', 'T', ':', 'B' },
+};
+
+const struct nonspd_mem_info micron_lpddr3_mt52l256m64d2pp_107wtb = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
+
+	.module_size_mbits	= 8192,
+	.num_ranks		= 1,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num		=
+	        { 'M', 'T', '5', '2', 'L', '2', '5', '6', 'M', '6', '4', 'D',
+		  '2', 'P', 'P', '-', '1', '0', '7', 'W', 'T', ':', 'B' },
+};
+
+const struct nonspd_mem_info micron_lpddr3_mt52l512m32d2pf_107wtb = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
+
+	.module_size_mbits	= 16384,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num		=
+	        { 'M', 'T', '5', '2', 'L', '5', '1', '2', 'M', '3', '2', 'D',
+		  '2', 'P', 'F', '-', '1', '0', '7', 'W', 'T', ':', 'B' },
+};
+
 const struct nonspd_mem_info micron_mt41k256m16ha = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
