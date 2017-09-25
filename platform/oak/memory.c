@@ -115,10 +115,10 @@ static int get_mem_info(struct platform_intf *intf,
 		*info = &hynix_lpddr3_h9ccnnnbltblar_nud;
 		break;
 	case MICRON_DDR3_MT52L256M32D1PF_107WTB_1G:
-		*info = &micron_mt52l256m32d1pf;
+		*info = &micron_lpddr3_mt52l256m32d1pf_107wtb;
 		break;
 	case MICRON_DDR3_MT52L512M32D2PF_107WTB_2G:
-		*info = &micron_mt52l512m32d2pf;
+		*info = &micron_lpddr3_mt52l512m32d2pf_107wtb;
 		break;
 	case SAMSUNG_DDR3_K4E6E304EB_EGCF_2G:
 		*info = &samsung_lpddr3_k4e6e304eb_egcf;
