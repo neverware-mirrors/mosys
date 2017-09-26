@@ -275,6 +275,7 @@ NM		?= $(CROSS_COMPILE)nm
 STRIP		?= $(CROSS_COMPILE)strip
 OBJCOPY		?= $(CROSS_COMPILE)objcopy
 OBJDUMP		?= $(CROSS_COMPILE)objdump
+PKG_CONFIG	?= $(CROSS_COMPILE)pkg-config
 INSTALL		?= install
 AWK		= awk
 DEPMOD		= /sbin/depmod
@@ -294,8 +295,10 @@ LINUXINCLUDE    := -Iinclude \
 
 KERNELVERSION	= $(CORE).$(MAJOR).$(MINOR)
 
-FMAP_LINKOPT	?= $(shell pkg-config --libs fmap 2> /dev/null || -lfmap-0.3)
-LDLIBS		:= $(shell pkg-config --libs uuid 2> /dev/null || -luuid) $(FMAP_LINKOPT)
+FMAP_LIBS	:= $(shell $(PKG_CONFIG) --libs fmap 2>/dev/null || echo -lfmap-0.3)
+FMAP_LINKOPT	?= $(FMAP_LIBS)
+UUID_LIBS	:= $(shell $(PKG_CONFIG) --libs uuid 2>/dev/null || echo -luuid)
+LDLIBS		:= $(UUID_LIBS) $(FMAP_LINKOPT)
 
 #EXTRA_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES))
 
@@ -1019,7 +1022,7 @@ export LIBUUID_TEST
 test_libuuid:
 	@echo "Testing libuuid..."
 	@echo "$$LIBUUID_TEST" > .uuid_test.c
-	@$(CC) $(CFLAGS) $(CC_LDFLAGS) -o .uuid_test .uuid_test.c -luuid >/dev/null 2>&1 && \
+	$(Q)$(CC) $(CFLAGS) $(CC_LDFLAGS) -o .uuid_test .uuid_test.c -luuid >/dev/null 2>&1 && \
 	echo "libuuid test passed." || \
 	( echo "libuuid test failed. Please install libuuid" ; exit 1)
 	@rm -f .uuid_test.c .uuid_test
@@ -1039,7 +1042,7 @@ export LIBFMAP_TEST
 test_libfmap:
 	@echo "Testing libfmap..."
 	@echo "$$LIBFMAP_TEST" > .fmap_test.c
-	@$(CC) $(CFLAGS) $(CC_LDFLAGS) -o .fmap_test .fmap_test.c $(FMAP_LINKOPT) >/dev/null 2>&1 && \
+	$(Q)$(CC) $(CFLAGS) $(CC_LDFLAGS) -o .fmap_test .fmap_test.c $(FMAP_LINKOPT) >/dev/null 2>&1 && \
 	echo "libfmap test passed." || \
 	( echo "libfmap test failed. Please install libfmap (http://flashmap.googlecode.com)"; exit 1 )
 	@rm -f .fmap_test.c .fmap_test
