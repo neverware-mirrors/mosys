@@ -1,0 +1,10 @@
+#
+# cros_config configuration
+#
+
+config CROS_CONFIG
+	bool "Embed Chrome OS master configuration"
+	help
+	  Enable access to Chrome OS master configuration. This causes mosys
+	  to embed the configuration within itself so that it can use it to
+	  decode SKU ID and other tasks. This is for use with unified builds.

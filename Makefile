@@ -322,7 +322,7 @@ export MAKE AWK INSTALLKERNEL
 export HOSTCXX HOSTCXXFLAGS CHECK CHECKFLAGS
 
 export KBUILD_CPPFLAGS LINUXINCLUDE OBJCOPYFLAGS LDFLAGS
-export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_GCOV
+export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_GCOV LIBS_LIBFDT
 export KBUILD_AFLAGS AFLAGS_KERNEL
 
 # Files to ignore in find ... statements
@@ -632,14 +632,15 @@ $(vmlinux-dirs): prepare scripts
 	$(Q)$(MAKE) $(build)=$@
 
 CC_LDFLAGS = $(patsubst %,-Wl$(comma)%,$(LDFLAGS))
+LIBS_LIBFDT := $(if $(CONFIG_CROS_CONFIG),-lfdt)
 
 $(PROGRAM): $(vmlinux-all)
 	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CC_LDFLAGS) $(MOSYS_MACROS) \
-	$(LINUXINCLUDE) -o $@ $@.c $? $(LDLIBS)
+	$(LINUXINCLUDE) -o $@ $@.c $? $(LIBS_LIBFDT) $(LDLIBS)
 
 $(PROGRAM_STATIC): $(vmlinux-all)
 	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CC_LDFLAGS) $(MOSYS_MACROS) \
-	$(LINUXINCLUDE) -o $@ $(PROGRAM).c $? -static $(LDLIBS)
+	$(LINUXINCLUDE) -o $@ $(PROGRAM).c $? -static $(LIBS_LIBFDT) $(LDLIBS)
 
 VPD_ENCODE_DEFCONFIG	:= "vpd_encode.config"
 VPD_ENCODE_MACROS	:= -DPROGRAM=\"vpd_encode\" \

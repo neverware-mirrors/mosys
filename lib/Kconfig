@@ -1,0 +1,5 @@
+#
+# Library configuration
+#
+
+source "lib/cros_config/Kconfig"

@@ -1,5 +1,6 @@
 obj-y		+= acpi/
 obj-y		+= cbfs/
+obj-$(CONFIG_CROS_CONFIG)	+= cros_config/
 obj-y		+= crypto/	# TODO: Make this a build option
 obj-y		+= dynamic_array/
 obj-y		+= eeprom/
