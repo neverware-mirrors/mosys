@@ -29,6 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -40,6 +41,7 @@
 
 #include "drivers/google/cros_ec.h"
 
+#include "lib/cros_config.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
@@ -55,64 +57,11 @@ static struct sku_info
 	 * updater configuration is corrected.
 	 */
 	SKU_ELECTRO = { .brand = "ACBB", .model = "reef", .chassis = "ELECTRO"},
-	SKU_BASKING = { .brand = "ASUN", .model = "reef", .chassis = "BASKING"},
-	/* Coral SKUs */
-	/* TODO(hungte) Fill the brand code when they are assigned. */
-	SKU_ASTRONAUT = { .brand = "CTIE", .model = "astronaut", },
-	SKU_SANTA = { .brand = "ACBE", .model = "santa", },
-	SKU_LAVA = { .brand = NULL, .model = "lava", },
-	SKU_BLUE = { .brand = NULL, .model = "blue", },
-	SKU_BRUCE = { .brand = NULL, .model = "bruce", },
-	SKU_PORBEAGLE = { .brand = NULL, .model = "porbeagle", },
-	SKU_ROBO = { .brand = "QZUX", .model = "robo", },
-	SKU_ROBO360 = { .brand = "KABJ", .model = "robo360", },
-	SKU_WHITETIP1 = { .brand = NULL, .model = "whitetip1", },
-	SKU_WHITETIP2 = { .brand = NULL, .model = "whitetip2", },
-	SKU_NASHER = { .brand = "CPPT", .model = "nasher", },
-	SKU_NASHER360 = { .brand = "INUT", .model = "nasher360", };
-
+	SKU_BASKING = { .brand = "ASUN", .model = "reef", .chassis = "BASKING"};
 /* Reference: b/35583395 */
 static struct sku_mapping reef_sku_table[] = {
 	{0, &SKU_BASKING},
 	{8, &SKU_ELECTRO},
-	{SKU_NUMBER_ANY, NULL},
-};
-
-/**
- * TODO(hungte) The mapping table below is made by duplicating for ranges. We do
- * this for now because it's unclear if most projects will be ranged, or is
- * sufficient with single or discontinuous values. We can revise this to ranges,
- * or other data structure in future when we have better idea of how the mapping
- * table looks like in the end.
- */
-/* Reference: Coral SKU Map */
-static struct sku_mapping coral_sku_table[] = {
-	{0, &SKU_ASTRONAUT},
-	{1, &SKU_ASTRONAUT},
-	{2, &SKU_SANTA},
-	{3, &SKU_SANTA},
-	{4, &SKU_LAVA},
-	{5, &SKU_LAVA},
-	{6, &SKU_BLUE},
-	{7, &SKU_BLUE},
-	{8, &SKU_BRUCE},
-	{9, &SKU_LAVA},
-	{10, &SKU_LAVA},
-	{26, &SKU_PORBEAGLE},
-	{27, &SKU_PORBEAGLE},
-	{61, &SKU_ASTRONAUT},
-	{62, &SKU_ASTRONAUT},
-	{70, &SKU_ROBO},
-	{71, &SKU_ROBO360},
-	{78, &SKU_WHITETIP1},
-	{82, &SKU_WHITETIP2},
-	{160, &SKU_NASHER},
-	{161, &SKU_NASHER},
-	{162, &SKU_NASHER},
-	{163, &SKU_NASHER360},
-	{164, &SKU_NASHER360},
-	{165, &SKU_NASHER360},
-	{166, &SKU_NASHER360},
 	{SKU_NUMBER_ANY, NULL},
 };
 
@@ -124,11 +73,12 @@ struct probe_ids {
 	 */
 	struct sku_mapping *sku_table;
 	const struct sku_info single_sku;
+	int use_master_config;
 };
 
 static const struct probe_ids probe_id_list[] = {
 	{ { "Reef", }, .sku_table = reef_sku_table },
-	{ { "Coral", }, .sku_table = coral_sku_table },
+	{ { "Coral", }, .use_master_config = true },
 
 	{ { "Pyro", }, .single_sku = { .brand = "LEAN", .model = "pyro" } },
 	{ { "Sand", }, },
@@ -177,6 +127,11 @@ reef_probe_exit:
 	intf->name = pid->names[0];
 	if (pid->sku_table) {
 		intf->sku_info = sku_find_info(intf, pid->sku_table);
+#ifdef CONFIG_CROS_CONFIG
+	} else if (pid->use_master_config) {
+		intf->sku_info = cros_config_read_sku_info(
+			sku_get_number(intf));
+#endif
 	} else {
 		intf->sku_info = &pid->single_sku;
 	}
