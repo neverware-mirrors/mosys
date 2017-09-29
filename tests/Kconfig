@@ -1,0 +1,6 @@
+config TEST
+	bool "Enable building the simple test"
+	help
+	  This test checks that cros_config works correctly. It is intended to
+	  be executed by the Chrome OS ebuild, whereas the existing tests
+	  do not work in that environment.

@@ -1,0 +1,190 @@
+/*
+ * Copyright 2017 The Chromium OS Authors. All rights reserved.
+ *
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+
+/dts-v1/;
+
+/ {
+	chromeos {
+		family: family {
+		};
+
+		models: models {
+		};
+	};
+};
+
+&family {
+/*
+ * NOTE: In order to pin firmware versions for specific models, see:
+ * https://chromium.googlesource.com/chromiumos/platform2/+/master/chromeos-config/README.md
+ */
+	firmware {
+		script = "updater4.sh";
+		shared: coral {
+			bcs-overlay = "overlay-coral-private";
+			ec-image = "bcs://Coral_EC.9959.0.0.tbz2";
+			main-image = "bcs://Coral.9959.0.0.tbz2";
+			build-targets {
+				coreboot = "coral";
+				ec = "coral";
+				depthcharge = "coral";
+				libpayload = "coral";
+			};
+		};
+	};
+
+	mapping {
+		sku-map {
+			simple-sku-map = < 0 &astronaut
+				1 &astronaut
+				2 &santa
+				3 &santa
+				4 &lava
+				5 &lava
+				6 &blue
+				7 &blue
+				8 &bruce
+				9 &lava
+				10 &lava
+				26 &porbeagle
+				27 &porbeagle
+				61 &astronaut_61
+				62 &astronaut_62
+				70 &robo
+				71 &robo360
+				78 &whitetip1
+				82 &whitetip2
+				160 &nasher
+				161 &nasher
+				162 &nasher
+				163 &nasher360
+				164 &nasher360
+				165 &nasher360
+				166 &nasher360 >;
+		};
+	};
+};
+
+&models {
+	coral {
+		firmware {
+			shares = < &shared >;
+			key-id = "CORAL";
+		};
+	};
+
+	astronaut: astronaut {
+		firmware {
+			shares = < &shared >;
+			key-id = "ASTRONAUT";
+		};
+		sub-models {
+			astronaut_61: astronaut61 {
+				brand-code = "WXYZ";
+			};
+
+			astronaut_62: astronaut62 {
+				brand-code = "ABCD";
+			};
+		};
+	};
+
+	blue: blue {
+		firmware {
+			shares = < &shared >;
+			key-id = "BLUE";
+		};
+	};
+
+	bruce: bruce {
+		firmware {
+			shares = < &shared >;
+			key-id = "BRUCE";
+		};
+	};
+
+	lava: lava {
+		firmware {
+			shares = < &shared >;
+			key-id = "LAVA";
+		};
+	};
+
+	nasher: nasher {
+		brand-code = "CPPT";
+		firmware {
+			shares = < &shared >;
+			key-id = "NASHER";
+		};
+	};
+
+	nasher360: nasher360 {
+		brand-code = "INUT";
+		firmware {
+			shares = < &shared >;
+			key-id = "NASHER360";
+		};
+	};
+
+	porbeagle: porbeagle {
+		firmware {
+			shares = < &shared >;
+			key-id = "PORBEAGLE";
+		};
+	};
+
+	robo: robo {
+		brand-code = "QZUX";
+		firmware {
+			shares = < &shared >;
+			key-id = "ROBO";
+		};
+	};
+
+	robo360: robo360 {
+		brand-code = "KABJ";
+		firmware {
+			shares = < &shared >;
+			/**
+			 * TODO(b:65260329): add robo360 root key for signing and correct
+			 *                   model.dtsi.
+			 */
+			key-id = "ROBO";
+		};
+	};
+
+	santa: santa {
+		brand-code = "ACBE";
+		firmware {
+			shares = < &shared >;
+			key-id = "SANTA";
+		};
+	};
+
+	/*
+	 * TODO(chromium:761229): Support shared configuration so that all of
+	 * the white-label config can go here.
+	 *
+	 * whitetip: whitetip {
+	 *	-- config will eventually go here.
+	 * };
+	 */
+
+	whitetip1: whitetip1 {
+		firmware {
+			shares = < &shared >;
+			key-id = "WHITETIP1";
+		};
+	};
+
+	whitetip2: whitetip2 {
+		firmware {
+			shares = < &shared >;
+			key-id = "WHITETIP2";
+		};
+	};
+};

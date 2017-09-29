@@ -419,7 +419,7 @@ drivers-y	:=
 libs-y		:=
 tools-y		:= tools/
 #FIXME: Clean up core-y
-core-y		:= core/ intf/ drivers/ platform/ lib/ $(tools-y)
+core-y		:= core/ intf/ drivers/ platform/ lib/ $(tools-y) tests/
 
 # Tools that are compiled separately
 
@@ -641,6 +641,10 @@ $(PROGRAM): $(vmlinux-all)
 $(PROGRAM_STATIC): $(vmlinux-all)
 	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CC_LDFLAGS) $(MOSYS_MACROS) \
 	$(LINUXINCLUDE) -o $@ $(PROGRAM).c $? -static $(LIBS_LIBFDT) $(LDLIBS)
+
+simple_tests: $(vmlinux-all)
+	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CC_LDFLAGS) $(MOSYS_MACROS) \
+	$(LINUXINCLUDE) -o $@ $? $(LIBS_LIBFDT) $(LDLIBS)
 
 VPD_ENCODE_DEFCONFIG	:= "vpd_encode.config"
 VPD_ENCODE_MACROS	:= -DPROGRAM=\"vpd_encode\" \
