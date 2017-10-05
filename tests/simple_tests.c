@@ -84,7 +84,8 @@ int main(int argc, char **argv)
 	char *fdt = __dtb_test_config_begin;
 	int ret;
 
-	log_threshold_set(LOG_SPEW);
+	mosys_log_init("stderr", LOG_SPEW, stderr);
+
 	ret = do_test(fdt, 0, "astronaut", NULL);
 	ret |= do_test(fdt, 61, "astronaut", "WXYZ");
 	ret |= do_test(fdt, 62, "astronaut", "ABCD");
