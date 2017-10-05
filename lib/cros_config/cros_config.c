@@ -47,6 +47,103 @@ static int cros_config_fdt_err(const char *where, int err)
 }
 
 /**
+ * check_sku_map() - Check a single sku-map node for a match
+ *
+ * This searches the given sku-map node to see if it is a match for the given
+ * SKU ID.
+ *
+ * @fdt: Device tree blob
+ * @node: 'sku-map' node to examine
+ * @find_sku_id: SKU ID to search for
+ * @return phandle found (> 0), if any, 0 if not found, negative on error
+ */
+static int check_sku_map(const char *fdt, int node, int find_sku_id)
+{
+	const fdt32_t *data, *end, *ptr;
+	int found_phandle = 0;
+	int len;
+
+	lperror(LOG_DEBUG, "%s: Trying %s\n", __func__,
+			fdt_get_name(fdt, node, NULL));
+
+	/* If we have a single SKU, deal with that first */
+	data = fdt_getprop(fdt, node, "single-sku", &len);
+	if (data) {
+		if (len != sizeof(fdt32_t)) {
+			lperror(LOG_ERR, "%s: single-sku: Invalid length %d\n",
+				__func__, len);
+			return -1;
+		}
+		found_phandle = fdt32_to_cpu(*data);
+		lperror(LOG_DEBUG, "%s: Single SKU match\n", __func__);
+		return found_phandle;
+	}
+
+	/*
+	 * Locate the map and make sure it is a multiple of 2 cells (first is
+	 * SKU ID, second is phandle).
+	 */
+	data = fdt_getprop(fdt, node, "simple-sku-map", &len);
+	if (!data)
+		return cros_config_fdt_err("find simple-sku-map", len);
+	if (len % (sizeof(fdt32_t) * 2)) {
+		/*
+		 * Validation of configuration should catch this, so this
+		 * should never happen. But we don't want to crash.
+		 */
+		lperror(LOG_ERR, "%s: %s: simple-sku-map: Invalid length %d\n",
+			__func__, fdt_get_name(fdt, node, NULL), len);
+		return -1;
+	}
+
+	/* Search for the SKU ID in the list */
+	for (end = (fdt32_t *)((char *)data + len), ptr = data;
+	     ptr < end; ptr += 2) {
+		int sku_id = fdt32_to_cpu(ptr[0]);
+		int phandle = fdt32_to_cpu(ptr[1]);
+
+		if (sku_id == find_sku_id) {
+			found_phandle = phandle;
+			break;
+		}
+	}
+	if (!found_phandle) {
+		lperror(LOG_DEBUG, "%s: SKU ID %d not found in mapping\n",
+			__func__, find_sku_id);
+		return 0;
+	}
+	lperror(LOG_DEBUG, "%s: Simple SKU map match\n", __func__);
+
+	return found_phandle;
+}
+
+/**
+ * check_sku_map() - Check all sku-map nodes for a match
+ *
+ * This searches all the sku-map subnodes to see if it is a match for the given
+ * SKU ID.
+ *
+ * @fdt: Device tree blob
+ * @mapping_node: 'mapping' node to examine
+ * @find_sku_id: SKU ID to search for
+ * @return phandle found (> 0), if any, 0 if not found, negative on error
+ */
+static int check_sku_maps(const char *fdt, int mapping_node, int find_sku_id)
+{
+	int subnode, phandle;
+
+	fdt_for_each_subnode(subnode, fdt, mapping_node) {
+		phandle = check_sku_map(fdt, subnode, find_sku_id);
+		if (phandle < 0)
+			return -1;
+		else if (phandle > 0)
+			break;
+	}
+
+	return phandle;
+}
+
+/**
  * follow_phandle() - Find the model node pointed to by a phandle
  *
  * @fdt: Device tree blob
@@ -93,56 +190,19 @@ static int follow_phandle(const char *fdt, int phandle, int *targetp)
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 			  int find_sku_id)
 {
-	const fdt32_t *data, *end, *ptr;
 	int mapping_node, model_node;
-	int found_phandle = 0;
+	int phandle;
 	int target;
-	int len;
 
 	lprintf(LOG_DEBUG, "%s: Looking up SKU ID %d\n", __func__, find_sku_id);
-	/*
-	 * TODO(sjg@chromium.org): Support multiple SKU maps, as needed for
-	 * reef-uni
-	 */
-	mapping_node = fdt_path_offset(fdt, "/chromeos/family/mapping/sku-map");
-	if (mapping_node < 0) {
+	mapping_node = fdt_path_offset(fdt, "/chromeos/family/mapping");
+	if (mapping_node < 0)
 		return cros_config_fdt_err("find mapping", mapping_node);
-	}
 
-	/*
-	 * Locate the map and make sure it is a multiple of 2 cells (first is
-	 * SKU ID, second is phandle).
-	 */
-	data = fdt_getprop(fdt, mapping_node, "simple-sku-map", &len);
-	if (!data) {
-		return cros_config_fdt_err("find sku-map", len);
-	}
-	if (len % (sizeof(fdt32_t) * 2)) {
-		/*
-		 * Validation of configuration should catch this, so this
-		 * should never happen. But we don't want to crash.
-		 */
-		lperror(LOG_ERR, "%s: Invalid length %d\n", __func__);
-		return -1;
-	}
-
-	/* Search for the SKU ID in the list */
-	for (end = (void *)data + len, ptr = data; ptr < end; ptr += 2) {
-		int sku_id = fdt32_to_cpu(ptr[0]);
-		int phandle = fdt32_to_cpu(ptr[1]);
-
-		if (sku_id == find_sku_id) {
-			found_phandle = phandle;
-			break;
-		}
-	}
-	if (!found_phandle) {
-		lperror(LOG_ERR, "%s: SKU ID %d not found in mapping\n",
-			__func__, find_sku_id);
-		return -1;
-	}
-
-	model_node = follow_phandle(fdt, found_phandle, &target);
+	phandle = check_sku_maps(fdt, mapping_node, find_sku_id);
+	if (phandle <= 0)
+		goto err;
+	model_node = follow_phandle(fdt, phandle, &target);
 	if (model_node < 0)
 		goto err;
 
