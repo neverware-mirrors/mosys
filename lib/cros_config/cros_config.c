@@ -46,14 +46,57 @@ static int cros_config_fdt_err(const char *where, int err)
 	return err;
 }
 
+/**
+ * follow_phandle() - Find the model node pointed to by a phandle
+ *
+ * @fdt: Device tree blob
+ * @phandle: Phandle to look up
+ * @targetp: Returns the target node of the phandle
+ * @return model node for this phandle, or negative on error
+ */
+static int follow_phandle(const char *fdt, int phandle, int *targetp)
+{
+	const char *parent_name;
+	int node, parent;
+	int model_node;
+
+	/* Follow the phandle to the target */
+	node = fdt_node_offset_by_phandle(fdt, phandle);
+	if (node < 0)
+		return cros_config_fdt_err("find phandle for sku ID", node);
+
+	/* Figure out whether the target is a model or a sub-model */
+	parent = fdt_parent_offset(fdt, node);
+	if (parent < 0) {
+		return cros_config_fdt_err("find parent of phandle target",
+					   node);
+	}
+	parent_name = fdt_get_name(fdt, parent, NULL);
+	if (!strcmp(parent_name, "submodels")) {
+		model_node = fdt_parent_offset(fdt, parent);
+		if (model_node < 0) {
+			return cros_config_fdt_err("find sub-model parent",
+						   node);
+		}
+	} else if (!strcmp(parent_name, "models")) {
+		model_node = node;
+	} else {
+		lperror(LOG_ERR, "%s: phandle target parent '%s' invalid\n",
+			__func__, parent_name);
+		return -1;
+	}
+	*targetp = node;
+
+	return model_node;
+}
+
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 			  int find_sku_id)
 {
 	const fdt32_t *data, *end, *ptr;
 	int mapping_node, model_node;
-	const char *parent_name;
 	int found_phandle = 0;
-	int parent, node;
+	int target;
 	int len;
 
 	lprintf(LOG_DEBUG, "%s: Looking up SKU ID %d\n", __func__, find_sku_id);
@@ -99,41 +142,21 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 		return -1;
 	}
 
-	/* Follow the phandle to the target */
-	node = fdt_node_offset_by_phandle(fdt, found_phandle);
-	if (node < 0) {
-		return cros_config_fdt_err("find phandle for sku ID", node);
-	}
-
-	/* Figure out whether the target is a model or a sub-model */
-	parent = fdt_parent_offset(fdt, node);
-	if (parent < 0) {
-		return cros_config_fdt_err("find parent of phandle target",
-					   node);
-	}
-	parent_name = fdt_get_name(fdt, parent, NULL);
-	if (!strcmp(parent_name, "sub-models")) {
-		model_node = fdt_parent_offset(fdt, parent);
-		if (model_node < 0) {
-			return cros_config_fdt_err("find sub-model parent",
-						   node);
-		}
-	} else if (!strcmp(parent_name, "models")) {
-		model_node = node;
-	} else {
-		lperror(LOG_ERR, "%s: phandle target parent '%s' invalid\n",
-			__func__, parent_name);
-		return -1;
-	}
+	model_node = follow_phandle(fdt, found_phandle, &target);
+	if (model_node < 0)
+		goto err;
 
 	/* We found the model node, so pull out the data */
 	memset(sku_info, '\0', sizeof(*sku_info));
 	sku_info->model = fdt_get_name(fdt, model_node, NULL);
-	sku_info->brand = fdt_getprop(fdt, node, "brand-code", NULL);
+	sku_info->brand = fdt_getprop(fdt, target, "brand-code", NULL);
 	/* we don't report the sub-model in mosys */
 	lprintf(LOG_DEBUG, "%s: Found model '%s'\n", __func__, sku_info->model);
 
 	return 0;
+err:
+	lperror(LOG_ERR, "%s: Could not locate SKU in mapping\n", __func__);
+	return -1;
 }
 
 int cros_config_read_sku_info(struct platform_intf *intf,

@@ -82,7 +82,7 @@
 			shares = < &shared >;
 			key-id = "ASTRONAUT";
 		};
-		sub-models {
+		submodels {
 			astronaut_61: astronaut61 {
 				brand-code = "WXYZ";
 			};
