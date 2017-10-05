@@ -38,8 +38,6 @@
 
 #include "lib/sku.h"
 
-static struct sku_info cros_config_sku;
-
 static int cros_config_fdt_err(const char *where, int err)
 {
 	lperror(LOG_ERR, "%s: %s: %s\n", __func__, where, fdt_strerror(err));
@@ -137,18 +135,18 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	return 0;
 }
 
-struct sku_info *cros_config_read_sku_info(int sku_id)
+int cros_config_read_sku_info(int sku_id, struct sku_info *sku_info)
 {
 	extern char __dtb_config_begin[];
 	char *fdt = __dtb_config_begin;
 	int ret;
 
-	ret = cros_config_setup_sku(fdt, &cros_config_sku, sku_id);
+	ret = cros_config_setup_sku(fdt, sku_info, sku_id);
 	if (ret) {
 		lperror(LOG_ERR, "%s: Failed to read master configuration",
 			__func__);
-		return NULL;
+		return -1;
 	}
 
-	return &cros_config_sku;
+	return 0;
 }

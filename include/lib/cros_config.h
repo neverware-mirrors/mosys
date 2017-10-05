@@ -32,18 +32,18 @@
 #ifndef _CROS_CONFIG_H_
 #define _CROS_CONFIG_H_
 
+struct sku_info;
+
 /**
  * cros_config_read_sku_info() - read SKU information
  *
  * Read information about a particular SKU ID.
  *
  * @sku_id: SKU ID to look up
- * @return: SKU information for this SKU ID, or NULL on error. This pointer
- * will remain valid until this function is called again. Pointers within
- * struct sku_info point to static (read-only) data so have no lifetime
- * restrictions.
+ * @sku_info: Returns SKU information on success
+ * @return: 0 if OK, other value on error
  */
-struct sku_info *cros_config_read_sku_info(int sku_id);
+int cros_config_read_sku_info(int sku_id, struct sku_info *sku_info);
 
 /**
  * cros_config_setup_sku() - read SKU information (internal functions)

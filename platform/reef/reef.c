@@ -129,8 +129,10 @@ reef_probe_exit:
 		intf->sku_info = sku_find_info(intf, pid->sku_table);
 #ifdef CONFIG_CROS_CONFIG
 	} else if (pid->use_master_config) {
-		intf->sku_info = cros_config_read_sku_info(
-			sku_get_number(intf));
+		static struct sku_info sku_info;
+
+		status = cros_config_read_sku_info(sku_get_number(intf),
+						   &sku_info);
 #endif
 	} else {
 		intf->sku_info = &pid->single_sku;
