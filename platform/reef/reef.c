@@ -49,6 +49,8 @@
 
 #include "reef.h"
 
+#ifndef CONFIG_CROS_CONFIG
+
 /* sku_info: brand, model, chassis, customization */
 static struct sku_info
 	/* Reef SKUs */
@@ -73,18 +75,17 @@ struct probe_ids {
 	 */
 	struct sku_mapping *sku_table;
 	const struct sku_info single_sku;
-	int use_master_config;
 };
 
 static const struct probe_ids probe_id_list[] = {
+	/* For coral SKU map, please see cs/f:dtsi f:coral */
 	{ { "Reef", }, .sku_table = reef_sku_table },
-	{ { "Coral", }, .use_master_config = true },
-
 	{ { "Pyro", }, .single_sku = { .brand = "LEAN", .model = "pyro" } },
 	{ { "Sand", }, },
 	{ { "Snappy", }, .single_sku = { .brand = "HPZO", .model = "snappy" } },
 	{ { NULL }, },
 };
+#endif /* CONFIG_CROS_CONFIG */
 
 struct platform_cmd *reef_sub[] = {
 	&cmd_ec,
@@ -100,6 +101,18 @@ struct platform_cmd *reef_sub[] = {
 
 int reef_probe(struct platform_intf *intf)
 {
+#ifdef CONFIG_CROS_CONFIG
+	static struct sku_info sku_info;
+	int ret;
+
+	ret = cros_config_read_sku_info(intf, &sku_info);
+
+	/* If there was no error, indicate that we found a match */
+	if (!ret)
+		return 1;
+
+	return ret;
+#else
 	static int status, probed;
 	const struct probe_ids *pid;
 
@@ -127,16 +140,11 @@ reef_probe_exit:
 	intf->name = pid->names[0];
 	if (pid->sku_table) {
 		intf->sku_info = sku_find_info(intf, pid->sku_table);
-#ifdef CONFIG_CROS_CONFIG
-	} else if (pid->use_master_config) {
-		static struct sku_info sku_info;
-
-		status = cros_config_read_sku_info(intf, &sku_info);
-#endif
 	} else {
 		intf->sku_info = &pid->single_sku;
 	}
 	return status;
+#endif
 }
 
 /* late setup routine; not critical to core functionality */
