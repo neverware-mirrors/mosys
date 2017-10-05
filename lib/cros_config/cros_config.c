@@ -37,6 +37,7 @@
 #include "mosys/platform.h"
 
 #include "lib/sku.h"
+#include "lib/smbios.h"
 
 static int cros_config_fdt_err(const char *where, int err)
 {
@@ -135,12 +136,17 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	return 0;
 }
 
-int cros_config_read_sku_info(int sku_id, struct sku_info *sku_info)
+int cros_config_read_sku_info(struct platform_intf *intf,
+			      struct sku_info *sku_info)
 {
 	extern char __dtb_config_begin[];
 	char *fdt = __dtb_config_begin;
+	int sku_id;
 	int ret;
 
+	sku_id = smbios_sysinfo_get_sku_number(intf);
+	if (sku_id == -1)
+		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
 	ret = cros_config_setup_sku(fdt, sku_info, sku_id);
 	if (ret) {
 		lperror(LOG_ERR, "%s: Failed to read master configuration",

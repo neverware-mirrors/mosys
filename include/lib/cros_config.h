@@ -32,18 +32,20 @@
 #ifndef _CROS_CONFIG_H_
 #define _CROS_CONFIG_H_
 
+struct platform_intf;
 struct sku_info;
 
 /**
- * cros_config_read_sku_info() - read SKU information
+ * cros_config_read_sku_info() - read SKU information for current model
  *
- * Read information about a particular SKU ID.
+ * Read information about the current model.
  *
- * @sku_id: SKU ID to look up
+ * @intf: Platform information, used to access SMBIOS name and SKU ID
  * @sku_info: Returns SKU information on success
  * @return: 0 if OK, other value on error
  */
-int cros_config_read_sku_info(int sku_id, struct sku_info *sku_info);
+int cros_config_read_sku_info(struct platform_intf *intf,
+			      struct sku_info *sku_info);
 
 /**
  * cros_config_setup_sku() - read SKU information (internal functions)
