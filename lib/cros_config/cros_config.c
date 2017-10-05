@@ -210,6 +210,9 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	memset(sku_info, '\0', sizeof(*sku_info));
 	sku_info->model = fdt_get_name(fdt, model_node, NULL);
 	sku_info->brand = fdt_getprop(fdt, target, "brand-code", NULL);
+	if (!sku_info->brand)
+		sku_info->brand = fdt_getprop(fdt, model_node, "brand-code",
+					      NULL);
 	/* we don't report the sub-model in mosys */
 	lprintf(LOG_DEBUG, "%s: Found model '%s'\n", __func__, sku_info->model);
 
