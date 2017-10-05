@@ -43,7 +43,7 @@ static int cros_config_fdt_err(const char *where, int err)
 {
 	lperror(LOG_ERR, "%s: %s: %s\n", __func__, where, fdt_strerror(err));
 
-	return err;
+	return -1;
 }
 
 /**
