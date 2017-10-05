@@ -37,13 +37,13 @@
 #include "lib/cros_config.h"
 #include "lib/sku.h"
 
-static int do_test(const char *fdt, int sku_id, const char *expected_model,
-		   const char *expected_brand)
+static int do_test(const char *fdt, const char * smbios_name, int sku_id,
+		   const char *expected_model, const char *expected_brand)
 {
 	struct sku_info sku_info;
 	int ret;
 
-	ret = cros_config_setup_sku(fdt, &sku_info, sku_id);
+	ret = cros_config_setup_sku(fdt, &sku_info, smbios_name, sku_id);
 	if (ret) {
 		if (!expected_model)
 			return 0;
@@ -86,12 +86,30 @@ int main(int argc, char **argv)
 
 	mosys_log_init("stderr", LOG_SPEW, stderr);
 
-	ret = do_test(fdt, 0, "astronaut", NULL);
-	ret |= do_test(fdt, 61, "astronaut", "WXYZ");
-	ret |= do_test(fdt, 62, "astronaut", "ABCD");
-	ret |= do_test(fdt, 160, "nasher", "CPPT");
-	ret |= do_test(fdt, 163, "nasher360", "INUT");
-	ret |= do_test(fdt, 255, NULL, NULL);
+	/* Single SKU */
+	ret = do_test(fdt, "pyro", 0, "pyro", "ABCE");
+	ret |= do_test(fdt, "snappy", 0, "snappy", "ABCF");
+	ret |= do_test(fdt, "sand", 0, "sand", "ABCH");
+
+	/* SMBIOS plus SKU ID lookup */
+	ret = do_test(fdt, "coral", 0, "astronaut", NULL);
+	ret |= do_test(fdt, "coral", 61, "astronaut", "WXYZ");
+	ret |= do_test(fdt, "coral", 62, "astronaut", "ABCD");
+	ret |= do_test(fdt, "coral", 160, "nasher", "CPPT");
+	ret |= do_test(fdt, "coral", 163, "nasher360", "INUT");
+
+	/* Different SMBIOS name */
+	ret |= do_test(fdt, "reef", 0, "basking", "ABCG");
+
+	ret |= do_test(fdt, "reef", 4, "reef", "ABCA");
+	ret |= do_test(fdt, "reef", 5, "reef", "ABCA");
+	ret |= do_test(fdt, "reef", 8, "electro", "ABCI");
+
+	/* Without an SMBIOS name we should fail */
+	ret |= do_test(fdt, NULL, 61, NULL, NULL);
+
+	/* Invalid SKU ID */
+	ret |= do_test(fdt, "coral", 255, NULL, NULL);
 
 	if (ret) {
 		fprintf(stdout, "Simple tests failed\n");

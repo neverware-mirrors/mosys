@@ -54,17 +54,31 @@ static int cros_config_fdt_err(const char *where, int err)
  *
  * @fdt: Device tree blob
  * @node: 'sku-map' node to examine
- * @find_sku_id: SKU ID to search for
+ * @find_sku_id: SKU ID to search for. This is not required (can be -1) for
+ *	single-sku matching
+ * @find_smbios_name: SMBIOS name to search for. Can be NULL if the name does
+ *	not need to be checked (no smbios-name-match property). This only works
+ *	on x86 devices.
  * @return phandle found (> 0), if any, 0 if not found, negative on error
  */
-static int check_sku_map(const char *fdt, int node, int find_sku_id)
+static int check_sku_map(const char *fdt, int node,
+			 const char *find_smbios_name, int find_sku_id)
 {
 	const fdt32_t *data, *end, *ptr;
+	const char *smbios_name;
 	int found_phandle = 0;
 	int len;
 
 	lperror(LOG_DEBUG, "%s: Trying %s\n", __func__,
 			fdt_get_name(fdt, node, NULL));
+	smbios_name = fdt_getprop(fdt, node, "smbios-name-match", NULL);
+	if (smbios_name &&
+	    (!find_smbios_name || strcmp(smbios_name, find_smbios_name))) {
+		lperror(LOG_DEBUG, "%s: SMBIOS name '%s' does not match '%s'\n",
+			__func__, smbios_name,
+			find_smbios_name ? find_smbios_name : "(null)");
+		return 0;
+	}
 
 	/* If we have a single SKU, deal with that first */
 	data = fdt_getprop(fdt, node, "single-sku", &len);
@@ -125,15 +139,18 @@ static int check_sku_map(const char *fdt, int node, int find_sku_id)
  *
  * @fdt: Device tree blob
  * @mapping_node: 'mapping' node to examine
+ * @find_smbios_name: SMBIOS name to search for
  * @find_sku_id: SKU ID to search for
  * @return phandle found (> 0), if any, 0 if not found, negative on error
  */
-static int check_sku_maps(const char *fdt, int mapping_node, int find_sku_id)
+static int check_sku_maps(const char *fdt, int mapping_node,
+			  const char *find_smbios_name, int find_sku_id)
 {
 	int subnode, phandle;
 
 	fdt_for_each_subnode(subnode, fdt, mapping_node) {
-		phandle = check_sku_map(fdt, subnode, find_sku_id);
+		phandle = check_sku_map(fdt, subnode, find_smbios_name,
+					find_sku_id);
 		if (phandle < 0)
 			return -1;
 		else if (phandle > 0)
@@ -188,18 +205,22 @@ static int follow_phandle(const char *fdt, int phandle, int *targetp)
 }
 
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
-			  int find_sku_id)
+			  const char *find_smbios_name, int find_sku_id)
 {
 	int mapping_node, model_node;
 	int phandle;
 	int target;
 
-	lprintf(LOG_DEBUG, "%s: Looking up SKU ID %d\n", __func__, find_sku_id);
+	lprintf(LOG_DEBUG, "%s: Looking up SMBIOS name '%s', SKU ID %d\n",
+		__func__, find_smbios_name ? find_smbios_name : "(null)",
+		find_sku_id);
+
 	mapping_node = fdt_path_offset(fdt, "/chromeos/family/mapping");
 	if (mapping_node < 0)
 		return cros_config_fdt_err("find mapping", mapping_node);
 
-	phandle = check_sku_maps(fdt, mapping_node, find_sku_id);
+	phandle = check_sku_maps(fdt, mapping_node, find_smbios_name,
+				 find_sku_id);
 	if (phandle <= 0)
 		goto err;
 	model_node = follow_phandle(fdt, phandle, &target);
@@ -227,13 +248,19 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 {
 	extern char __dtb_config_begin[];
 	char *fdt = __dtb_config_begin;
+	const char *smbios_name;
 	int sku_id;
 	int ret;
 
+	smbios_name = smbios_sysinfo_get_name(intf);
+	if (!smbios_name)
+		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
+	lprintf(LOG_DEBUG, "%s: Found model '%s'\n", __func__, sku_info->model);
 	sku_id = smbios_sysinfo_get_sku_number(intf);
 	if (sku_id == -1)
 		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
-	ret = cros_config_setup_sku(fdt, sku_info, sku_id);
+
+	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_id);
 	if (ret) {
 		lperror(LOG_ERR, "%s: Failed to read master configuration",
 			__func__);
