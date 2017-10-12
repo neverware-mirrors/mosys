@@ -108,8 +108,10 @@ int reef_probe(struct platform_intf *intf)
 	ret = cros_config_read_sku_info(intf, &sku_info);
 
 	/* If there was no error, indicate that we found a match */
-	if (!ret)
+	if (!ret) {
+		intf->sku_info = &sku_info;
 		return 1;
+	}
 
 	return ret;
 #else
