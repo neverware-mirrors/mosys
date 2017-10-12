@@ -38,12 +38,15 @@
 #include "lib/sku.h"
 
 static int do_test(const char *fdt, const char * smbios_name, int sku_id,
-		   const char *expected_model, const char *expected_brand)
+		   const char *expected_model, const char *expected_brand,
+		   const char *expected_platform)
 {
+	const char *platform_name;
 	struct sku_info sku_info;
 	int ret;
 
-	ret = cros_config_setup_sku(fdt, &sku_info, smbios_name, sku_id);
+	ret = cros_config_setup_sku(fdt, &sku_info, smbios_name, sku_id,
+				    &platform_name);
 	if (ret) {
 		if (!expected_model)
 			return 0;
@@ -74,6 +77,16 @@ static int do_test(const char *fdt, const char * smbios_name, int sku_id,
 			sku_info.brand);
 		return 1;
 	}
+	if (expected_platform && !platform_name) {
+		fprintf(stdout, "SKU ID %d, expected platform, got none\n",
+			sku_id);
+		return 1;
+	}
+	if (expected_platform && strcmp(platform_name, expected_platform)) {
+		fprintf(stdout, "SKU ID %d, platform is %s\n", sku_id,
+			platform_name);
+		return 1;
+	}
 
 	return 0;
 }
@@ -87,29 +100,32 @@ int main(int argc, char **argv)
 	mosys_log_init("stderr", LOG_SPEW, stderr);
 
 	/* Single SKU */
-	ret = do_test(fdt, "pyro", 0, "pyro", "ABCE");
-	ret |= do_test(fdt, "snappy", 0, "snappy", "ABCF");
-	ret |= do_test(fdt, "sand", 0, "sand", "ABCH");
+	ret = do_test(fdt, "pyro", 0, "pyro", "ABCE", "Pyro");
+	ret |= do_test(fdt, "snappy", 0, "snappy", "ABCF", "Snappy");
+	ret |= do_test(fdt, "sand", 0, "sand", "ABCH", "Sand");
 
 	/* SMBIOS plus SKU ID lookup */
-	ret = do_test(fdt, "coral", 0, "astronaut", NULL);
-	ret |= do_test(fdt, "coral", 61, "astronaut", "WXYZ");
-	ret |= do_test(fdt, "coral", 62, "astronaut", "ABCD");
-	ret |= do_test(fdt, "coral", 160, "nasher", "CPPT");
-	ret |= do_test(fdt, "coral", 163, "nasher360", "INUT");
+	ret = do_test(fdt, "coral", 0, "astronaut", NULL, "Coral");
+	ret |= do_test(fdt, "coral", 61, "astronaut", "WXYZ", "Coral");
+	ret |= do_test(fdt, "coral", 62, "astronaut", "ABCD", "Coral");
+	ret |= do_test(fdt, "coral", 160, "nasher", "CPPT", "Coral");
+	ret |= do_test(fdt, "coral", 163, "nasher360", "INUT", "Coral");
 
 	/* Different SMBIOS name */
-	ret |= do_test(fdt, "reef", 0, "basking", "ABCG");
+	ret |= do_test(fdt, "reef", 0, "basking", "ABCG", "Reef");
 
-	ret |= do_test(fdt, "reef", 4, "reef", "ABCA");
-	ret |= do_test(fdt, "reef", 5, "reef", "ABCA");
-	ret |= do_test(fdt, "reef", 8, "electro", "ABCI");
+	ret |= do_test(fdt, "reef", 4, "reef", "ABCA", "Reef");
+	ret |= do_test(fdt, "reef", 5, "reef", "ABCA", "Reef");
+	ret |= do_test(fdt, "reef", 8, "electro", "ABCI", "Reef");
 
 	/* Without an SMBIOS name we should fail */
-	ret |= do_test(fdt, NULL, 61, NULL, NULL);
+	ret |= do_test(fdt, NULL, 61, NULL, NULL, NULL);
 
 	/* Invalid SKU ID */
-	ret |= do_test(fdt, "coral", 255, NULL, NULL);
+	ret |= do_test(fdt, "coral", 255, NULL, NULL, NULL);
+
+	/* Invalid platform name */
+	ret |= do_test(fdt, "bad", 0, "sand", "ABCH", "unknown");
 
 	if (ret) {
 		fprintf(stdout, "Simple tests failed\n");

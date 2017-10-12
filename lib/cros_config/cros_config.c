@@ -59,10 +59,12 @@ static int cros_config_fdt_err(const char *where, int err)
  * @find_smbios_name: SMBIOS name to search for. Can be NULL if the name does
  *	not need to be checked (no smbios-name-match property). This only works
  *	on x86 devices.
+ * @platform_namep: Returns platform name for this SKU, if found
  * @return phandle found (> 0), if any, 0 if not found, negative on error
  */
 static int check_sku_map(const char *fdt, int node,
-			 const char *find_smbios_name, int find_sku_id)
+			 const char *find_smbios_name, int find_sku_id,
+			 const char **platform_namep)
 {
 	const fdt32_t *data, *end, *ptr;
 	const char *smbios_name;
@@ -90,7 +92,7 @@ static int check_sku_map(const char *fdt, int node,
 		}
 		found_phandle = fdt32_to_cpu(*data);
 		lperror(LOG_DEBUG, "%s: Single SKU match\n", __func__);
-		return found_phandle;
+		goto found;
 	}
 
 	/*
@@ -127,6 +129,12 @@ static int check_sku_map(const char *fdt, int node,
 		return 0;
 	}
 	lperror(LOG_DEBUG, "%s: Simple SKU map match\n", __func__);
+found:
+	*platform_namep = fdt_getprop(fdt, node, "platform-name", NULL);
+	if (!*platform_namep)
+		*platform_namep = "unknown";
+	lperror(LOG_DEBUG, "%s: Platform name '%s'\n", __func__,
+		*platform_namep);
 
 	return found_phandle;
 }
@@ -141,20 +149,23 @@ static int check_sku_map(const char *fdt, int node,
  * @mapping_node: 'mapping' node to examine
  * @find_smbios_name: SMBIOS name to search for
  * @find_sku_id: SKU ID to search for
+ * @platform_namep: Returns platform name for this SKU, if found
  * @return phandle found (> 0), if any, 0 if not found, negative on error
  */
 static int check_sku_maps(const char *fdt, int mapping_node,
-			  const char *find_smbios_name, int find_sku_id)
+			  const char *find_smbios_name, int find_sku_id,
+			  const char **platform_namep)
 {
 	int subnode, phandle;
 
 	fdt_for_each_subnode(subnode, fdt, mapping_node) {
 		phandle = check_sku_map(fdt, subnode, find_smbios_name,
-					find_sku_id);
+					find_sku_id, platform_namep);
 		if (phandle < 0)
 			return -1;
-		else if (phandle > 0)
+		else if (phandle > 0) {
 			break;
+		}
 	}
 
 	return phandle;
@@ -205,7 +216,8 @@ static int follow_phandle(const char *fdt, int phandle, int *targetp)
 }
 
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
-			  const char *find_smbios_name, int find_sku_id)
+			  const char *find_smbios_name, int find_sku_id,
+			  const char **platform_namep)
 {
 	int mapping_node, model_node;
 	int phandle;
@@ -220,7 +232,7 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 		return cros_config_fdt_err("find mapping", mapping_node);
 
 	phandle = check_sku_maps(fdt, mapping_node, find_smbios_name,
-				 find_sku_id);
+				 find_sku_id, platform_namep);
 	if (phandle <= 0)
 		goto err;
 	model_node = follow_phandle(fdt, phandle, &target);
@@ -246,26 +258,27 @@ err:
 int cros_config_read_sku_info(struct platform_intf *intf,
 			      struct sku_info *sku_info)
 {
+	const char *smbios_name, *platform_name;
 	extern char __dtb_config_begin[];
 	char *fdt = __dtb_config_begin;
-	const char *smbios_name;
 	int sku_id;
 	int ret;
 
 	smbios_name = smbios_sysinfo_get_name(intf);
 	if (!smbios_name)
 		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
-	lprintf(LOG_DEBUG, "%s: Found model '%s'\n", __func__, sku_info->model);
 	sku_id = smbios_sysinfo_get_sku_number(intf);
 	if (sku_id == -1)
 		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
 
-	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_id);
+	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_id,
+				    &platform_name);
 	if (ret) {
 		lperror(LOG_ERR, "%s: Failed to read master configuration",
 			__func__);
 		return -1;
 	}
+	intf->name = platform_name;
 
 	return 0;
 }
