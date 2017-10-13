@@ -197,7 +197,7 @@ int vpd_find_entry(struct platform_intf *intf,
 		return -1;
 	}
 
-	lprintf(LOG_DEBUG, "VPD Table Entry @ 0x%x\n", baseaddr + *offset);
+	lprintf(LOG_DEBUG, "VPD Table Entry @ 0x%lx\n", baseaddr + *offset);
 
 	/* copy entry into user-provided buffer */
 	memset(entry, 0, sizeof(*entry));
@@ -532,8 +532,8 @@ extern int vpd_get_blob(struct platform_intf *intf,
 		*buf = mosys_malloc(actual_size);
 
 		if (mmio_read(intf, offset, actual_size, (void *)*buf) < 0) {
-			lprintf(LOG_DEBUG, "%s: cannot map %lu bytes at offset"
-			                   " %lu\n", __func__,
+			lprintf(LOG_DEBUG, "%s: cannot map %x bytes at offset"
+			                   " %d\n", __func__,
 					   offset, actual_size);
 			ret = -1;
 			goto vpd_get_blob_exit;
@@ -566,8 +566,8 @@ extern int vpd_get_blob(struct platform_intf *intf,
 	max_size = vpd_rom_size - bbp->offset;
 	tmp = mosys_malloc(max_size);
 	if (mmio_read(intf, offset, max_size, tmp) < 0) {
-		lprintf(LOG_DEBUG, "%s: cannot map %lu bytes at offset"
-		                   " %lu\n", __func__,
+		lprintf(LOG_DEBUG, "%s: cannot map %x bytes at offset"
+		                   " %d\n", __func__,
 				   offset, max_size);
 		ret = -1;
 		goto vpd_get_blob_exit;
@@ -630,7 +630,7 @@ extern int vpd_print_blob(struct platform_intf *intf,
 	}
 
 	if (mmio_read(intf, offset, size, blob) < 0) {
-		lprintf(LOG_DEBUG, "%s: cannot map %lu bytes at offset %lu\n",
+		lprintf(LOG_DEBUG, "%s: cannot map %x bytes at offset %x\n",
 				   __func__, offset, size);
 		rc = -1;
 	} else {

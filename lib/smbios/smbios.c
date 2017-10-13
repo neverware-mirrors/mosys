@@ -206,7 +206,7 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 		fp = fopen("/sys/kernel/debug/efi_smbios_base", "r");
 		if ((fp > 0) && (fgets(&line[0], LINE_MAX, fp) != NULL)) {
 			baseaddr = strtoull(line, NULL, 0);
-			lprintf(LOG_DEBUG, "%s: SMBIOS=0x%08x\n",
+			lprintf(LOG_DEBUG, "%s: SMBIOS=0x%08lx\n",
 			                   __func__, baseaddr);
 			data = mmio_map(intf, O_RDONLY, baseaddr, len);
 			offset = 0;
@@ -240,8 +240,8 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 			                 "SMBIOS=", 7, 1, &klog_offset) == 0) {
 				baseaddr = strtoull(buf + klog_offset + 7,
 				                    NULL, 0);
-				lprintf(LOG_DEBUG, "kernel log offset: %d, "
-				                   "SMBIOS=0x%08x\n",
+				lprintf(LOG_DEBUG, "kernel log offset: %lx, "
+				                   "SMBIOS=0x%08lx\n",
 					           klog_offset, baseaddr);
 				data = mmio_map(intf, O_RDONLY, baseaddr, len);
 				offset = 0;
@@ -262,7 +262,7 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 	}
 
 
-	lprintf(LOG_DEBUG, "SMBIOS Table Entry @ 0x%x\n", baseaddr + offset);
+	lprintf(LOG_DEBUG, "SMBIOS Table Entry @ 0x%lx\n", baseaddr + offset);
 
 	/* copy entry into user-provided buffer */
 	memset(entry, 0, sizeof(*entry));

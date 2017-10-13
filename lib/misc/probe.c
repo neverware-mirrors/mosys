@@ -242,7 +242,7 @@ int probe_cmdline(const char *key, int cs)
 	}
 
 	if (ret)
-		lprintf(LOG_DEBUG, "Found match on kernel command-line\n", key);
+		lprintf(LOG_DEBUG, "Found match on kernel command-line\n");
 probe_cmdline_done:
 	fclose(cmdline);
 	return ret;

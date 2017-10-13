@@ -455,7 +455,7 @@ static int sensor_set_fantach_cmd(struct platform_intf *intf,
 			return -1;
 		}
 
-		lprintf(LOG_DEBUG, "Setting fan tach to %u\%\n", percent);
+		lprintf(LOG_DEBUG, "Setting fan tach to %u%%\n", percent);
 		ret = intf->cb->sensor->set_fantach(intf, name, percent);
 	}
 

@@ -298,7 +298,6 @@ static const char *flashrom_path(void)
 {
 	static char path[PATH_MAX] = "flashrom";
 	int fd;
-	int i = 0;
 	struct stat s;
 	char android_path[] = "/system/bin/flashrom";
 

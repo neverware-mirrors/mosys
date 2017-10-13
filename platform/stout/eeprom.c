@@ -56,7 +56,7 @@ static int stout_firmware_mmio_setup(struct platform_intf *intf,
 		return -1;
 	rom_size = eeprom->device->size(intf);
 	rom_base = 0xffffffff - rom_size + 1;
-	lprintf(LOG_DEBUG, "%s: rom_base: 0x%08x, rom_size: 0x%08x\n",
+	lprintf(LOG_DEBUG, "%s: rom_base: 0x%08lx, rom_size: 0x%08lx\n",
 	__func__, rom_base, rom_size);
 
 	eeprom->addr.mmio = rom_base;

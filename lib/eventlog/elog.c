@@ -1034,7 +1034,7 @@ int elog_add_event_manually(struct platform_intf *intf,
 	shrink_size = length / 4;
 
 	if (event_size > shrink_size) {
-		lprintf(LOG_WARNING, "Event size %d is too large.\n",
+		lprintf(LOG_WARNING, "Event size %lx is too large.\n",
 			event_size);
 		return -1;
 	}

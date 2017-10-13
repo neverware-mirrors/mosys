@@ -303,7 +303,7 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 
 eeprom_map_cmd_exit:
 	if (rc < 0)
-		lprintf(LOG_ERR, "could not read flash map\n", __func__);
+		lprintf(LOG_ERR, "could not read flash map\n");
 	errno = errsv;
 	return rc;
 }
@@ -571,7 +571,7 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 		return -1;
 	}
 	if (st.st_size > eeprom_size) {
-		lprintf(LOG_ERR, "cannot write %u bytes to %s eeprom "
+		lprintf(LOG_ERR, "cannot write %lx bytes to %s eeprom "
 			         "(%u bytes)\n", st.st_size, eeprom->name,
 		                  eeprom_size);
 		errno = EFBIG;
@@ -597,7 +597,7 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 
 	if (eeprom->device->write(intf, eeprom, 0,
 				  st.st_size, buf) != st.st_size) {
-		lprintf(LOG_ERR, "Unable to write %u bytes to %s\n",
+		lprintf(LOG_ERR, "Unable to write %lx bytes to %s\n",
 				  st.st_size, eeprom->name);
 		rc = -1;
 	} else {

@@ -60,7 +60,8 @@ extern int mosys_log_init(const char *name, enum log_levels threshold,
 extern int mosys_log_halt(void);
 
 /* log something */
-extern int lprintf(enum log_levels level, const char *format, ...);
+extern int lprintf(enum log_levels level, const char *format, ...)
+                   __attribute__((format (__printf__, 2, 3)));
 /* log something including the errno string */
 extern int lperror(enum log_levels level, const char *format, ...);
 

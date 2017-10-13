@@ -99,8 +99,8 @@ static int vbnv_find_eeprom(struct platform_intf *intf,
 	}
 
 	if (region->len % VBNV_BLOCK_SIZE != 0) {
-		lprintf(LOG_WARNING, "VBNV region size (%u) is not "
-				"divisible by block size (%u).\n",
+		lprintf(LOG_WARNING, "VBNV region size (%lx) is not "
+				"divisible by block size (%x).\n",
 				region->len, VBNV_BLOCK_SIZE);
 	}
 

@@ -248,7 +248,7 @@ void print_tree(struct platform_intf *intf)
 		printf("%s\n", str);
 
 		if (tree_subcommand(intf, intf->sub[root], 1, str) < 0)
-			lprintf(LOG_DEBUG, "tree walking failed", str);
+			lprintf(LOG_DEBUG, "tree walking failed: %s", str);
 	}
 }
 

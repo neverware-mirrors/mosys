@@ -123,7 +123,7 @@ int file_open(const char *file, int rw)
 
 	/* verify inode */
 	if (st1.st_ino != st2.st_ino) {
-		lprintf(LOG_NOTICE, "File %s has invalid inode: %d != %d\n",
+		lprintf(LOG_NOTICE, "File %s has invalid inode: %lx != %lx\n",
 			file, st1.st_ino, st2.st_ino);
 		close(fd);
 		return -1;
@@ -139,7 +139,7 @@ int file_open(const char *file, int rw)
 
 	/* verify inode */
 	if (st2.st_nlink != 1) {
-		lprintf(LOG_NOTICE, "File %s has invalid link count: %d != 1\n",
+		lprintf(LOG_NOTICE, "File %s has invalid link count: %lx != 1\n",
 			file, st2.st_nlink);
 		close(fd);
 		return -1;

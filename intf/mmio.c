@@ -109,7 +109,7 @@ static void *mmio_mmap(struct platform_intf *intf, int flags,
 		return NULL;
 	}
 
-	lprintf(LOG_DEBUG, "mmio_mmap(0x%016llx, %d)\n", address, length);
+	lprintf(LOG_DEBUG, "mmio_mmap(0x%016lx, %d)\n", address, length);
 
 	if (length == 0) {
 		lprintf(LOG_DEBUG, "mmap_map: Nothing to do!\n");
