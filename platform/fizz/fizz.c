@@ -29,6 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -40,6 +41,7 @@
 
 #include "drivers/google/cros_ec.h"
 
+#include "lib/cros_config.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
@@ -47,6 +49,10 @@
 
 #include "fizz.h"
 
+#ifdef CONFIG_CROS_CONFIG
+static struct sku_info
+	SKU_FIZZ = { .brand = NULL, .model = "fizz", .chassis = "FIZZ"};
+#else
 /* sku_info: brand, model, chassis, customization, data */
 static struct sku_info
 	/* Fizz SKUs */
@@ -77,6 +83,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Fizz", }, .sku_table = fizz_sku_table },
 	{ { NULL }, },
 };
+#endif /* CONFIG_CROS_CONFIG */
 
 struct platform_cmd *fizz_sub[] = {
 	&cmd_ec,
@@ -93,6 +100,27 @@ struct platform_cmd *fizz_sub[] = {
 
 int fizz_probe(struct platform_intf *intf)
 {
+#ifdef CONFIG_CROS_CONFIG
+	static struct sku_info sku_info;
+	int sku_id;
+	int ret;
+
+	sku_id = smbios_sysinfo_get_sku_number(intf);
+	if (sku_id == -1) {
+		intf->sku_info = &SKU_FIZZ; /* no SKU id defined for fizz board */
+		return 1;
+	}
+
+	ret = cros_config_read_sku_info(intf, &sku_info);
+
+	/* If there was no error, indicate that we found a match */
+	if (!ret) {
+		intf->sku_info = &sku_info;
+		return 1;
+	}
+
+	return ret;
+#else
 	static int status, probed;
 	const struct probe_ids *pid;
 
@@ -124,6 +152,7 @@ fizz_probe_exit:
 		intf->sku_info = &pid->single_sku;
 	}
 	return status;
+#endif /* CONFIG_CROS_CONFIG */
 }
 
 /* late setup routine; not critical to core functionality */
