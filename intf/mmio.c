@@ -159,7 +159,7 @@ static void *mmio_mmap(struct platform_intf *intf, int flags,
 	if (mptr == MAP_FAILED) {
 		/* Add back the base address for a clearer error message. */
 		address += get_address_range_begin(&file_range->range);
-		lperror(LOG_ERR, "Failed to mmap range 0x%016llx-0x%016llx",
+		lperror(LOG_ERR, "Failed to mmap range 0x%016lx-0x%016lx",
 		        address, address + length);
 		close(fd);
 		return NULL;
@@ -205,7 +205,7 @@ static int mmio_munmap(struct platform_intf *intf, void *mptr,
 	/* clean up */
 	if (munmap(mptr - moffset, moffset + length) < 0) {
 		address += get_address_range_begin(&file_range->range);
-		lperror(LOG_ERR, "Failed to munmap range0x%016llx-0x%016llx",
+		lperror(LOG_ERR, "Failed to munmap range0x%016lx-0x%016lx",
 		        address, address + length);
 		return -1;
 	}

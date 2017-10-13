@@ -373,7 +373,7 @@ int flashrom_read(uint8_t *buf, size_t size,
 	}
 
 	if (read(fd, buf, size) != size) {
-		lperror(LOG_DEBUG, "%s: Unable to read image\n");
+		lperror(LOG_DEBUG, "%s: Unable to read image\n", full_filename);
 		goto flashrom_read_exit_1;
 	}
 
@@ -442,7 +442,7 @@ int flashrom_read_by_name(uint8_t **buf,
 
 	*buf = mosys_malloc(s.st_size);
 	if (read(fd, *buf, s.st_size) < 0) {
-		lperror(LOG_DEBUG, "%s: Unable to read image");
+		lperror(LOG_DEBUG, "%s: Unable to read image", full_filename);
 		free(*buf);
 		goto flashrom_read_exit_2;
 	}

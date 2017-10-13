@@ -284,7 +284,7 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 		rc = eeprom_map_cmd_file(intf, name);
 		errsv = errno;
 		if (rc < 0) {
-			lperror(LOG_ERR, "Failed to read flashmap from file ",
+			lperror(LOG_ERR, "Failed to read flashmap from file "
 				"\"%s\"", name);
 		}
 		goto eeprom_map_cmd_exit;
@@ -294,7 +294,7 @@ static int eeprom_map_cmd(struct platform_intf *intf,
 		rc = eeprom_map_cmd_eeprom(intf, name);
 		errsv = errno;
 		if (rc < 0) {
-			lperror(LOG_ERR, "Failed to read flashmap from device ",
+			lperror(LOG_ERR, "Failed to read flashmap from device "
 				"\"%s\"", name);
 		}
 	} else {
