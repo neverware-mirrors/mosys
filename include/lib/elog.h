@@ -292,6 +292,10 @@ struct elog_event_mem_cache_update {
 #define ELOG_EC_DEVICE_EVENT_DSP            0x01
 #define ELOG_EC_DEVICE_EVENT_WIFI           0x02
 
+/* S0ix sleep/wake */
+#define ELOG_TYPE_S0IX_ENTER              0xaf
+#define ELOG_TYPE_S0IX_EXIT               0xb0
+
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */
 /* Recovery not requested. */
 #define VBNV_RECOVERY_NOT_REQUESTED   0x00
