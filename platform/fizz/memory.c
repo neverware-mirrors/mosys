@@ -59,18 +59,6 @@ static int fizz_spd_read(struct platform_intf *intf,
 }
 
 /*
- * dimm_auron_dimm_count  -  return total number of dimm slots
- *
- * @intf:       platform interface
- *
- * returns dimm slot count
- */
-static int dimm_fizz_dimm_count(struct platform_intf *intf)
-{
-	return FIZZ_DIMM_COUNT;
-}
-
-/*
  * dimm_map  -  Convert logical dimm number to useful values
  *
  * @intf:       platform interface
@@ -149,24 +137,8 @@ static int dimm_fizz_dimm_map(struct platform_intf *intf,
 	return ret;
 }
 
-static int dimm_fizz_spd_read(struct platform_intf *intf,
-                          int dimm, int reg, int len, uint8_t *buf)
-{
-	int bus;
-	int address;
-
-	bus = intf->cb->memory->dimm_map(intf, DIMM_TO_BUS, dimm);
-	address = intf->cb->memory->dimm_map(intf, DIMM_TO_ADDRESS, dimm);
-
-	return spd_read_i2c(intf, bus, address, reg, len, buf);
-}
-
 static struct memory_spd_cb fizz_spd_cb = {
 	.read		= fizz_spd_read,
-};
-
-static struct memory_spd_cb dimm_fizz_spd_cb = {
-	.read		= dimm_fizz_spd_read,
 };
 
 struct memory_cb fizz_memory_cb = {
