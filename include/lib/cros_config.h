@@ -61,6 +61,6 @@ int cros_config_read_sku_info(struct platform_intf *intf,
  */
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 			  const char *find_smbios_name, int find_sku_id,
-			  char *const *platform_namep);
+			  const char **platform_namep);
 
 #endif

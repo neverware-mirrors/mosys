@@ -36,6 +36,7 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
+#include "lib/cros_config.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
 
