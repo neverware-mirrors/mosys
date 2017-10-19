@@ -57,7 +57,7 @@ static struct sku_info
 static struct sku_info
 	/* Fizz SKUs */
 	/* TODO(yllin) Fill the brand code when they are assigned. */
-	SKU_KENCH = { .brand = NULL, .model = "kench", .chassis = "KENCH"},
+	SKU_KENCH = { .brand = "YXBK", .model = "kench", .chassis = "KENCH"},
 	SKU_TEEMO = { .brand = "PHYB", .model = "teemo", .chassis = "TEEMO"},
 	SKU_SION = { .brand = NULL, .model = "sion", .chassis = "SION"};
 
