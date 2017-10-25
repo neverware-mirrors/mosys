@@ -56,6 +56,7 @@ enum {
 };
 
 static int print_platforminfo(const char *key, const char *value);
+struct platform_cmd platform_cmds[];
 
 static int platform_generic_identifier_cmd(struct platform_intf *intf,
 					   struct platform_cmd *cmd,
@@ -222,13 +223,34 @@ static int platform_reset_cmd(struct platform_intf *intf,
 	return intf->cb->sys->reset(intf);
 }
 
+static int platform_id_cmd(struct platform_intf *intf,
+                           struct platform_cmd *in_cmd, int argc, char **argv)
+{
+	struct platform_cmd *cmd;
+	int i;
+
+        /* Run every command we can find, avoiding recursion */
+	for (cmd = platform_cmds; cmd->name; cmd++) {
+		if (cmd->arg.func && cmd->arg.func != platform_id_cmd)
+			cmd->arg.func(intf, cmd, argc, argv);
+	}
+
+	return 0;
+}
+
 struct platform_cmd platform_cmds[] = {
 	{
-		.name	= "vendor",
-		.desc	= "Display Platform Vendor",
+		.name	= "id",
+		.desc	= "Display Platform Identification Information",
 		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = platform_vendor_cmd }
+		.arg	= { .func = platform_id_cmd }
 	},
+        {
+                .name   = "vendor",
+                .desc   = "Display Platform Vendor",
+                .type   = ARG_TYPE_GETTER,
+                .arg    = { .func = platform_vendor_cmd }
+        },
 	{
 		.name	= "name",
 		.desc	= "Display Platform Product Name",
