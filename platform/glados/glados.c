@@ -71,6 +71,7 @@ static const struct probe_ids probe_id_list[] = {
 	 * TODO(hungte) There may be variants for LARS so we can't provide a
 	 * single brand here for now. Need to revise for what to do. */
 	{ { "Lars", }, .single_sku = { .brand = NULL, }, },
+	{ { "Nautilus", }, .single_sku = { .brand = "ZSKM", }, },
 	{ { "Pbody", }, },
 	{ { "Sentry", }, .single_sku = { .brand = "LEAJ", }, },
 	{ { "Skylake", }, },
