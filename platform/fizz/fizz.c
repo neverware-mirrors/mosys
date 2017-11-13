@@ -74,7 +74,7 @@ static struct sku_info
 	/* TODO(yllin) Fill the brand code when they are assigned. */
 	SKU_KENCH = { .brand = "YXBK", .model = "kench", .chassis = "KENCH"},
 	SKU_TEEMO = { .brand = "PHYB", .model = "teemo", .chassis = "TEEMO"},
-	SKU_SION = { .brand = NULL, .model = "sion", .chassis = "SION"};
+	SKU_SION = { .brand = "ALRH", .model = "sion", .chassis = "SION"};
 
 /* Reference: b/63820080 */
 static struct sku_mapping fizz_sku_table[] = {
