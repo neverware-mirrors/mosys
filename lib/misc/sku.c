@@ -222,6 +222,16 @@ char *sku_get_customization(struct platform_intf *intf)
 	return result;
 }
 
+char *sku_get_customization_from_vpd(void)
+{
+	const char *value;
+
+	value = _get_vpd_value("customization_id");
+	if (!value)
+		value = "";
+	return mosys_strdup(value);
+}
+
 char *sku_get_signature_id(struct platform_intf *intf)
 {
 	const struct sku_info *info = intf->sku_info;
