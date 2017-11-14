@@ -44,6 +44,10 @@
 			reg = <0>;
 			platform-name = "Coral";
 			smbios-name-match = "coral";
+			/*
+			 * This is just for testing only. It is not correct for
+			 * actual use with coral.
+			 */
 			simple-sku-map = < 0 &astronaut
 				1 &astronaut
 				2 &santa
@@ -61,8 +65,11 @@
 				62 &astronaut_62
 				70 &robo
 				71 &robo360
-				78 &whitetip1
+				78 &whitetip
 				82 &whitetip2
+				83 &blacktip
+				84 &blacktip_touch
+				85 &blacktip_notouch
 				160 &nasher
 				161 &nasher
 				162 &nasher
@@ -205,16 +212,15 @@
 		};
 	};
 
-	/*
-	 * TODO(chromium:761229): Support shared configuration so that all of
-	 * the white-label config can go here.
-	 *
-	 * whitetip: whitetip {
-	 *	-- config will eventually go here.
-	 * };
-	 */
+	whitetip: whitetip {
+		firmware {
+			sig-id-in-customization-id;
+		};
+	};
 
 	whitetip1: whitetip1 {
+		whitelabel = <&whitetip>;
+		brand-code = "SHAR";
 		firmware {
 			shares = < &shared >;
 			key-id = "WHITETIP1";
@@ -222,6 +228,8 @@
 	};
 
 	whitetip2: whitetip2 {
+		whitelabel = <&whitetip>;
+		brand-code = "SHAQ";
 		firmware {
 			shares = < &shared >;
 			key-id = "WHITETIP2";
@@ -255,5 +263,28 @@
 
 	electro: electro {
 		brand-code = "ABCI";
+	};
+
+	/* Whitelabel model */
+	blacktip: blacktip {
+		firmware {
+			shares = <&shared>;
+		};
+		submodels {
+			blacktip_touch: touch {
+			};
+			blacktip_notouch: notouch {
+			};
+		};
+		whitelabels {
+			blacktip1 {
+				brand-code = "HBBN";
+				key-id = "BLACKTIP1";
+			};
+			blacktip2 {
+				brand-code = "HBBO";
+				key-id = "BLACKTIP2";
+			};
+		};
 	};
 };

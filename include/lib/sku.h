@@ -93,6 +93,16 @@ extern char *sku_get_chassis(struct platform_intf *intf);
 extern char *sku_get_customization(struct platform_intf *intf);
 
 /**
+ * sku_get_customization_from_vpd - get customization ID from VPD
+ *
+ * This reads VPD and does not use any fallback values.
+ *
+ * returns allocated string containing value or allocated empty string if not
+ * found or error
+ */
+extern char *sku_get_customization_from_vpd(void);
+
+/**
  * sku_get_signature_id - get the signature ID
  *
  * Query the signature ID used by this model. This is normally the same

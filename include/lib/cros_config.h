@@ -56,11 +56,14 @@ int cros_config_read_sku_info(struct platform_intf *intf,
  * @fdt: Device tree file
  * @sku_info: Returns SKU information on success
  * @find_smbios_name: SMBIOS name to look up
+ * @find_wl_name: Whitelabel name to look up (this is either a model name or a
+ *    whitelabel tag depending on the schema used)
  * @find_sku_id: SKU ID to look up
  * @return: 0 if OK, other value on error
  */
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 			  const char *find_smbios_name, int find_sku_id,
+			  const char *find_wl_name,
 			  const char **platform_namep);
 
 #endif
