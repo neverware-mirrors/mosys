@@ -42,7 +42,7 @@
 
 static int cros_config_fdt_err(const char *where, int err)
 {
-	lperror(LOG_ERR, "%s: %s: %s\n", __func__, where, fdt_strerror(err));
+	lprintf(LOG_ERR, "%s: %s: %s\n", __func__, where, fdt_strerror(err));
 
 	return -1;
 }
@@ -72,12 +72,12 @@ static int check_sku_map(const char *fdt, int node,
 	int found_phandle = 0;
 	int len;
 
-	lperror(LOG_DEBUG, "%s: Trying %s\n", __func__,
-			fdt_get_name(fdt, node, NULL));
+	lprintf(LOG_DEBUG, "%s: Trying %s\n", __func__,
+		fdt_get_name(fdt, node, NULL));
 	smbios_name = fdt_getprop(fdt, node, "smbios-name-match", NULL);
 	if (smbios_name &&
 	    (!find_smbios_name || strcmp(smbios_name, find_smbios_name))) {
-		lperror(LOG_DEBUG, "%s: SMBIOS name '%s' does not match '%s'\n",
+		lprintf(LOG_DEBUG, "%s: SMBIOS name '%s' does not match '%s'\n",
 			__func__, smbios_name,
 			find_smbios_name ? find_smbios_name : "(null)");
 		return 0;
@@ -87,12 +87,12 @@ static int check_sku_map(const char *fdt, int node,
 	data = fdt_getprop(fdt, node, "single-sku", &len);
 	if (data) {
 		if (len != sizeof(fdt32_t)) {
-			lperror(LOG_ERR, "%s: single-sku: Invalid length %d\n",
+			lprintf(LOG_ERR, "%s: single-sku: Invalid length %d\n",
 				__func__, len);
 			return -1;
 		}
 		found_phandle = fdt32_to_cpu(*data);
-		lperror(LOG_DEBUG, "%s: Single SKU match\n", __func__);
+		lprintf(LOG_DEBUG, "%s: Single SKU match\n", __func__);
 		goto found;
 	}
 
@@ -108,7 +108,7 @@ static int check_sku_map(const char *fdt, int node,
 		 * Validation of configuration should catch this, so this
 		 * should never happen. But we don't want to crash.
 		 */
-		lperror(LOG_ERR, "%s: %s: simple-sku-map: Invalid length %d\n",
+		lprintf(LOG_ERR, "%s: %s: simple-sku-map: Invalid length %d\n",
 			__func__, fdt_get_name(fdt, node, NULL), len);
 		return -1;
 	}
@@ -125,16 +125,16 @@ static int check_sku_map(const char *fdt, int node,
 		}
 	}
 	if (!found_phandle) {
-		lperror(LOG_DEBUG, "%s: SKU ID %d not found in mapping\n",
+		lprintf(LOG_DEBUG, "%s: SKU ID %d not found in mapping\n",
 			__func__, find_sku_id);
 		return 0;
 	}
-	lperror(LOG_DEBUG, "%s: Simple SKU map match\n", __func__);
+	lprintf(LOG_DEBUG, "%s: Simple SKU map match\n", __func__);
 found:
 	*platform_namep = fdt_getprop(fdt, node, "platform-name", NULL);
 	if (!*platform_namep)
 		*platform_namep = "unknown";
-	lperror(LOG_DEBUG, "%s: Platform name '%s'\n", __func__,
+	lprintf(LOG_DEBUG, "%s: Platform name '%s'\n", __func__,
 		*platform_namep);
 
 	return found_phandle;
@@ -207,7 +207,7 @@ static int follow_phandle(const char *fdt, int phandle, int *targetp)
 	} else if (!strcmp(parent_name, "models")) {
 		model_node = node;
 	} else {
-		lperror(LOG_ERR, "%s: phandle target parent '%s' invalid\n",
+		lprintf(LOG_ERR, "%s: phandle target parent '%s' invalid\n",
 			__func__, parent_name);
 		return -1;
 	}
@@ -252,7 +252,7 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 
 	return 0;
 err:
-	lperror(LOG_ERR, "%s: Could not locate SKU in mapping\n", __func__);
+	lprintf(LOG_ERR, "%s: Could not locate SKU in mapping\n", __func__);
 	return -1;
 }
 
@@ -275,7 +275,7 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_id,
 				    &platform_name);
 	if (ret) {
-		lperror(LOG_ERR, "%s: Failed to read master configuration",
+		lprintf(LOG_ERR, "%s: Failed to read master configuration",
 			__func__);
 		return -1;
 	}
