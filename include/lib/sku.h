@@ -25,6 +25,8 @@ enum {
  *         example 'SAMUS'.
  * `customization` is the legacy support for customization_id in upper case,
  *         for example 'GOOGLE-SAMUS'.
+ * 'signature_id' is the signature ID used for zero-touch whitelabels in
+ *         unified builds. See sku_get_signature_id() below.
  * `data` is a general pointer for platform implementations to use, for example
  *         adding peripheral status like number of cameras or form factor.
  */
@@ -33,6 +35,7 @@ struct sku_info {
 	const char *model;
 	const char *chassis;
 	const char *customization;
+	const char *signature_id;
 	void *data;
 };
 
@@ -88,6 +91,29 @@ extern char *sku_get_chassis(struct platform_intf *intf);
  * returns NULL to indicate value not found or error
  */
 extern char *sku_get_customization(struct platform_intf *intf);
+
+/**
+ * sku_get_signature_id - get the signature ID
+ *
+ * Query the signature ID used by this model. This is normally the same
+ * as the model, but for the alternative schema used for coral
+ * whitelabel, it may be something else. This is used to name the
+ * vblock_A/B_<signature> and rootkey.<signature> files in the firmware
+ * updater.
+ *
+ * This is only supported with unified builds. Before that, we have
+ * tended to use the customization_id in VPD to fill this role, but
+ * there is no point in mosys inserting itself into that flow. Also in
+ * that case we normally use the key ID (which is in capitals).
+ *
+ * This is only intended for use within the firmware updater. If at
+ * some point we use cros_config in the firmware updater then this can
+ * be dropped.
+ *
+ * returns allocated string containing value if found
+ * returns NULL to indicate value not found or error
+ */
+extern char *sku_get_signature_id(struct platform_intf *intf);
 
 /**
  * sku_get_model - get model name
