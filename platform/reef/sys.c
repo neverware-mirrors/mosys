@@ -33,6 +33,7 @@
 #include "mosys/platform.h"
 
 #include "lib/acpi.h"
+#include "lib/sku.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
 
@@ -48,4 +49,8 @@ struct sys_cb reef_sys_cb = {
 	.family			= &smbios_sysinfo_get_family,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
+#ifdef CONFIG_CROS_CONFIG
+	/* Only unibuild has the concept of a signature ID */
+	.signature_id           = sku_get_signature_id,
+#endif
 };

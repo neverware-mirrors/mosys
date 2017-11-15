@@ -222,6 +222,15 @@ char *sku_get_customization(struct platform_intf *intf)
 	return result;
 }
 
+char *sku_get_signature_id(struct platform_intf *intf)
+{
+	const struct sku_info *info = intf->sku_info;
+
+	if (!info->signature_id)
+		return NULL;
+	return mosys_strdup(info->signature_id);
+}
+
 void *sku_get_data(struct platform_intf *intf)
 {
 	const struct sku_info *info = intf->sku_info;
