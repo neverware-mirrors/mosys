@@ -49,46 +49,51 @@ static int do_test(const char *fdt, const char * smbios_name, int sku_id,
 				    &platform_name);
 	if (ret) {
 		if (!expected_model)
-			return 0;
+			goto pass;
 		fprintf(stdout, "SKU ID %d, expected a config\n", sku_id);
-		return 1;
+		goto err;
 	}
 	if (!expected_model) {
 		fprintf(stdout, "SKU ID %d, expected no config\n", sku_id);
-		return 1;
+		goto err;
 	}
 	if (strcmp(sku_info.model, expected_model)) {
-		fprintf(stdout, "SKU ID %d, model is %s\n", sku_id,
-			sku_info.model);
-		return 1;
+		fprintf(stdout, "SKU ID %d, model is %s, expected %s\n", sku_id,
+			sku_info.model, expected_model);
+		goto err;
 	}
 	if (!expected_brand && sku_info.brand) {
 		fprintf(stdout, "SKU ID %d, expected no brand, got %s\n",
 			sku_id, sku_info.brand);
-		return 1;
+		goto err;
 	}
 	if (expected_brand && !sku_info.brand) {
 		fprintf(stdout, "SKU ID %d, expected brand, got none\n",
 			sku_id);
-		return 1;
+		goto err;
 	}
 	if (expected_brand && strcmp(sku_info.brand, expected_brand)) {
 		fprintf(stdout, "SKU ID %d, brand is %s\n", sku_id,
 			sku_info.brand);
-		return 1;
+		goto err;
 	}
 	if (expected_platform && !platform_name) {
 		fprintf(stdout, "SKU ID %d, expected platform, got none\n",
 			sku_id);
-		return 1;
+		goto err;
 	}
 	if (expected_platform && strcmp(platform_name, expected_platform)) {
 		fprintf(stdout, "SKU ID %d, platform is %s\n", sku_id,
 			platform_name);
-		return 1;
+		goto err;
 	}
+pass:
+	fprintf(stdout, "-- passed\n\n");
 
 	return 0;
+err:
+	fprintf(stdout, "\n");
+	return -1;
 }
 
 int main(int argc, char **argv)
