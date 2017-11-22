@@ -236,7 +236,11 @@ char *sku_get_signature_id(struct platform_intf *intf)
 {
 	const struct sku_info *info = intf->sku_info;
 
-	if (!info->signature_id)
+	/*
+	 * Avoid a crash if there is no SKU information for this board. Quite
+	 * a few boards do not have this.
+	 */
+	if (!info || !info->signature_id)
 		return NULL;
 	return mosys_strdup(info->signature_id);
 }
