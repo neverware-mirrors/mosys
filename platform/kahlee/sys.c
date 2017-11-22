@@ -29,6 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef CONFIG_CROS_CONFIG
+
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
@@ -57,3 +59,4 @@ struct sys_cb kahlee_sys_cb = {
 	.model			= &kahlee_get_model,
 	.signature_id           = sku_get_signature_id,
 };
+#endif /* CONFIG_CROS_CONFIG */

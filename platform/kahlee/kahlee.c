@@ -29,6 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef CONFIG_CROS_CONFIG
+
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -40,29 +42,12 @@
 
 #include "drivers/google/cros_ec.h"
 
-#include "lib/probe.h"
+#include "lib/cros_config.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
+#include "lib/sku.h"
 
 #include "kahlee.h"
-
-struct probe_ids {
-	const char *names[2];
-	const char *frids[2];
-};
-
-static const struct probe_ids probe_id_list[] = {
-	{ .names = { "Kahlee", NULL},
-	  .frids = { "Google_Kahlee", NULL},
-	},
-	{ .names = { "KAHLEE", NULL},
-	  .frids = { "Google_KAHLEE", NULL},
-	},
-	{ .names = { "kahlee", NULL},
-	  .frids = { "Google_kahlee", NULL},
-	},
-	{ { NULL } }
-};
 
 struct platform_cmd *kahlee_sub[] = {
 	&cmd_ec,
@@ -77,31 +62,18 @@ struct platform_cmd *kahlee_sub[] = {
 
 int kahlee_probe(struct platform_intf *intf)
 {
-	static int status, probed;
-	const struct probe_ids *pid;
+        static struct sku_info sku_info;
+        int ret;
 
-	if (probed)
-		return status;
-	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* FRID */
-		if (probe_frid((const char **)pid->frids)) {
-			status = 1;
-			goto kahlee_probe_exit;
-		}
+        ret = cros_config_read_sku_info(intf, "Kahlee", &sku_info);
 
-		/* SMBIOS */
-		if (probe_smbios(intf, (const char **)pid->names)) {
-			status = 1;
-			goto kahlee_probe_exit;
-		}
-	}
-	return 0;
+        /* If there was no error, indicate that we found a match */
+        if (!ret) {
+                intf->sku_info = &sku_info;
+                return 1;
+        }
 
-kahlee_probe_exit:
-	probed = 1;
-	/* Update canonical platform name */
-	intf->name = pid->names[0];
-	return status;
+        return ret;
 }
 
 /* late setup routine; not critical to core functionality */
@@ -145,3 +117,4 @@ struct platform_intf platform_kahlee = {
 	.setup_post	= &kahlee_setup_post,
 	.destroy	= &kahlee_destroy,
 };
+#endif /* CONFIG_CROS_CONFIG */

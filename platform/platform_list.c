@@ -101,7 +101,7 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_GRU
 	&platform_gru,
 #endif
-#ifdef CONFIG_PLATFORM_KAHLEE
+#if defined(CONFIG_PLATFORM_KAHLEE) && defined(CONFIG_CROS_CONFIG)
 	&platform_kahlee,
 #endif
 #ifdef CONFIG_PLATFORM_LINK
