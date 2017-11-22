@@ -222,6 +222,10 @@ char *sku_get_customization(struct platform_intf *intf)
 	return result;
 }
 
+/*
+ * Do not use this outside of unibuild since it is not meaningful to have a
+ * signature ID in a legacy build.
+ */
 char *sku_get_customization_from_vpd(void)
 {
 	const char *value;
