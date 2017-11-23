@@ -262,20 +262,20 @@ include $(srctree)/scripts/Kbuild.include
 
 # Make variables (CC, etc...)
 
-AR		?= $(CROSS_COMPILE)ar
-AS		?= $(CROSS_COMPILE)as
-CC		?= $(CROSS_COMPILE)gcc
-CPP		?= $(CC) -E
-LD		?= $(CROSS_COMPILE)ld
-NM		?= $(CROSS_COMPILE)nm
-STRIP		?= $(CROSS_COMPILE)strip
-OBJCOPY		?= $(CROSS_COMPILE)objcopy
-OBJDUMP		?= $(CROSS_COMPILE)objdump
-PKG_CONFIG	?= $(CROSS_COMPILE)pkg-config
-INSTALL		?= install
-AWK		= awk
-DEPMOD		= /sbin/depmod
-CHECK		= sparse
+AR		:= $(CROSS_COMPILE)$(if $(AR),$(AR),ar)
+AS		:= $(CROSS_COMPILE)$(if $(AS),$(AS),as)
+CC		:= $(CROSS_COMPILE)$(if $(CC),$(CC),cc)
+CPP		:= $(CC) -E
+LD		:= $(CROSS_COMPILE)$(if $(LD),$(LD),ld)
+NM		:= $(CROSS_COMPILE)$(if $(NM),$(NM),nm)
+STRIP		:= $(CROSS_COMPILE)$(if $(STRIP),$(STRIP),strip)
+OBJCOPY		:= $(CROSS_COMPILE)$(if $(OBJCOPY),$(OBJCOPY),objcopy)
+OBJDUMP		:= $(CROSS_COMPILE)$(if $(OBJDUMP),$(OBJDUMP),objdump)
+PKG_CONFIG	:= $(CROSS_COMPILE)$(if $(PKG_CONFIG),$(PKG_CONFIG),pkg-config)
+INSTALL		:= install
+AWK		:= awk
+DEPMOD		:= /sbin/depmod
+CHECK		:= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
