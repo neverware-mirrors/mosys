@@ -119,7 +119,7 @@ export srctree objtree VPATH
 # SUBARCH tells the usermode build what the underlying arch is.  That is set
 # first, and if a usermode build is happening, the "ARCH=um" on the command
 # line overrides the setting of ARCH below.  If a native build is happening,
-# then ARCH is assigned, getting whatever value it gets normally, and 
+# then ARCH is assigned, getting whatever value it gets normally, and
 # SUBARCH is subsequently ignored.
 
 SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
@@ -221,7 +221,7 @@ export KBUILD_CHECKSRC KBUILD_SRC
 #         cmd_cc_o_c       = $(CC) $(c_flags) -c -o $@ $<
 #
 # If $(quiet) is empty, the whole command will be printed.
-# If it is set to "quiet_", only the short version will be printed. 
+# If it is set to "quiet_", only the short version will be printed.
 # If it is set to "silent_", nothing will be printed at all, since
 # the variable $(silent_cmd_cc_o_c) doesn't exist.
 #
@@ -251,10 +251,6 @@ endif
 export quiet Q KBUILD_VERBOSE
 
 UNITTEST		?= n
-CMOCKERY_PATH		:= tools/cmockery
-CMOCKERY_INCLUDE	:= -I$(CMOCKERY_PATH)/src/google
-CMOCKERY_FIND_IGNORE	:= \( -name cmockery \) -prune -o
-UNITTEST_DATA          := $(addsuffix /tools/test_data/, $(shell pwd))
 GENHTML_OUTPUT_DIR	:= html
 
 # Look for make include files relative to root of kernel src
@@ -283,8 +279,6 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-#CFLAGS_KERNEL	=
-#AFLAGS_KERNEL	=
 CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage -lgcov
 
 # Use LINUXINCLUDE when you must reference the include/ directory.
@@ -295,17 +289,16 @@ LINUXINCLUDE    := -Iinclude \
 
 KERNELVERSION	= $(CORE).$(MAJOR).$(MINOR)
 
-FMAP_LIBS	:= $(shell $(PKG_CONFIG) --libs fmap 2>/dev/null || echo -lfmap-0.3)
-FMAP_LINKOPT	?= $(FMAP_LIBS)
+FMAP_LIBS	:= $(shell $(PKG_CONFIG) --libs fmap 2>/dev/null || echo -lfmap)
 UUID_LIBS	:= $(shell $(PKG_CONFIG) --libs uuid 2>/dev/null || echo -luuid)
-LDLIBS		:= $(UUID_LIBS) $(FMAP_LINKOPT)
+LDLIBS		:= $(UUID_LIBS) $(FMAP_LIBS)
 
 #EXTRA_CFLAGS	:= $(patsubst %,-l%, $(LIBRARIES))
 
 MOSYS_MACROS	:= -DPROGRAM=\"$(PROGRAM)\" \
 		   -DVERSION=\"$(RELEASENAME)\"
 
-KBUILD_CPPFLAGS := 
+KBUILD_CPPFLAGS :=
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes \
 		   -Werror-implicit-function-declaration \
@@ -574,50 +567,8 @@ vmlinux-all  := $(vmlinux-main)
 vmlinux-lds  :=
 export KBUILD_VMLINUX_OBJS := $(vmlinux-all)
 
-# Rule to link vmlinux - also used during CONFIG_KALLSYMS
-# May be overridden by arch/$(ARCH)/Makefile
-quiet_cmd_vmlinux__ ?= LD      $@
-      cmd_vmlinux__ ?= $(LD) $(LDFLAGS) $(LDFLAGS_VMLINUX) -o $@ \
-      -T $(vmlinux-lds) \
-      --start-group $(vmlinux-main) --end-group                  \
-      $(filter-out $(vmlinux-lds) $(vmlinux-main) vmlinux.o FORCE ,$^)
 
-# Generate new vmlinux version
-quiet_cmd_vmlinux_version = GEN     .version
-      cmd_vmlinux_version = set -e;                     \
-	if [ ! -r .version ]; then			\
-	  rm -f .version;				\
-	  echo 1 >.version;				\
-	else						\
-	  mv .version .old_version;			\
-	  expr 0$$(cat .old_version) + 1 >.version;	\
-	fi;						\
-	$(MAKE) $(build)=init
-
-# Generate System.map
-quiet_cmd_sysmap = SYSMAP
-      cmd_sysmap = $(CONFIG_SHELL) $(srctree)/scripts/mksysmap
-
-# Link of vmlinux
-# If CONFIG_KALLSYMS is set .version is already updated
-# Generate System.map and verify that the content is consistent
-# Use + in front of the vmlinux_version rule to silent warning with make -j2
-# First command is ':' to allow us to use + in front of the rule
-define rule_vmlinux__
-	:
-	$(call cmd,vmlinux__)
-	$(Q)echo 'cmd_$@ := $(cmd_vmlinux__)' > $(@D)/.$(@F).cmd
-
-	$(Q)$(if $($(quiet)cmd_sysmap),                                      \
-	  echo '  $($(quiet)cmd_sysmap)  System.map' &&)                     \
-	$(cmd_sysmap) $@ System.map;                                         \
-	if [ $$? -ne 0 ]; then                                               \
-		rm -f $@;                                                    \
-		/bin/false;                                                  \
-	fi;
-endef
-
-# The actual objects are generated when descending, 
+# The actual objects are generated when descending,
 # make sure no implicit rule kicks in
 $(sort $(vmlinux-main)) $(vmlinux-lds): $(vmlinux-dirs) ;
 
@@ -778,7 +729,7 @@ include/linux/version.h: $(srctree)/Makefile FORCE
 
 # Directories & files removed with 'make clean'
 CLEAN_DIRS  += $(MODVERDIR)
-CLEAN_FILES += $(PROGRAM) $(TESTPROGRAM) $(TOOLS)
+CLEAN_FILES += $(PROGRAM) $(PROGRAM_STATIC) $(TOOLS)
 
 # clean - Delete most, but leave enough to build external modules
 #
@@ -790,25 +741,18 @@ PHONY += $(clean-dirs) clean
 $(clean-dirs):
 	$(Q)$(MAKE) $(clean)=$(patsubst _clean_%,%,$@)
 
-# Note: Cmockery uses an html file for documentation, so we need
-# to be careful not to delete it along with lcov generated files.
 lcov-clean:
-	@find . $(RCS_FIND_IGNORE) $(CMOCKERY_FIND_IGNORE) \
+	@find . $(RCS_FIND_IGNORE) \
 		\( -name '*.css' -o -name '*.gcda' -o -name '*.png' \
 		-o -name '*.css' -o -name '*.info' -o -name '*.html' \) \
 		-type f -print | xargs rm -f
 	@rm -rf $(GENHTML_OUTPUT_DIR)/
 
-cmockery-clean:
-	$(shell if [ -e $(CMOCKERY_PATH)/Makefile ]; then \
-	                make -C $(CMOCKERY_PATH) clean >/dev/null; \
-	        fi)
-
-clean: $(clean-dirs) lcov-clean cmockery-clean
+clean: $(clean-dirs) lcov-clean
 	$(call cmd,rmdirs)
 	$(call cmd,rmfiles)
 	@find . $(RCS_FIND_IGNORE) \
-		\( -name '*.[oas]' -o -name '*.ko' -o -name '.*.cmd' \
+		\( -name '*.[oas]' -o -name '*.o' -o -name '.*.cmd' \
 		-o -name '.*.d' -o -name '.*.tmp' -o -name '*.mod.c' \
 		-o -name '*.symtypes' -o -name 'modules.order' \
 		-o -name modules.builtin -o -name '.tmp_*.o.*' \
@@ -836,8 +780,6 @@ help:
 	@echo  '  export	  - Copy source code without VCS metadata'
 	@echo  '  dir/            - Build all files in dir and below'
 	@echo  '  dir/file.[ois]  - Build specified target only'
-	@echo  '  kernelrelease	  - Output the release version string'
-	@echo  '  kernelversion	  - Output the version stored in Makefile'
 	@echo  ''
 	@echo  ''
 	@echo  'Architecture specific targets ($(SRCARCH)):'
@@ -883,14 +825,6 @@ $(help-board-dirs): help-%:
 endif #ifeq ($(config-targets),1)
 endif #ifeq ($(mixed-targets),1)
 
-PHONY += kernelrelease kernelversion
-
-kernelrelease:
-	$(if $(wildcard include/config/kernel.release), $(Q)echo $(KERNELRELEASE), \
-	$(error kernelrelease not valid - run 'make prepare' to update it))
-kernelversion:
-	@echo $(KERNELVERSION)
-
 # Single targets
 # ---------------------------------------------------------------------------
 # Single targets are compatible with:
@@ -919,7 +853,7 @@ target-dir = $(dir $@)
 %.symtypes: %.c prepare scripts FORCE
 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
 
-# FIXME Should go into a make.lib or something 
+# FIXME Should go into a make.lib or something
 # ===========================================================================
 
 quiet_cmd_rmdirs = $(if $(wildcard $(rm-dirs)),CLEAN   $(wildcard $(rm-dirs)))
@@ -927,22 +861,6 @@ quiet_cmd_rmdirs = $(if $(wildcard $(rm-dirs)),CLEAN   $(wildcard $(rm-dirs)))
 
 quiet_cmd_rmfiles = $(if $(wildcard $(rm-files)),CLEAN   $(wildcard $(rm-files)))
       cmd_rmfiles = rm -f $(rm-files)
-
-# Run depmod only if we have System.map and depmod is executable
-quiet_cmd_depmod = DEPMOD  $(KERNELRELEASE)
-      cmd_depmod = \
-	if [ -r System.map -a -x $(DEPMOD) ]; then                              \
-		$(DEPMOD) -ae -F System.map                                     \
-		$(if $(strip $(INSTALL_MOD_PATH)), -b $(INSTALL_MOD_PATH) )     \
-		$(KERNELRELEASE);                                               \
-	fi
-
-a_flags = -Wp,-MD,$(depfile) $(KBUILD_AFLAGS) $(AFLAGS_KERNEL) \
-	  $(LINUXINCLUDE) $(KBUILD_CPPFLAGS) \
-	  $(modkern_aflags) $(EXTRA_AFLAGS) $(AFLAGS_$(basetarget).o)
-
-quiet_cmd_as_o_S = AS      $@
-cmd_as_o_S       = $(CC) $(a_flags) -c -o $@ $<
 
 # read all saved command lines
 
@@ -971,48 +889,6 @@ install: $(TARGETS)
 	$(INSTALL) -m 0755 $(TARGETS) $(INSTALL_PATH)
 #	$(INSTALL) -m 0644 $(PROGRAM).8 $(MANDIR)/man8
 
-PHONY += export
-export:
-	@rm -rf $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)
-	@svn export -r BASE . $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)
-	@sed "s/^SVNVERSION.*/SVNVERSION := $(SVNVERSION)/" Makefile >$(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)/Makefile
-	@LC_ALL=C svn log >$(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)/ChangeLog
-	@echo Exported $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)/
-
-PHONY += tarball
-# TAROPTIONS reduces information leakage from the packager's system.
-# If other tar programs support command line arguments for setting uid/gid of
-# stored files, they can be handled here as well.
-TAROPTIONS = $(shell LC_ALL=C tar --version|grep -q GNU && echo "--owner=root --group=root")
-tarball: export
-	@tar cjf $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME).tar.bz2 -C $(EXPORTDIR)/ $(TAROPTIONS) $(PROGRAM)-$(RELEASENAME)/
-	@rm -rf $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME)
-	@echo Created $(EXPORTDIR)/$(PROGRAM)-$(RELEASENAME).tar.bz2
-
-libcmockery.a:
-	@echo "Configuring cmockery..."
-	$(Q)cd $(CMOCKERY_PATH) && ./configure >/dev/null && cd -
-	@echo Building cmockery.
-	$(Q)make --quiet -C $(CMOCKERY_PATH)
-	ar rcs $@ $(CMOCKERY_PATH)/libcmockery_la-cmockery.o
-
-PHONY += test
-test: UNITTEST=y
-test: CFLAGS += $(CFLAGS_GCOV)
-test: KBUILD_CFLAGS+= $(CFLAGS_GCOV)
-test: LINUXINCLUDE += $(CMOCKERY_INCLUDE)
-test: MOSYS_MACROS += -DUNITTEST_DATA=\"$(UNITTEST_DATA)\"
-test: $(vmlinux-all) libcmockery.a
-	lcov --directory . --zerocounters
-	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) $(LDLIBS) $(CFLAGS_GCOV) \
-	$(MOSYS_MACROS) $(LINUXINCLUDE) -o $(TESTPROGRAM) $(TESTPROGRAM).c $?
-	@echo "Running $(TESTPROGRAM)"
-	./$(TESTPROGRAM)
-	lcov -b $(shell pwd) --directory . --capture \
-	--output-file $(TESTPROGRAM).info --test-name $(TESTPROGRAM)
-	genhtml -o $(GENHTML_OUTPUT_DIR)/ $(TESTPROGRAM).info
-	@echo "Check results in $(GENHTML_OUTPUT_DIR)/index.html"
-
 define LIBUUID_TEST
 #include <uuid/uuid.h>
 int main(void)
@@ -1027,7 +903,7 @@ export LIBUUID_TEST
 test_libuuid:
 	@echo "Testing libuuid..."
 	@echo "$$LIBUUID_TEST" > .uuid_test.c
-	$(Q)$(CC) $(CFLAGS) $(CC_LDFLAGS) -o .uuid_test .uuid_test.c -luuid >/dev/null 2>&1 && \
+	$(Q)$(CC) $(CFLAGS) $(CC_LDFLAGS) -o .uuid_test .uuid_test.c $(UUID_LIBS) && \
 	echo "libuuid test passed." || \
 	( echo "libuuid test failed. Please install libuuid" ; exit 1)
 	@rm -f .uuid_test.c .uuid_test
@@ -1047,7 +923,7 @@ export LIBFMAP_TEST
 test_libfmap:
 	@echo "Testing libfmap..."
 	@echo "$$LIBFMAP_TEST" > .fmap_test.c
-	$(Q)$(CC) $(CFLAGS) $(CC_LDFLAGS) -o .fmap_test .fmap_test.c $(FMAP_LINKOPT) >/dev/null 2>&1 && \
+	$(Q)$(CC) $(CFLAGS) $(CC_LDFLAGS) -o .fmap_test .fmap_test.c $(FMAP_LIBS) && \
 	echo "libfmap test passed." || \
 	( echo "libfmap test failed. Please install libfmap (http://flashmap.googlecode.com)"; exit 1 )
 	@rm -f .fmap_test.c .fmap_test
