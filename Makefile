@@ -18,8 +18,8 @@
 NAME="Mosys"
 PROGRAM=mosys
 PROGRAM_STATIC=$(PROGRAM)_s
-TARGETS=$(PROGRAM) $(PROGRAM_STATIC)
-TESTPROGRAM=$(PROGRAM)_test
+PROGRAM_LIB=mosys.a
+TARGETS=$(PROGRAM) $(PROGRAM_STATIC) $(PROGRAM_LIB)
 
 # Mosys will use the following version format: core.major.minor-revision
 # Here is a summery of each of those fields:
@@ -593,6 +593,9 @@ $(PROGRAM_STATIC): $(vmlinux-all)
 	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CC_LDFLAGS) $(MOSYS_MACROS) \
 	$(LINUXINCLUDE) -o $@ $(PROGRAM).c $? -static $(LIBS_LIBFDT) $(LDLIBS)
 
+$(PROGRAM_LIB): $(vmlinux-all)
+	$(Q)$(AR) crus $@ $?
+
 simple_tests: $(vmlinux-all)
 	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CC_LDFLAGS) $(MOSYS_MACROS) \
 	$(LINUXINCLUDE) -o $@ $? $(LIBS_LIBFDT) $(LDLIBS)
@@ -729,7 +732,7 @@ include/linux/version.h: $(srctree)/Makefile FORCE
 
 # Directories & files removed with 'make clean'
 CLEAN_DIRS  += $(MODVERDIR)
-CLEAN_FILES += $(PROGRAM) $(PROGRAM_STATIC) $(TOOLS)
+CLEAN_FILES += $(PROGRAM) $(PROGRAM_STATIC) $(PROGRAM_LIB) $(TOOLS)
 
 # clean - Delete most, but leave enough to build external modules
 #
