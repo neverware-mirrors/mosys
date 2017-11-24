@@ -37,6 +37,7 @@
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
+#include "lib/sku.h"
 #include "lib/generic_callbacks.h"
 #include "mosys/command_list.h"
 #include "mosys/platform.h"
@@ -57,11 +58,12 @@ struct gru_probe_id {
 	const char *name;
 	const char *fdt_compat;
 	int has_ec;
+	const struct sku_info single_sku;
 } gru_id_list[] = {
-	[BOB]		= { "Bob", "google,bob-rev", 1 },
-	[GRU]		= { "Gru", "google,gru-rev", 1 },
-	[KEVIN]		= { "Kevin", "google,kevin-rev", 1 },
-	[SCARLET]	= { "Scarlet", "google,scarlet-rev", 1 },
+	[BOB]		= { "Bob", "google,bob-rev", 1, { .brand = "ASUO" } },
+	[GRU]		= { "Gru", "google,gru-rev", 1, { .brand = "LOGA" } },
+	[KEVIN]		= { "Kevin", "google,kevin-rev", 1, { .brand = "SMAJ" } },
+	[SCARLET]	= { "Scarlet", "google,scarlet-rev", 1, { .brand = "DXZT" } },
 };
 
 #define GRU_CMD_EC_NUM	0
@@ -90,6 +92,7 @@ static int gru_probe(struct platform_intf *intf)
 			lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT "
 				"compatible node.\n", gru_id_list[i].name);
 			intf->name = gru_id_list[i].name;
+			intf->sku_info = &gru_id_list[i].single_sku;
 			probed_board = i;
 			break;
 		}
