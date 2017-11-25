@@ -13,3 +13,7 @@ include/generated
 mosys
 mosys_s
 libmosys.a
+
+# Rust
+/target/
+**/*.rs.bk
