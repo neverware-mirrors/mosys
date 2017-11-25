@@ -11,3 +11,5 @@ scripts/kconfig/mconf
 include/config
 include/generated
 mosys
+mosys_s
+libmosys.a
