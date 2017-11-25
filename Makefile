@@ -18,7 +18,7 @@
 NAME="Mosys"
 PROGRAM=mosys
 PROGRAM_STATIC=$(PROGRAM)_s
-PROGRAM_LIB=mosys.a
+PROGRAM_LIB=lib$(PROGRAM).a
 TARGETS=$(PROGRAM) $(PROGRAM_STATIC) $(PROGRAM_LIB)
 
 # Mosys will use the following version format: core.major.minor-revision
@@ -302,7 +302,8 @@ KBUILD_CPPFLAGS :=
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes \
 		   -Werror-implicit-function-declaration \
-		   -Werror=format-security
+		   -Werror=format-security \
+		   -fPIC
 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 
@@ -594,7 +595,8 @@ $(PROGRAM_STATIC): $(vmlinux-all)
 	$(LINUXINCLUDE) -o $@ $(PROGRAM).c $? -static $(LIBS_LIBFDT) $(LDLIBS)
 
 $(PROGRAM_LIB): $(vmlinux-all)
-	$(Q)$(AR) crus $@ $?
+	$(Q)$(LD) -r -o mosys.o $?
+	$(Q)$(AR) crus $@ mosys.o
 
 simple_tests: $(vmlinux-all)
 	$(Q)$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(CC_LDFLAGS) $(MOSYS_MACROS) \
