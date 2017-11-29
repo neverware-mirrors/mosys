@@ -36,6 +36,7 @@
 
 #include <stdio.h>
 
+/* Should be kept in sync with enum Log in src/logging.rs. */
 enum log_levels {
 	LOG_EMERG = 0,		/* system is unusable */
 	LOG_ALERT,		/* action must be taken immediately */

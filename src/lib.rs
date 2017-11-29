@@ -2,43 +2,54 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#![allow(non_upper_case_globals)]
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
+#[macro_use]
+extern crate lazy_static;
 
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+mod bindings;
+mod logging;
 
 use std::error::Error;
-use std::ffi::CStr;
-use std::ffi::CString;
-use std::ptr;
+use std::sync::Mutex;
+
+use bindings::*;
+use logging::Log;
+
+const PROG_NAME: &str = "mosys";
+
+lazy_static! {
+    pub static ref INSTANCES: Mutex<u8> = Mutex::new(0);
+}
 
 #[derive(Debug)]
-pub struct Mosys {
-    pub prog_name: CString,
-}
+pub struct Mosys {}
 
 impl Mosys {
     pub fn new(_args: &mut Vec<String>) -> Result<Mosys> {
-        Ok(Mosys  {
-            prog_name: CString::new("mosys")?,
-        })
-    }
+        let mut m = INSTANCES.lock().unwrap();
+        *m += 1;
 
-    pub fn run(self) -> Result<()> {
-        let hello_world = CStr::from_bytes_with_nul(b"Hello World!\n\0")?;
-
-        // Safe because functions do not mutate passed pointers and strings are null terminated.
-        unsafe {
-            mosys_log_init(
-                self.prog_name.as_ptr(),
-                log_levels_LOG_DEBUG,
-                ptr::null_mut(),
-            );
-            lprintf(log_levels_LOG_DEBUG, hello_world.as_ptr());
+        if *m == 1 {
+            // Safe because function only mutates state owned by C components.
+            unsafe {
+                mosys_globals_init();
+            }
         }
 
+        Log::init(&PROG_NAME, Log::Debug)?;
+        Ok(Mosys {})
+    }
+
+    pub fn run(&self) -> Result<()> {
+        Log::Debug.log("Hello World!\n")?;
         Ok(())
+    }
+}
+
+impl Drop for Mosys {
+    fn drop(&mut self) {
+        let mut m = INSTANCES.lock().unwrap();
+        *m -= 1;
+        Log::drop();
     }
 }
 
