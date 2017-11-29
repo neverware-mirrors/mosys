@@ -2,37 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#![allow(non_upper_case_globals)]
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
+extern crate mosys;
 
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+use std::env;
+use std::process;
 
-use std::ptr;
-use std::ffi::CStr;
+use mosys::Mosys;
 
 fn main() {
-    let prog_name = CStr::from_bytes_with_nul(b"mosys\0").unwrap();
-    let hello_world = CStr::from_bytes_with_nul(b"Hello World!\n\0").unwrap();
+    let mut args: Vec<String> = env::args().collect();
 
-    // Safe because functions do not mutate passed pointers and strings are null terminated.
-    unsafe {
-        mosys_log_init(prog_name.as_ptr(), log_levels_LOG_DEBUG, ptr::null_mut());
-        lprintf(log_levels_LOG_DEBUG, hello_world.as_ptr());
-    }
-}
+    let mosys = Mosys::new(&mut args).unwrap_or_else(|err| {
+        eprintln!("Problem creating program: {}", err);
+        process::exit(1);
+    });
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_ffi() {
-        unsafe {
-            mosys_globals_init();
-            mosys_set_kv_pair_style(kv_pair_style_KV_STYLE_PAIR);
-            let ret = mosys_get_kv_pair_style();
-            assert_eq!(ret, kv_pair_style_KV_STYLE_PAIR);;
-        }
+    if let Err(err) = mosys.run() {
+        eprintln!("Application error: {}", err);
+        process::exit(1);
     }
 }
