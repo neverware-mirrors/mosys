@@ -10,3 +10,6 @@ lto = true
 panic = 'abort'
 
 [dependencies]
+
+[build-dependencies]
+bindgen = "=0.31.3"

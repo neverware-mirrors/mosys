@@ -595,7 +595,7 @@ $(PROGRAM_STATIC): $(vmlinux-all)
 	$(LINUXINCLUDE) -o $@ $(PROGRAM).c $? -static $(LIBS_LIBFDT) $(LDLIBS)
 
 $(PROGRAM_LIB): $(vmlinux-all)
-	$(Q)$(LD) -r -o mosys.o $?
+	$(Q)$(LD) $(LDFLAGS) -r -o mosys.o $?
 	$(Q)$(AR) crus $@ mosys.o
 
 simple_tests: $(vmlinux-all)
