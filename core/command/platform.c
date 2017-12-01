@@ -249,10 +249,11 @@ static int platform_id_cmd(struct platform_intf *intf,
 	int i;
 
         /* Run every command we can find, avoiding recursion */
-	for (cmd = platform_cmds; cmd->name; cmd++) {
-		if (cmd->arg.func && cmd->arg.func != platform_id_cmd)
+        for (cmd = platform_cmds; cmd->name; cmd++) {
+		if (cmd->arg.func && cmd->arg.func != platform_id_cmd &&
+		    cmd->type == ARG_TYPE_GETTER)
 			cmd->arg.func(intf, cmd, argc, argv);
-	}
+        }
 
 	return 0;
 }
