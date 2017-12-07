@@ -4,7 +4,8 @@
 
 use std;
 use std::error::Error;
-use std::ffi::CString;
+use std::ffi::{CString, NulError};
+use std::fmt;
 use std::ptr;
 use std::sync::Mutex;
 
@@ -51,10 +52,7 @@ impl Log {
 
         match ret {
             0 => Ok(()),
-            _ => Err(From::from(format!(
-                "Logger initialization failed with return code [{}]",
-                ret
-            ))),
+            _ => Err(LogError::Init(ret)),
         }
     }
 
@@ -62,7 +60,7 @@ impl Log {
         let m = INSTANCES.lock().unwrap();
 
         if *m < 1 {
-            return Err(From::from("Logger isn't ready"));
+            return Err(LogError::NotReady);
         }
 
         let message_cstring = CString::new(message)?;
@@ -106,4 +104,44 @@ impl Log {
     }
 }
 
-type Result = std::result::Result<(), Box<Error>>;
+#[derive(Debug)]
+pub enum LogError {
+    Init(i32),
+    NotReady,
+    NullTerm(NulError),
+}
+
+impl fmt::Display for LogError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            LogError::Init(code) => write!(f, "Logger initialization error code: {}", code),
+            LogError::NotReady => write!(f, "Logger not ready"),
+            LogError::NullTerm(ref err) => write!(f, "String null termination error: {}", err),
+        }
+    }
+}
+
+impl Error for LogError {
+    fn description(&self) -> &str {
+        match *self {
+            LogError::Init(_) => "Initialization",
+            LogError::NotReady => "Not ready",
+            LogError::NullTerm(ref err) => err.description(),
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        match *self {
+            LogError::NullTerm(ref err) => Some(err),
+            _ => None,
+        }
+    }
+}
+
+impl From<NulError> for LogError {
+    fn from(err: NulError) -> LogError {
+        LogError::NullTerm(err)
+    }
+}
+
+type Result = std::result::Result<(), LogError>;

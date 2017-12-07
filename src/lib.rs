@@ -9,10 +9,12 @@ mod bindings;
 mod logging;
 
 use std::error::Error;
+use std::fmt;
+use std::io;
 use std::sync::Mutex;
 
 use bindings::*;
-use logging::Log;
+use logging::{Log, LogError};
 
 const PROG_NAME: &str = "mosys";
 
@@ -53,7 +55,50 @@ impl Drop for Mosys {
     }
 }
 
-type Result<T> = std::result::Result<T, Box<Error>>;
+#[derive(Debug)]
+pub enum MosysError {
+    Io(io::Error),
+    Log(LogError),
+}
+
+impl fmt::Display for MosysError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            MosysError::Io(ref err) => write!(f, "IO error: {}", err),
+            MosysError::Log(ref err) => write!(f, "Logging error: {}", err),
+        }
+    }
+}
+
+impl Error for MosysError {
+    fn description(&self) -> &str {
+        match *self {
+            MosysError::Io(ref err) => err.description(),
+            MosysError::Log(ref err) => err.description(),
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        match *self {
+            MosysError::Io(ref err) => Some(err),
+            MosysError::Log(ref err) => Some(err),
+        }
+    }
+}
+
+impl From<io::Error> for MosysError {
+    fn from(err: io::Error) -> MosysError {
+        MosysError::Io(err)
+    }
+}
+
+impl From<LogError> for MosysError {
+    fn from(err: LogError) -> MosysError {
+        MosysError::Log(err)
+    }
+}
+
+type Result<T> = std::result::Result<T, MosysError>;
 
 #[cfg(test)]
 mod tests {
