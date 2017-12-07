@@ -60,6 +60,10 @@ static int read_ram_code(struct platform_intf *intf)
 		gru_dimm_count = 2;
 		gru_mem_info = &samsung_lpddr3_k4e6e304eb_egcf;
 		break;
+	case 1:
+		gru_dimm_count = 2;
+		gru_mem_info = &hynix_lpddr3_h9ccnnnbjtalar_nud;
+		break;
 	case 3:
 		gru_dimm_count = 2;
 		gru_mem_info = &samsung_lpddr3_k4e8e324eb_egcf;
