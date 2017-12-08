@@ -103,7 +103,6 @@ struct platform_cmd *reef_sub[] = {
 	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
-	&cmd_pd,
 	&cmd_platform,
 	&cmd_smbios,
 	&cmd_eventlog,
