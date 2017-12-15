@@ -49,7 +49,6 @@
 
 #include "fizz.h"
 
-#ifndef CONFIG_CROS_CONFIG
 /* sku_info: brand, model, chassis, customization, data */
 static struct sku_info
 	/* Fizz SKUs */
@@ -80,7 +79,6 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Fizz", }, .sku_table = fizz_sku_table },
 	{ { NULL }, },
 };
-#endif /* CONFIG_CROS_CONFIG */
 
 struct platform_cmd *fizz_sub[] = {
 	&cmd_ec,
@@ -97,20 +95,6 @@ struct platform_cmd *fizz_sub[] = {
 
 int fizz_probe(struct platform_intf *intf)
 {
-#ifdef CONFIG_CROS_CONFIG
-        static struct sku_info sku_info;
-        int ret;
-
-        ret = cros_config_read_sku_info(intf, &sku_info);
-
-        /* If there was no error, indicate that we found a match */
-        if (!ret) {
-                intf->sku_info = &sku_info;
-                return 1;
-        }
-
-        return ret;
-#else
 	static int status, probed;
 	const struct probe_ids *pid;
 
@@ -134,6 +118,22 @@ int fizz_probe(struct platform_intf *intf)
 
 fizz_probe_exit:
 	probed = 1;
+
+#ifdef CONFIG_CROS_CONFIG
+	static struct sku_info sku_info;
+	int ret;
+
+	ret = cros_config_read_sku_info(intf, &sku_info);
+
+	/* If there was no error, indicate that we found a match */
+	if (!ret) {
+		intf->sku_info = &sku_info;
+		return 1;
+	}
+
+	return ret;
+#endif /* CONFIG_CROS_CONFIG */
+
 	/* Update canonical platform name */
 	intf->name = pid->names[0];
 	if (pid->sku_table) {
@@ -142,7 +142,6 @@ fizz_probe_exit:
 		intf->sku_info = &pid->single_sku;
 	}
 	return status;
-#endif /* CONFIG_CROS_CONFIG */
 }
 
 /* late setup routine; not critical to core functionality */
