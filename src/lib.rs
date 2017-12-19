@@ -25,10 +25,13 @@ lazy_static! {
 }
 
 #[derive(Debug)]
-pub struct Mosys {}
+pub struct Mosys {
+    program: String,
+    args: Vec<String>,
+}
 
 impl Mosys {
-    pub fn new(args: &[String]) -> Result<Mosys> {
+    pub fn new(mut args: Vec<String>) -> Result<Mosys> {
         let mut m = INSTANCES.lock().unwrap();
         *m += 1;
 
@@ -40,7 +43,18 @@ impl Mosys {
         }
 
         Log::init(&PROG_NAME, Log::Debug)?;
-        let program = args.get(0).unwrap();
+        Ok(Mosys {
+            program: args.remove(0),
+            args: args,
+        })
+    }
+
+    fn print_usage(&self, opts: Options) {
+        let brief = format!("Usage: {} [options] {{commands}}", &self.program);
+        print!("{}", opts.usage(&brief));
+    }
+
+    pub fn run(&self) -> Result<()> {
         let mut opts = Options::new();
         opts.optflag("k", "keyvalue", "print data in key=value format");
         opts.optflag("l", "long", "print data in long format");
@@ -62,10 +76,10 @@ impl Mosys {
         opts.optflag("h", "help", "print this help\n");
         opts.optflag("V", "version", "print version\n");
 
-        let matches = opts.parse(args.get(1..).unwrap())?;
+        let matches = opts.parse(&self.args)?;
 
         if matches.opt_present("h") {
-            Mosys::print_usage(&program, opts);
+            self.print_usage(opts);
             return Err(MosysError::Help);
         }
 
@@ -74,21 +88,11 @@ impl Mosys {
         let _commands = match matches.free.get(0) {
             Some(c) => c,
             None => {
-                Mosys::print_usage(&program, opts);
+                self.print_usage(opts);
                 return Err(MosysError::NoCommands);
             }
         };
-
-        Ok(Mosys {})
-    }
-
-    fn print_usage(program: &str, opts: Options) {
-        let brief = format!("Usage: {} [options] {{commands}}", program);
-        print!("{}", opts.usage(&brief));
-    }
-
-    pub fn run(&self) -> Result<()> {
-        Log::Debug.log("Hello World!\n")?;
+        Log::Debug.log("Completed successfully\n")?;
         Ok(())
     }
 }
@@ -170,7 +174,7 @@ mod tests {
     #[test]
     fn test_new() {
         let args = vec!["someprogname".to_string(), "command".to_string()];
-        Mosys::new(&args).expect("Instantiation failed");
+        Mosys::new(args).expect("Instantiation failed");
     }
 
     #[test]
@@ -181,7 +185,8 @@ mod tests {
             "command".to_string(),
         ];
 
-        match Mosys::new(&args) {
+        let mosys = Mosys::new(args).unwrap();
+        match mosys.run() {
             Err(MosysError::Help) => (),
             _ => panic!("Should have returned help error code"),
         }
@@ -193,7 +198,8 @@ mod tests {
             "command".to_string(),
         ];
 
-        Mosys::new(&args).expect("Should have succeeded with getopts arguments");
+        let mosys = Mosys::new(args).unwrap();
+        mosys.run().expect("Should have succeeded with getopts arguments");
     }
 
     #[test]

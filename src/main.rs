@@ -12,7 +12,7 @@ use mosys::Mosys;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let mosys = Mosys::new(&args).unwrap_or_else(|err| {
+    let mosys = Mosys::new(args).unwrap_or_else(|err| {
         eprintln!("Problem creating program: {}", err);
         process::exit(1);
     });
