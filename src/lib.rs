@@ -18,7 +18,8 @@ use bindings::*;
 use getopts::Options;
 use logging::{Log, LogError};
 
-const PROG_NAME: &str = "mosys";
+const PROG_NAME: &'static str = "mosys";
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 lazy_static! {
     pub static ref INSTANCES: Mutex<u8> = Mutex::new(0);
@@ -42,7 +43,7 @@ impl Mosys {
             }
         }
 
-        Log::init(&PROG_NAME, Log::Debug)?;
+        Log::init(&PROG_NAME, Log::Warning)?;
         Ok(Mosys {
             program: args.remove(0),
             args: args,
@@ -83,7 +84,24 @@ impl Mosys {
             return Err(MosysError::Help);
         }
 
-        let _single_key = matches.opt_str("s");
+        if matches.opt_present("V") {
+            Log::Warning.log(&format!("{} version {}", &self.program, VERSION))?;
+            return Ok(());
+        }
+
+        for _ in 0..matches.opt_count("v") {
+            Log::inc_threshold();
+        }
+
+        if matches.opt_present("S") {
+            // Safe because all resources in print_platforms are under C control
+            unsafe {
+                return match print_platforms() {
+                    0 => Ok(()),
+                    _ => Err(MosysError::PlatformList),
+                };
+            }
+        }
 
         let _commands = match matches.free.get(0) {
             Some(c) => c,
@@ -92,6 +110,7 @@ impl Mosys {
                 return Err(MosysError::NoCommands);
             }
         };
+
         Log::Debug.log("Completed successfully\n")?;
         Ok(())
     }
@@ -112,6 +131,7 @@ pub enum MosysError {
     Log(LogError),
     Help,
     NoCommands,
+    PlatformList,
 }
 
 impl fmt::Display for MosysError {
@@ -122,6 +142,7 @@ impl fmt::Display for MosysError {
             MosysError::Log(ref err) => write!(f, "Logging error: {}", err),
             MosysError::Help => write!(f, "Requested help"),
             MosysError::NoCommands => write!(f, "No commands given"),
+            MosysError::PlatformList => write!(f, "Platform list failed"),
         }
     }
 }
@@ -134,6 +155,7 @@ impl Error for MosysError {
             MosysError::Log(ref err) => err.description(),
             MosysError::Help => "Requested help",
             MosysError::NoCommands => "No commands given",
+            MosysError::PlatformList => "Platform list failure",
         }
     }
 
@@ -170,6 +192,13 @@ type Result<T> = std::result::Result<T, MosysError>;
 #[cfg(test)]
 mod tests {
     use super::*;
+    use logging::LAST_LOG;
+
+    // Verbosity is global so this lock allows us to run tests at the same time that won't stomp
+    // on each other.
+    lazy_static! {
+        static ref LOCK: Mutex<u8> = Mutex::new(0);
+    }
 
     #[test]
     fn test_new() {
@@ -178,28 +207,82 @@ mod tests {
     }
 
     #[test]
-    fn test_args() {
+    fn test_help() {
         let args = vec![
             "someprogname".to_string(),
             "-h".to_string(),
             "command".to_string(),
         ];
-
         let mosys = Mosys::new(args).unwrap();
+
         match mosys.run() {
             Err(MosysError::Help) => (),
             _ => panic!("Should have returned help error code"),
         }
+    }
 
+    #[test]
+    fn test_version() {
+        let args = vec!["someprogname".to_string(), "-V".to_string()];
+        let mosys = Mosys::new(args).unwrap();
+        mosys.run().expect("Should have exited Ok(())");
+        assert_eq!(
+            &**LAST_LOG.lock().unwrap(),
+            &format!("someprogname version {}", env!("CARGO_PKG_VERSION"))
+        );
+    }
+
+    #[test]
+    fn test_verbosity() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = vec![
+            "someprogname".to_string(),
+            "-v".to_string(),
+            "-v".to_string(),
+            "-v".to_string(),
+            "-v".to_string(),
+            "-v".to_string(),
+            "command".to_string(),
+        ];
+        let mosys = Mosys::new(args).unwrap();
+        mosys.run().expect("Should have exited Ok(())");
+        let t = Log::get_threshold();
+        assert_eq!(t, Log::Spew, "Should have incremented verbosity to max");
+    }
+
+    #[test]
+    fn test_platform_list() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = vec![
+            "someprogname".to_string(),
+            "-S".to_string(),
+            "-v".to_string(),
+        ];
+        let mosys = Mosys::new(args).unwrap();
+        mosys.run().expect("Should have exited Ok(())");
+    }
+
+    #[test]
+    fn test_misc_args() {
+        let _test_lock = LOCK.lock().unwrap();
         let args = vec![
             "someprogname".to_string(),
             "-s".to_string(),
             "keyname".to_string(),
+            "-l".to_string(),
+            "-t".to_string(),
+            "-f".to_string(),
+            "-p".to_string(),
+            "platformname".to_string(),
             "command".to_string(),
         ];
 
         let mosys = Mosys::new(args).unwrap();
-        mosys.run().expect("Should have succeeded with getopts arguments");
+        mosys
+            .run()
+            .expect("Should have succeeded with getopts arguments");
+        let t = Log::get_threshold();
+        assert_eq!(t, Log::Warning, "Should not have incremented verbosity");
     }
 
     #[test]

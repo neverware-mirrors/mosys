@@ -32,15 +32,15 @@ fn main() {
         root_dir.join("target"),
     ];
     let wrapper = out_path.join("wrapper.h");
-    generate_wrapper(root_dir.as_path(), &wrapper, &prune)
-        .expect("Failed to generate wrapper.h");
+    generate_wrapper(root_dir.as_path(), &wrapper, &prune).expect("Failed to generate wrapper.h");
     let bindings = bindgen::Builder::default()
         .header(wrapper.to_str().unwrap())
         .clang_arg("-Iinclude")
-        .whitelist_function("mosys_.*")
+        .whitelist_function("log_.*")
         .whitelist_function("lprintf")
         .whitelist_function("lperror")
-        .whitelist_function("log_.*")
+        .whitelist_function(".*platform.*")
+        .whitelist_function("mosys_.*")
         .generate()
         .expect("Unable to generate bindings");
     bindings

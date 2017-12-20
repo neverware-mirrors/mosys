@@ -150,7 +150,7 @@ dependencies = [
 
 [[package]]
 name = "mosys"
-version = "0.1.0"
+version = "2.0.0"
 dependencies = [
  "bindgen 0.31.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "getopts 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)",
