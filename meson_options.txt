@@ -1,0 +1,19 @@
+option(
+  'arch',
+  type : 'combo',
+  value: 'x86',
+  choices: ['x86', 'x86_64', 'amd64', 'mips', 'arm'],
+  description: 'The target architecture.',
+)
+option(
+  'use_cros_config',
+  type: 'boolean',
+  value: 'false',
+  description: 'If set to true, cros_config will be used',
+)
+option(
+  'static',
+  type: 'boolean',
+  value: 'false',
+  description: 'Sets if the normal mosys executable is also statically linked',
+)
