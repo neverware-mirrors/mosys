@@ -134,7 +134,7 @@ fizz_probe_exit:
 		intf->sku_info = &SKU_FIZZ; /* no SKU id defined for fizz board */
 		status = 1;
 	} else {
-		int ret = cros_config_read_sku_info(intf, &sku_info);
+		int ret = cros_config_read_sku_info(intf, "Fizz", &sku_info);
 
 		/* If there was no error, indicate that we found a match */
 		if (!ret) {
@@ -165,6 +165,22 @@ fizz_probe_exit:
 
 fizz_probe_exit:
 	probed = 1;
+
+#ifdef CONFIG_CROS_CONFIG
+	static struct sku_info sku_info;
+	int ret;
+
+	ret = cros_config_read_sku_info(intf, "Fizz", &sku_info);
+
+	/* If there was no error, indicate that we found a match */
+	if (!ret) {
+		intf->sku_info = &sku_info;
+		return 1;
+	}
+
+	return ret;
+#endif /* CONFIG_CROS_CONFIG */
+
 	/* Update canonical platform name */
 	intf->name = pid->names[0];
 	if (pid->sku_table) {

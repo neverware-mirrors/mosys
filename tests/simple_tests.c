@@ -37,7 +37,8 @@
 #include "lib/cros_config.h"
 #include "lib/sku.h"
 
-static int do_test(const char *fdt, const char * smbios_name, int sku_id,
+static int do_test(const char *fdt, const char *platform_names,
+		   const char *smbios_name, int sku_id,
 		   const char *wl_name, const char *expected_model,
 		   const char *expected_brand, const char *expected_platform,
 		   const char *expected_sig_id)
@@ -46,8 +47,9 @@ static int do_test(const char *fdt, const char * smbios_name, int sku_id,
 	struct sku_info sku_info;
 	int ret;
 
-	ret = cros_config_setup_sku(fdt, &sku_info, smbios_name, sku_id,
-				    wl_name, &platform_name);
+	ret = cros_config_setup_sku(fdt, &sku_info, platform_names,
+				    smbios_name, sku_id, wl_name,
+				    &platform_name);
 	if (ret) {
 		if (!expected_model)
 			goto pass;
@@ -176,7 +178,7 @@ int main(int argc, char **argv)
 		       "Coral", "blacktip2");
 
 	/* Without an SMBIOS name we should fail */
-	ret |= do_test(fdt, NULL, 61, "", NULL, NULL, NULL, NULL);
+	ret |= do_test(fdt, names, NULL, 61, "", NULL, NULL, NULL, NULL);
 
 	/* Invalid SKU ID */
 	ret |= do_test(fdt, names, "Coral", 255, "", NULL, NULL, NULL, NULL);
