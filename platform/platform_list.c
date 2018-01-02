@@ -92,7 +92,7 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_DAISY
 	&platform_daisy,
 #endif
-#ifdef CONFIG_PLATFORM_FIZZ
+#if defined(CONFIG_PLATFORM_FIZZ) && defined(CONFIG_CROS_CONFIG)
 	&platform_fizz,
 #endif
 #ifdef CONFIG_PLATFORM_GLADOS
