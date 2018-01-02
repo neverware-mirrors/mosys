@@ -37,7 +37,8 @@
 #include "lib/cros_config.h"
 #include "lib/sku.h"
 
-static int do_test(const char *fdt, const char * smbios_name, int sku_id,
+static int do_test(const char *fdt, const char *platform_names,
+		   const char *smbios_name, int sku_id,
 		   const char *wl_name, const char *expected_model,
 		   const char *expected_brand, const char *expected_platform,
 		   const char *expected_sig_id)
@@ -46,8 +47,9 @@ static int do_test(const char *fdt, const char * smbios_name, int sku_id,
 	struct sku_info sku_info;
 	int ret;
 
-	ret = cros_config_setup_sku(fdt, &sku_info, smbios_name, sku_id,
-				    wl_name, &platform_name);
+	ret = cros_config_setup_sku(fdt, &sku_info, platform_names,
+				    smbios_name, sku_id, wl_name,
+				    &platform_name);
 	if (ret) {
 		if (!expected_model)
 			goto pass;
@@ -108,48 +110,58 @@ int main(int argc, char **argv)
 {
 	extern char __dtb_test_config_begin[];
 	char *fdt = __dtb_test_config_begin;
+	const char *names = "Reef,Pyro,Snappy,Sand,bad";
 	int ret;
 
 	mosys_log_init("stderr", LOG_SPEW, stderr);
 
 	/* Single SKU */
-	ret = do_test(fdt, "pyro", 0, "", "pyro", "ABCE", "Pyro", NULL);
-	ret |= do_test(fdt, "snappy", 0, "", "snappy", "ABCF", "Snappy", NULL);
-	ret |= do_test(fdt, "sand", 0, "", "sand", "ABCH", "Sand", NULL);
+	ret = do_test(fdt, names, "pyro", 0, "", "pyro", "ABCE", "Pyro", NULL);
+	ret |= do_test(fdt, names, "snappy", 0, "", "snappy", "ABCF", "Snappy",
+		       NULL);
+	ret |= do_test(fdt, names, "sand", 0, "", "sand", "ABCH", "Sand", NULL);
 
 	/* SMBIOS plus SKU ID lookup */
-	ret = do_test(fdt, "coral", 0, "", "astronaut", NULL, "Coral", NULL);
-	ret |= do_test(fdt, "coral", 61, "", "astronaut", "WXYZ", "Coral",
+	ret = do_test(fdt, names, "coral", 0, "", "astronaut", NULL, "Coral",
+		      NULL);
+	ret |= do_test(fdt, names, "coral", 61, "", "astronaut", "WXYZ",
+		       "Coral", NULL);
+	ret |= do_test(fdt, names, "coral", 62, "", "astronaut", "ABCD",
+		       "Coral", NULL);
+	ret |= do_test(fdt, names, "coral", 160, "", "nasher", "CPPT", "Coral",
 		       NULL);
-	ret |= do_test(fdt, "coral", 62, "", "astronaut", "ABCD", "Coral",
-		       NULL);
-	ret |= do_test(fdt, "coral", 160, "", "nasher", "CPPT", "Coral", NULL);
-	ret |= do_test(fdt, "coral", 163, "", "nasher360", "INUT", "Coral",
-		       NULL);
+	ret |= do_test(fdt, names, "coral", 163, "", "nasher360", "INUT",
+		       "Coral", NULL);
 
 	/* Different SMBIOS name */
-	ret |= do_test(fdt, "reef", 0, "", "basking", "ABCG", "Reef", NULL);
+	ret |= do_test(fdt, names, "reef", 0, "", "basking", "ABCG", "Reef",
+		       NULL);
 
-	ret |= do_test(fdt, "reef", 4, "", "reef", "ABCA", "Reef", NULL);
-	ret |= do_test(fdt, "reef", 5, "", "reef", "ABCA", "Reef", NULL);
-	ret |= do_test(fdt, "reef", 8, "", "electro", "ABCI", "Reef", NULL);
+	ret |= do_test(fdt, names, "reef", 4, "", "reef", "ABCA", "Reef", NULL);
+	ret |= do_test(fdt, names, "reef", 5, "", "reef", "ABCA", "Reef", NULL);
+	ret |= do_test(fdt, names, "reef", 8, "", "electro", "ABCI", "Reef",
+		       NULL);
 
 	/* white label should provide correct brand code and signature ID */
-	ret |= do_test(fdt, "coral", 82, "", "whitetip2", "SHAQ", "Coral",
+	ret |= do_test(fdt, names, "coral", 82, "", "whitetip2", "SHAQ",
+		       "Coral", NULL);
+	ret |= do_test(fdt, names, "coral", 78, "", "whitetip", NULL, "Coral",
 		       NULL);
-	ret |= do_test(fdt, "coral", 78, "", "whitetip", NULL, "Coral", NULL);
-	ret |= do_test(fdt, "coral", 78, "whitetip1", "whitetip1", "SHAR",
-		       "Coral", NULL);
-	ret |= do_test(fdt, "coral", 78, "whitetip2", "whitetip2", "SHAQ",
-		       "Coral", NULL);
+	ret |= do_test(fdt, names, "coral", 78, "whitetip1", "whitetip1",
+		       "SHAR", "Coral", NULL);
+	ret |= do_test(fdt, names, "coral", 78, "whitetip2", "whitetip2",
+		       "SHAQ", "Coral", NULL);
 
 	/*
 	 * For blacktip (alternate schema) if we don't provide the whitelabel
 	 * name then we get no brand code or signature ID.
 	 */
-	ret |= do_test(fdt, "coral", 83, "", "blacktip", NULL, "Coral", NULL);
-	ret |= do_test(fdt, "coral", 84, "", "blacktip", NULL, "Coral", NULL);
-	ret |= do_test(fdt, "coral", 85, "", "blacktip", NULL, "Coral", NULL);
+	ret |= do_test(fdt, names, "coral", 83, "", "blacktip", NULL, "Coral",
+		       NULL);
+	ret |= do_test(fdt, names, "coral", 84, "", "blacktip", NULL, "Coral",
+		       NULL);
+	ret |= do_test(fdt, names, "coral", 85, "", "blacktip", NULL, "Coral",
+		       NULL);
 
 	/*
 	 * But when we do provide the whitelabel name (blacktip1, 2) we do get
@@ -158,20 +170,29 @@ int main(int argc, char **argv)
 	 * provides some sort of validation, since the whitelabel name comes
 	 * from VPD.
 	 */
-	ret |= do_test(fdt, "coral", 83, "", "blacktip", NULL, "Coral", NULL);
-	ret |= do_test(fdt, "coral", 84, "blacktip1", "blacktip", "HBBN",
+	ret |= do_test(fdt, names, "coral", 83, "", "blacktip", NULL, "Coral",
+		       NULL);
+	ret |= do_test(fdt, names, "coral", 84, "blacktip1", "blacktip", "HBBN",
 		       "Coral", "blacktip1");
-	ret |= do_test(fdt, "coral", 85, "blacktip2", "blacktip", "HBBO",
+	ret |= do_test(fdt, names, "coral", 85, "blacktip2", "blacktip", "HBBO",
 		       "Coral", "blacktip2");
 
 	/* Without an SMBIOS name we should fail */
-	ret |= do_test(fdt, NULL, 61, "", NULL, NULL, NULL, NULL);
+	ret |= do_test(fdt, names, NULL, 61, "", NULL, NULL, NULL, NULL);
 
 	/* Invalid SKU ID */
-	ret |= do_test(fdt, "coral", 255, "", NULL, NULL, NULL, NULL);
+	ret |= do_test(fdt, names, "coral", 255, "", NULL, NULL, NULL, NULL);
 
 	/* Invalid platform name */
-	ret |= do_test(fdt, "bad", 0, "", "sand", "ABCH", "unknown", NULL);
+	ret |= do_test(fdt, names, "bad", 0, "", "sand", "ABCH", "unknown",
+		       NULL);
+
+	/* Platform name that we don't support in the config */
+	ret |= do_test(fdt, "wibble", "pyro", 0, "", NULL, NULL, NULL, NULL);
+
+	/* Empty platform name supports anything */
+	ret |= do_test(fdt, "Reef,Snappy,Sand,bad,,", "pyro", 0, "", "pyro",
+		       "ABCE", "Pyro", NULL);
 
 	if (ret) {
 		fprintf(stdout, "Simple tests failed\n");
