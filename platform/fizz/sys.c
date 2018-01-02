@@ -29,6 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef CONFIG_CROS_CONFIG
+
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
@@ -51,3 +53,4 @@ struct sys_cb fizz_sys_cb = {
 	.sku_number		= &smbios_sysinfo_get_sku_number,
 	.signature_id           = sku_get_signature_id,
 };
+#endif /* CONFIG_CROS_CONFIG */
