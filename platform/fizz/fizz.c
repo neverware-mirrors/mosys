@@ -29,6 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef CONFIG_CROS_CONFIG
+
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -49,47 +51,6 @@
 
 #include "fizz.h"
 
-struct probe_ids {
-	const char *names[2];
-	/**
-	 * Devices with SKU-based mapping should define sku_table,
-	 * otherwise use single_sku.
-	 */
-	struct sku_mapping *sku_table;
-	const struct sku_info single_sku;
-};
-
-#ifdef CONFIG_CROS_CONFIG
-static struct sku_info
-	SKU_FIZZ = { .brand = NULL, .model = "fizz", .chassis = "FIZZ"};
-
-static const struct probe_ids probe_id_list[] = {
-	{ { "Fizz", }, },
-	{ { NULL }, },
-};
-#else
-/* sku_info: brand, model, chassis, customization, data */
-static struct sku_info
-	/* Fizz SKUs */
-	/* TODO(yllin) Fill the brand code when they are assigned. */
-	SKU_KENCH = { .brand = "YXBK", .model = "kench", .chassis = "KENCH"},
-	SKU_TEEMO = { .brand = "PHYB", .model = "teemo", .chassis = "TEEMO"},
-	SKU_SION = { .brand = NULL, .model = "sion", .chassis = "SION"};
-
-/* Reference: b/63820080 */
-static struct sku_mapping fizz_sku_table[] = {
-	{0, &SKU_KENCH},
-	{1, &SKU_TEEMO},
-	{2, &SKU_SION},
-	{SKU_NUMBER_ANY, NULL},
-};
-
-static const struct probe_ids probe_id_list[] = {
-	{ { "Fizz", }, .sku_table = fizz_sku_table },
-	{ { NULL }, },
-};
-#endif /* CONFIG_CROS_CONFIG */
-
 struct platform_cmd *fizz_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
@@ -105,68 +66,6 @@ struct platform_cmd *fizz_sub[] = {
 
 int fizz_probe(struct platform_intf *intf)
 {
-	static int status, probed;
-	const struct probe_ids *pid;
-
-#ifdef CONFIG_CROS_CONFIG
-	static struct sku_info sku_info;
-	int sku_id;
-
-	if (probed)
-		return status;
-	probed = 1;
-
-	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* FRID */
-		if (probe_frid((const char **)pid->names))
-			goto fizz_probe_exit;
-
-		/* SMBIOS */
-		if (probe_smbios(intf, (const char **)pid->names))
-			goto fizz_probe_exit;
-	}
-	return 0;
-
-fizz_probe_exit:
-
-	sku_id = smbios_sysinfo_get_sku_number(intf);
-	if (sku_id == -1) {
-		intf->sku_info = &SKU_FIZZ; /* no SKU id defined for fizz board */
-		status = 1;
-	} else {
-		int ret = cros_config_read_sku_info(intf, "Fizz", &sku_info);
-
-		/* If there was no error, indicate that we found a match */
-		if (!ret) {
-			intf->sku_info = &sku_info;
-			status = 1;
-		}
-	}
-
-	return status;
-#else
-	if (probed)
-		return status;
-
-	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* FRID */
-		if (probe_frid((const char **)pid->names)) {
-			status = 1;
-			goto fizz_probe_exit;
-		}
-
-		/* SMBIOS */
-		if (probe_smbios(intf, (const char **)pid->names)) {
-			status = 1;
-			goto fizz_probe_exit;
-		}
-	}
-	return 0;
-
-fizz_probe_exit:
-	probed = 1;
-
-#ifdef CONFIG_CROS_CONFIG
 	static struct sku_info sku_info;
 	int ret;
 
@@ -179,17 +78,6 @@ fizz_probe_exit:
 	}
 
 	return ret;
-#endif /* CONFIG_CROS_CONFIG */
-
-	/* Update canonical platform name */
-	intf->name = pid->names[0];
-	if (pid->sku_table) {
-		intf->sku_info = sku_find_info(intf, pid->sku_table);
-	} else {
-		intf->sku_info = &pid->single_sku;
-	}
-	return status;
-#endif /* CONFIG_CROS_CONFIG */
 }
 
 /* late setup routine; not critical to core functionality */
@@ -236,3 +124,4 @@ struct platform_intf platform_fizz = {
 	.setup_post	= &fizz_setup_post,
 	.destroy	= &fizz_destroy,
 };
+#endif /* CONFIG_CROS_CONFIG */
