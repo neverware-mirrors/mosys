@@ -124,7 +124,7 @@ fizz_probe_exit:
 	static struct sku_info sku_info;
 	int ret;
 
-	ret = cros_config_read_sku_info(intf, &sku_info);
+	ret = cros_config_read_sku_info(intf, "Fizz", &sku_info);
 
 	/* If there was no error, indicate that we found a match */
 	if (!ret) {

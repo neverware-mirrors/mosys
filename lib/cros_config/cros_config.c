@@ -29,6 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define _GNU_SOURCE
+
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <libfdt.h>
@@ -280,7 +283,28 @@ static int cros_config_lookup_whitelabel(const char *fdt, int *model_nodep,
 	return wl_tag;
 }
 
+/**
+ * string_in_list() - Check if a name is in a comma-separated list
+ *
+ * @name: Name to search for
+ * @list: List of names to search in, separated by a comma
+ * @return true if found, false if not found
+ */
+static bool string_in_list(const char *name, const char *list)
+{
+	const char *p, *end;
+
+	for (p = list; *p; p = end) {
+		end = strchrnul(p, ',');
+		if (!strncmp(name, p, end - p))
+			return true;
+	}
+
+	return false;
+}
+
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
+			  const char *find_platform_names,
 			  const char *find_smbios_name, int find_sku_id,
 			  const char *find_wl_name,
 			  const char **platform_namep)
@@ -293,6 +317,12 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	lprintf(LOG_DEBUG, "%s: Looking up SMBIOS name '%s', SKU ID %d\n",
 		__func__, find_smbios_name ? find_smbios_name : "(null)",
 		find_sku_id);
+	if (find_smbios_name &&
+	    !string_in_list(find_smbios_name, find_platform_names)) {
+		lprintf(LOG_ERR, "%s: Could not locate name '%s' in '%s'\n",
+			__func__, find_smbios_name, find_platform_names);
+		return -1;
+	}
 
 	mapping_node = fdt_path_offset(fdt, "/chromeos/family/mapping");
 	if (mapping_node < 0)
@@ -341,6 +371,7 @@ err:
 }
 
 int cros_config_read_sku_info(struct platform_intf *intf,
+			      const char *find_platform_names,
 			      struct sku_info *sku_info)
 {
 	const char *smbios_name, *platform_name;
@@ -356,10 +387,10 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	if (sku_id == -1)
 		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
 
-	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_id, NULL,
-				    &platform_name);
+	ret = cros_config_setup_sku(fdt, sku_info, find_platform_names,
+				    smbios_name, sku_id, NULL, &platform_name);
 	if (ret) {
-		lprintf(LOG_ERR, "%s: Failed to read master configuration",
+		lprintf(LOG_ERR, "%s: Failed to read master configuration\n",
 			__func__);
 		return -1;
 	}
