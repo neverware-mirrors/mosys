@@ -246,7 +246,6 @@ static int platform_id_cmd(struct platform_intf *intf,
                            struct platform_cmd *in_cmd, int argc, char **argv)
 {
 	struct platform_cmd *cmd;
-	int i;
 
         /* Run every command we can find, avoiding recursion */
 	for (cmd = platform_cmds; cmd->name; cmd++) {
