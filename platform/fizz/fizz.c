@@ -56,13 +56,15 @@ static struct sku_info
 	/* TODO(yllin) Fill the brand code when they are assigned. */
 	SKU_KENCH = { .brand = "YXBK", .model = "kench", .chassis = "KENCH"},
 	SKU_TEEMO = { .brand = "PHYB", .model = "teemo", .chassis = "TEEMO"},
-	SKU_SION = { .brand = "ALRH", .model = "sion", .chassis = "SION"};
+	SKU_SION = { .brand = "ALRH", .model = "sion", .chassis = "SION"},
+	SKU_WUKONG = { .brand = NULL, .model = "wukong", .chassis = "WUKONG"};
 
 /* Reference: b/63820080 */
 static struct sku_mapping fizz_sku_table[] = {
 	{0, &SKU_KENCH},
 	{1, &SKU_TEEMO},
 	{2, &SKU_SION},
+	{3, &SKU_WUKONG},
 	{SKU_NUMBER_ANY, NULL},
 };
 
