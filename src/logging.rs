@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#![allow(non_upper_case_globals)]
+// non_upper_case_globals is for bindings
+// dead_code is for conditional #[cfg(test)] usage of LAST_LOG lock
+#![allow(non_upper_case_globals, dead_code)]
 
 use std;
 use std::error::Error;
@@ -23,14 +25,13 @@ lazy_static! {
 ///
 /// The enum members are the various log levels defined in the C enum in mosys/log.h. Should be
 /// kept in sync.
-#[allow(dead_code)]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Log {
     Emerg,   // system is unusable
     Alert,   // action must be taken immediately
     Crit,    // critical conditions
     Err,     // error conditions
-    Warning, // warning conditions */
+    Warning, // warning conditions
     Notice,  // normal but significant condition
     Info,    // informational messages
     Debug,   // debug-level messages
@@ -41,7 +42,7 @@ impl Log {
     /// Initialize the logging system. Exactly one call to drop() is expected for every call to
     /// this function.
     pub fn init(prog_name: &str, threshold: Log) -> Result {
-        let prog_name_cstr = CString::new(prog_name).unwrap().as_ptr();
+        let prog_name_cstr = CString::new(prog_name).unwrap();
         let threshold_cenum = Log::renum_to_cenum(threshold);
         let mut ret: i32 = 0;
         let mut m = INSTANCES.lock().unwrap();
@@ -51,7 +52,7 @@ impl Log {
             // Safe because function doesn't mutate passed pointers and strings are null
             // terminated.
             unsafe {
-                ret = mosys_log_init(prog_name_cstr, threshold_cenum, ptr::null_mut());
+                ret = mosys_log_init(prog_name_cstr.as_ptr(), threshold_cenum, ptr::null_mut());
             }
         }
 
@@ -78,7 +79,11 @@ impl Log {
             lprintf(threshold_cenum, message_cstring.as_ptr());
         }
 
-        *LAST_LOG.lock().unwrap() = message.to_string();
+        #[cfg(test)]
+        {
+            *LAST_LOG.lock().unwrap() = message.to_string();
+        }
+
         Ok(())
     }
 

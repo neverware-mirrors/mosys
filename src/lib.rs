@@ -10,8 +10,10 @@ mod bindings;
 mod logging;
 
 use std::error::Error;
+use std::ffi::{CString, NulError};
 use std::fmt;
 use std::io;
+use std::ptr::null;
 use std::sync::Mutex;
 
 use bindings::*;
@@ -29,6 +31,9 @@ lazy_static! {
 pub struct Mosys {
     program: String,
     args: Vec<String>,
+    style: kv_pair_style,
+    single_key: CString,
+    platform_override: CString,
 }
 
 impl Mosys {
@@ -47,6 +52,9 @@ impl Mosys {
         Ok(Mosys {
             program: args.remove(0),
             args: args,
+            style: kv_pair_style_KV_STYLE_VALUE,
+            single_key: CString::default(),
+            platform_override: CString::default(),
         })
     }
 
@@ -55,7 +63,7 @@ impl Mosys {
         print!("{}", opts.usage(&brief));
     }
 
-    pub fn run(&self) -> Result<()> {
+    pub fn run(&mut self) -> Result<()> {
         let mut opts = Options::new();
         opts.optflag("k", "keyvalue", "print data in key=value format");
         opts.optflag("l", "long", "print data in long format");
@@ -93,13 +101,51 @@ impl Mosys {
             Log::inc_threshold();
         }
 
+        if let Some(s) = matches.opt_str("s") {
+            self.style = kv_pair_style_KV_STYLE_SINGLE;
+            self.single_key = CString::new(s)?;
+
+            // Safe because kv_set_single_key stores a const pointer to this string and this
+            // CString will live for the duration of the program.
+            unsafe {
+                kv_set_single_key(self.single_key.as_ptr());
+            }
+        } else if matches.opt_present("k") {
+            self.style = kv_pair_style_KV_STYLE_PAIR;
+        } else if matches.opt_present("l") {
+            self.style = kv_pair_style_KV_STYLE_LONG;
+        }
+
+        // Safe because the parameter is an enum constant
+        unsafe {
+            mosys_set_kv_pair_style(self.style);
+        }
+
         if matches.opt_present("S") {
             // Safe because all resources in print_platforms are under C control
             unsafe {
                 return match print_platforms() {
                     0 => Ok(()),
-                    _ => Err(MosysError::PlatformList),
+                    _ => Err(MosysError::NonzeroPlatformListRet),
                 };
+            }
+        }
+
+        match matches.opt_str("p") {
+            Some(p) => {
+                self.platform_override = CString::new(p)?;
+
+                // Safe because mosys_platform_setup only examines the string pointer during init
+                // and the pointer lives for the duration of the program.
+                unsafe {
+                    mosys_platform_setup(self.platform_override.as_ptr());
+                }
+            }
+            None => {
+                // Safe because mosys_platform_setup uses null to skip override
+                unsafe {
+                    mosys_platform_setup(null());
+                }
             }
         }
 
@@ -129,9 +175,10 @@ pub enum MosysError {
     Flag(getopts::Fail),
     Io(io::Error),
     Log(LogError),
+    Unicode(NulError),
     Help,
     NoCommands,
-    PlatformList,
+    NonzeroPlatformListRet,
 }
 
 impl fmt::Display for MosysError {
@@ -140,9 +187,10 @@ impl fmt::Display for MosysError {
             MosysError::Flag(ref err) => write!(f, "Flag error: {}", err),
             MosysError::Io(ref err) => write!(f, "IO error: {}", err),
             MosysError::Log(ref err) => write!(f, "Logging error: {}", err),
+            MosysError::Unicode(ref err) => write!(f, "Invalid unicode was passed: {}", err),
             MosysError::Help => write!(f, "Requested help"),
             MosysError::NoCommands => write!(f, "No commands given"),
-            MosysError::PlatformList => write!(f, "Platform list failed"),
+            MosysError::NonzeroPlatformListRet => write!(f, "Platform list failed"),
         }
     }
 }
@@ -153,9 +201,10 @@ impl Error for MosysError {
             MosysError::Flag(ref err) => err.description(),
             MosysError::Io(ref err) => err.description(),
             MosysError::Log(ref err) => err.description(),
+            MosysError::Unicode(ref err) => err.description(),
             MosysError::Help => "Requested help",
             MosysError::NoCommands => "No commands given",
-            MosysError::PlatformList => "Platform list failure",
+            MosysError::NonzeroPlatformListRet => "Platform list failure",
         }
     }
 
@@ -164,6 +213,7 @@ impl Error for MosysError {
             MosysError::Flag(ref err) => Some(err),
             MosysError::Io(ref err) => Some(err),
             MosysError::Log(ref err) => Some(err),
+            MosysError::Unicode(ref err) => Some(err),
             _ => None,
         }
     }
@@ -187,6 +237,12 @@ impl From<LogError> for MosysError {
     }
 }
 
+impl From<NulError> for MosysError {
+    fn from(err: NulError) -> MosysError {
+        MosysError::Unicode(err)
+    }
+}
+
 type Result<T> = std::result::Result<T, MosysError>;
 
 #[cfg(test)]
@@ -194,26 +250,28 @@ mod tests {
     use super::*;
     use logging::LAST_LOG;
 
-    // Verbosity is global so this lock allows us to run tests at the same time that won't stomp
-    // on each other.
+    // Verbosity and kv_pair_style are global so this lock allows us to run tests at the same time
+    // that won't stomp on each other.
     lazy_static! {
         static ref LOCK: Mutex<u8> = Mutex::new(0);
     }
 
     #[test]
     fn test_new() {
+        let _test_lock = LOCK.lock().unwrap();
         let args = vec!["someprogname".to_string(), "command".to_string()];
         Mosys::new(args).expect("Instantiation failed");
     }
 
     #[test]
     fn test_help() {
+        let _test_lock = LOCK.lock().unwrap();
         let args = vec![
             "someprogname".to_string(),
             "-h".to_string(),
             "command".to_string(),
         ];
-        let mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(args).unwrap();
 
         match mosys.run() {
             Err(MosysError::Help) => (),
@@ -223,8 +281,9 @@ mod tests {
 
     #[test]
     fn test_version() {
+        let _test_lock = LOCK.lock().unwrap();
         let args = vec!["someprogname".to_string(), "-V".to_string()];
-        let mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(args).unwrap();
         mosys.run().expect("Should have exited Ok(())");
         assert_eq!(
             &**LAST_LOG.lock().unwrap(),
@@ -244,7 +303,7 @@ mod tests {
             "-v".to_string(),
             "command".to_string(),
         ];
-        let mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(args).unwrap();
         mosys.run().expect("Should have exited Ok(())");
         let t = Log::get_threshold();
         assert_eq!(t, Log::Spew, "Should have incremented verbosity to max");
@@ -258,7 +317,7 @@ mod tests {
             "-S".to_string(),
             "-v".to_string(),
         ];
-        let mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(args).unwrap();
         mosys.run().expect("Should have exited Ok(())");
     }
 
@@ -277,12 +336,92 @@ mod tests {
             "command".to_string(),
         ];
 
-        let mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(args).unwrap();
         mosys
             .run()
             .expect("Should have succeeded with getopts arguments");
         let t = Log::get_threshold();
         assert_eq!(t, Log::Warning, "Should not have incremented verbosity");
+    }
+
+    #[test]
+    fn test_single_kv_pair() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = vec![
+            "someprogname".to_string(),
+            "-s".to_string(),
+            "keyname".to_string(),
+            "command".to_string(),
+        ];
+
+        let mut mosys = Mosys::new(args).unwrap();
+        mosys
+            .run()
+            .expect("Should have succeeded with getopts arguments");
+
+        let r;
+
+        unsafe {
+            r = mosys_get_kv_pair_style();
+        }
+
+        assert_eq!(
+            r,
+            kv_pair_style_KV_STYLE_SINGLE,
+            "Should have change kv_pair_style"
+        );
+    }
+
+    #[test]
+    fn test_long_kv_pair() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = vec![
+            "someprogname".to_string(),
+            "-l".to_string(),
+            "command".to_string(),
+        ];
+
+        let mut mosys = Mosys::new(args).unwrap();
+        mosys
+            .run()
+            .expect("Should have succeeded with getopts arguments");
+        let r;
+
+        unsafe {
+            r = mosys_get_kv_pair_style();
+        }
+
+        assert_eq!(
+            r,
+            kv_pair_style_KV_STYLE_LONG,
+            "Should have change kv_pair_style"
+        );
+    }
+
+    #[test]
+    fn test_pair_kv_pair() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = vec![
+            "someprogname".to_string(),
+            "-k".to_string(),
+            "command".to_string(),
+        ];
+
+        let mut mosys = Mosys::new(args).unwrap();
+        mosys
+            .run()
+            .expect("Should have succeeded with getopts arguments");
+        let r;
+
+        unsafe {
+            r = mosys_get_kv_pair_style();
+        }
+
+        assert_eq!(
+            r,
+            kv_pair_style_KV_STYLE_PAIR,
+            "Should have change kv_pair_style"
+        );
     }
 
     #[test]

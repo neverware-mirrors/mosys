@@ -36,6 +36,7 @@ fn main() {
     let bindings = bindgen::Builder::default()
         .header(wrapper.to_str().unwrap())
         .clang_arg("-Iinclude")
+        .whitelist_function("kv_.*")
         .whitelist_function("log_.*")
         .whitelist_function("lprintf")
         .whitelist_function("lperror")
