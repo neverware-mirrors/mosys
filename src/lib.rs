@@ -93,7 +93,7 @@ impl Mosys {
         }
 
         if matches.opt_present("V") {
-            Log::Warning.log(&format!("{} version {}", &self.program, VERSION))?;
+            Log::Warning.log(&format!("{} version {}\n", &self.program, VERSION))?;
             return Ok(());
         }
 
@@ -287,7 +287,7 @@ mod tests {
         mosys.run().expect("Should have exited Ok(())");
         assert_eq!(
             &**LAST_LOG.lock().unwrap(),
-            &format!("someprogname version {}", env!("CARGO_PKG_VERSION"))
+            &format!("someprogname version {}\n", env!("CARGO_PKG_VERSION"))
         );
     }
 
