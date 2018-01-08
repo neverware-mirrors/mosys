@@ -54,6 +54,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "intf/pci.h"
 #include "lib/android.h"
 #include "mosys/globals.h"
 #include "mosys/ipc_lock.h"

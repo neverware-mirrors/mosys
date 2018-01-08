@@ -36,6 +36,8 @@
 
 #include <inttypes.h>
 
+#include "mosys/platform.h"
+
 struct platform_intf;
 
 typedef int (*pci_callback_t)(struct platform_intf *intf,
