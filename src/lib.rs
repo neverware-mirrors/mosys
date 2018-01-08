@@ -10,10 +10,11 @@ mod bindings;
 mod logging;
 
 use std::error::Error;
-use std::ffi::{CString, NulError};
+use std::ffi::{CStr, CString, NulError};
 use std::fmt;
 use std::io;
 use std::ptr::null;
+use std::str::Utf8Error;
 use std::sync::Mutex;
 
 use bindings::*;
@@ -22,6 +23,7 @@ use logging::{Log, LogError};
 
 const PROG_NAME: &'static str = "mosys";
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const LOCK_TIMEOUT_SECS: i32 = 180;
 
 lazy_static! {
     pub static ref INSTANCES: Mutex<u8> = Mutex::new(0);
@@ -131,22 +133,50 @@ impl Mosys {
             }
         }
 
-        match matches.opt_str("p") {
+        if !matches.opt_present("f") {
+            // Safe because argument and return are primitives. Note: this requires root perms
+            let rc = unsafe { mosys_acquire_big_lock(LOCK_TIMEOUT_SECS) };
+
+            if rc < 0 {
+                Log::Err.log("Acquiring lock failed")?;
+                return Err(MosysError::AcqLockFail);
+            }
+        }
+
+        let platform_interface = match matches.opt_str("p") {
             Some(p) => {
                 self.platform_override = CString::new(p)?;
 
                 // Safe because mosys_platform_setup only examines the string pointer during init
                 // and the pointer lives for the duration of the program.
                 unsafe {
-                    mosys_platform_setup(self.platform_override.as_ptr());
+                    mosys_platform_setup(self.platform_override.as_ptr())
                 }
             }
             None => {
                 // Safe because mosys_platform_setup uses null to skip override
                 unsafe {
-                    mosys_platform_setup(null());
+                    mosys_platform_setup(null())
                 }
             }
+        };
+
+        if platform_interface.is_null() {
+            Log::Err.log("Platform not supported\n")?;
+            return Err(MosysError::PlatformNotSupported);
+        }
+
+        // This is valid so convert it to a regular, mutable reference
+        let platform_interface = unsafe { &mut *platform_interface };
+
+        // Safe because the strings stored on the platform_intf struct are static
+        let platform_name = unsafe { CStr::from_ptr(platform_interface.name).to_str()? };
+        Log::Debug.log(&format!("Platform: {}\n", platform_name))?;
+
+        if matches.opt_present("t") {
+            // Safe because the pointer is guaranteed to be valid at this point
+            unsafe { print_tree(platform_interface) };
+            return Ok(());
         }
 
         let _commands = match matches.free.get(0) {
@@ -175,10 +205,13 @@ pub enum MosysError {
     Flag(getopts::Fail),
     Io(io::Error),
     Log(LogError),
-    Unicode(NulError),
+    NullString(NulError),
+    InvalidUtf8(Utf8Error),
     Help,
     NoCommands,
     NonzeroPlatformListRet,
+    AcqLockFail,
+    PlatformNotSupported,
 }
 
 impl fmt::Display for MosysError {
@@ -187,10 +220,15 @@ impl fmt::Display for MosysError {
             MosysError::Flag(ref err) => write!(f, "Flag error: {}", err),
             MosysError::Io(ref err) => write!(f, "IO error: {}", err),
             MosysError::Log(ref err) => write!(f, "Logging error: {}", err),
-            MosysError::Unicode(ref err) => write!(f, "Invalid unicode was passed: {}", err),
+            MosysError::NullString(ref err) => write!(f, "String with null byte passed: {}", err),
+            MosysError::InvalidUtf8(ref err) => {
+                write!(f, "C string with invalid UTF-8 passed: {}", err)
+            }
             MosysError::Help => write!(f, "Requested help"),
             MosysError::NoCommands => write!(f, "No commands given"),
             MosysError::NonzeroPlatformListRet => write!(f, "Platform list failed"),
+            MosysError::AcqLockFail => write!(f, "Aquiring global, system lock failed"),
+            MosysError::PlatformNotSupported => write!(f, "Platform not supported"),
         }
     }
 }
@@ -201,10 +239,13 @@ impl Error for MosysError {
             MosysError::Flag(ref err) => err.description(),
             MosysError::Io(ref err) => err.description(),
             MosysError::Log(ref err) => err.description(),
-            MosysError::Unicode(ref err) => err.description(),
+            MosysError::NullString(ref err) => err.description(),
+            MosysError::InvalidUtf8(ref err) => err.description(),
             MosysError::Help => "Requested help",
             MosysError::NoCommands => "No commands given",
             MosysError::NonzeroPlatformListRet => "Platform list failure",
+            MosysError::AcqLockFail => "Aquiring global, system lock failed",
+            MosysError::PlatformNotSupported => "Platform not supported",
         }
     }
 
@@ -213,7 +254,8 @@ impl Error for MosysError {
             MosysError::Flag(ref err) => Some(err),
             MosysError::Io(ref err) => Some(err),
             MosysError::Log(ref err) => Some(err),
-            MosysError::Unicode(ref err) => Some(err),
+            MosysError::NullString(ref err) => Some(err),
+            MosysError::InvalidUtf8(ref err) => Some(err),
             _ => None,
         }
     }
@@ -239,7 +281,13 @@ impl From<LogError> for MosysError {
 
 impl From<NulError> for MosysError {
     fn from(err: NulError) -> MosysError {
-        MosysError::Unicode(err)
+        MosysError::NullString(err)
+    }
+}
+
+impl From<Utf8Error> for MosysError {
+    fn from(err: Utf8Error) -> MosysError {
+        MosysError::InvalidUtf8(err)
     }
 }
 
@@ -259,7 +307,13 @@ mod tests {
     #[test]
     fn test_new() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec!["someprogname".to_string(), "command".to_string()];
+        let args = vec![
+            "someprogname".to_string(),
+            "-f".to_string(),
+            "-p".to_string(),
+            "Link".to_string(),
+            "command".to_string(),
+        ];
         Mosys::new(args).expect("Instantiation failed");
     }
 
@@ -276,6 +330,37 @@ mod tests {
         match mosys.run() {
             Err(MosysError::Help) => (),
             _ => panic!("Should have returned help error code"),
+        }
+    }
+
+    /// This test will always fail as expected when not run as root (as tests should never be).
+    #[test]
+    fn test_lock_fail() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = vec!["someprogname".to_string(), "command".to_string()];
+        let mut mosys = Mosys::new(args).unwrap();
+
+        match mosys.run() {
+            Err(MosysError::AcqLockFail) => (),
+            _ => panic!("Should have failed to acquire lock when not running as root"),
+        }
+    }
+
+    #[test]
+    fn test_platform_not_supported() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = vec![
+            "someprogname".to_string(),
+            "-f".to_string(),
+            "-p".to_string(),
+            "nonexistant_platform".to_string(),
+            "command".to_string(),
+        ];
+        let mut mosys = Mosys::new(args).unwrap();
+
+        match mosys.run() {
+            Err(MosysError::PlatformNotSupported) => (),
+            _ => panic!("Should have failed to find a platform"),
         }
     }
 
@@ -301,6 +386,9 @@ mod tests {
             "-v".to_string(),
             "-v".to_string(),
             "-v".to_string(),
+            "-f".to_string(),
+            "-p".to_string(),
+            "Link".to_string(),
             "command".to_string(),
         ];
         let mut mosys = Mosys::new(args).unwrap();
@@ -332,7 +420,7 @@ mod tests {
             "-t".to_string(),
             "-f".to_string(),
             "-p".to_string(),
-            "platformname".to_string(),
+            "Link".to_string(),
             "command".to_string(),
         ];
 
@@ -349,6 +437,9 @@ mod tests {
         let _test_lock = LOCK.lock().unwrap();
         let args = vec![
             "someprogname".to_string(),
+            "-f".to_string(),
+            "-p".to_string(),
+            "Link".to_string(),
             "-s".to_string(),
             "keyname".to_string(),
             "command".to_string(),
@@ -377,6 +468,9 @@ mod tests {
         let _test_lock = LOCK.lock().unwrap();
         let args = vec![
             "someprogname".to_string(),
+            "-f".to_string(),
+            "-p".to_string(),
+            "Link".to_string(),
             "-l".to_string(),
             "command".to_string(),
         ];
@@ -403,6 +497,9 @@ mod tests {
         let _test_lock = LOCK.lock().unwrap();
         let args = vec![
             "someprogname".to_string(),
+            "-f".to_string(),
+            "-p".to_string(),
+            "Link".to_string(),
             "-k".to_string(),
             "command".to_string(),
         ];

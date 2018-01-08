@@ -41,6 +41,7 @@ fn main() {
         .whitelist_function("lprintf")
         .whitelist_function("lperror")
         .whitelist_function(".*platform.*")
+        .whitelist_function("print_.*")
         .whitelist_function("mosys_.*")
         .generate()
         .expect("Unable to generate bindings");
