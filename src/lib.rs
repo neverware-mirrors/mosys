@@ -84,8 +84,8 @@ impl Mosys {
             "specify platform id (bypass auto-detection)",
             "[id]",
         );
-        opts.optflag("h", "help", "print this help\n");
-        opts.optflag("V", "version", "print version\n");
+        opts.optflag("h", "help", "print this help");
+        opts.optflag("V", "version", "print version");
 
         let matches = opts.parse(&self.args)?;
 
@@ -95,7 +95,7 @@ impl Mosys {
         }
 
         if matches.opt_present("V") {
-            Log::Warning.log(&format!("{} version {}\n", &self.program, VERSION))?;
+            Log::Warning.logln(&format!("{} version {}", &self.program, VERSION))?;
             return Ok(());
         }
 
@@ -138,7 +138,7 @@ impl Mosys {
             let rc = unsafe { mosys_acquire_big_lock(LOCK_TIMEOUT_SECS) };
 
             if rc < 0 {
-                Log::Err.log("Acquiring lock failed")?;
+                Log::Err.logln("Acquiring lock failed")?;
                 return Err(MosysError::AcqLockFail);
             }
         }
@@ -162,7 +162,7 @@ impl Mosys {
         };
 
         if platform_interface.is_null() {
-            Log::Err.log("Platform not supported\n")?;
+            Log::Err.logln("Platform not supported")?;
             return Err(MosysError::PlatformNotSupported);
         }
 
@@ -171,7 +171,7 @@ impl Mosys {
 
         // Safe because the strings stored on the platform_intf struct are static
         let platform_name = unsafe { CStr::from_ptr(platform_interface.name).to_str()? };
-        Log::Debug.log(&format!("Platform: {}\n", platform_name))?;
+        Log::Debug.logln(&format!("Platform: {}", platform_name))?;
 
         if matches.opt_present("t") {
             // Safe because the pointer is guaranteed to be valid at this point
@@ -187,7 +187,7 @@ impl Mosys {
             }
         };
 
-        Log::Debug.log("Completed successfully\n")?;
+        Log::Debug.logln("Completed successfully")?;
         Ok(())
     }
 }

@@ -87,6 +87,10 @@ impl Log {
         Ok(())
     }
 
+    pub fn logln(self, message: &str) -> Result {
+        self.log(&format!("{}\n", message))
+    }
+
     /// Get the current threshold for the logging system.
     pub fn get_threshold() -> Log {
         // Safe because log levels are always >0
