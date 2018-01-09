@@ -149,15 +149,11 @@ impl Mosys {
 
                 // Safe because mosys_platform_setup only examines the string pointer during init
                 // and the pointer lives for the duration of the program.
-                unsafe {
-                    mosys_platform_setup(self.platform_override.as_ptr())
-                }
+                unsafe { mosys_platform_setup(self.platform_override.as_ptr()) }
             }
             None => {
                 // Safe because mosys_platform_setup uses null to skip override
-                unsafe {
-                    mosys_platform_setup(null())
-                }
+                unsafe { mosys_platform_setup(null()) }
             }
         };
 
@@ -295,6 +291,10 @@ type Result<T> = std::result::Result<T, MosysError>;
 
 #[cfg(test)]
 mod tests {
+    macro_rules! vec_of_strings {
+        ($($x:expr),*) => (vec![$($x.to_string()),*]);
+    }
+
     use super::*;
     use logging::LAST_LOG;
 
@@ -307,24 +307,14 @@ mod tests {
     #[test]
     fn test_new() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec![
-            "someprogname".to_string(),
-            "-f".to_string(),
-            "-p".to_string(),
-            "Link".to_string(),
-            "command".to_string(),
-        ];
+        let args = vec_of_strings!["someprogname", "-f", "-p", "Link", "command"];
         Mosys::new(args).expect("Instantiation failed");
     }
 
     #[test]
     fn test_help() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec![
-            "someprogname".to_string(),
-            "-h".to_string(),
-            "command".to_string(),
-        ];
+        let args = vec_of_strings!["someprogname", "-h", "command"];
         let mut mosys = Mosys::new(args).unwrap();
 
         match mosys.run() {
@@ -337,7 +327,7 @@ mod tests {
     #[test]
     fn test_lock_fail() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec!["someprogname".to_string(), "command".to_string()];
+        let args = vec_of_strings!["someprogname", "command"];
         let mut mosys = Mosys::new(args).unwrap();
 
         match mosys.run() {
@@ -349,12 +339,12 @@ mod tests {
     #[test]
     fn test_platform_not_supported() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec![
-            "someprogname".to_string(),
-            "-f".to_string(),
-            "-p".to_string(),
-            "nonexistant_platform".to_string(),
-            "command".to_string(),
+        let args = vec_of_strings![
+            "someprogname",
+            "-f",
+            "-p",
+            "nonexistant_platform",
+            "command"
         ];
         let mut mosys = Mosys::new(args).unwrap();
 
@@ -367,7 +357,7 @@ mod tests {
     #[test]
     fn test_version() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec!["someprogname".to_string(), "-V".to_string()];
+        let args = vec_of_strings!["someprogname", "-V"];
         let mut mosys = Mosys::new(args).unwrap();
         mosys.run().expect("Should have exited Ok(())");
         assert_eq!(
@@ -379,17 +369,17 @@ mod tests {
     #[test]
     fn test_verbosity() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec![
-            "someprogname".to_string(),
-            "-v".to_string(),
-            "-v".to_string(),
-            "-v".to_string(),
-            "-v".to_string(),
-            "-v".to_string(),
-            "-f".to_string(),
-            "-p".to_string(),
-            "Link".to_string(),
-            "command".to_string(),
+        let args = vec_of_strings![
+            "someprogname",
+            "-v",
+            "-v",
+            "-v",
+            "-v",
+            "-v",
+            "-f",
+            "-p",
+            "Link",
+            "command"
         ];
         let mut mosys = Mosys::new(args).unwrap();
         mosys.run().expect("Should have exited Ok(())");
@@ -400,11 +390,7 @@ mod tests {
     #[test]
     fn test_platform_list() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec![
-            "someprogname".to_string(),
-            "-S".to_string(),
-            "-v".to_string(),
-        ];
+        let args = vec_of_strings!["someprogname", "-S", "-v"];
         let mut mosys = Mosys::new(args).unwrap();
         mosys.run().expect("Should have exited Ok(())");
     }
@@ -412,16 +398,16 @@ mod tests {
     #[test]
     fn test_misc_args() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec![
-            "someprogname".to_string(),
-            "-s".to_string(),
-            "keyname".to_string(),
-            "-l".to_string(),
-            "-t".to_string(),
-            "-f".to_string(),
-            "-p".to_string(),
-            "Link".to_string(),
-            "command".to_string(),
+        let args = vec_of_strings![
+            "someprogname",
+            "-s",
+            "keyname",
+            "-l",
+            "-t",
+            "-f",
+            "-p",
+            "Link",
+            "command"
         ];
 
         let mut mosys = Mosys::new(args).unwrap();
@@ -435,14 +421,14 @@ mod tests {
     #[test]
     fn test_single_kv_pair() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec![
-            "someprogname".to_string(),
-            "-f".to_string(),
-            "-p".to_string(),
-            "Link".to_string(),
-            "-s".to_string(),
-            "keyname".to_string(),
-            "command".to_string(),
+        let args = vec_of_strings![
+            "someprogname",
+            "-f",
+            "-p",
+            "Link",
+            "-s",
+            "keyname",
+            "command"
         ];
 
         let mut mosys = Mosys::new(args).unwrap();
@@ -466,14 +452,7 @@ mod tests {
     #[test]
     fn test_long_kv_pair() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec![
-            "someprogname".to_string(),
-            "-f".to_string(),
-            "-p".to_string(),
-            "Link".to_string(),
-            "-l".to_string(),
-            "command".to_string(),
-        ];
+        let args = vec_of_strings!["someprogname", "-f", "-p", "Link", "-l", "command"];
 
         let mut mosys = Mosys::new(args).unwrap();
         mosys
@@ -495,14 +474,7 @@ mod tests {
     #[test]
     fn test_pair_kv_pair() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec![
-            "someprogname".to_string(),
-            "-f".to_string(),
-            "-p".to_string(),
-            "Link".to_string(),
-            "-k".to_string(),
-            "command".to_string(),
-        ];
+        let args = vec_of_strings!["someprogname", "-f", "-p", "Link", "-k", "command"];
 
         let mut mosys = Mosys::new(args).unwrap();
         mosys
