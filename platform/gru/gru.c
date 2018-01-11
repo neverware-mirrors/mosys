@@ -49,6 +49,7 @@ enum gru_boards {
 	BOB,
 	GRU,
 	KEVIN,
+	RAINIER,
 	SCARLET
 };
 
@@ -63,6 +64,7 @@ struct gru_probe_id {
 	[BOB]		= { "Bob", "google,bob-rev", 1, { .brand = "ASUO" } },
 	[GRU]		= { "Gru", "google,gru-rev", 1, { .brand = "LOGA" } },
 	[KEVIN]		= { "Kevin", "google,kevin-rev", 1, { .brand = "SMAJ" } },
+	[RAINIER]	= { "Rainier", "google,rainier-rev", 1 },
 	[SCARLET]	= { "Scarlet", "google,scarlet-rev", 1, { .brand = "DXZT" } },
 };
 
