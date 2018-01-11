@@ -65,7 +65,7 @@ int kahlee_probe(struct platform_intf *intf)
         static struct sku_info sku_info;
         int ret;
 
-        ret = cros_config_read_sku_info(intf, "Kahlee", &sku_info);
+        ret = cros_config_read_sku_info(intf, "Kahlee,Grunt", &sku_info);
 
         /* If there was no error, indicate that we found a match */
         if (!ret) {
