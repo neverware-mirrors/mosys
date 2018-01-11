@@ -501,24 +501,6 @@ struct platform_cmd sensor_set_cmds[] = {
 		.type	= ARG_TYPE_SETTER,
 		.arg	= { .func = sensor_set_fantach_cmd }
 	},
-#if 0
-	{
-		.name	= "thermal",
-		.desc	= "Modify thermal parameters",
-		.usage	= "<name> <parameter> <value>",
-		.type	= ARG_TYPE_SETTER,
-		.arg	= { .func = sensor_set_thermal_cmd }
-	},
-#endif
-#if 0
-	{
-		.name	= "voltage",
-		.desc	= "Modify voltage parameters",
-		.usage	= "<name> <parameter> <value>",
-		.type	= ARG_TYPE_SETTER,
-		.arg	= { .func = sensor_set_voltage_cmd }
-	},
-#endif
 	{ NULL }
 };
 

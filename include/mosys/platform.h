@@ -42,13 +42,6 @@ struct kv_pair;
 struct gpio_map;
 struct nonspd_mem_info;
 
-#if 0
-/* disabled via build option for mosys standalone binary */
-#ifndef MOSYS_AS_LIBRARY
-#define MOSYS_AS_LIBRARY 1
-#endif
-#endif
-
 #define MOSYS_DATA_ROOT		"/var/log/mosysdata"
 
 /* defined platform types */
@@ -91,12 +84,6 @@ struct mmio_intf;
 struct io_intf;
 struct smi_intf;
 struct i2c_intf;
-struct amb_intf;
-struct sp_intf;
-struct msr_intf;
-struct mce_intf;
-struct edac_intf;
-struct cpuid_intf;
 
 struct platform_op {
 	struct pci_intf *pci;		/* pci interface */
@@ -104,12 +91,6 @@ struct platform_op {
 	struct io_intf *io;		/* io interface */
 	struct smi_intf *smi;		/* smi interface */
 	struct i2c_intf *i2c;		/* i2c interface */
-	struct amb_intf *amb;		/* amb interface */
-	struct sp_intf *sp;		/* sensorpath interface */
-	struct msr_intf *msr;		/* msr interface */
-	struct mce_intf *mce;		/* mcelog interface */
-	struct edac_intf *edac;		/* edac interface */
-	struct cpuid_intf *cpuid;	/* cpuid instruction interface */
 	struct fru_intf *fru;		/* FRU interface */
 	struct sched_intf *sched;	/* process scheduler interface */
 };
@@ -302,9 +283,6 @@ struct vpd_cb {
 };
 
 /* system information callbacks */
-struct mce;
-struct edac_event;
-struct gtune_var;
 struct sys_cb {
 	/* methods useful for probing */
 	char *(*vendor)(struct platform_intf *intf);
@@ -341,32 +319,6 @@ struct sys_cb {
 
 	/* custom reset function */
 	int (*reset)(struct platform_intf *intf);
-
-#if 0
-	int (*tune_settings)(struct platform_intf *intf, int argc, char **argv);
-	/* Machine Check Exceptions */
-	int (*mce_handler)(struct platform_intf *intf, struct mce *mce);
-	int (*mce_printall)(struct platform_intf *intf);
-	/* Error Detection And Correction */
-	int (*edac_setup)(struct platform_intf *intf);
-	int (*edac_handler)(struct platform_intf *intf,
-	                    struct edac_event *event);
-#endif
-#if 0
-	/* FIXME: these should go into another set of callbacks, or something */
-	/* CPU enumeration and information */
-	int (*get_cores_per_socket)(struct platform_intf *intf);
-	int (*get_logical_cores_enabled)(struct platform_intf *intf);
-	int (*get_physical_cores_enabled)(struct platform_intf *intf);
-	int (*get_sockets_enabled)(struct platform_intf *intf);
-	int (*query_socket)(struct platform_intf *intf, int num);
-	uint8_t (*get_microcode)(struct platform_intf *intf, int cpu);
-//	enum cpu_types (*get_cpu_type)(struct platform_intf *intf, int node);
-#endif
-#if 0
-	/* Tunable variable list */
-	struct gtune_var **gtune_var_list;
-#endif
 };
 
 /* flash callbacks */
