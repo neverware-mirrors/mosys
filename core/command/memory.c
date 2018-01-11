@@ -94,46 +94,10 @@ static int memory_print_speed(struct platform_intf *intf,
 	return rc;
 }
 
-/* SMBIOS-based DIMM information */
-//extern struct platform_cmd smbios_memory_dimm_cmds[];
-
 /* SPD information */
 extern struct platform_cmd memory_spd_cmds[];
 
-/* AMB information */
-//extern struct platform_cmd memory_amb_cmds[];
-
-/* Error information */
-//extern struct platform_cmd memory_error_cmds[];
-
-/* Address conversion */
-//extern struct platform_cmd memory_convert_cmds[];
-
 struct platform_cmd memory_print_cmds[] = {
-#if 0
-	{
-		.name	= "all",
-		.desc	= "Print all general info",
-		.usage	= "print all <dimmN>",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = print_all }
-	},
-	{
-		.name	= "id",
-		.desc	= "Print module ID info",
-		.usage	= "print id <dimmN>",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = print_module_id }
-	},
-#endif
-#if 0
-	{
-		.name	= "pop",
-		.desc	= "Population information",
-		.type	= ARG_TYPE_SUB,
-		.arg	= { .sub = print_memory_population }
-	},
-#endif
 	{
 		.name	= "speed",
 		.desc	= "Print Memory Speed",
@@ -145,38 +109,6 @@ struct platform_cmd memory_print_cmds[] = {
 };
 
 struct platform_cmd memory_cmds[] = {
-#if 0
-	{
-		.name	= "smbios",
-		.desc	= "SMBIOS-provided information",
-		.type	= ARG_TYPE_SUB,
-		.arg	= { .sub = smbios_memory_dimm_cmds }
-	},
-#endif
-#if 0
-	{
-		.name	= "error",
-		.desc	= "Error information",
-		.type	= ARG_TYPE_SUB,
-		.arg	= { .sub = memory_error_cmds }
-	},
-#endif
-#if 0
-	{
-		.name	= "amb",
-		.desc	= "Raw AMB information",
-		.type	= ARG_TYPE_SUB,
-		.arg	= { .sub = memory_amb_cmds }
-	},
-#endif
-#if 0
-	{
-		.name	= "convert",
-		.desc	= "Address conversion",
-		.type	= ARG_TYPE_SUB,
-		.arg	= { .sub = memory_convert_cmds }
-	},
-#endif
 	{
 		.name	= "dump",
 		.desc	= "Dump a range of memory",

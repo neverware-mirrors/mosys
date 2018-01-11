@@ -619,14 +619,6 @@ struct platform_cmd eeprom_enet_cmds[] = {
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = eeprom_enet_info_cmd }
 	},
-#if 0
-	{
-		.name	= "write",
-		.desc	= "Write to ethernet controller EEPROM(s)",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = eeprom_enet_write_cmd }
-	},
-#endif
 	{ NULL }
 };
 
