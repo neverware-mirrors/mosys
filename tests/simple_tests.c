@@ -193,6 +193,8 @@ int main(int argc, char **argv)
 	/* Empty platform name supports anything */
 	ret |= do_test(fdt, "Reef,Snappy,Sand,bad,,", "pyro", 0, "", "pyro",
 		       "ABCE", "Pyro", NULL);
+	ret |= do_test(fdt, "Reef,Snappy,Sand,Bad", "Pyro", 0, "", NULL, NULL,
+		       NULL, NULL);
 
 	if (ret) {
 		fprintf(stdout, "Simple tests failed\n");
