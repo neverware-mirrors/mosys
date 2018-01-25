@@ -43,7 +43,7 @@
 		sku-map@0 {
 			reg = <0>;
 			platform-name = "Coral";
-			smbios-name-match = "coral";
+			smbios-name-match = "Coral";
 			/*
 			 * This is just for testing only. It is not correct for
 			 * actual use with coral.
@@ -81,7 +81,7 @@
 		sku-map@1 {
 			reg = <1>;
 			platform-name = "Reef";
-			smbios-name-match = "reef";
+			smbios-name-match = "Reef";
 			/* This is an example! It does not match any real family */
 			simple-sku-map = <
 				0 &basking
@@ -92,25 +92,25 @@
 		sku-map@2 {
 			reg = <2>;
 			platform-name = "Pyro";
-			smbios-name-match = "pyro";
+			smbios-name-match = "Pyro";
 			single-sku = <&pyro>;
 		};
 		sku-map@3 {
 			reg = <3>;
 			platform-name = "Snappy";
-			smbios-name-match = "snappy";
+			smbios-name-match = "Snappy";
 			single-sku = <&snappy>;
 		};
 		sku-map@4 {
 			reg = <4>;
 			platform-name = "Sand";
-			smbios-name-match = "sand";
+			smbios-name-match = "Sand";
 			single-sku = <&sand>;
 		};
 		sku-map@5 {
 			/* Missing platform-name */
 			reg = <5>;
-			smbios-name-match = "bad";
+			smbios-name-match = "Bad";
 			single-sku = <&sand>;
 		};
 	};
