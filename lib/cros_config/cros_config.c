@@ -294,8 +294,7 @@ static bool string_in_list(const char *name, const char *list)
 {
 	const char *p, *end;
 
-
-	for (p = list; *p; p = end + (*end == ',')) {
+	for (p = list; *p; p = end) {
 		end = strchrnul(p, ',');
 		if (!strncmp(name, p, end - p))
 			return true;
@@ -315,9 +314,9 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	int phandle;
 	int target;
 
-	lprintf(LOG_DEBUG, "%s: Looking up SMBIOS name '%s', SKU ID %d, platform names '%s'\n",
+	lprintf(LOG_DEBUG, "%s: Looking up SMBIOS name '%s', SKU ID %d\n",
 		__func__, find_smbios_name ? find_smbios_name : "(null)",
-		find_sku_id, find_platform_names);
+		find_sku_id);
 	if (find_smbios_name &&
 	    !string_in_list(find_smbios_name, find_platform_names)) {
 		lprintf(LOG_ERR, "%s: Could not locate name '%s' in '%s'\n",
