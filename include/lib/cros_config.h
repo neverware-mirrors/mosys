@@ -64,7 +64,8 @@ int cros_config_read_sku_info(struct platform_intf *intf,
  * @find_wl_name: Whitelabel name to look up (this is either a model name or a
  *    whitelabel tag depending on the schema used)
  * @find_sku_id: SKU ID to look up
- * @return: 0 if OK, other value on error
+ * @return: 0 if OK, -ENOENT if @find_platform_names does not contain the SMBIOS
+ * name for this device, or -1 for any other error
  */
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 			  const char *find_platform_names,
