@@ -84,7 +84,7 @@ int spd_total_size(uint8_t *data)
 
 		tmp = ((data[0] & __mask(6, 4)) >> 4);
 		if (tmp == 0x1) {
-			size = 256;
+			size = SPD_DEFAULT_LENGTH;
 		} else {
 			lprintf(LOG_DEBUG, "Undefined SPD size, "
 					   "assuming %d bytes\n",
@@ -95,7 +95,7 @@ int spd_total_size(uint8_t *data)
 		break;
 	}
 	case SPD_DRAM_TYPE_DDR4:
-	  size = 512;
+	  size = SPD_DDR4_LENGTH;
 	  break;
 	default:
 		lprintf(LOG_ERR, "SPD type %02x not supported\n", data[2]);

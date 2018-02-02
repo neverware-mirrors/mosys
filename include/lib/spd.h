@@ -38,10 +38,21 @@
 #include <valstr.h>
 
 #include "intf/i2c.h"
+#include "lib/ddr4.h"
 
 #define SPD_READ          0
 #define SPD_WRITE         1
-#define SPD_MAX_LENGTH    512
+
+#define SPD_DEFAULT_LENGTH 256
+#define SPD_DDR4_LENGTH    512
+#define SPD_MAX_LENGTH     SPD_DDR4_LENGTH
+
+#define SPD_DEFAULT_PART_OFF 128
+#define SPD_DDR4_PART_OFF    DDR4_SPD_REG_MODULE_PART_NUM_0
+
+#define SPD_DEFAULT_PART_LEN 18
+#define SPD_DDR4_PART_LEN    SPD_DEFAULT_PART_LEN
+
 #define SPD_PAGE_0        (0x6C >> 1)
 #define SPD_PAGE_1        (0x6E >> 1)
 

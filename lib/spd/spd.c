@@ -240,31 +240,67 @@ struct spd_device *new_spd_device(struct platform_intf *intf, int dimm)
 	return spd;
 }
 
-static int find_spd_by_part_number(struct platform_intf *intf, int dimm,
-				   uint8_t *spd, uint32_t num_spd)
+enum {
+	SPD_INFO_DDR4,
+	SPD_INFO_DEFAULT,
+};
+
+static const struct spd_info {
+	size_t spd_len;
+	uint32_t spd_part_off;
+	size_t spd_part_len;
+} spd_mem_info[] = {
+	[SPD_INFO_DDR4] = {
+		.spd_len = SPD_DDR4_LENGTH,
+		.spd_part_off = SPD_DDR4_PART_OFF,
+		.spd_part_len = SPD_DDR4_PART_LEN,
+	},
+	[SPD_INFO_DEFAULT] = {
+		.spd_len = SPD_DEFAULT_LENGTH,
+		.spd_part_off = SPD_DEFAULT_PART_OFF,
+		.spd_part_len = SPD_DEFAULT_PART_LEN,
+	},
+};
+
+static ssize_t find_spd_by_part_number(struct platform_intf *intf, int dimm,
+				       uint8_t *spd, size_t spd_file_len)
 {
-	char *smbios_part_num;
-	uint8_t i;
+	const char *smbios_part_num;
+	ssize_t ret = -1, offset;
+	uint8_t i, num_spd;
 	uint8_t *ptr;
-	struct smbios_table table;
+	struct smbios_table *table = mosys_malloc(sizeof(*table));
+	const struct spd_info *info = &spd_mem_info[SPD_INFO_DEFAULT];
 
 	lprintf(LOG_DEBUG, "Use SMBIOS type 17 to get memory information\n");
-	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, table,
 			      SMBIOS_LEGACY_ENTRY_BASE,
 			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
 		lprintf(LOG_DEBUG, "Can't find smbios type17\n");
-		return -1;
+		goto out;
 	}
-	smbios_part_num = table.string[table.data.mem_device.part_number];
+
+	if (table->data.mem_device.type == SMBIOS_MEMORY_TYPE_DDR4)
+		info =  &spd_mem_info[SPD_INFO_DDR4];
+
+	smbios_part_num = table->string[table->data.mem_device.part_number];
+
+	num_spd = spd_file_len / info->spd_len;
 
 	for (i = 0; i < num_spd; i++) {
-		ptr = (spd + i * 256);
-		if (!memcmp(smbios_part_num, ptr + 128, 18)) {
-			lprintf(LOG_DEBUG, "found %x\n", i);
-			return i;
+		offset = i * info->spd_len;
+		ptr = spd + offset;
+		if (!memcmp(smbios_part_num, ptr + info->spd_part_off,
+			    info->spd_part_len)) {
+			lprintf(LOG_DEBUG, "Using memory config %u\n", i);
+			ret = offset;
+			break;
 		}
 	}
-	return -1;
+
+out:
+	free(table);
+	return ret;
 }
 
 int spd_read_from_cbfs(struct platform_intf *intf,
@@ -272,32 +308,23 @@ int spd_read_from_cbfs(struct platform_intf *intf,
 			uint8_t *spd, size_t fw_size, uint8_t *fw)
 {
 	struct cbfs_file *file;
-	int spd_index = 0;
-	uint32_t spd_offset, num_spd;
+	size_t file_len;
+	ssize_t spd_offset;
 	uint8_t *ptr;
-	int ret = 0;
 
-	if ((file = cbfs_find("spd.bin", fw, fw_size)) == NULL) {
-		ret = -1;
-		goto out;
-	}
+	if ((file = cbfs_find("spd.bin", fw, fw_size)) == NULL)
+		return -1;
 
 	ptr = (uint8_t *)file + ntohl(file->offset);
-	num_spd = ntohl(file->len) / 256;
-	spd_index = find_spd_by_part_number(intf, module, ptr, num_spd);
-	if (spd_index < 0) {
-		ret = -1;
-		goto out;
-	}
+	file_len = ntohl(file->len);
 
-	MOSYS_CHECK((spd_index * 256) + reg + num_bytes_to_read <=
-							num_spd * 256);
-	spd_offset = ntohl(file->offset) + (spd_index * 256);
+	spd_offset = find_spd_by_part_number(intf, module, ptr, file_len);
+	if (spd_offset < 0)
+		return -1;
 
-	lprintf(LOG_DEBUG, "Using memory config %u\n", spd_index);
-	memcpy(spd, (void *)file + spd_offset + reg, num_bytes_to_read);
+	MOSYS_CHECK(spd_offset + reg + num_bytes_to_read <= file_len);
 
-	ret = num_bytes_to_read;
-out:
-	return ret;
+	memcpy(spd, ptr + spd_offset + reg, num_bytes_to_read);
+
+	return num_bytes_to_read;
 }
