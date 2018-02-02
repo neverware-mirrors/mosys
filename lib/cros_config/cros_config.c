@@ -37,12 +37,14 @@
 #include <string.h>
 #include <libfdt.h>
 
+#include "mosys/alloc.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "lib/cros_config.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
+#include "lib/string.h"
 
 static int cros_config_fdt_err(const char *where, int err)
 {
@@ -224,58 +226,34 @@ static int follow_phandle(const char *fdt, int phandle, int *targetp)
  * cros_config_lookup_whitelabel() - Look up whitelabel information
  *
  * This checks whether the model is a zero-touch whitelabel and if so, checks
- * the VPD for the correct whitelabel name. It updates @model_nodep if needed
- * and returns the whitelabel tag node if needed.
+ * the VPD for the correct whitelabel name.
  *
  * @fdt: Device tree blob
- * @model_nodep: On entry this is the model node to be checked. If this is a
- *    whitelabel model then on exit it is updated to the specific whitelabel
- *    model node if this is different.
+ * @model_nodep: On entry this is the model node to be checked.
  * @find_wl_name: Whitelabel name to search for. If NULL then the value is read
- *    from the VPD using sku_get_customization_from_vpd()
- * @return -1 on error, 0 if there is no whitelabel tag needed (but the
- *    *model_nodep may be updated), or the whitelabel tag node offset (>0) for
- *    if this is a whitelabel using the alternatie schema
+ *    from the VPD using sku_get_whitelabel_from_vpd()
+ * @return -1 on error, or the whitelabel tag node offset (>0) if this is a
+ *    whitelabel, or 0 on lookup failure.
  */
-static int cros_config_lookup_whitelabel(const char *fdt, int *model_nodep,
+static int cros_config_lookup_whitelabel(const char *fdt, int model_nodep,
 					 const char *find_wl_name)
 {
 	int firmware_node;
 	int wl_tags_node;
 	int wl_tag = 0;
 
-	firmware_node = fdt_subnode_offset(fdt, *model_nodep, "firmware");
-	if (firmware_node >= 0) {
-		if (fdt_getprop(fdt, firmware_node,
-				"sig-id-in-customization-id", NULL)) {
-			int models_node, wl_model;
+	firmware_node = fdt_subnode_offset(fdt, model_nodep, "firmware");
 
-			if (!find_wl_name)
-				find_wl_name = sku_get_customization_from_vpd();
-			models_node = fdt_path_offset(fdt, "/chromeos/models");
-			wl_model = fdt_subnode_offset(fdt, models_node,
-						      find_wl_name);
-			if (wl_model < 0) {
-				lprintf(LOG_ERR,
-					"Cannot find whitelabel model '%s': for base model %s: %s\n",
-					find_wl_name,
-					fdt_get_name(fdt, *model_nodep, NULL),
-					fdt_strerror(wl_model));
-				return 0;
-			}
-			*model_nodep = wl_model;
-		}
-	}
-	wl_tags_node = fdt_subnode_offset(fdt, *model_nodep, "whitelabels");
+	wl_tags_node = fdt_subnode_offset(fdt, model_nodep, "whitelabels");
 	if (wl_tags_node >= 0) {
 		if (!find_wl_name)
-			find_wl_name = sku_get_customization_from_vpd();
+			find_wl_name = sku_get_whitelabel_from_vpd();
 		wl_tag = fdt_subnode_offset(fdt, wl_tags_node, find_wl_name);
 		if (wl_tag < 0) {
 			lprintf(LOG_ERR,
 				"Cannot find whitelabel tag '%s' for model '%s': %s (check VPD customization ID)\n",
 				find_wl_name,
-				fdt_get_name(fdt, *model_nodep, NULL),
+				fdt_get_name(fdt, model_nodep, NULL),
 				fdt_strerror(wl_tag));
 			return 0;
 		}
@@ -315,6 +293,7 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	int wl_tag_node;
 	int phandle;
 	int target;
+	char *customization;
 
 	lprintf(LOG_DEBUG, "%s: Looking up SMBIOS name '%s', SKU ID %d, platform names '%s'\n",
 		__func__, find_smbios_name ? find_smbios_name : "(null)",
@@ -345,17 +324,29 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	 * If this is a whitelabel model, select the correct model or
 	 * whitelabel tag.
 	 */
-	wl_tag_node = cros_config_lookup_whitelabel(fdt, &model_node,
+	wl_tag_node = cros_config_lookup_whitelabel(fdt, model_node,
 						    find_wl_name);
 	if (wl_tag_node < 0) {
 		goto err;
 	} else if (wl_tag_node) {
-		/* Alternate schema stored whitelabel info in a special place */
-		sku_info->signature_id = fdt_get_name(fdt, wl_tag_node, NULL);
+		/* Whitelabel info is in whitelabels table. */
+		char *sig_id_gen = (char*)mosys_malloc(128);
+
+		if (!sig_id_gen) {
+			lprintf(LOG_ERR,
+				"Could not allocate sig_id_gen string\n");
+			return -ENOMEM;
+		}
+
+		snprintf(sig_id_gen, 128, "%s-%s",
+			 fdt_get_name(fdt, model_node, NULL),
+			 fdt_get_name(fdt, wl_tag_node, NULL));
+		sku_info->signature_id = sig_id_gen;
+
 		sku_info->brand = fdt_getprop(fdt, wl_tag_node, "brand-code",
 					      NULL);
 	} else {
-		/* Not a whitelabel, or uses standard schema */
+		/* Not a whitelabel */
 		sku_info->signature_id = fdt_get_name(fdt, model_node, NULL);
 		sku_info->brand = fdt_getprop(fdt, target, "brand-code", NULL);
 		if (!sku_info->brand)
@@ -363,6 +354,16 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 						      "brand-code", NULL);
 	}
 	sku_info->model = fdt_get_name(fdt, model_node, NULL);
+
+	/* Default customization should be model, or model-wltag. */
+	customization = mosys_strdup(sku_info->signature_id);
+	if (!customization) {
+		lprintf(LOG_ERR,
+			"Could not allocate customization string\n");
+		return -ENOMEM;
+	}
+	sku_info->customization = strupper(customization);
+
 	/* we don't report the sub-model in mosys */
 	lprintf(LOG_DEBUG, "%s: Found model '%s'\n", __func__, sku_info->model);
 

@@ -65,8 +65,6 @@
 				62 &astronaut_62
 				70 &robo
 				71 &robo360
-				78 &whitetip
-				82 &whitetip2
 				83 &blacktip
 				84 &blacktip_touch
 				85 &blacktip_notouch
@@ -212,30 +210,6 @@
 		};
 	};
 
-	whitetip: whitetip {
-		firmware {
-			sig-id-in-customization-id;
-		};
-	};
-
-	whitetip1: whitetip1 {
-		whitelabel = <&whitetip>;
-		brand-code = "SHAR";
-		firmware {
-			shares = < &shared >;
-			key-id = "WHITETIP1";
-		};
-	};
-
-	whitetip2: whitetip2 {
-		whitelabel = <&whitetip>;
-		brand-code = "SHAQ";
-		firmware {
-			shares = < &shared >;
-			key-id = "WHITETIP2";
-		};
-	};
-
 	reef: reef {
 		brand-code = "ABCA";
 		submodels {
@@ -277,11 +251,11 @@
 			};
 		};
 		whitelabels {
-			blacktip1 {
+			loem1 {
 				brand-code = "HBBN";
 				key-id = "BLACKTIP1";
 			};
-			blacktip2 {
+			loem2 {
 				brand-code = "HBBO";
 				key-id = "BLACKTIP2";
 			};
