@@ -31,6 +31,7 @@
 
 #define _GNU_SOURCE
 
+#include <errno.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -320,9 +321,9 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 		find_sku_id, find_platform_names);
 	if (find_smbios_name &&
 	    !string_in_list(find_smbios_name, find_platform_names)) {
-		lprintf(LOG_ERR, "%s: Could not locate name '%s' in '%s'\n",
+		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
 			__func__, find_smbios_name, find_platform_names);
-		return -1;
+		return -ENOENT;
 	}
 
 	mapping_node = fdt_path_offset(fdt, "/chromeos/family/mapping");
@@ -391,8 +392,9 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	ret = cros_config_setup_sku(fdt, sku_info, find_platform_names,
 				    smbios_name, sku_id, NULL, &platform_name);
 	if (ret) {
-		lprintf(LOG_ERR, "%s: Failed to read master configuration\n",
-			__func__);
+		if (ret != -ENOENT)
+			lprintf(LOG_ERR, "%s: Failed to read master configuration\n",
+				__func__);
 		return -1;
 	}
 	intf->name = platform_name;
