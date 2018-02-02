@@ -24,7 +24,7 @@ enum {
  * `chassis` is the chassis ID (usually same as model) in upper case, for
  *         example 'SAMUS'.
  * `customization` is the legacy support for customization_id in upper case,
- *         for example 'GOOGLE-SAMUS'.
+ *         for example 'GOOGLE-SAMUS', also used as network config key.
  * 'signature_id' is the signature ID used for zero-touch whitelabels in
  *         unified builds. See sku_get_signature_id() below.
  * `data` is a general pointer for platform implementations to use, for example
@@ -93,23 +93,22 @@ extern char *sku_get_chassis(struct platform_intf *intf);
 extern char *sku_get_customization(struct platform_intf *intf);
 
 /**
- * sku_get_customization_from_vpd - get customization ID from VPD
+ * sku_get_whitelabel_from_vpd - get whitelabel_tag from VPD
  *
  * This reads VPD and does not use any fallback values.
  *
  * returns allocated string containing value or allocated empty string if not
  * found or error
  */
-extern char *sku_get_customization_from_vpd(void);
+extern char *sku_get_whitelabel_from_vpd(void);
 
 /**
  * sku_get_signature_id - get the signature ID
  *
  * Query the signature ID used by this model. This is normally the same
- * as the model, but for the alternative schema used for coral
- * whitelabel, it may be something else. This is used to name the
- * vblock_A/B_<signature> and rootkey.<signature> files in the firmware
- * updater.
+ * as the model, but for whitelabel, it is model-whitelabel_tag.
+ * This is used to name the vblock_A/B_<signature> and rootkey.<signature>
+ * files in the firmware updater.
  *
  * This is only supported with unified builds. Before that, we have
  * tended to use the customization_id in VPD to fill this role, but
