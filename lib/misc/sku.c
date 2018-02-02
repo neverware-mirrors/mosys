@@ -226,11 +226,11 @@ char *sku_get_customization(struct platform_intf *intf)
  * Do not use this outside of unibuild since it is not meaningful to have a
  * signature ID in a legacy build.
  */
-char *sku_get_customization_from_vpd(void)
+char *sku_get_whitelabel_from_vpd(void)
 {
 	const char *value;
 
-	value = _get_vpd_value("customization_id");
+	value = _get_vpd_value("whitelabel_tag");
 	if (!value)
 		value = "";
 	return mosys_strdup(value);

@@ -142,16 +142,6 @@ int main(int argc, char **argv)
 	ret |= do_test(fdt, names, "Reef", 8, "", "electro", "ABCI", "Reef",
 		       NULL);
 
-	/* white label should provide correct brand code and signature ID */
-	ret |= do_test(fdt, names, "Coral", 82, "", "whitetip2", "SHAQ",
-		       "Coral", NULL);
-	ret |= do_test(fdt, names, "Coral", 78, "", "whitetip", NULL, "Coral",
-		       NULL);
-	ret |= do_test(fdt, names, "Coral", 78, "whitetip1", "whitetip1",
-		       "SHAR", "Coral", NULL);
-	ret |= do_test(fdt, names, "Coral", 78, "whitetip2", "whitetip2",
-		       "SHAQ", "Coral", NULL);
-
 	/*
 	 * For blacktip (alternate schema) if we don't provide the whitelabel
 	 * name then we get no brand code or signature ID.
@@ -172,10 +162,10 @@ int main(int argc, char **argv)
 	 */
 	ret |= do_test(fdt, names, "Coral", 83, "", "blacktip", NULL, "Coral",
 		       NULL);
-	ret |= do_test(fdt, names, "Coral", 84, "blacktip1", "blacktip", "HBBN",
-		       "Coral", "blacktip1");
-	ret |= do_test(fdt, names, "Coral", 85, "blacktip2", "blacktip", "HBBO",
-		       "Coral", "blacktip2");
+	ret |= do_test(fdt, names, "Coral", 84, "loem1", "blacktip", "HBBN",
+		       "Coral", "blacktip-loem1");
+	ret |= do_test(fdt, names, "Coral", 85, "loem2", "blacktip", "HBBO",
+		       "Coral", "blacktip-loem2");
 
 	/* Without an SMBIOS name we should fail */
 	ret |= do_test(fdt, names, NULL, 61, "", NULL, NULL, NULL, NULL);
