@@ -119,7 +119,7 @@ int reef_probe(struct platform_intf *intf)
 	static struct sku_info sku_info;
 	int ret;
 
-	ret = cros_config_read_sku_info(intf, "Reef,Pyro,Sand,Snappy,Coral",
+	ret = cros_config_read_sku_info(intf, "Reef,Pyro,Sand,Snappy",
 					&sku_info);
 
 	/* If there was no error, indicate that we found a match */
@@ -165,6 +165,26 @@ reef_probe_exit:
 #endif /* CONFIG_CROS_CONFIG */
 }
 
+int coral_probe(struct platform_intf *intf)
+{
+#ifdef CONFIG_CROS_CONFIG
+	static struct sku_info sku_info;
+	int ret;
+
+	ret = cros_config_read_sku_info(intf, "Coral", &sku_info);
+
+	/* If there was no error, indicate that we found a match */
+	if (!ret) {
+		intf->sku_info = &sku_info;
+		return 1;
+	}
+
+	return ret;
+#else
+	return -1;
+#endif
+}
+
 /* late setup routine; not critical to core functionality */
 static int reef_setup_post(struct platform_intf *intf)
 {
@@ -197,12 +217,32 @@ struct platform_cb reef_cb = {
 	.eventlog	= &reef_eventlog_cb,
 };
 
+struct platform_cb coral_cb = {
+	.ec		= &cros_ec_cb,
+	.eeprom		= &reef_eeprom_cb,
+	.memory		= &reef_memory_cb,
+	.nvram		= &reef_nvram_cb,
+	.smbios		= &smbios_sysinfo_cb,
+	.sys 		= &coral_sys_cb,
+	.eventlog	= &reef_eventlog_cb,
+};
+
 struct platform_intf platform_reef = {
 	.type		= PLATFORM_X86_64,
 	.name		= "Reef",
 	.sub		= reef_sub,
 	.cb		= &reef_cb,
 	.probe		= &reef_probe,
+	.setup_post	= &reef_setup_post,
+	.destroy	= &reef_destroy,
+};
+
+struct platform_intf platform_coral = {
+	.type		= PLATFORM_X86_64,
+	.name		= "Coral",
+	.sub		= reef_sub,
+	.cb		= &coral_cb,
+	.probe		= &coral_probe,
 	.setup_post	= &reef_setup_post,
 	.destroy	= &reef_destroy,
 };

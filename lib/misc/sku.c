@@ -204,22 +204,36 @@ char *sku_get_model(struct platform_intf *intf)
 	return result;
 }
 
-char *sku_get_customization(struct platform_intf *intf)
+char *sku_get_vpd_customization(struct platform_intf *intf)
 {
 	const struct sku_info *info = intf->sku_info;
-	char *result = _get_vpd_value("customization_id");
+	char *customization_id;
 
-	/* Unlike other SKU values, we trust VPD than mosys table. */
-	if (result)
-		return result;
+	/* Look for VPD first before looking into model */
+	customization_id = _get_vpd_value("customization_id");
+	if (customization_id)
+		return customization_id;
 
 	if (info && info->customization)
 		return mosys_strdup(info->customization);
 
-	result = sku_get_model(intf);
-	if (result)
-		strupper(result);
-	return result;
+	return NULL;
+}
+
+char *sku_get_customization(struct platform_intf *intf)
+{
+	const struct sku_info *info = intf->sku_info;
+	char *customization_id;
+
+	/* Look for model first before looking into VPD */
+	if (info && info->customization)
+		return mosys_strdup(info->customization);
+
+	customization_id = _get_vpd_value("customization_id");
+	if (customization_id)
+		return customization_id;
+
+	return NULL;
 }
 
 /*
