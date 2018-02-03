@@ -41,6 +41,7 @@ extern struct platform_intf platform_alex;
 extern struct platform_intf platform_auron;
 extern struct platform_intf platform_beltino;
 extern struct platform_intf platform_butterfly;
+extern struct platform_intf platform_coral;
 extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_cyclone;
 extern struct platform_intf platform_daisy;
@@ -133,6 +134,7 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_REEF
 	&platform_reef,
+	&platform_coral,
 #endif
 #ifdef CONFIG_PLATFORM_SAMUS
 	&platform_samus,

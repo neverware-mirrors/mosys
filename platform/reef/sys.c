@@ -49,6 +49,20 @@ struct sys_cb reef_sys_cb = {
 	.family			= &smbios_sysinfo_get_family,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
+	.customization		= sku_get_vpd_customization,
+#ifdef CONFIG_CROS_CONFIG
+	/* Only unibuild has the concept of a signature ID */
+	.signature_id           = sku_get_signature_id,
+#endif
+};
+
+struct sys_cb coral_sys_cb = {
+	.version		= &smbios_sysinfo_get_version,
+	.vendor			= &smbios_sysinfo_get_vendor,
+	.name			= &reef_get_name,
+	.family			= &smbios_sysinfo_get_family,
+	.firmware_vendor	= &smbios_bios_get_vendor,
+	.sku_number		= &smbios_sysinfo_get_sku_number,
 #ifdef CONFIG_CROS_CONFIG
 	/* Only unibuild has the concept of a signature ID */
 	.signature_id           = sku_get_signature_id,
