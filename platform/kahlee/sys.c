@@ -56,6 +56,7 @@ struct sys_cb kahlee_sys_cb = {
 	.name			= &kahlee_get_name,
 	.family			= &smbios_sysinfo_get_family,
 	.firmware_vendor	= &smbios_bios_get_vendor,
+	.sku_number		= &smbios_sysinfo_get_sku_number,
 	.model			= &kahlee_get_model,
 	.signature_id           = sku_get_signature_id,
 };

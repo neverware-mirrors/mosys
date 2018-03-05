@@ -252,6 +252,7 @@ int smbios_sysinfo_get_sku_number(struct platform_intf *intf)
 	char *sku_var = smbios_sysinfo_get_sku(intf);
 	int result = -1;
 
+	lprintf(LOG_DEBUG, "got sku_var='%s'\n", sku_var ? sku_var : "(null)");
 	if (sku_var) {
 		/* Coreboot writes 'sku%d'. */
 		sscanf(sku_var, "sku%d", &result);
