@@ -375,6 +375,8 @@ struct elog_event_mem_cache_update {
 #define VBNV_RECOVERY_VB2_DEV_SWITCH  0x2E
 /* VB2: Error determining firmware slot */
 #define VBNV_RECOVERY_VB2_FW_SLOT     0x2F
+/* VB2: Error updating AUX firmware */
+#define VBNV_RECOVERY_VB2_AUX_FW_UPDATE 0x30
 /* Unspecified/unknown error in read-only firmware */
 #define VBNV_RECOVERY_RO_UNSPECIFIED  0x3F
 /* User manually requested recovery by pressing a key at developer
