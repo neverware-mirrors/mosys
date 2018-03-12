@@ -52,6 +52,7 @@ extern struct platform_intf platform_kahlee;
 extern struct platform_intf platform_link;
 extern struct platform_intf platform_lumpy;
 extern struct platform_intf platform_mario;
+extern struct platform_intf platform_nami;
 extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_oak;
 extern struct platform_intf platform_parrot;
@@ -113,6 +114,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_MARIO
 	&platform_mario,
+#endif
+#if defined(CONFIG_PLATFORM_NAMI) && defined(CONFIG_CROS_CONFIG)
+	&platform_nami,
 #endif
 #ifdef CONFIG_PLATFORM_NYAN
 	&platform_nyan,

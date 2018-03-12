@@ -13,6 +13,7 @@ obj-$(CONFIG_PLATFORM_KAHLEE)   += kahlee/
 obj-$(CONFIG_PLATFORM_LINK)	+= link/
 obj-$(CONFIG_PLATFORM_LUMPY)	+= lumpy/
 obj-$(CONFIG_PLATFORM_MARIO)	+= mario/
+obj-$(CONFIG_PLATFORM_NAMI)	+= nami/
 obj-$(CONFIG_PLATFORM_NYAN)	+= nyan/
 obj-$(CONFIG_PLATFORM_OAK)	+= oak/
 obj-$(CONFIG_PLATFORM_PARROT)	+= parrot/

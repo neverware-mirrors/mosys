@@ -123,6 +123,12 @@ config PLATFORM_MARIO
 	bool "Google Cr-48 Chromebook"
 	default n
 
+config PLATFORM_NAMI
+	depends on PLATFORM_ARCH_X86
+	select CROS_EC_LPC
+	bool "nami"
+	default n
+
 config PLATFORM_NYAN
         depends on PLATFORM_ARCH_ARMEL
 	select SOC_NVIDIA_TEGRA124

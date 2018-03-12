@@ -73,7 +73,6 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Lars", }, .single_sku = { .brand = NULL, }, },
         /* TODO(b/73852456) Allocate a brand code */
 	{ { "Meowth", }, .single_sku = { .brand = NULL, }, },
-        { { "Nami", }, .single_sku = { .brand = NULL, }, },
 	{ { "Nautilus", }, .single_sku = { .brand = "ZSKM", }, },
 	{ { "Pbody", }, },
 	{ { "Sentry", }, .single_sku = { .brand = "LEAJ", }, },
