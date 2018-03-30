@@ -55,6 +55,7 @@ extern struct platform_intf platform_mario;
 extern struct platform_intf platform_nami;
 extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_oak;
+extern struct platform_intf platform_octopus;
 extern struct platform_intf platform_parrot;
 extern struct platform_intf platform_peach;
 extern struct platform_intf platform_pinky;
@@ -123,6 +124,9 @@ struct platform_intf *platform_intf_list[] = {
 #endif
 #ifdef CONFIG_PLATFORM_OAK
 	&platform_oak,
+#endif
+#ifdef CONFIG_PLATFORM_OCTOPUS
+	&platform_octopus,
 #endif
 #ifdef CONFIG_PLATFORM_PARROT
 	&platform_parrot,

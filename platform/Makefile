@@ -16,6 +16,7 @@ obj-$(CONFIG_PLATFORM_MARIO)	+= mario/
 obj-$(CONFIG_PLATFORM_NAMI)	+= nami/
 obj-$(CONFIG_PLATFORM_NYAN)	+= nyan/
 obj-$(CONFIG_PLATFORM_OAK)	+= oak/
+obj-$(CONFIG_PLATFORM_OCTOPUS)  += octopus/
 obj-$(CONFIG_PLATFORM_PARROT)	+= parrot/
 obj-$(CONFIG_PLATFORM_PEACH)	+= peach/
 obj-$(CONFIG_PLATFORM_PINKY)	+= pinky/

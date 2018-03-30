@@ -141,6 +141,12 @@ config PLATFORM_OAK
 	bool "Oak"
 	default n
 
+config PLATFORM_OCTOPUS
+        depends on PLATFORM_ARCH_X86
+        select CROS_EC_LPC
+        bool "Octopus"
+        default n
+
 config PLATFORM_PARROT
 	depends on PLATFORM_ARCH_X86
 	select CHIPSET_INTEL_SERIES6
@@ -169,7 +175,6 @@ config PLATFORM_RAMBI
 config PLATFORM_REEF
 	depends on PLATFORM_ARCH_X86
 	select CROS_EC_LPC
-	select SOC_INTEL_APOLLOLAKE
 	bool "reef"
 	default n
 
