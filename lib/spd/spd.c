@@ -266,9 +266,10 @@ static ssize_t find_spd_by_part_number(struct platform_intf *intf, int dimm,
 				       uint8_t *spd, size_t spd_file_len)
 {
 	const char *smbios_part_num;
+	size_t smbios_part_num_len, spd_part_num_len;
 	ssize_t ret = -1, offset;
 	uint8_t i, num_spd;
-	uint8_t *ptr;
+	uint8_t *ptr, *spd_part_num;
 	struct smbios_table *table = mosys_malloc(sizeof(*table));
 	const struct spd_info *info = &spd_mem_info[SPD_INFO_DEFAULT];
 
@@ -281,17 +282,34 @@ static ssize_t find_spd_by_part_number(struct platform_intf *intf, int dimm,
 	}
 
 	if (table->data.mem_device.type == SMBIOS_MEMORY_TYPE_DDR4)
-		info =  &spd_mem_info[SPD_INFO_DDR4];
+		info = &spd_mem_info[SPD_INFO_DDR4];
 
 	smbios_part_num = table->string[table->data.mem_device.part_number];
+	smbios_part_num_len = strnlen(smbios_part_num, info->spd_part_len);
+
+	if (smbios_part_num_len == 0) {
+		lprintf(LOG_DEBUG, "SMBIOS type 17 is missing part number\n");
+		goto out;
+	}
 
 	num_spd = spd_file_len / info->spd_len;
 
 	for (i = 0; i < num_spd; i++) {
 		offset = i * info->spd_len;
 		ptr = spd + offset;
-		if (!memcmp(smbios_part_num, ptr + info->spd_part_off,
-			    info->spd_part_len)) {
+		spd_part_num = ptr + info->spd_part_off;
+		spd_part_num_len = info->spd_part_len;
+
+		// Strip off trailing whitespace from SPD part number.
+		while (spd_part_num_len > 0 &&
+		       spd_part_num[spd_part_num_len - 1] == ' ')
+			spd_part_num_len--;
+
+		if (spd_part_num_len != smbios_part_num_len)
+			continue;
+
+		if (!memcmp(smbios_part_num, spd_part_num,
+			    smbios_part_num_len)) {
 			lprintf(LOG_DEBUG, "Using memory config %u\n", i);
 			ret = offset;
 			break;
