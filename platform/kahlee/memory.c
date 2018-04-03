@@ -29,17 +29,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "lib/nonspd.h"
+#include "mosys/callbacks.h"
+#include "mosys/log.h"
+#include "mosys/platform.h"
+
+#include "lib/flashrom.h"
+#include "lib/smbios.h"
+#include "lib/spd.h"
+
 #include "kahlee.h"
 
-int get_kahlee_mem_info(struct platform_intf *intf,
-                        const struct nonspd_mem_info **info)
+static int kahlee_spd_read(struct platform_intf *intf, int dimm, int reg,
+			   int spd_len, uint8_t *spd_buf)
 {
-	return spd_set_nonspd_info(intf, info);
+	static uint8_t *fw_buf;
+	static int fw_size = 0;
+
+	/* dimm cnt is 0 based */
+	if (dimm >= intf->cb->memory->dimm_count(intf)) {
+		lprintf(LOG_DEBUG, "%s: Invalid DIMM specified\n", __func__);
+		return -1;
+	}
+
+	if (fw_size < 0)
+		return -1; /* previous attempt failed */
+
+	if (!fw_size) {
+		fw_size = flashrom_read_host_firmware_region(intf, &fw_buf);
+		if (fw_size < 0)
+			return -1;
+		add_destroy_callback(free, fw_buf);
+	}
+
+	return spd_read_from_cbfs(intf, dimm, reg, spd_len, spd_buf, fw_size,
+				  fw_buf);
 }
+
+static struct memory_spd_cb kahlee_spd_cb = {
+	.read   = kahlee_spd_read,
+};
 
 struct memory_cb kahlee_memory_cb = {
 	.dimm_count		= smbios_dimm_count,
 	.dimm_speed		= smbios_dimm_speed,
-	.nonspd_mem_info	= get_kahlee_mem_info,
+	.spd			= &kahlee_spd_cb,
 };
