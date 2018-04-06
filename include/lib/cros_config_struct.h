@@ -46,9 +46,13 @@
  * 'sku_info' Corresonding sku_info for these attributes.
  */
 struct config_map {
+	// Set to "" if match is not required.
 	const char *platform_name;
+	// Set to "" if match is not required.
 	const char *smbios_match_name;
+	// Set to -1 if match is not required.
 	int sku_id;
+	// Set to "" if match is not required.
 	const char *customization_id;
 	struct sku_info info;
 };
@@ -74,8 +78,10 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
  * This function exists so the config map can be auto-generated in a
  * separate code file at build time.
  *
+ * @num_entries: Value is set to the array size.
+ *
  * @return: Pointer to the array of config_map entries.
  */
-struct config_map **cros_config_get_config_map();
+const struct config_map *cros_config_get_config_map(int *num_entries);
 
 #endif

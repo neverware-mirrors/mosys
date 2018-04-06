@@ -32,16 +32,17 @@
 #define _GNU_SOURCE
 
 #include <errno.h>
+#include <libfdt.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libfdt.h>
 
 #include "mosys/alloc.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "lib/cros_config.h"
+#include "lib/cros_config_struct.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
@@ -120,8 +121,8 @@ static int check_sku_map(const char *fdt, int node,
 	}
 
 	/* Search for the SKU ID in the list */
-	for (end = (fdt32_t *)((char *)data + len), ptr = data;
-	     ptr < end; ptr += 2) {
+	for (end = (fdt32_t *)((char *)data + len), ptr = data; ptr < end;
+	     ptr += 2) {
 		int sku_id = fdt32_to_cpu(ptr[0]);
 		int phandle = fdt32_to_cpu(ptr[1]);
 
@@ -165,7 +166,8 @@ static int check_sku_maps(const char *fdt, int mapping_node,
 {
 	int subnode, phandle;
 
-	fdt_for_each_subnode(subnode, fdt, mapping_node) {
+	fdt_for_each_subnode(subnode, fdt, mapping_node)
+	{
 		phandle = check_sku_map(fdt, subnode, find_smbios_name,
 					find_sku_id, platform_namep);
 		if (phandle < 0)
@@ -251,7 +253,8 @@ static int cros_config_lookup_whitelabel(const char *fdt, int model_nodep,
 		wl_tag = fdt_subnode_offset(fdt, wl_tags_node, find_wl_name);
 		if (wl_tag < 0) {
 			lprintf(LOG_ERR,
-				"Cannot find whitelabel tag '%s' for model '%s': %s (check VPD customization ID)\n",
+				"Cannot find whitelabel tag '%s' for model "
+				"'%s': %s (check VPD customization ID)\n",
 				find_wl_name,
 				fdt_get_name(fdt, model_nodep, NULL),
 				fdt_strerror(wl_tag));
@@ -273,7 +276,6 @@ static bool string_in_list(const char *name, const char *list)
 {
 	const char *p, *end;
 
-
 	for (p = list; *p; p = end + (*end == ',')) {
 		end = strchrnul(p, ',');
 		if (!strncmp(name, p, end - p))
@@ -286,8 +288,7 @@ static bool string_in_list(const char *name, const char *list)
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 			  const char *find_platform_names,
 			  const char *find_smbios_name, int find_sku_id,
-			  const char *find_wl_name,
-			  const char **platform_namep)
+			  const char *find_wl_name, const char **platform_namep)
 {
 	int mapping_node, model_node;
 	int wl_tag_node;
@@ -295,9 +296,11 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	int target;
 	char *customization;
 
-	lprintf(LOG_DEBUG, "%s: Looking up SMBIOS name '%s', SKU ID %d, platform names '%s'\n",
-		__func__, find_smbios_name ? find_smbios_name : "(null)",
-		find_sku_id, find_platform_names);
+	lprintf(
+	    LOG_DEBUG,
+	    "%s: Looking up SMBIOS name '%s', SKU ID %d, platform names '%s'\n",
+	    __func__, find_smbios_name ? find_smbios_name : "(null)",
+	    find_sku_id, find_platform_names);
 	if (find_smbios_name &&
 	    !string_in_list(find_smbios_name, find_platform_names)) {
 		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
@@ -324,13 +327,13 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	 * If this is a whitelabel model, select the correct model or
 	 * whitelabel tag.
 	 */
-	wl_tag_node = cros_config_lookup_whitelabel(fdt, model_node,
-						    find_wl_name);
+	wl_tag_node =
+	    cros_config_lookup_whitelabel(fdt, model_node, find_wl_name);
 	if (wl_tag_node < 0) {
 		goto err;
 	} else if (wl_tag_node) {
 		/* Whitelabel info is in whitelabels table. */
-		char *sig_id_gen = (char*)mosys_malloc(128);
+		char *sig_id_gen = (char *)mosys_malloc(128);
 
 		if (!sig_id_gen) {
 			lprintf(LOG_ERR,
@@ -343,23 +346,22 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 			 fdt_get_name(fdt, wl_tag_node, NULL));
 		sku_info->signature_id = sig_id_gen;
 
-		sku_info->brand = fdt_getprop(fdt, wl_tag_node, "brand-code",
-					      NULL);
+		sku_info->brand =
+		    fdt_getprop(fdt, wl_tag_node, "brand-code", NULL);
 	} else {
 		/* Not a whitelabel */
 		sku_info->signature_id = fdt_get_name(fdt, model_node, NULL);
 		sku_info->brand = fdt_getprop(fdt, target, "brand-code", NULL);
 		if (!sku_info->brand)
-			sku_info->brand = fdt_getprop(fdt, model_node,
-						      "brand-code", NULL);
+			sku_info->brand =
+			    fdt_getprop(fdt, model_node, "brand-code", NULL);
 	}
 	sku_info->model = fdt_get_name(fdt, model_node, NULL);
 
 	/* Default customization should be model, or model-wltag. */
 	customization = mosys_strdup(sku_info->signature_id);
 	if (!customization) {
-		lprintf(LOG_ERR,
-			"Could not allocate customization string\n");
+		lprintf(LOG_ERR, "Could not allocate customization string\n");
 		return -ENOMEM;
 	}
 	sku_info->customization = strupper(customization);
@@ -383,6 +385,12 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	int sku_id;
 	int ret;
 
+	ret = cros_config_read_sku_info_struct(intf, find_platform_names,
+					       sku_info);
+	if (!ret) {
+		return 0;
+	}
+
 	smbios_name = smbios_sysinfo_get_name(intf);
 	if (!smbios_name)
 		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
@@ -394,7 +402,8 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 				    smbios_name, sku_id, NULL, &platform_name);
 	if (ret) {
 		if (ret != -ENOENT)
-			lprintf(LOG_ERR, "%s: Failed to read master configuration\n",
+			lprintf(LOG_ERR,
+				"%s: Failed to read master configuration\n",
 				__func__);
 		return -1;
 	}
