@@ -5,12 +5,10 @@ mosys_core_src = [
   'globals.c',
   'file_backed_range.c',
   'callbacks.c',
-  'csem.c',
   'output.c',
   'list.c',
   'kv_pair.c',
   'alloc.c',
-  'ipc_lock.c',
   'platform.c',
   'file_lock.c',
 ]

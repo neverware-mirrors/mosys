@@ -95,9 +95,7 @@ static int do_cmd(const char *cmd, char *const *argv,
 			struct pipe pipes[], int num_pipes)
 {
 	int rc = 0;
-#if defined(CONFIG_USE_IPC_LOCK)
 	int re_acquire_lock = 1;
-#endif
 	int pid = -1;
 	int status = 0;
 	int i;
@@ -120,10 +118,8 @@ static int do_cmd(const char *cmd, char *const *argv,
 		}
 	}
 
-#if defined(CONFIG_USE_IPC_LOCK)
 	if (mosys_release_big_lock() < 0)
 		re_acquire_lock = 0;
-#endif
 	if (argv != NULL) {
 		for (i = 0; argv[i] != NULL; i++) {
 			lprintf(LOG_DEBUG, "%s ", argv[i]);
@@ -225,13 +221,11 @@ static int do_cmd(const char *cmd, char *const *argv,
 		}
 	}
 
-#if defined(CONFIG_USE_IPC_LOCK)
         /* try to get lock */
         if (re_acquire_lock && (mosys_acquire_big_lock(50000) < 0)) {
 		lprintf(LOG_DEBUG, "%s: could not re-acquire lock\n", __func__);
 		rc = -1;
         }
-#endif
 	close(null_fd);
 	return rc;
 }

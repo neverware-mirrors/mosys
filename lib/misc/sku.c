@@ -22,22 +22,17 @@
 
 static int _release_lock(void)
 {
-#if defined(CONFIG_USE_IPC_LOCK)
 	return mosys_release_big_lock() >= 0;
-#endif
-	return 0;
 }
 
 static int _acquire_lock()
 {
-#if defined(CONFIG_USE_IPC_LOCK)
 	/* Timeout copied from lib/flashrom/flashrom.c */
 	if (mosys_acquire_big_lock(50000) < 0) {
 		lprintf(LOG_DEBUG, "%s: could not re-acquire lock\n",
 			__func__);
 		return -1;
 	}
-#endif
 	return 0;
 }
 

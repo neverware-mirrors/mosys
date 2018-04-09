@@ -12,7 +12,6 @@ conf_data.set('VERSION', '"1.2.03"')
 conf_data.set('CONFIG_LITTLE_ENDIAN', 1)
 conf_data.set('CONFIG_LOGLEVEL', 4)
 conf_data.set('CONFIG_PLATFORM_EXPERIMENTAL', 1)
-conf_data.set('CONFIG_USE_IPC_LOCK', 1)
 use_cros_config = get_option('use_cros_config') == 'true'
 if use_cros_config
   conf_data.set('CONFIG_CROS_CONFIG', 1)
@@ -58,7 +57,6 @@ if arch == 'x86' or arch == 'x86_64' or arch == 'amd64'
   conf_data.set('CONFIG_SOC_INTEL_BRASWELL', 1)
   conf_data.set('CONFIG_STORAGE_SANDISK_U100', 1)
   conf_data.set('CONFIG_SUPERIO_ITE_IT8772', 1)
-  conf_data.set('CONFIG_USE_FILE_LOCK', 1)
 elif arch == 'mip'
   conf_data.set('CONFIG_PLATFORM_ARCH_MIPSEL', 1)
 elif arch == 'arm'
@@ -82,7 +80,6 @@ elif arch == 'arm'
   conf_data.set('CONFIG_SOC_SAMSUNG_EXYNOS5250', 1)
   conf_data.set('CONFIG_SOC_SAMSUNG_EXYNOS5420', 1)
   conf_data.set('CONFIG_TRACKPAD_CYPRESS_APA', 1)
-  conf_data.set('CONFIG_USE_FILE_LOCK', 1)
 endif
 
 # Create the config header file and include it by default while compiling
