@@ -20,6 +20,7 @@ subdir('mario')
 subdir('nami')
 subdir('nyan')
 subdir('oak')
+subdir('octopus')
 subdir('parrot')
 subdir('peach')
 subdir('pinky')
@@ -60,6 +61,7 @@ libmosys_platform = static_library(
     libmosys_platform_nami,
     libmosys_platform_nyan,
     libmosys_platform_oak,
+    libmosys_platform_octopus,
     libmosys_platform_parrot,
     libmosys_platform_peach,
     libmosys_platform_pinky,
