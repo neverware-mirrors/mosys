@@ -4,10 +4,13 @@ mosys_lib_cros_config_src = [
   'cros_config_data.c',
 ]
 
+src = []
 deps = []
 link_with = []
 
+# Cros config is a special snowflake.
 if use_cros_config
+  src += mosys_lib_cros_config_src
   fdt_dep = meson.get_compiler('c').find_library('fdt')
   deps += fdt_dep
   dtb_lib = static_library(
@@ -28,7 +31,7 @@ endif
 
 libmosys_lib_cros_config = static_library(
   'mosys_lib_cros_config',
-  [mosys_lib_cros_config_src],
+  [src],
   dependencies: deps,
   include_directories : include_common,
   link_with: link_with,
