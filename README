@@ -1,4 +1,4 @@
-mosys - The multifunction open system tool
+mosys - The more open system tool
 
 Introduction
 ------------
@@ -18,12 +18,17 @@ its usefulness may be extremely limited.
 
 Configuration & Building
 ------------------------
-Mosys uses the Linux kernel configuration and build system. "make help" lists
-the available configuration and build targets.
+Mosys uses the Meson build system. Run "meson -D${arch?} output_dir" to
+configure and then "ninja -C output_dir" to build. "ninja -C output_dir test"
+will run tests and "ninja -C output_dir install" will install. Chrome OS
+contributors will want to use cros_workon instead.
 
-After a fresh checkout, you will need to generate a configuration file before
-the sources may be compiled. To do so, run a configuration target (ie "make
-menuconfig") followed by a generic target such as "make" or "make all".
+See meson.build for valid arch options.
+
+Other flags of interest:
+-Duse_cros_config=true/false: whether to enable linking to cros_config for
+                              Chrome OS. See Chrome OS example in mosys ebuild.
+-Dstatic=true/false: whether to enable a static mosys_s binary.
 
 Usage
 -----

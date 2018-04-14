@@ -1,5 +1,0 @@
-# sandisk config variables
-
-config STORAGE_SANDISK_U100
-	bool "U100"
-	default n

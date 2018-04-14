@@ -1,4 +1,0 @@
-config INTF_PORT_IO
-	bool
-	default y if PLATFORM_ARCH_X86
-	default n

@@ -1,2 +1,0 @@
-obj-$(CONFIG_CHIPSET_INTEL_SERIES6)	+= series6.o
-obj-$(CONFIG_CHIPSET_INTEL_SERIES6)	+= gpio.o

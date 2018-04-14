@@ -1,5 +1,0 @@
-# ene config variables
-
-config EC_ENE_KB932
-	bool "ENE KB932"
-	default n

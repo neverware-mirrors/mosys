@@ -1,2 +1,0 @@
-obj-$(CONFIG_EC_ITE_IT8500)		+= it8500.o
-obj-$(CONFIG_SUPERIO_ITE_IT8772)	+= it8772.o

@@ -1,5 +1,0 @@
-# smsc config variables
-
-config EC_SMSC_MEC1308
-	bool "MEC1308"
-	default n

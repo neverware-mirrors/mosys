@@ -1,2 +1,0 @@
-obj-$(CONFIG_CHIPSET_INTEL_NM10)	+= nm10.o
-obj-$(CONFIG_CHIPSET_INTEL_NM10)	+= gpio.o

@@ -1,2 +1,0 @@
-obj-$(CONFIG_EC_SMSC_MEC1308)	+= mec1308.o
-obj-$(CONFIG_EC_SMSC_MEC1308)	+= mec1308_mbx.o

@@ -1,1 +1,0 @@
-obj-$(CONFIG_EC_NUVOTON_NPCE781)	+= npce781.o
