@@ -1,11 +1,3 @@
-mosys_lib_vbnv_src = [
+libmosys_src += files(
   'vbnv_flash.c',
-]
-
-libmosys_lib_vbnv = static_library(
-  'mosys_lib_vbnv',
-  [mosys_lib_vbnv_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

@@ -93,6 +93,8 @@ add_global_arguments('-include', 'config.h', language: 'c')
 fmap_dep = dependency('fmap')
 uuid_dep = dependency('uuid')
 
+libmosys_src = files()
+
 # Subdirs with source to link against
 subdir('core')
 subdir('drivers')
@@ -100,23 +102,41 @@ subdir('intf')
 subdir('lib')
 subdir('platform')
 
+deps = [
+  fmap_dep,
+  uuid_dep,
+]
+link_whole = []
+
+# Cros config is a special snowflake.
+if use_cros_config
+  libmosys_src += mosys_lib_cros_config_src
+  fdt_dep = meson.get_compiler('c').find_library('fdt')
+  deps += fdt_dep
+  dtb_lib = static_library(
+    'cros_config_dtb',
+    cros_config_dtb_src,
+    c_args: [
+      '-Itools/vpd_encode',
+      '-D__ASSEMBLY__',
+      '-c',
+    ],
+    link_args: [
+      '-znoexecstack',
+      '-r',
+    ],
+  )
+  link_whole += dtb_lib
+endif
+
 # Lib momsys shared library target
 libmosys = static_library(
   'mosys',
-  [],
-  dependencies: [
-    fmap_dep,
-    uuid_dep,
-  ],
+  libmosys_src,
+  dependencies: deps,
   include_directories: include_common,
-  link_with: [
-    libmosys_core,
-    libmosys_drivers,
-    libmosys_intf,
-    libmosys_lib,
-    libmosys_platform,
-  ],
-  pic: true
+  link_whole: link_whole,
+  pic: true,
 )
 
 # Add static linking if static is set

@@ -1,4 +1,4 @@
-mosys_platform_zgb_src = [
+libmosys_src += files(
   'eeprom.c',
   'chromia700.c',
   'nvram.c',
@@ -7,12 +7,4 @@ mosys_platform_zgb_src = [
   'vpd.c',
   'gpio.c',
   'ec.c',
-]
-
-libmosys_platform_zgb = static_library(
-  'mosys_platform_zgb',
-  [mosys_platform_zgb_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

@@ -1,4 +1,4 @@
-mosys_lib_spd_src = [
+libmosys_src += files(
   'spd_fields.c',
   'nonspd_modules.c',
   'nonspd.c',
@@ -7,12 +7,4 @@ mosys_lib_spd_src = [
   'ddr2.c',
   'ddr3.c',
   'spd.c',
-]
-
-libmosys_lib_spd = static_library(
-  'mosys_lib_spd',
-  [mosys_lib_spd_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

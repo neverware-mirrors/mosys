@@ -1,4 +1,4 @@
-mosys_platform_beltino_src = [
+libmosys_src += files(
   'eeprom.c',
   'nvram.c',
   'memory.c',
@@ -6,12 +6,4 @@ mosys_platform_beltino_src = [
   'sys.c',
   'gpio.c',
   'beltino.c',
-]
-
-libmosys_platform_beltino = static_library(
-  'mosys_platform_beltino',
-  [mosys_platform_beltino_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

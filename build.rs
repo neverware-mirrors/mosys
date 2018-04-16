@@ -8,31 +8,31 @@ use std::env;
 use std::fs::{self, File};
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 fn main() {
-    let status = Command::new("make")
-        .args(&["libmosys.a"])
-        .status()
-        .expect("Failed to execute make");
-    assert!(status.success(), "make exited with a non-zero status");
     let root_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
-    let root_dir = PathBuf::from(&root_dir);
-    println!("cargo:rustc-link-search=native={}", root_dir.display());
+    let root_dir = Path::new(&root_dir);
+    let meson_build_root = env::var("MESON_BUILD_ROOT").unwrap();
+    let meson_build_root = Path::new(&meson_build_root);
+    assert!(
+        meson_build_root.join("libmosys.a").exists(),
+        "libmosys.a is not present, see the README for instructions on building Mosys"
+    );
+    println!(
+        "cargo:rustc-link-search=native={}",
+        meson_build_root.display()
+    );
     println!("cargo:rustc-link-lib=static=mosys");
     println!("cargo:rustc-link-lib=dylib=uuid");
     println!("cargo:rustc-link-lib=dylib=fmap");
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     let prune = vec![
         root_dir.join(".git"),
-        root_dir.join("include/config"),
-        root_dir.join("include/generated"),
-        root_dir.join("scripts"),
         root_dir.join("src"),
         root_dir.join("target"),
     ];
     let wrapper = out_path.join("wrapper.h");
-    generate_wrapper(root_dir.as_path(), &wrapper, &prune).expect("Failed to generate wrapper.h");
+    generate_wrapper(root_dir, &wrapper, &prune).expect("Failed to generate wrapper.h");
     let bindings = bindgen::Builder::default()
         .header(wrapper.to_str().unwrap())
         .clang_arg("-Iinclude")

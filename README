@@ -30,6 +30,9 @@ Other flags of interest:
                               Chrome OS. See Chrome OS example in mosys ebuild.
 -Dstatic=true/false: whether to enable a static mosys_s binary.
 
+To build the experimental Rust support, first build libmosys.a using the
+instructions above. Then run: "MESON_BUILD_ROOT=output_dir cargo build".
+
 Usage
 -----
 Mosys uses a natural language syntax to navigate thru a command hierarchy for

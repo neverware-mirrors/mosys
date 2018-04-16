@@ -1,11 +1,3 @@
-mosys_lib_cbfs_src = [
+libmosys_src += files(
   'cbfs_core.c',
-]
-
-libmosys_lib_cbfs = static_library(
-  'mosys_lib_cbfs',
-  [mosys_lib_cbfs_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

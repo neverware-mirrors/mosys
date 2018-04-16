@@ -1,4 +1,4 @@
-mosys_platform_slippy_src = [
+libmosys_src += files(
   'eeprom.c',
   'nvram.c',
   'memory.c',
@@ -6,12 +6,4 @@ mosys_platform_slippy_src = [
   'sys.c',
   'gpio.c',
   'ec.c',
-]
-
-libmosys_platform_slippy = static_library(
-  'mosys_platform_slippy',
-  [mosys_platform_slippy_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

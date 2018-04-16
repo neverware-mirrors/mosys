@@ -1,4 +1,4 @@
-mosys_core_src = [
+libmosys_src += files(
   'log.c',
   'intf_list.c',
   'big_lock.c',
@@ -11,16 +11,6 @@ mosys_core_src = [
   'alloc.c',
   'platform.c',
   'file_lock.c',
-]
+)
 
 subdir('command')
-
-libmosys_core = static_library(
-  'mosys_core',
-  [mosys_core_src],
-  include_directories : include_common,
-  link_with: [
-    libmosys_core_command,
-  ],
-  pic: true,
-)

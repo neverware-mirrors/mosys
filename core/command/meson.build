@@ -1,4 +1,4 @@
-mosys_core_command_src = [
+libmosys_src += files(
   'i2c.c',
   'eeprom.c',
   'eventlog.c',
@@ -18,12 +18,4 @@ mosys_core_command_src = [
   'platform.c',
   'ec.c',
   'smbios.c',
-]
-
-libmosys_core_command = static_library(
-  'mosys_core_command',
-  [mosys_core_command_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

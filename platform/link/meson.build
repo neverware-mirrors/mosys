@@ -1,4 +1,4 @@
-mosys_platform_link_src = [
+libmosys_src += files(
   'eeprom.c',
   'nvram.c',
   'memory.c',
@@ -6,12 +6,4 @@ mosys_platform_link_src = [
   'gpio.c',
   'link.c',
   'ec.c',
-]
-
-libmosys_platform_link = static_library(
-  'mosys_platform_link',
-  [mosys_platform_link_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

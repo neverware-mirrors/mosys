@@ -1,4 +1,4 @@
-mosys_platform_kiev_src = [
+libmosys_src += files(
   'eeprom.c',
   'kiev.c',
   'nvram.c',
@@ -6,12 +6,4 @@ mosys_platform_kiev_src = [
   'sensors.c',
   'sys.c',
   'vpd.c',
-]
-
-libmosys_platform_kiev = static_library(
-  'mosys_platform_kiev',
-  [mosys_platform_kiev_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

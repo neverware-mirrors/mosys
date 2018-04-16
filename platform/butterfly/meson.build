@@ -1,4 +1,4 @@
-mosys_platform_butterfly_src = [
+libmosys_src += files(
   'eeprom.c',
   'nvram.c',
   'memory.c',
@@ -6,12 +6,4 @@ mosys_platform_butterfly_src = [
   'storage.c',
   'butterfly.c',
   'ec.c',
-]
-
-libmosys_platform_butterfly = static_library(
-  'mosys_platform_butterfly',
-  [mosys_platform_butterfly_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

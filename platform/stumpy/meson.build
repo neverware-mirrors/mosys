@@ -1,4 +1,4 @@
-mosys_platform_stumpy_src = [
+libmosys_src += files(
   'eeprom.c',
   'nvram.c',
   'memory.c',
@@ -6,12 +6,4 @@ mosys_platform_stumpy_src = [
   'sensors.c',
   'sys.c',
   'vpd.c',
-]
-
-libmosys_platform_stumpy = static_library(
-  'mosys_platform_stumpy',
-  [mosys_platform_stumpy_src],
-  include_directories : include_common,
-  link_with: [],
-  pic: true,
 )

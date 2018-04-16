@@ -1,6 +1,6 @@
-mosys_platform_src = [
+libmosys_src += files(
   'platform_list.c',
-]
+)
 
 subdir('alex')
 subdir('auron')
@@ -37,47 +37,3 @@ subdir('strago')
 subdir('stumpy')
 subdir('z600')
 subdir('zgb')
-
-libmosys_platform = static_library(
-  'mosys_platform',
-  [mosys_platform_src],
-  include_directories : include_common,
-  link_with: [
-    libmosys_platform_alex,
-    libmosys_platform_auron,
-    libmosys_platform_beltino,
-    libmosys_platform_butterfly,
-    libmosys_platform_cyan,
-    libmosys_platform_cyclone,
-    libmosys_platform_daisy,
-    libmosys_platform_fizz,
-    libmosys_platform_glados,
-    libmosys_platform_gru,
-    libmosys_platform_kahlee,
-    libmosys_platform_kiev,
-    libmosys_platform_link,
-    libmosys_platform_lumpy,
-    libmosys_platform_mario,
-    libmosys_platform_nami,
-    libmosys_platform_nyan,
-    libmosys_platform_oak,
-    libmosys_platform_octopus,
-    libmosys_platform_parrot,
-    libmosys_platform_peach,
-    libmosys_platform_pinky,
-    libmosys_platform_rambi,
-    libmosys_platform_reef,
-    libmosys_platform_samus,
-    libmosys_platform_skate,
-    libmosys_platform_slippy,
-    libmosys_platform_smaug,
-    libmosys_platform_spring,
-    libmosys_platform_storm,
-    libmosys_platform_stout,
-    libmosys_platform_strago,
-    libmosys_platform_stumpy,
-    libmosys_platform_z600,
-    libmosys_platform_zgb,
-  ],
-  pic: true,
-)
