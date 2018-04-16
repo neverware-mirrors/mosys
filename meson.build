@@ -44,6 +44,7 @@ if arch == 'x86' or arch == 'x86_64' or arch == 'amd64'
   conf_data.set('CONFIG_PLATFORM_LINK', 1)
   conf_data.set('CONFIG_PLATFORM_LUMPY', 1)
   conf_data.set('CONFIG_PLATFORM_MARIO', 1)
+  conf_data.set('CONFIG_PLATFORM_OCTOPUS', 1)
   conf_data.set('CONFIG_PLATFORM_PARROT', 1)
   conf_data.set('CONFIG_PLATFORM_RAMBI', 1)
   conf_data.set('CONFIG_PLATFORM_REEF', 1)

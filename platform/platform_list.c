@@ -125,7 +125,7 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_OAK
 	&platform_oak,
 #endif
-#ifdef CONFIG_PLATFORM_OCTOPUS
+#ifdef CONFIG_PLATFORM_OCTOPUS && defined(CONFIG_CROS_CONFIG)
 	&platform_octopus,
 #endif
 #ifdef CONFIG_PLATFORM_PARROT
