@@ -60,6 +60,7 @@ struct probe_ids {
 /* sku_info: brand, model, chassis, customization */
 static const struct probe_ids probe_id_list[] = {
 	{ { "Asuka", }, .single_sku = { .brand = "DEAH", }, },
+	{ { "Atlas", }, .single_sku = { .brand = "XWJE", }, },
 	{ { "Caroline", }, .single_sku = { .brand = "SMAK", }, },
 	{ { "Cave", }, .single_sku = { .brand = "ASUL", }, },
 	{ { "Chell", }, .single_sku = { .brand = "HPZR", }, },
