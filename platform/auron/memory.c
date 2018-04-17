@@ -29,6 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <linux/limits.h>
+
 #include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"

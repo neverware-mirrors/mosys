@@ -12,7 +12,7 @@ conf_data.set('VERSION', '"1.2.03"')
 conf_data.set('CONFIG_LITTLE_ENDIAN', 1)
 conf_data.set('CONFIG_LOGLEVEL', 4)
 conf_data.set('CONFIG_PLATFORM_EXPERIMENTAL', 1)
-use_cros_config = get_option('use_cros_config') == 'true'
+use_cros_config = get_option('use_cros_config') == true
 if use_cros_config
   conf_data.set('CONFIG_CROS_CONFIG', 1)
 endif
@@ -89,6 +89,7 @@ configure_file(
   configuration : conf_data,
 )
 add_global_arguments('-include', 'config.h', language: 'c')
+add_global_arguments('-std=gnu99', language : 'c')
 
 # External libs used by Mosys
 fmap_dep = dependency('fmap')
@@ -142,7 +143,7 @@ libmosys = static_library(
 
 # Add static linking if static is set
 link_args = []
-if get_option('static') == 'true'
+if get_option('static') == true
   link_args += '-static'
 endif
 
@@ -168,6 +169,3 @@ executable(
   install: true,
   install_dir: '/usr/sbin',
 )
-
-# Import tests last, which can link against libmosys
-subdir('tests')

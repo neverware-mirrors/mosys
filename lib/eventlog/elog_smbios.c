@@ -34,6 +34,7 @@
  */
 
 #define _XOPEN_SOURCE 600 /* for strptime + snprintf */
+#include <linux/limits.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <unistd.h>

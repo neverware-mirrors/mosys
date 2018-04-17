@@ -32,6 +32,7 @@
 
 #include <fcntl.h>
 #include <inttypes.h>
+#include <linux/limits.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 
