@@ -42,7 +42,8 @@
  *         Ignored now since mosys conditionally calls cros_config already.
  * `smbios_match_name` SMBIOS name to match.
  * `sku_id` SKU id to match.
- * `customization_id` Customization id to match.
+ * `customization_id` 'customization-id' to match from the VPD.
+ * `whitelabel_tag` 'whitelabel-tag' to match from the VPD.
  * 'sku_info' Corresonding sku_info for these attributes.
  */
 struct config_map {
@@ -54,6 +55,8 @@ struct config_map {
 	int sku_id;
 	// Set to "" if match is not required.
 	const char *customization_id;
+	// Set to "" if match is not required.
+	const char *whitelabel_tag;
 	struct sku_info info;
 };
 
@@ -69,8 +72,7 @@ struct config_map {
  * @return: 0 if OK, other value on error
  */
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
-				     const char *smbios_name,
-				     int sku_id,
+				     const char *smbios_name, int sku_id,
 				     struct sku_info *sku_info);
 
 /**
