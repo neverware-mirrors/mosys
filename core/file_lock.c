@@ -134,8 +134,11 @@ static int file_lock_open_or_create(struct ipc_lock *lock)
 	}
 
 	lock->fd = open(path, O_RDWR | O_CREAT, 0600);
+	int errsv = errno;
+
 	if (lock->fd < 0) {
-		lperror(LOG_ERR, "Cannot open lockfile %s", path);
+		lperror(LOG_ERR, "Cannot open lockfile %s: %s", path,
+			strerror(errsv));
 		return -1;
 	}
 
