@@ -63,13 +63,14 @@ struct config_map {
  * Read information about the current device using generated struct data.
  *
  * @intf: Platform information, used to access SMBIOS name and SKU ID
- * @find_platform_names: Comma-separated list of platform names that are
- *    permitted
+ * @smbios_name: SMBIOS name read from the platform.
+ * @sku_id: SKU ID read from the platform.
  * @sku_info: Returns SKU information on success
  * @return: 0 if OK, other value on error
  */
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
-				     const char *find_platform_names,
+				     const char *smbios_name,
+				     int sku_id,
 				     struct sku_info *sku_info);
 
 /**

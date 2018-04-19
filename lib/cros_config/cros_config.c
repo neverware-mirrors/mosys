@@ -286,7 +286,6 @@ static bool string_in_list(const char *name, const char *list)
 }
 
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
-			  const char *find_platform_names,
 			  const char *find_smbios_name, int find_sku_id,
 			  const char *find_wl_name, const char **platform_namep)
 {
@@ -298,15 +297,9 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 
 	lprintf(
 	    LOG_DEBUG,
-	    "%s: Looking up SMBIOS name '%s', SKU ID %d, platform names '%s'\n",
+	    "%s: Looking up SMBIOS name '%s', SKU ID %d\n",
 	    __func__, find_smbios_name ? find_smbios_name : "(null)",
-	    find_sku_id, find_platform_names);
-	if (find_smbios_name &&
-	    !string_in_list(find_smbios_name, find_platform_names)) {
-		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
-			__func__, find_smbios_name, find_platform_names);
-		return -ENOENT;
-	}
+	    find_sku_id);
 
 	mapping_node = fdt_path_offset(fdt, "/chromeos/family/mapping");
 	if (mapping_node < 0)
@@ -385,12 +378,6 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	int sku_id;
 	int ret;
 
-	ret = cros_config_read_sku_info_struct(intf, find_platform_names,
-					       sku_info);
-	if (!ret) {
-		return 0;
-	}
-
 	smbios_name = smbios_sysinfo_get_name(intf);
 	if (!smbios_name)
 		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
@@ -398,8 +385,21 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	if (sku_id == -1)
 		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
 
-	ret = cros_config_setup_sku(fdt, sku_info, find_platform_names,
-				    smbios_name, sku_id, NULL, &platform_name);
+	if (smbios_name &&
+	    !string_in_list(smbios_name, find_platform_names)) {
+		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
+			__func__, smbios_name, find_platform_names);
+		return -ENOENT;
+	}
+
+	ret = cros_config_read_sku_info_struct(intf, smbios_name, sku_id,
+					       sku_info);
+	if (!ret) {
+		return 0;
+	}
+
+	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_id, NULL,
+				    &platform_name);
 	if (ret) {
 		if (ret != -ENOENT)
 			lprintf(LOG_ERR,

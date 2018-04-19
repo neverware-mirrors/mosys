@@ -7,25 +7,16 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
+#include "lib/cros_config.h"
 #include "lib/cros_config_struct.h"
 #include "lib/math.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
 
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
-				     const char *find_platform_names,
+				     const char *smbios_name, int sku_id,
 				     struct sku_info *sku_info)
 {
-	const char *smbios_name;
-	int sku_id;
-
-	smbios_name = smbios_sysinfo_get_name(intf);
-	if (!smbios_name)
-		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
-	sku_id = smbios_sysinfo_get_sku_number(intf);
-	if (sku_id == -1)
-		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
-
 	const char *customization_id = sku_get_vpd_customization(intf);
 	if (customization_id == NULL) {
 		customization_id = sku_get_whitelabel_from_vpd();
