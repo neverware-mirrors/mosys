@@ -70,117 +70,51 @@ extern struct platform_intf platform_storm;
 extern struct platform_intf platform_stout;
 extern struct platform_intf platform_strago;
 extern struct platform_intf platform_stumpy;
-extern struct platform_intf platform_z600;
 extern struct platform_intf platform_zgb;
 
 struct platform_intf *platform_intf_list[] = {
-#ifdef CONFIG_PLATFORM_ALEX
+#ifdef CONFIG_PLATFORM_ARCH_X86
 	&platform_alex,
-#endif
-#ifdef CONFIG_PLATFORM_AURON
 	&platform_auron,
-#endif
-#ifdef CONFIG_PLATFORM_BELTINO
 	&platform_beltino,
-#endif
-#ifdef CONFIG_PLATFORM_BUTTERFLY
 	&platform_butterfly,
-#endif
-#ifdef CONFIG_PLATFORM_CYAN
-	&platform_cyan,
-#endif
-#ifdef CONFIG_PLATFORM_CYCLONE
-	&platform_cyclone,
-#endif
-#ifdef CONFIG_PLATFORM_DAISY
-	&platform_daisy,
-#endif
-#if defined(CONFIG_PLATFORM_FIZZ) && defined(CONFIG_CROS_CONFIG)
-	&platform_fizz,
-#endif
-#ifdef CONFIG_PLATFORM_GLADOS
-	&platform_glados,
-#endif
-#ifdef CONFIG_PLATFORM_GRU
-	&platform_gru,
-#endif
-#if defined(CONFIG_PLATFORM_KAHLEE) && defined(CONFIG_CROS_CONFIG)
-	&platform_kahlee,
-#endif
-#ifdef CONFIG_PLATFORM_LINK
-	&platform_link,
-#endif
-#ifdef CONFIG_PLATFORM_LUMPY
-	&platform_lumpy,
-#endif
-#ifdef CONFIG_PLATFORM_MARIO
-	&platform_mario,
-#endif
-#if defined(CONFIG_PLATFORM_NAMI) && defined(CONFIG_CROS_CONFIG)
-	&platform_nami,
-#endif
-#ifdef CONFIG_PLATFORM_NYAN
-	&platform_nyan,
-#endif
-#ifdef CONFIG_PLATFORM_OAK
-	&platform_oak,
-#endif
-#ifdef CONFIG_PLATFORM_OCTOPUS && defined(CONFIG_CROS_CONFIG)
-	&platform_octopus,
-#endif
-#ifdef CONFIG_PLATFORM_PARROT
-	&platform_parrot,
-#endif
-#ifdef CONFIG_PLATFORM_PEACH
-	&platform_peach,
-#endif
-#ifdef CONFIG_PLATFORM_PINKY
-	&platform_pinky,
-#endif
-#ifdef CONFIG_PLATFORM_RAMBI
-	&platform_rambi,
-#endif
-#ifdef CONFIG_PLATFORM_REEF
-	&platform_reef,
 	&platform_coral,
-#endif
-#ifdef CONFIG_PLATFORM_SAMUS
+	&platform_cyan,
+	&platform_glados,
+	&platform_link,
+	&platform_lumpy,
+	&platform_mario,
+	&platform_parrot,
+	&platform_rambi,
+	&platform_reef,
 	&platform_samus,
-#endif
-#ifdef CONFIG_PLATFORM_SKATE
-	&platform_skate,
-#endif
-#ifdef CONFIG_PLATFORM_SLIPPY
 	&platform_slippy,
-#endif
-#ifdef CONFIG_PLATFORM_SMAUG
-	&platform_smaug,
-#endif
-#ifdef CONFIG_PLATFORM_SPRING
-	&platform_spring,
-#endif
-#ifdef CONFIG_PLATFORM_STORM
-	&platform_storm,
-#endif
-#ifdef CONFIG_PLATFORM_STOUT
 	&platform_stout,
-#endif
-#ifdef CONFIG_PLATFORM_STRAGO
 	&platform_strago,
-#endif
-#ifdef CONFIG_PLATFORM_STUMPY
 	&platform_stumpy,
-#endif
-#ifdef CONFIG_PLATFORM_Z600
-	&platform_z600,
-#endif
-#ifdef CONFIG_PLATFORM_ZGB
 	&platform_zgb,
-#endif
-
+#ifdef CONFIG_CROS_CONFIG
+	&platform_fizz,
+	&platform_kahlee,
+	&platform_nami,
+	&platform_octopus,
+#endif // CONFIG_PLATFORM_ARCH_X86
 /* experimental platforms */
-#ifdef CONFIG_EXPERIMENTAL_KIEV
 	&platform_kiev,
-#endif
+#endif // CONFIG_PLATFORM_ARCH_X86
+
+#ifdef CONFIG_PLATFORM_ARCH_ARMEL
+	&platform_cyclone,
+	&platform_daisy,
+	&platform_gru,
+	&platform_nyan,
+	&platform_oak,
+	&platform_peach,
+	&platform_pinky,
+	&platform_skate,
+	&platform_smaug,
+	&platform_spring,
+	&platform_storm,
+#endif // CONFIG_PLATFORM_ARCH_ARMEL
 	NULL
 };

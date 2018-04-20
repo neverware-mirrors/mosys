@@ -50,7 +50,7 @@
 #include "intf/io.h"
 
 /* Stuff needed for port IO */
-#if defined(CONFIG_INTF_PORT_IO)
+#if defined(CONFIG_PLATFORM_ARCH_X86)
 #if defined(__DARWIN__)
 /* Header is part of the DirectHW library. */
 #include <DirectHW/DirectHW.h>
