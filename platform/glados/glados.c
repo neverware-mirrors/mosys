@@ -65,7 +65,6 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Cave", }, .single_sku = { .brand = "ASUL", }, },
 	{ { "Chell", }, .single_sku = { .brand = "HPZR", }, },
 	{ { "Eve", }, .single_sku = { .brand = "ZZAF", }, },
-	{ { "Poppy" }, .single_sku = { .brand = "LOGG", }, },
 	{ { "Glados", } },
 	{ { "Kunimitsu", }, },
 	/**
@@ -76,6 +75,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Meowth", }, .single_sku = { .brand = NULL, }, },
 	{ { "Nautilus", }, .single_sku = { .brand = "ZSKM", }, },
 	{ { "Pbody", }, },
+	{ { "Poppy" }, .single_sku = { .brand = "LOGG", }, },
 	{ { "Sentry", }, .single_sku = { .brand = "LEAJ", }, },
 	{ { "Skylake", }, },
 	{ { "Soraka", }, .single_sku = { .brand = "ARBI", }, },
