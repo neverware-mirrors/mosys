@@ -53,6 +53,7 @@ deps = [
   uuid_dep,
 ]
 link_whole = []
+objects = []
 
 # Cros config is a special snowflake.
 if use_cros_config
@@ -63,7 +64,6 @@ if use_cros_config
     'cros_config_dtb',
     cros_config_dtb_src,
     c_args: [
-      '-Itools/vpd_encode',
       '-D__ASSEMBLY__',
       '-c',
     ],
@@ -73,6 +73,7 @@ if use_cros_config
     ],
   )
   link_whole += dtb_lib
+  objects = dtb_lib.extract_all_objects()
 endif
 
 # Lib momsys shared library target
@@ -82,6 +83,7 @@ libmosys = static_library(
   dependencies: deps,
   include_directories: include_common,
   link_whole: link_whole,
+  objects: objects,
   pic: true,
 )
 
