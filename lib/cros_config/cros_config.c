@@ -372,6 +372,11 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 			      const char *find_platform_names,
 			      struct sku_info *sku_info)
 {
+#ifdef CONFIG_PLATFORM_ARCH_ARMEL
+	return cros_config_read_sku_info_struct(intf, sku_info);
+#endif // CONFIG_PLATFORM_ARCH_ARMEL
+
+#ifdef CONFIG_PLATFORM_ARCH_X86
 	const char *smbios_name, *platform_name;
 	extern char __dtb_config_begin[];
 	char *fdt = __dtb_config_begin;
@@ -410,4 +415,5 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	intf->name = platform_name;
 
 	return 0;
+#endif // CONFIG_PLATFORM_ARCH_X86
 }

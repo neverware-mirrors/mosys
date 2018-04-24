@@ -47,12 +47,13 @@
  * 'sku_info' Corresonding sku_info for these attributes.
  */
 struct config_map {
-	// Set to "" if match is not required.
-	const char *platform_name;
-	// Set to "" if match is not required.
+	// [x86 only] Set to "" if match is not required.
 	const char *smbios_match_name;
+	// [ARM only]
+	const char *device_tree_compatible_match;
 	// Set to -1 if match is not required.
 	int sku_id;
+	const char *platform_name;
 	// Set to "" if match is not required.
 	const char *customization_id;
 	// Set to "" if match is not required.
@@ -60,6 +61,7 @@ struct config_map {
 	struct sku_info info;
 };
 
+#ifdef CONFIG_PLATFORM_ARCH_X86
 /**
  * cros_config_read_sku_info_struct() - read SKU information for current device
  *
@@ -74,6 +76,21 @@ struct config_map {
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
 				     const char *smbios_name, int sku_id,
 				     struct sku_info *sku_info);
+#endif // CONFIG_PLATFORM_ARCH_X86
+
+#ifdef CONFIG_PLATFORM_ARCH_ARMEL
+/**
+ * cros_config_read_sku_info_struct() - read SKU information for current device
+ *
+ * Read information about the current device using generated struct data.
+ *
+ * @intf: Platform information, used to access device identity information.
+ * @sku_info: Returns SKU information on success
+ * @return: 0 if OK, other value on error
+ */
+int cros_config_read_sku_info_struct(struct platform_intf *intf,
+				     struct sku_info *sku_info);
+#endif // CONFIG_PLATFORM_ARCH_ARMEL
 
 /**
  * cros_config_get_config_map() - Returns a handle to the config map.
