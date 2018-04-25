@@ -52,6 +52,7 @@ extern struct nvram_cb cros_spi_flash_nvram_cb;
 /* FIXME: assume coreboot for now */
 #define FDT_RAM_CODE_PATH	"firmware/coreboot/ram-code"
 #define FDT_BOARD_ID_PATH	"firmware/coreboot/board-id"
+#define FDT_SKU_ID_PATH		"firmware/coreboot/sku-id"
 
 
 /* returns number of bytes read or -1 to indicate error */
@@ -136,6 +137,22 @@ int fdt_get_board_id(uint32_t *board_id)
 	}
 
 	lprintf(LOG_DEBUG, "%s: board_id: %u\n", __func__, *board_id);
+	return 0;
+}
+
+int fdt_get_sku_id(uint32_t *sku_id)
+{
+	if (fdt_get_uint32_val(FDT_SKU_ID_PATH, sku_id) < 0) {
+		lprintf(LOG_ERR, "%s: Error when reading board ID\n", __func__);
+		return -1;
+	}
+
+	if (*sku_id == 0xffffffff) {
+		lprintf(LOG_ERR, "%s: sku_id is invalid.\n", __func__);
+		return -1;
+	}
+
+	lprintf(LOG_DEBUG, "%s: sku_id: %u\n", __func__, *sku_id);
 	return 0;
 }
 
