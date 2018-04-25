@@ -36,7 +36,10 @@
 #include "lib/fdt.h"
 
 /* Gru uses device-tree compatible typle: google,<family>-<name>-rev<N>,
- * ie "google,gru-gru-rev0" */
+ * ie "google,gru-gru-rev0"
+ * Scarlet uses an additional sku<X> suffix:
+ * google,<family>-<name>-rev<N>-sku<X> -- e.g., "google,gru-scarlet-rev5-sku6"
+ */
 
 static char *gru_get_version(struct platform_intf *intf)
 {
@@ -48,6 +51,16 @@ static char *gru_get_version(struct platform_intf *intf)
 
 	snprintf(board_id_str, sizeof(board_id_str), "rev%u", board_id);
 	return mosys_strdup(board_id_str);
+}
+
+static char *gru_get_sku_id(struct platform_intf *intf)
+{
+	uint32_t sku_id;
+
+	if (fdt_get_sku_id(&sku_id) < 0)
+		return -1;
+
+	return sku_id;
 }
 
 static char *gru_get_vendor(struct platform_intf *intf)
@@ -65,4 +78,5 @@ struct sys_cb gru_sys_cb = {
 	.vendor			= &gru_get_vendor,
 	.name			= &gru_get_name,
 	.version		= &gru_get_version,
+	.sku_number		= &gru_get_sku_id,
 };
