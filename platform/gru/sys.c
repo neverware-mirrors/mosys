@@ -34,6 +34,7 @@
 
 #include "lib/probe.h"
 #include "lib/fdt.h"
+#include "lib/sku.h"
 
 /* Gru uses device-tree compatible typle: google,<family>-<name>-rev<N>,
  * ie "google,gru-gru-rev0"
@@ -79,4 +80,8 @@ struct sys_cb gru_sys_cb = {
 	.name			= &gru_get_name,
 	.version		= &gru_get_version,
 	.sku_number		= &gru_get_sku_id,
+#ifdef CONFIG_CROS_CONFIG
+	/* Only unibuild has the concept of a signature ID */
+	.signature_id		= sku_get_signature_id,
+#endif
 };

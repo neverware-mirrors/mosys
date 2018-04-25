@@ -34,6 +34,7 @@
 
 #include "gru.h"
 #include "drivers/google/cros_ec.h"
+#include "lib/cros_config.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -84,6 +85,20 @@ struct platform_cmd *gru_sub[] = {
 
 static int gru_probe(struct platform_intf *intf)
 {
+#ifdef CONFIG_CROS_CONFIG
+	static struct sku_info sku_info;
+	int ret;
+
+	ret = cros_config_read_sku_info(intf, "", &sku_info);
+
+	/* If there was no error, indicate that we found a match */
+	if (!ret) {
+		intf->sku_info = &sku_info;
+		return 1;
+	}
+
+	return ret;
+#else
 	int i;
 
 	for (i = 0; i < ARRAY_SIZE(gru_id_list); i++) {
@@ -101,6 +116,7 @@ static int gru_probe(struct platform_intf *intf)
 
 	lprintf(LOG_DEBUG, "%s: probed_board: %d\n", __func__, probed_board);
 	return probed_board > UNKNOWN ? 1 : 0;
+#endif /* CONFIG_CROS_CONFIG */
 }
 
 static int gru_setup_post(struct platform_intf *intf)
