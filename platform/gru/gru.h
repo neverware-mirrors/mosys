@@ -47,7 +47,6 @@ extern struct sys_cb gru_sys_cb;
 
 /* functions called by setup routines */
 extern int gru_ec_setup(struct platform_intf *intf);
-extern void gru_eeprom_setup(struct platform_intf *intf, int has_ec);
 extern int gru_vpd_setup(struct platform_intf *intf);
 
 #endif /* GOOGLE_GRU_H */

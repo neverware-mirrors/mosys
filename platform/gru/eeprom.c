@@ -159,12 +159,6 @@ static struct eeprom eeproms[] = {
 	{ 0 },
 };
 
-void gru_eeprom_setup(struct platform_intf *intf, int has_ec)
-{
-	if (!has_ec)
-		intf->cb->eeprom->eeprom_list = &eeproms[GRU_HOST_FIRMWARE];
-}
-
 struct eeprom_cb gru_eeprom_cb = {
 	.eeprom_list	= eeproms,
 };

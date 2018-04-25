@@ -58,14 +58,13 @@ static enum gru_boards probed_board = UNKNOWN;
 struct gru_probe_id {
 	const char *name;
 	const char *fdt_compat;
-	int has_ec;
 	const struct sku_info single_sku;
 } gru_id_list[] = {
-	[BOB]		= { "Bob", "google,bob-rev", 1, { .brand = "ASUO" } },
-	[GRU]		= { "Gru", "google,gru-rev", 1, { .brand = "LOGA" } },
-	[KEVIN]		= { "Kevin", "google,kevin-rev", 1, { .brand = "SMAJ" } },
-	[RAINIER]	= { "Rainier", "google,rainier-rev", 1 },
-	[SCARLET]	= { "Scarlet", "google,scarlet-rev", 1, { .brand = "DXZT" } },
+	[BOB]		= { "Bob", "google,bob-rev", { .brand = "ASUO" } },
+	[GRU]		= { "Gru", "google,gru-rev", { .brand = "LOGA" } },
+	[KEVIN]		= { "Kevin", "google,kevin-rev", { .brand = "SMAJ" } },
+	[RAINIER]	= { "Rainier", "google,rainier-rev" },
+	[SCARLET]	= { "Scarlet", "google,scarlet-rev", { .brand = "DXZT" } },
 };
 
 #define GRU_CMD_EC_NUM	0
@@ -106,15 +105,8 @@ static int gru_probe(struct platform_intf *intf)
 
 static int gru_setup_post(struct platform_intf *intf)
 {
-	if (gru_id_list[probed_board].has_ec) {
-		if (cros_ec_setup(intf) < 0)
-			return -1;
-	} else {
-		intf->cb->ec = NULL;
-		intf->sub = &gru_sub[GRU_CMD_EC_NUM + 1];
-	}
-
-	gru_eeprom_setup(intf, gru_id_list[probed_board].has_ec);
+	if (cros_ec_setup(intf) < 0)
+		return -1;
 
 	return 0;
 }
