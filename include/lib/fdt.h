@@ -38,6 +38,8 @@
 
 extern int fdt_get_ram_code(uint32_t *ram_code);
 extern int fdt_get_board_id(uint32_t *board_id);
+extern int fdt_get_sku_id(uint32_t *sku_id);
+
 
 enum vbnv_storage_media {
 	VBNV_STORAGE_UNKNOWN	= -1,
