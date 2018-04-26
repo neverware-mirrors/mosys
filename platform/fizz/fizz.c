@@ -58,6 +58,7 @@ struct platform_cmd *fizz_sub[] = {
 	&cmd_fp,
 	&cmd_memory,
 	&cmd_nvram,
+	&cmd_pd,
 	&cmd_platform,
 	&cmd_psu,
 	&cmd_smbios,
