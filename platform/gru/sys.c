@@ -54,7 +54,7 @@ static char *gru_get_version(struct platform_intf *intf)
 	return mosys_strdup(board_id_str);
 }
 
-static char *gru_get_sku_id(struct platform_intf *intf)
+static int gru_get_sku_id(struct platform_intf *intf)
 {
 	uint32_t sku_id;
 
