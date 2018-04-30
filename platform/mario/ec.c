@@ -181,16 +181,16 @@ static const char *google_cr48_ec_fw_version(struct platform_intf *intf)
 	ec_wait(intf, mbx_base);
 
 	io_write8(intf, mbx_base, MARIO_EC_MBX_IDX0);
-	io_read8(intf, mbx_base + 1, &version[0]);
+	io_read8(intf, mbx_base + 1, (uint8_t *)&version[0]);
 
 	io_write8(intf, mbx_base, MARIO_EC_MBX_IDX1);
-	io_read8(intf, mbx_base + 1, &version[1]);
+	io_read8(intf, mbx_base + 1, (uint8_t *)&version[1]);
 
 	io_write8(intf, mbx_base, MARIO_EC_MBX_DATA0);
-	io_read8(intf, mbx_base + 1, &version[2]);
+	io_read8(intf, mbx_base + 1, (uint8_t *)&version[2]);
 
 	io_write8(intf, mbx_base, MARIO_EC_MBX_DATA1);
-	io_read8(intf, mbx_base + 1, &version[3]);
+	io_read8(intf, mbx_base + 1, (uint8_t *)&version[3]);
 
 	version[4] = '\0';
 	return version;
