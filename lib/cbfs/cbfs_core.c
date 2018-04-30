@@ -111,8 +111,8 @@ struct cbfs_file *cbfs_find(const char *name, const uint8_t *buf, size_t size)
 			offset = CBFS_ALIGN_UP(offset, align);
 			continue;
 		}
-		lprintf(LOG_DEBUG, "%s: Found entry \"%s\" at offset 0x%06lx\n",
-		                   __func__, CBFS_NAME(file), offset);
+		lprintf(LOG_DEBUG, "%s: Found entry \"%s\" at offset 0x%06jx\n",
+		                   __func__, CBFS_NAME(file), (intmax_t)offset);
 		if (strcmp(CBFS_NAME(file), name) == 0) {
 			return file;
 		}
