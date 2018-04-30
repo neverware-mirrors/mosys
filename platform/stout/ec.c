@@ -122,7 +122,7 @@ int ecram_read(struct platform_intf *intf,
 			stout_ec_mem_addr address, uint8_t *data,
 			stout_ec_command cmd)
 {
-	return ec_command(intf, cmd, (int8_t *)&address, 1,
+	return ec_command(intf, cmd, (uint8_t *)&address, 1,
 				data, 1);
 }
 
