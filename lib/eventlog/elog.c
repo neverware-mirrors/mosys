@@ -1020,7 +1020,7 @@ int elog_add_event_manually(struct platform_intf *intf,
 
   	/* Total event size must fit in length member of entry (1 byte) */
 	if (event_size > 0xff) {
-		lprintf(LOG_ERR, "Event data size %lu too large.\n",
+		lprintf(LOG_ERR, "Event data size %zu too large.\n",
 				event_data_size);
 		errno = EINVAL;
 		return -1;
@@ -1040,7 +1040,7 @@ int elog_add_event_manually(struct platform_intf *intf,
 	shrink_size = length / 4;
 
 	if (event_size > shrink_size) {
-		lprintf(LOG_WARNING, "Event size %lx is too large.\n",
+		lprintf(LOG_WARNING, "Event size %zx is too large.\n",
 			event_size);
 		return -1;
 	}
