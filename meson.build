@@ -35,6 +35,11 @@ configure_file(
 add_global_arguments('-include', 'config.h', language: 'c')
 add_global_arguments('-std=gnu99', language : 'c')
 
+cc = meson.get_compiler('c')
+if (cc.has_argument('-Wno-address-of-packed-member'))
+  add_global_arguments(['-Wno-address-of-packed-member'], language: 'c')
+endif
+
 # External libs used by Mosys
 fmap_dep = dependency('fmap')
 uuid_dep = dependency('uuid')
