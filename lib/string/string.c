@@ -240,7 +240,7 @@ void lshift_nibbles(uint8_t array[], size_t len)
  */
 int nstr2buf(uint8_t **buf, const char *str, int base, const char *delim)
 {
-	unsigned char c[2] = { '\0', '\0' };
+	char c[2] = { '\0', '\0' };
 	unsigned long int digit;
 	int str_idx, tmp_idx, len, err = 0;
 	char *endptr;
