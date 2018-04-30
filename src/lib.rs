@@ -11,7 +11,7 @@ mod logging;
 
 use std::error::Error;
 use std::ffi::{CStr, CString, NulError};
-use std::fmt;
+use std::fmt::{Display, Formatter};
 use std::io;
 use std::ptr::null;
 use std::str::Utf8Error;
@@ -30,16 +30,16 @@ lazy_static! {
 }
 
 #[derive(Debug)]
-pub struct Mosys {
-    program: String,
-    args: Vec<String>,
+pub struct Mosys<'a> {
+    program: &'a str,
+    args: Vec<&'a str>,
     style: kv_pair_style,
     single_key: CString,
     platform_override: CString,
 }
 
-impl Mosys {
-    pub fn new(mut args: Vec<String>) -> Result<Mosys> {
+impl<'a> Mosys<'a> {
+    pub fn new(args: &'a [impl AsRef<str>]) -> Result<Mosys<'a>> {
         let mut m = INSTANCES.lock().unwrap();
         *m += 1;
 
@@ -51,9 +51,12 @@ impl Mosys {
         }
 
         Log::init(&PROG_NAME, Log::Warning)?;
+        let mut vec = Vec::new();
+        let program = args[0].as_ref();
+        vec.extend(args[1..].iter().map(|v| v.as_ref()));
         Ok(Mosys {
-            program: args.remove(0),
-            args: args,
+            program: program,
+            args: vec,
             style: kv_pair_style_KV_STYLE_VALUE,
             single_key: CString::default(),
             platform_override: CString::default(),
@@ -188,7 +191,7 @@ impl Mosys {
     }
 }
 
-impl Drop for Mosys {
+impl<'a> Drop for Mosys<'a> {
     fn drop(&mut self) {
         let mut m = INSTANCES.lock().unwrap();
         *m -= 1;
@@ -210,8 +213,8 @@ pub enum MosysError {
     PlatformNotSupported,
 }
 
-impl fmt::Display for MosysError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl Display for MosysError {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         match *self {
             MosysError::Flag(ref err) => write!(f, "Flag error: {}", err),
             MosysError::Io(ref err) => write!(f, "IO error: {}", err),
@@ -291,10 +294,6 @@ type Result<T> = std::result::Result<T, MosysError>;
 
 #[cfg(test)]
 mod tests {
-    macro_rules! vec_of_strings {
-        ($($x:expr),*) => (vec![$($x.to_string()),*]);
-    }
-
     use super::*;
     use logging::LAST_LOG;
 
@@ -307,15 +306,15 @@ mod tests {
     #[test]
     fn test_new() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings!["someprogname", "-f", "-p", "Link", "command"];
-        Mosys::new(args).expect("Instantiation failed");
+        let args = ["someprogname", "-f", "-p", "Link", "command"];
+        Mosys::new(&args).expect("Instantiation failed");
     }
 
     #[test]
     fn test_help() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings!["someprogname", "-h", "command"];
-        let mut mosys = Mosys::new(args).unwrap();
+        let args = ["someprogname", "-h", "command"];
+        let mut mosys = Mosys::new(&args).unwrap();
 
         match mosys.run() {
             Err(MosysError::Help) => (),
@@ -327,8 +326,8 @@ mod tests {
     #[test]
     fn test_lock_fail() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings!["someprogname", "command"];
-        let mut mosys = Mosys::new(args).unwrap();
+        let args = ["someprogname", "command"];
+        let mut mosys = Mosys::new(&args).unwrap();
 
         match mosys.run() {
             Err(MosysError::AcqLockFail) => (),
@@ -339,14 +338,14 @@ mod tests {
     #[test]
     fn test_platform_not_supported() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings![
+        let args = [
             "someprogname",
             "-f",
             "-p",
             "nonexistant_platform",
-            "command"
+            "command",
         ];
-        let mut mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(&args).unwrap();
 
         match mosys.run() {
             Err(MosysError::PlatformNotSupported) => (),
@@ -357,8 +356,8 @@ mod tests {
     #[test]
     fn test_version() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings!["someprogname", "-V"];
-        let mut mosys = Mosys::new(args).unwrap();
+        let args = ["someprogname", "-V"];
+        let mut mosys = Mosys::new(&args).unwrap();
         mosys.run().expect("Should have exited Ok(())");
         assert_eq!(
             &**LAST_LOG.lock().unwrap(),
@@ -369,7 +368,7 @@ mod tests {
     #[test]
     fn test_verbosity() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings![
+        let args = [
             "someprogname",
             "-v",
             "-v",
@@ -379,9 +378,9 @@ mod tests {
             "-f",
             "-p",
             "Link",
-            "command"
+            "command",
         ];
-        let mut mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(&args).unwrap();
         mosys.run().expect("Should have exited Ok(())");
         let t = Log::get_threshold();
         assert_eq!(t, Log::Spew, "Should have incremented verbosity to max");
@@ -390,15 +389,15 @@ mod tests {
     #[test]
     fn test_platform_list() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings!["someprogname", "-S", "-v"];
-        let mut mosys = Mosys::new(args).unwrap();
+        let args = ["someprogname", "-S", "-v"];
+        let mut mosys = Mosys::new(&args).unwrap();
         mosys.run().expect("Should have exited Ok(())");
     }
 
     #[test]
     fn test_misc_args() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings![
+        let args = [
             "someprogname",
             "-s",
             "keyname",
@@ -407,10 +406,10 @@ mod tests {
             "-f",
             "-p",
             "Link",
-            "command"
+            "command",
         ];
 
-        let mut mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(&args).unwrap();
         mosys
             .run()
             .expect("Should have succeeded with getopts arguments");
@@ -421,17 +420,17 @@ mod tests {
     #[test]
     fn test_single_kv_pair() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings![
+        let args = [
             "someprogname",
             "-f",
             "-p",
             "Link",
             "-s",
             "keyname",
-            "command"
+            "command",
         ];
 
-        let mut mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(&args).unwrap();
         mosys
             .run()
             .expect("Should have succeeded with getopts arguments");
@@ -443,8 +442,7 @@ mod tests {
         }
 
         assert_eq!(
-            r,
-            kv_pair_style_KV_STYLE_SINGLE,
+            r, kv_pair_style_KV_STYLE_SINGLE,
             "Should have change kv_pair_style"
         );
     }
@@ -452,9 +450,9 @@ mod tests {
     #[test]
     fn test_long_kv_pair() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings!["someprogname", "-f", "-p", "Link", "-l", "command"];
+        let args = ["someprogname", "-f", "-p", "Link", "-l", "command"];
 
-        let mut mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(&args).unwrap();
         mosys
             .run()
             .expect("Should have succeeded with getopts arguments");
@@ -465,8 +463,7 @@ mod tests {
         }
 
         assert_eq!(
-            r,
-            kv_pair_style_KV_STYLE_LONG,
+            r, kv_pair_style_KV_STYLE_LONG,
             "Should have change kv_pair_style"
         );
     }
@@ -474,9 +471,9 @@ mod tests {
     #[test]
     fn test_pair_kv_pair() {
         let _test_lock = LOCK.lock().unwrap();
-        let args = vec_of_strings!["someprogname", "-f", "-p", "Link", "-k", "command"];
+        let args = ["someprogname", "-f", "-p", "Link", "-k", "command"];
 
-        let mut mosys = Mosys::new(args).unwrap();
+        let mut mosys = Mosys::new(&args).unwrap();
         mosys
             .run()
             .expect("Should have succeeded with getopts arguments");
@@ -487,8 +484,7 @@ mod tests {
         }
 
         assert_eq!(
-            r,
-            kv_pair_style_KV_STYLE_PAIR,
+            r, kv_pair_style_KV_STYLE_PAIR,
             "Should have change kv_pair_style"
         );
     }
