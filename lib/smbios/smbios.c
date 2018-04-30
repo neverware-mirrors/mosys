@@ -241,7 +241,7 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 			                 "SMBIOS=", 7, 1, &klog_offset) == 0) {
 				baseaddr = strtoull(buf + klog_offset + 7,
 				                    NULL, 0);
-				lprintf(LOG_DEBUG, "kernel log offset: %lx, "
+				lprintf(LOG_DEBUG, "kernel log offset: %zx, "
 				                   "SMBIOS=0x%08lx\n",
 					           klog_offset, baseaddr);
 				data = mmio_map(intf, O_RDONLY, baseaddr, len);
