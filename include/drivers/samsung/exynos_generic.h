@@ -38,7 +38,7 @@ struct gpio_map;
 
 struct exynos_gpio_bank {
 	const char *name;	/* name of port (GPAn, GPBn, etc) */
-	uint32_t baseaddr;	/* base address */
+	uintptr_t baseaddr;	/* base address */
 };
 
 /* Except for ETCn, each bank has 6 32-bit registers */
