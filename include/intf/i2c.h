@@ -82,7 +82,7 @@ struct i2c_intf {
 	 */
 	 int (*i2c_transfer)(struct platform_intf *intf, int bus, int address,
 			     const void *outdata, int outsize,
-			     const void *indata, int insize);
+			     void *indata, int insize);
 
 	/*
 	 * smbus_read_reg - Read from a register addressable SMBus device

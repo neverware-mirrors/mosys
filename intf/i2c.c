@@ -155,7 +155,7 @@ static void i2c_close_dev(struct platform_intf *intf)
 
 static int i2c_transfer(struct platform_intf *intf, int bus, int address,
 			const void *outdata, int outsize,
-			const void *indata, int insize)
+			void *indata, int insize)
 {
 	int ret = -1;
 	struct i2c_rdwr_ioctl_data data;
@@ -175,7 +175,7 @@ static int i2c_transfer(struct platform_intf *intf, int bus, int address,
 		msg[data.nmsgs].addr = address;
 		msg[data.nmsgs].flags = 0;
 		msg[data.nmsgs].len = outsize;
-		msg[data.nmsgs].buf = (char *)outdata;
+		msg[data.nmsgs].buf = (uint8_t *)outdata;
 		data.nmsgs++;
 	}
 
@@ -184,7 +184,7 @@ static int i2c_transfer(struct platform_intf *intf, int bus, int address,
 		msg[data.nmsgs].addr = address;
 		msg[data.nmsgs].flags = I2C_M_RD;
 		msg[data.nmsgs].len = insize;
-		msg[data.nmsgs].buf = (char *)indata;
+		msg[data.nmsgs].buf = indata;
 		data.nmsgs++;
 	}
 
