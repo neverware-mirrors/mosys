@@ -571,9 +571,9 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 		return -1;
 	}
 	if (st.st_size > eeprom_size) {
-		lprintf(LOG_ERR, "cannot write %lx bytes to %s eeprom "
-			         "(%u bytes)\n", st.st_size, eeprom->name,
-		                  eeprom_size);
+		lprintf(LOG_ERR, "cannot write %jx bytes to %s eeprom "
+				 "(%u bytes)\n", (intmax_t)st.st_size,
+				  eeprom->name, eeprom_size);
 		errno = EFBIG;
 		return -1;
 	}
@@ -597,8 +597,8 @@ static int eeprom_write_cmd(struct platform_intf *intf,
 
 	if (eeprom->device->write(intf, eeprom, 0,
 				  st.st_size, buf) != st.st_size) {
-		lprintf(LOG_ERR, "Unable to write %lx bytes to %s\n",
-				  st.st_size, eeprom->name);
+		lprintf(LOG_ERR, "Unable to write %jx bytes to %s\n",
+				  (intmax_t)st.st_size, eeprom->name);
 		rc = -1;
 	} else {
 		mosys_printf("Wrote image to %s\n", eeprom->name);
