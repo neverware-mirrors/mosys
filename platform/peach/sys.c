@@ -47,7 +47,7 @@ static char *get_name(struct platform_intf *intf)
 
 	ret = mosys_strdup(intf->name);
 
-	return (const char *)ret;
+	return ret;
 }
 
 static char *get_version(struct platform_intf *intf)
