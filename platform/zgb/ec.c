@@ -153,7 +153,7 @@ static const char *acer_chromia700_ec_fw_version(struct platform_intf *intf)
 	if (mbx_wait(intf, NPCE781_MBX_CSR_IBF, CLEAR)) return "unknown";
 	io_write8(intf, mbx_csr, 0xfb);
 	if (mbx_wait(intf, NPCE781_MBX_CSR_OBF, SET)) return "unknown";
-	io_read8(intf, mbx_data, &version[0]);
+	io_read8(intf, mbx_data, (uint8_t *)&version[0]);
 
 	version[1] = '.';
 
@@ -166,7 +166,7 @@ static const char *acer_chromia700_ec_fw_version(struct platform_intf *intf)
 	if (mbx_wait(intf, NPCE781_MBX_CSR_IBF, CLEAR)) return "unknown";
 	io_write8(intf, mbx_csr, 0xfb);
 	if (mbx_wait(intf, NPCE781_MBX_CSR_OBF, SET)) return "unknown";
-	io_read8(intf, mbx_data, &version[2]);
+	io_read8(intf, mbx_data, (uint8_t *)&version[2]);
 
 	/* step 5 */
 	if (mbx_wait(intf, NPCE781_MBX_CSR_IBF, CLEAR)) return "unknown";
@@ -177,7 +177,7 @@ static const char *acer_chromia700_ec_fw_version(struct platform_intf *intf)
 	if (mbx_wait(intf, NPCE781_MBX_CSR_IBF, CLEAR)) return "unknown";
 	io_write8(intf, mbx_csr, 0xfb);
 	if (mbx_wait(intf, NPCE781_MBX_CSR_OBF, SET)) return "unknown";
-	io_read8(intf, mbx_data, &version[3]);
+	io_read8(intf, mbx_data, (uint8_t *)&version[3]);
 
 	version[4] = '\0';
 
