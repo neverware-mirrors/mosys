@@ -105,10 +105,10 @@ static const char *butterfly_ec_fw_version(struct platform_intf *intf)
 	static char version[BUTTERFLY_ECRAM_FW_VERSION_LEN + 1];
 
 	for (i = 0; i < ARRAY_SIZE(version); i++)
-		read_ecram(intf, BUTTERFLY_ECRAM_FW_VERSION + i, &version[i]);
+		read_ecram(intf, BUTTERFLY_ECRAM_FW_VERSION + i, (uint8_t *)&version[i]);
 	version[i] = '\0';
 
-	return (const char *)version;
+	return version;
 }
 
 int butterfly_ec_setup(struct platform_intf *intf)
