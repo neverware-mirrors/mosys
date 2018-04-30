@@ -150,7 +150,6 @@ struct platform_cb oak_cb = {
 struct platform_intf platform_oak = {
 	.type		= PLATFORM_ARMV8,
 	.name		= "Oak",
-	.id_list	= oak_id_list,
 	.sub		= oak_sub,
 	.cb		= &oak_cb,
 	.probe		= &oak_probe,
