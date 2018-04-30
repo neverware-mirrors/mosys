@@ -150,7 +150,7 @@ static int alex_spd_read_i2c(struct platform_intf *intf,
 static int alex_spd_read_vpd(struct platform_intf *intf,
                              int dimm, int reg, int len, uint8_t *buf)
 {
-	off_t spd;
+	uint64_t spd;
 	struct gpio_map *gpio = NULL;
 	int level;
 	int ret = -1;
@@ -172,8 +172,8 @@ static int alex_spd_read_vpd(struct platform_intf *intf,
 	else
 		return -1;
 
-	lprintf(LOG_DEBUG, "%s: reading %d bytes from 0x%lx\n",
-	                   __func__, len, spd + reg);
+	lprintf(LOG_DEBUG, "%s: reading %d bytes from 0x%jx\n",
+	                   __func__, len, (uintmax_t)spd + reg);
 	if (mmio_read(intf, spd + reg, len, buf) == 0)
 		ret = len;
 
