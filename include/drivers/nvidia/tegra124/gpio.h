@@ -40,7 +40,6 @@ typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint32_t gpio_t;
-typedef uint32_t gpio_t;
 
 #define TEGRA_GPIO_BASE 0x6000D000
 #define TEGRA_APB_PINMUX_BASE 0x70003000
