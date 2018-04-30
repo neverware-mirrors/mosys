@@ -49,7 +49,7 @@ static const char *samsung_series5_ec_vendor(struct platform_intf *intf)
 
 static const char *samsung_series5_ec_fw_version(struct platform_intf *intf)
 {
-	static uint8_t version[MEC1308_MBX_DATA_LEN];
+	static char version[MEC1308_MBX_DATA_LEN];
 	int i, num_tries = 3;
 
 	memset(version, 0, sizeof(version));

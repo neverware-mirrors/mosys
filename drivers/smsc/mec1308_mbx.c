@@ -142,7 +142,7 @@ void mec1308_mbx_teardown(struct platform_intf *intf)
 	mec1308_sio_exit(intf, ec_port);
 }
 
-int mec1308_mbx_fw_version(struct platform_intf *intf, uint8_t *buf, int len)
+int mec1308_mbx_fw_version(struct platform_intf *intf, char *buf, int len)
 {
 	int i;
 	uint8_t cmd = MEC1308_MBX_CMD_FW_VERSION;

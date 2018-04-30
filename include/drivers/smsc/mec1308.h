@@ -121,7 +121,7 @@ extern const char *mec1308_sio_vendor(struct platform_intf *intf);
  * returns <0 to indicate error
  */
 extern int mec1308_mbx_fw_version(struct platform_intf *intf,
-                                  uint8_t *buf, int len);
+                                  char *buf, int len);
 
 /*
  * mec1308_mbx_setup - setup internal variables (e.g. mailbox address)
