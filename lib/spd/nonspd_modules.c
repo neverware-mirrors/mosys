@@ -718,7 +718,7 @@ int spd_set_nonspd_info(struct platform_intf *intf,
 
 	for (index = 0; index < ARRAY_SIZE(nospdmemory); index++) {
 		if (!strncmp(table.string[table.data.mem_device.part_number],
-			nospdmemory[index]->part_num,
+			(const char *)nospdmemory[index]->part_num,
 			sizeof(nospdmemory[index]->part_num))) {
 			*info = nospdmemory[index];
 			break;
