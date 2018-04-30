@@ -128,7 +128,8 @@ int exynos_read_gpio_mvl(struct platform_intf *intf,
 	} else if (vpu && !vpd) {
 		ret = LOGIC_Z;
 	} else {
-		lprintf(LOG_DEBUG, "%s: detected unvalid logic state\n");
+		lprintf(LOG_DEBUG, "%s: detected unvalid logic state\n",
+			__func__);
 		return -1;
 	}
 
