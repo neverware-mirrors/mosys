@@ -178,13 +178,19 @@ impl<'a> Mosys<'a> {
             return Ok(());
         }
 
-        let _commands = match matches.free.get(0) {
-            Some(c) => c,
-            None => {
-                self.print_usage(opts);
-                return Err(MosysError::NoCommands);
+        // Safe because we are testing for null before dereferencing
+        unsafe {
+            if platform_interface.sub.is_null() || (*platform_interface.sub).is_null() {
+                return Err(MosysError::NoCommandsDefined);
             }
-        };
+        }
+
+        if matches.free.len() == 0 {
+            self.print_usage(opts);
+            return Err(MosysError::NoCommands);
+        }
+
+        let _commands = &matches.free[..];
 
         Log::Debug.logln("Completed successfully")?;
         Ok(())
@@ -208,6 +214,7 @@ pub enum MosysError {
     InvalidUtf8(Utf8Error),
     Help,
     NoCommands,
+    NoCommandsDefined,
     NonzeroPlatformListRet,
     AcqLockFail,
     PlatformNotSupported,
@@ -225,6 +232,7 @@ impl Display for MosysError {
             }
             MosysError::Help => write!(f, "Requested help"),
             MosysError::NoCommands => write!(f, "No commands given"),
+            MosysError::NoCommandsDefined => write!(f, "No commands defined for platform"),
             MosysError::NonzeroPlatformListRet => write!(f, "Platform list failed"),
             MosysError::AcqLockFail => write!(f, "Aquiring global, system lock failed"),
             MosysError::PlatformNotSupported => write!(f, "Platform not supported"),
@@ -233,6 +241,7 @@ impl Display for MosysError {
 }
 
 impl Error for MosysError {
+    // Remove this when https://github.com/rust-lang/rfcs/pull/2230 lands
     fn description(&self) -> &str {
         match *self {
             MosysError::Flag(ref err) => err.description(),
@@ -242,6 +251,7 @@ impl Error for MosysError {
             MosysError::InvalidUtf8(ref err) => err.description(),
             MosysError::Help => "Requested help",
             MosysError::NoCommands => "No commands given",
+            MosysError::NoCommandsDefined => "No commands defined for platform",
             MosysError::NonzeroPlatformListRet => "Platform list failure",
             MosysError::AcqLockFail => "Aquiring global, system lock failed",
             MosysError::PlatformNotSupported => "Platform not supported",
@@ -487,6 +497,18 @@ mod tests {
             r, kv_pair_style_KV_STYLE_PAIR,
             "Should have change kv_pair_style"
         );
+    }
+
+    #[test]
+    fn test_no_commands_defined() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = ["someprogname", "-f", "-p", "Dummy", "-k", "command"];
+
+        let mut mosys = Mosys::new(&args).unwrap();
+        match mosys.run() {
+            Err(MosysError::NoCommandsDefined) => (),
+            _ => panic!("Should have returned error that platform has no commands"),
+        }
     }
 
     #[test]

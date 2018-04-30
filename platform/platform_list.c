@@ -35,6 +35,7 @@
 
 /* experimental */
 extern struct platform_intf platform_kiev;
+extern struct platform_intf platform_dummy;
 
 /* production platforms */
 extern struct platform_intf platform_alex;
@@ -100,6 +101,7 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_octopus,
 #endif // CONFIG_PLATFORM_ARCH_X86
 /* experimental platforms */
+	&platform_dummy,
 	&platform_kiev,
 #endif // CONFIG_PLATFORM_ARCH_X86
 
