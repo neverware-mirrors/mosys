@@ -47,7 +47,7 @@ static char *skate_get_name(struct platform_intf *intf)
 
 	ret = mosys_strdup(intf->name);
 
-	return (const char *)ret;
+	return ret;
 }
 
 #if 0
