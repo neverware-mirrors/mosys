@@ -362,8 +362,8 @@ int flashrom_read(uint8_t *buf, size_t size,
 	}
 
 	if (s.st_size != size) {
-		lprintf(LOG_DEBUG, "%s: Size of image: %lu, expected %lu\n",
-		                   __func__, s.st_size, size);
+		lprintf(LOG_DEBUG, "%s: Size of image: %jd, expected %zu\n",
+		                   __func__, (intmax_t)s.st_size, size);
 		goto flashrom_read_exit_1;
 	}
 
