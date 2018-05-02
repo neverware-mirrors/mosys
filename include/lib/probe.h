@@ -133,7 +133,7 @@ extern char *fdt_model(void);
  * returns the index of the platform ID if found
  * returns <0 to indicate error
  */
-extern int probe_fdt_compatible(const char *id_list[],
+extern int probe_fdt_compatible(const char * const id_list[],
 				int num_ids, int allow_partial);
 
 

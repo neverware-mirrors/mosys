@@ -303,7 +303,8 @@ char *fdt_model(void)
 }
 
 #define FDT_COMPATIBLE	"/proc/device-tree/compatible"
-int probe_fdt_compatible(const char *id_list[], int num_ids, int allow_partial)
+int probe_fdt_compatible(const char * const id_list[], int num_ids,
+			 int allow_partial)
 {
 	int ret = -1, i, fd;
 	char path[PATH_MAX];
