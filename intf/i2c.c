@@ -606,6 +606,7 @@ static struct ll_node *i2c_find_sysfs_dir(struct platform_intf *intf,
 	struct ll_node *head = NULL;
 	int bus, addr;
 	int len = strlen(name);
+	const char *next;
 
 	if (!(dp = opendir(intf->op->i2c->sys_root))) {
 		lprintf(LOG_ERR, "Failed to open %s\n",
@@ -624,9 +625,12 @@ static struct ll_node *i2c_find_sysfs_dir(struct platform_intf *intf,
 		                     intf->op->i2c->sys_root, bus, addr);
 		fp = fopen(path, "r");
 		if (fp) {
-			fgets(s, sizeof(s), fp);
+			next = fgets(s, sizeof(s), fp);
 			fclose(fp);
-			if (!strncmp(s, name, len)) { /* Found one! */
+			if (!next) {
+				lprintf(LOG_NOTICE, "Error reading name: %s\n",
+					path);
+			} else if (!strncmp(s, name, len)) { /* Found one! */
 				struct i2c_data *n;
 
 				n = mosys_malloc(sizeof(struct i2c_data));
