@@ -268,7 +268,11 @@ const char *extract_block_device_model_name(const char *device)
 		return NULL;
 
 	model_name = mosys_malloc(PATH_MAX);
-	fgets(model_name, PATH_MAX, file);
+	if (!fgets(model_name, PATH_MAX, file)) {
+		fclose(file);
+		free(model_name);
+		return NULL;
+	}
 	fclose(file);
 
 	/* Remove trailing newline. */
