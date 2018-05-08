@@ -342,7 +342,7 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 			cas = ddr2_cas_lut[i - 1].str;
 			clock = val2str(byte[23], ddr2_clock_lut);
 
-			snprintf(tmp, sizeof(speeds), " %s-%s", clock, cas);
+			snprintf(tmp, sizeof(tmp), " %s-%s", clock, cas);
 			strncat(speeds, tmp, sizeof(speeds) - strlen(speeds) - 1);
 		}
 
@@ -352,7 +352,7 @@ int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
 			cas = ddr2_cas_lut[i - 2].str;
 			clock = val2str(byte[25], ddr2_clock_lut);
 
-			snprintf(tmp, sizeof(speeds), " %s-%s", clock, cas);
+			snprintf(tmp, sizeof(tmp), " %s-%s", clock, cas);
 			strncat(speeds, tmp, sizeof(speeds) - strlen(speeds) - 1);
 		}
 
