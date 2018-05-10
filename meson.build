@@ -110,8 +110,7 @@ executable(
   install_dir: '/usr/sbin',
 )
 
-# Mosys static executable. This will be removed by the ebuild if static is not
-# set, but is always built and installed first.
+# Mosys static executable
 executable(
   'mosys_s',
   ['mosys.c'],

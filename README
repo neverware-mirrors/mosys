@@ -28,7 +28,7 @@ See meson.build for valid arch options.
 Other flags of interest:
 -Duse_cros_config=true/false: whether to enable linking to cros_config for
                               Chrome OS. See Chrome OS example in mosys ebuild.
--Dstatic=true/false: whether to enable a static mosys_s binary.
+-Dstatic=true/false: whether to compile mosys binary as static.
 
 To build the experimental Rust support, first build libmosys.a using the
 instructions above. Then run: "MESON_BUILD_ROOT=output_dir cargo build".
