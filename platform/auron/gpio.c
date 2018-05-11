@@ -70,7 +70,7 @@ static void setup_gpio(struct platform_intf *intf, struct gpio_reg *reg)
 		lynxpoint_lp_read_gpio_attributes(intf, &platform_gpio_map[i],
 						  &reg[i]);
 	}
-	platform_gpio_map[num_of_gpio + 1].name = NULL;
+	platform_gpio_map[num_of_gpio].name = NULL;
 }
 
 static void free_resource_for_string_in_gpio_map(void)
