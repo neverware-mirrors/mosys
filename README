@@ -30,6 +30,16 @@ Other flags of interest:
                               Chrome OS. See Chrome OS example in mosys ebuild.
 -Dstatic=true/false: whether to compile mosys binary as static.
 
+Note that you might have better luck compiling mosys with Clang while -Werror is
+enabled. This is because we (Chromium) use Clang as our default compiler. To do
+that, add CC=clang before you invoke Meson.
+
+In summary, all of this should look something like:
+  CC=clang meson -Darch=amd64 -Duse_cros_config=true out
+  ninja -C out
+  ninja -C out test
+  ninja -C out install
+
 To build the experimental Rust support, first build libmosys.a using the
 instructions above. Then run: "MESON_BUILD_ROOT=output_dir cargo build".
 
