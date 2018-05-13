@@ -54,7 +54,9 @@ enum gru_boards {
 	SCARLET
 };
 
+#ifndef CONFIG_CROS_CONFIG
 static enum gru_boards probed_board = UNKNOWN;
+#endif
 
 struct gru_probe_id {
 	const char *name;
