@@ -216,7 +216,6 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 		}
 	}
 
-#ifndef __DARWIN__	/* FIXME: add support for OS X */
 	if (!found) {
 		char *buf;
 		int klog_size;
@@ -255,7 +254,6 @@ int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
 
 		free(buf);
 	}
-#endif	/* __DARWIN__ */
 
 	if (!found) {
 		lprintf(LOG_DEBUG, "Unable to find SMBIOS entry.\n");

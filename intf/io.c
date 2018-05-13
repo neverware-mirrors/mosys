@@ -51,14 +51,7 @@
 
 /* Stuff needed for port IO */
 #if defined(CONFIG_PLATFORM_ARCH_X86)
-#if defined(__DARWIN__)
-/* Header is part of the DirectHW library. */
-#include <DirectHW/DirectHW.h>
-#define off64_t off_t
-#define lseek64 lseek
-#else
 #include <sys/io.h>
-#endif
 
 static struct io_intf io_raw_intf;
 #endif
