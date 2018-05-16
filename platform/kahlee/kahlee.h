@@ -35,7 +35,7 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define KAHLEE_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
+#define KAHLEE_HOST_FIRMWARE_ROM_SIZE		(16384 * 1024)
 
 /* platform callbacks */
 extern struct eeprom_cb kahlee_eeprom_cb;	/* eeprom.c */
