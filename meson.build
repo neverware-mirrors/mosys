@@ -93,29 +93,11 @@ libmosys = static_library(
   pic: true,
 )
 
-# Add static linking if static is set
-link_args = []
-if get_option('static') == true
-  link_args += '-static'
-endif
-
 # Mosys dynamic executable
 executable(
   'mosys',
   ['mosys.c'],
   include_directories: include_common,
-  link_args: link_args,
-  link_with: [libmosys],
-  install: true,
-  install_dir: '/usr/sbin',
-)
-
-# Mosys static executable
-executable(
-  'mosys_s',
-  ['mosys.c'],
-  include_directories: include_common,
-  link_args: ['-static'],
   link_with: [libmosys],
   install: true,
   install_dir: '/usr/sbin',

@@ -28,7 +28,6 @@ See meson.build for valid arch options.
 Other flags of interest:
 -Duse_cros_config=true/false: whether to enable linking to cros_config for
                               Chrome OS. See Chrome OS example in mosys ebuild.
--Dstatic=true/false: whether to compile mosys binary as static.
 
 Note that you might have better luck compiling mosys with Clang while -Werror is
 enabled. This is because we (Chromium) use Clang as our default compiler. To do

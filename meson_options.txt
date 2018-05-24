@@ -11,9 +11,3 @@ option(
   value: 'false',
   description: 'If set to true, cros_config will be used',
 )
-option(
-  'static',
-  type: 'boolean',
-  value: 'false',
-  description: 'Sets if the normal mosys executable is also statically linked',
-)

@@ -22,7 +22,7 @@ fn main() {
         "cargo:rustc-link-search=native={}",
         meson_build_root.display()
     );
-    println!("cargo:rustc-link-lib=static=mosys");
+    println!("cargo:rustc-link-lib=dylib=mosys");
     println!("cargo:rustc-link-lib=dylib=uuid");
     println!("cargo:rustc-link-lib=dylib=fdt");
     println!("cargo:rustc-link-lib=dylib=fmap");
