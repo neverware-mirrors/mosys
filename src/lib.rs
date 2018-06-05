@@ -63,7 +63,7 @@ impl<'a> Mosys<'a> {
         })
     }
 
-    fn print_usage(&self, opts: Options) {
+    fn print_usage(&self, opts: &Options) {
         let brief = format!("Usage: {} [options] {{commands}}", &self.program);
         print!("{}", opts.usage(&brief));
     }
@@ -93,7 +93,7 @@ impl<'a> Mosys<'a> {
         let matches = opts.parse(&self.args)?;
 
         if matches.opt_present("h") {
-            self.print_usage(opts);
+            self.print_usage(&opts);
             return Err(MosysError::Help);
         }
 
@@ -185,14 +185,189 @@ impl<'a> Mosys<'a> {
             }
         }
 
-        if matches.free.len() == 0 {
+        let commands = &matches.free[..];
+        self.command_dispatch(platform_interface, &commands, &opts)?;
+
+        Log::Debug.logln("Completed successfully")?;
+        Ok(())
+    }
+
+    fn command_dispatch(
+        &self,
+        platform_intf: &mut bindings::platform_intf,
+        commands: &[String],
+        opts: &Options,
+    ) -> Result<()> {
+        let command = if commands.len() == 0 {
+            String::from("help")
+        } else {
+            commands[0].to_lowercase()
+        };
+
+        let mut do_list = false;
+        if command == "help" {
             self.print_usage(opts);
+            do_list = true;
+            println!("  Commands:");
+        }
+
+        let mut subcommand_ptr = platform_intf.sub;
+        // Safe because subcommand_ptr is checked before dereferencing
+        while !subcommand_ptr.is_null() && unsafe { !(*subcommand_ptr).is_null() } {
+            // Safe because *subcommand_ptr is checked before dereferencing
+            let mut subcommand = unsafe { &mut **subcommand_ptr };
+
+            // Safe because subcommand_ptr isn't null
+            subcommand_ptr = unsafe { subcommand_ptr.offset(1) };
+
+            assert!(!subcommand.name.is_null());
+            // Safe because sub.name is checked before dereferencing
+            let name = unsafe { CStr::from_ptr(subcommand.name).to_str()? };
+            if do_list {
+                assert!(!subcommand.desc.is_null());
+                // Safe because sub.desc is checked before dereferencing
+                let desc = unsafe { CStr::from_ptr(subcommand.desc).to_str()? };
+                println!("    {0: <12}  {1}", name, desc);
+                continue;
+            }
+
+            Log::Debug.logln(&format!("Command: {} ({})", name, command))?;
+
+            if name == command {
+                assert!(!subcommand.desc.is_null());
+                // Safe because sub.desc is checked before dereferencing
+                let desc = unsafe { CStr::from_ptr(subcommand.desc).to_str()? };
+                Log::Debug.logln(&format!("Found command {} ({})", name, desc))?;
+                return self.subcommand_dispatch(platform_intf, &mut subcommand, &commands[1..]);
+            }
+        }
+
+        if commands.len() == 0 {
             return Err(MosysError::NoCommands);
         }
 
-        let _commands = &matches.free[..];
+        if command == "help" {
+            return Err(MosysError::Help);
+        }
 
-        Log::Debug.logln("Completed successfully")?;
+        Log::Warning.logln("Command not found\n")?;
+        // trigger a help listing.
+        let _res = self.command_dispatch(platform_intf, &[String::from("help")], opts);
+        return Err(MosysError::CommandNotSupported);
+    }
+
+    fn subcommand_dispatch(
+        &self,
+        platform_intf: &mut bindings::platform_intf,
+        platform_cmd: &mut bindings::platform_cmd,
+        commands: &[String],
+    ) -> Result<()> {
+        match platform_cmd.type_ {
+            bindings::arg_type_ARG_TYPE_GETTER | bindings::arg_type_ARG_TYPE_SETTER => {
+                // Leaf subcommands should have an associated function
+                // Safe because func should always be defined
+                let command_func = match unsafe { platform_cmd.arg.func } {
+                    Some(x) => x,
+                    None => return Err(MosysError::SubcommandFunctionUndefined),
+                };
+
+                if commands.len() > 0 && commands[0].to_lowercase() == "help" {
+                    // Safe because function only modifies state owned by C components
+                    unsafe { bindings::platform_cmd_usage(platform_cmd) };
+                    return Err(MosysError::Help);
+                }
+
+                // Format commands to C array of C char*
+                let mut args: Vec<*mut i8> = commands
+                    .iter()
+                    .map(|arg| {
+                        CString::new(arg.to_lowercase().as_str()).unwrap().as_ptr() as *mut i8
+                    })
+                    .collect();
+                args.push(std::ptr::null_mut());
+                let argv: *mut *mut std::os::raw::c_char = args.as_mut_ptr();
+
+                // Safe because function only modifies state owned by C components
+                let res = unsafe {
+                    command_func(platform_intf, platform_cmd, commands.len() as i32, argv)
+                };
+                if res == 0 {
+                    return Ok(());
+                } else {
+                    return Err(MosysError::SubcommandFunctionError(res));
+                }
+            }
+            bindings::arg_type_ARG_TYPE_SUB => {
+                match commands.first() {
+                    None => {
+                        self.list_subcommands(platform_cmd)?;
+                        return Err(MosysError::NotEnoughSubcommands);
+                    }
+                    Some(x) if x == "help" => {
+                        self.list_subcommands(platform_cmd)?;
+                        return Err(MosysError::Help);
+                    }
+                    _ => (),
+                }
+
+                let command = &commands[0].to_lowercase();
+
+                // Safe because sub union field should exist
+                let mut subcommand_ptr = unsafe { platform_cmd.arg.sub };
+
+                // Safe because cmd is checked before dereferencing
+                while !subcommand_ptr.is_null() && unsafe { !(*subcommand_ptr).name.is_null() } {
+                    // Safe because cmd is checked before dereferencing
+                    let mut subcommand = unsafe { &mut *subcommand_ptr };
+
+                    assert!(!subcommand.name.is_null());
+                    let name = unsafe { CStr::from_ptr(subcommand.name).to_str()? };
+                    if name == command {
+                        assert!(!subcommand.desc.is_null());
+                        let desc = unsafe { CStr::from_ptr(subcommand.desc).to_str()? };
+                        Log::Debug.logln(&format!("Subcommand {} ({})", name, desc))?;
+                        return self.subcommand_dispatch(
+                            platform_intf,
+                            &mut subcommand,
+                            &commands[1..],
+                        );
+                    }
+
+                    // Safe because cmd isn't null
+                    subcommand_ptr = unsafe { subcommand_ptr.offset(1) };
+                }
+            }
+            _ => {
+                Log::Err.logln("Unknown subcommand type")?;
+                return Err(MosysError::CommandNotSupported);
+            }
+        }
+        Log::Warning.logln("Command not found")?;
+        self.list_subcommands(platform_cmd)?;
+        return Err(MosysError::CommandNotSupported);
+    }
+
+    fn list_subcommands(&self, platform_cmd: &bindings::platform_cmd) -> Result<()> {
+        println!("  Commands:");
+
+        // Safe because sub union field should exist
+        let mut subcommand = unsafe { platform_cmd.arg.sub };
+
+        // Safe because subcommand is checked before derefencing
+        while !subcommand.is_null() && unsafe { !(*subcommand).name.is_null() } {
+            // subcommand isn't null so save *sub as a mutable refence
+            let subcommand_struct = unsafe { &mut *subcommand };
+
+            // Safe because subcommand isn't null
+            subcommand = unsafe { subcommand.offset(1) };
+
+            assert!(!subcommand_struct.name.is_null());
+            assert!(!subcommand_struct.desc.is_null());
+            let name = unsafe { CStr::from_ptr(subcommand_struct.name).to_str()? };
+            let desc = unsafe { CStr::from_ptr(subcommand_struct.desc).to_str()? };
+
+            println!("    {0: <12}  {1}", name, desc);
+        }
         Ok(())
     }
 }
@@ -218,6 +393,10 @@ pub enum MosysError {
     NonzeroPlatformListRet,
     AcqLockFail,
     PlatformNotSupported,
+    CommandNotSupported,
+    NotEnoughSubcommands,
+    SubcommandFunctionError(i32),
+    SubcommandFunctionUndefined,
 }
 
 impl Display for MosysError {
@@ -236,6 +415,14 @@ impl Display for MosysError {
             MosysError::NonzeroPlatformListRet => write!(f, "Platform list failed"),
             MosysError::AcqLockFail => write!(f, "Aquiring global, system lock failed"),
             MosysError::PlatformNotSupported => write!(f, "Platform not supported"),
+            MosysError::CommandNotSupported => write!(f, "Command not supported on this platform"),
+            MosysError::NotEnoughSubcommands => write!(f, "Not enough subcommands were given"),
+            MosysError::SubcommandFunctionError(ref err) => {
+                write!(f, "Subcommand execution finished with error {}", err)
+            }
+            MosysError::SubcommandFunctionUndefined => {
+                write!(f, "Subcommand dosen't have a defined function")
+            }
         }
     }
 }
@@ -255,6 +442,12 @@ impl Error for MosysError {
             MosysError::NonzeroPlatformListRet => "Platform list failure",
             MosysError::AcqLockFail => "Aquiring global, system lock failed",
             MosysError::PlatformNotSupported => "Platform not supported",
+            MosysError::CommandNotSupported => "Command not supported on this platform",
+            MosysError::NotEnoughSubcommands => "Not enough subcommands were given",
+            MosysError::SubcommandFunctionError(ref _err) => {
+                "Subcommand execution finished with an error"
+            }
+            MosysError::SubcommandFunctionUndefined => "Subcommand doesn't have a defined function",
         }
     }
 
@@ -391,7 +584,10 @@ mod tests {
             "command",
         ];
         let mut mosys = Mosys::new(&args).unwrap();
-        mosys.run().expect("Should have exited Ok(())");
+        match mosys.run() {
+            Err(MosysError::CommandNotSupported) => (),
+            _ => panic!("Should have succeeded with getopts arguments"),
+        };
         let t = Log::get_threshold();
         assert_eq!(t, Log::Spew, "Should have incremented verbosity to max");
     }
@@ -441,9 +637,10 @@ mod tests {
         ];
 
         let mut mosys = Mosys::new(&args).unwrap();
-        mosys
-            .run()
-            .expect("Should have succeeded with getopts arguments");
+        match mosys.run() {
+            Err(MosysError::CommandNotSupported) => (),
+            _ => panic!("Should have succeeded with getopts arguments"),
+        };
 
         let r;
 
@@ -463,9 +660,10 @@ mod tests {
         let args = ["someprogname", "-f", "-p", "Link", "-l", "command"];
 
         let mut mosys = Mosys::new(&args).unwrap();
-        mosys
-            .run()
-            .expect("Should have succeeded with getopts arguments");
+        match mosys.run() {
+            Err(MosysError::CommandNotSupported) => (),
+            _ => panic!("Should have succeeded with getopts arguments"),
+        };
         let r;
 
         unsafe {
@@ -484,9 +682,10 @@ mod tests {
         let args = ["someprogname", "-f", "-p", "Link", "-k", "command"];
 
         let mut mosys = Mosys::new(&args).unwrap();
-        mosys
-            .run()
-            .expect("Should have succeeded with getopts arguments");
+        match mosys.run() {
+            Err(MosysError::CommandNotSupported) => (),
+            _ => panic!("Should have succeeded with getopts arguments"),
+        };
         let r;
 
         unsafe {
@@ -519,6 +718,63 @@ mod tests {
             mosys_set_kv_pair_style(kv_pair_style_KV_STYLE_PAIR);
             let ret = mosys_get_kv_pair_style();
             assert_eq!(ret, kv_pair_style_KV_STYLE_PAIR);;
+        }
+    }
+
+    #[test]
+    fn test_sub_help() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = ["someprogname", "-f", "-p", "Link", "ec", "help"];
+
+        let mut mosys = Mosys::new(&args).unwrap();
+        match mosys.run() {
+            Err(MosysError::Help) => (),
+            _ => panic!("Should have returned help error code"),
+        }
+    }
+
+    #[test]
+    fn test_subcommand() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = ["someprogname", "-f", "-p", "Link", "ec", "info"];
+
+        let mut mosys = Mosys::new(&args).unwrap();
+        mosys.run().expect("Complete command should return Ok(())");
+    }
+
+    #[test]
+    fn test_full_subcommand_help() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = ["someprogname", "-f", "-p", "Link", "ec", "info", "help"];
+
+        let mut mosys = Mosys::new(&args).unwrap();
+        match mosys.run() {
+            Err(MosysError::Help) => (),
+            _ => panic!("Should have returned help error code"),
+        }
+    }
+
+    #[test]
+    fn test_no_subcommand() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = ["someprogname", "-f", "-p", "Link", "ec"];
+
+        let mut mosys = Mosys::new(&args).unwrap();
+        match mosys.run() {
+            Err(MosysError::NotEnoughSubcommands) => (),
+            _ => panic!("Should have returned no subcommands error code"),
+        }
+    }
+
+    #[test]
+    fn test_subcommand_not_supported() {
+        let _test_lock = LOCK.lock().unwrap();
+        let args = ["someprogname", "-f", "-p", "Link", "ec", "fake"];
+
+        let mut mosys = Mosys::new(&args).unwrap();
+        match mosys.run() {
+            Err(MosysError::CommandNotSupported) => (),
+            _ => panic!("Should have returned command not supported error code"),
         }
     }
 }
