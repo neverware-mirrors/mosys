@@ -24,7 +24,9 @@ fn main() {
     );
     println!("cargo:rustc-link-lib=dylib=mosys");
     println!("cargo:rustc-link-lib=dylib=uuid");
-    println!("cargo:rustc-link-lib=dylib=fdt");
+    if !env::var("USE").is_err() && env::var("USE").unwrap().contains("unibuild") {
+        println!("cargo:rustc-link-lib=dylib=fdt");
+    }
     println!("cargo:rustc-link-lib=dylib=fmap");
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     let prune = vec![
