@@ -38,10 +38,8 @@ extern struct platform_intf platform_kiev;
 extern struct platform_intf platform_dummy;
 
 /* production platforms */
-extern struct platform_intf platform_alex;
 extern struct platform_intf platform_auron;
 extern struct platform_intf platform_beltino;
-extern struct platform_intf platform_butterfly;
 extern struct platform_intf platform_coral;
 extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_cyclone;
@@ -51,8 +49,6 @@ extern struct platform_intf platform_glados;
 extern struct platform_intf platform_gru;
 extern struct platform_intf platform_kahlee;
 extern struct platform_intf platform_link;
-extern struct platform_intf platform_lumpy;
-extern struct platform_intf platform_mario;
 extern struct platform_intf platform_nami;
 extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_oak;
@@ -70,21 +66,15 @@ extern struct platform_intf platform_spring;
 extern struct platform_intf platform_storm;
 extern struct platform_intf platform_stout;
 extern struct platform_intf platform_strago;
-extern struct platform_intf platform_stumpy;
-extern struct platform_intf platform_zgb;
 
 struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_ARCH_X86
-	&platform_alex,
 	&platform_auron,
 	&platform_beltino,
-	&platform_butterfly,
 	&platform_coral,
 	&platform_cyan,
 	&platform_glados,
 	&platform_link,
-	&platform_lumpy,
-	&platform_mario,
 	&platform_parrot,
 	&platform_rambi,
 	&platform_reef,
@@ -92,8 +82,6 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_slippy,
 	&platform_stout,
 	&platform_strago,
-	&platform_stumpy,
-	&platform_zgb,
 #ifdef CONFIG_CROS_CONFIG
 	&platform_fizz,
 	&platform_kahlee,
