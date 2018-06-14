@@ -3,11 +3,14 @@
 // found in the LICENSE file.
 
 extern crate mosys;
+extern crate io_jail;
 
 use std::env;
+use std::path::Path;
 use std::process;
 
 use mosys::Mosys;
+use io_jail::Minijail;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -16,6 +19,33 @@ fn main() {
         eprintln!("Problem creating program: {}", err);
         process::exit(1);
     });
+
+    let mut j = Minijail::new().unwrap();
+    // needs CAP_SYS_RAWIO and CAP_SYS_ADMIN
+    j.use_caps(0x220000);
+    j.set_ambient_caps();
+
+    j.namespace_vfs();
+    j.remount_proc_readonly();
+
+    j.namespace_net();
+    j.no_new_privs();
+
+    j.set_seccomp_filter_tsync();
+    j.log_seccomp_filter_failures();
+
+    let policy_path = Path::new("/usr/share/policy/mosys-seccomp.policy");
+    if let Err(err) = j.parse_seccomp_filters(policy_path) {
+        eprintln!("Minijail failed to parse seccomp policy. Error: {}", err);
+        eprintln!("This error is expected in initramfs environments.");
+    } else {
+        j.use_seccomp_filter();
+    }
+
+    j.run_as_init();
+
+    // Jail will be destoryed when it is dropped
+    j.enter();
 
     if let Err(err) = mosys.run() {
         eprintln!("Application error: {}", err);

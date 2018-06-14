@@ -1,0 +1,4 @@
+This is a Rust interface to the Minijail library. It's mostly copied from
+crosvm (https://chromium.git.corp.google.com/chromiumos/platform/crosvm/+/master/io_jail/src),
+the only other place that Rust code uses a Minijail.
+The 'enter' function was added to this instance.

@@ -54,6 +54,7 @@ impl<'a> Mosys<'a> {
         let mut vec = Vec::new();
         let program = args[0].as_ref();
         vec.extend(args[1..].iter().map(|v| v.as_ref()));
+
         Ok(Mosys {
             program: program,
             args: vec,

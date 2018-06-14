@@ -11,6 +11,7 @@ panic = 'abort'
 
 [dependencies]
 getopts = "=0.2.15"
+io_jail = { path = "io_jail" }
 lazy_static = "=1.0.0"
 
 [build-dependencies]
