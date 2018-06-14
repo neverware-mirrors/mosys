@@ -84,7 +84,7 @@ int octopus_probe(struct platform_intf *intf)
 	static struct sku_info sku_info;
 	int ret;
 
-	ret = cros_config_read_sku_info(intf, "Yorp,Bip",
+	ret = cros_config_read_sku_info(intf, "Yorp,Bip,Phaser",
 					&sku_info);
 
 	/* If there was no error, indicate that we found a match */
