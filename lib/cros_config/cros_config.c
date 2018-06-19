@@ -399,10 +399,10 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 
 	ret = cros_config_read_sku_info_struct(intf, smbios_name, sku_id,
 					       sku_info);
-	if (!ret) {
+	if (!ret)
 		return 0;
-	}
 
+	/* Fall back to using device tree if yaml-based config is not present */
 	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_id, NULL,
 				    &platform_name);
 	if (ret) {
