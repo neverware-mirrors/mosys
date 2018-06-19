@@ -44,12 +44,6 @@ static char *kahlee_get_name(struct platform_intf *intf)
 	return mosys_strdup(intf->name);
 }
 
-static char *kahlee_get_model(struct platform_intf *intf)
-{
-	/* TODO(sjg@chromium.org): Consider obtaining this from ACPI data */
-	return strlower(mosys_strdup(intf->name));
-}
-
 struct sys_cb kahlee_sys_cb = {
 	.version		= &smbios_sysinfo_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,
@@ -57,7 +51,6 @@ struct sys_cb kahlee_sys_cb = {
 	.family			= &smbios_sysinfo_get_family,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
-	.model			= &kahlee_get_model,
 	.signature_id           = sku_get_signature_id,
 };
 #endif /* CONFIG_CROS_CONFIG */
