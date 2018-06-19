@@ -295,12 +295,6 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	int target;
 	char *customization;
 
-	lprintf(
-	    LOG_DEBUG,
-	    "%s: Looking up SMBIOS name '%s', SKU ID %d\n",
-	    __func__, find_smbios_name ? find_smbios_name : "(null)",
-	    find_sku_id);
-
 	mapping_node = fdt_path_offset(fdt, "/chromeos/family/mapping");
 	if (mapping_node < 0)
 		return cros_config_fdt_err("find mapping", mapping_node);
@@ -396,13 +390,17 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 			__func__, smbios_name, find_platform_names);
 		return -ENOENT;
 	}
+	lprintf(LOG_DEBUG, "%s: Looking up SMBIOS name '%s', SKU ID %d\n",
+                __func__, smbios_name ? smbios_name : "(null)", sku_id);
 
+	lprintf(LOG_DEBUG, "Yaml lookup:\n");
 	ret = cros_config_read_sku_info_struct(intf, smbios_name, sku_id,
 					       sku_info);
 	if (!ret)
 		return 0;
 
 	/* Fall back to using device tree if yaml-based config is not present */
+	lprintf(LOG_DEBUG, "Yaml lookup failed, trying device tree:\n");
 	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_id, NULL,
 				    &platform_name);
 	if (ret) {
