@@ -49,6 +49,7 @@
 
 #include "intf/i2c.h"
 #include "lib/cbfs_core.h"
+#include "lib/math.h"
 #include "lib/smbios.h"
 #include "lib/smbios_tables.h"
 #include "lib/spd.h"
@@ -321,16 +322,19 @@ out:
 	return ret;
 }
 
-int spd_read_from_cbfs(struct platform_intf *intf,
-			int module, int reg, int num_bytes_to_read,
-			uint8_t *spd, size_t fw_size, uint8_t *fw)
+static int _spd_read_from_cbfs(const char *spd_cbfs_filename,
+				struct platform_intf *intf,
+				int module, int reg, int num_bytes_to_read,
+				uint8_t *spd, size_t fw_size, uint8_t *fw)
 {
 	struct cbfs_file *file;
 	size_t file_len;
 	ssize_t spd_offset;
 	uint8_t *ptr;
 
-	if ((file = cbfs_find("spd.bin", fw, fw_size)) == NULL)
+	lprintf(LOG_DEBUG, "Read SPD %s from cbfs\n", spd_cbfs_filename);
+
+	if ((file = cbfs_find(spd_cbfs_filename, fw, fw_size)) == NULL)
 		return -1;
 
 	ptr = (uint8_t *)file + ntohl(file->offset);
@@ -345,4 +349,26 @@ int spd_read_from_cbfs(struct platform_intf *intf,
 	memcpy(spd, ptr + spd_offset + reg, num_bytes_to_read);
 
 	return num_bytes_to_read;
+}
+
+int spd_read_from_cbfs(struct platform_intf *intf,
+			int module, int reg, int num_bytes_to_read,
+			uint8_t *spd, size_t fw_size, uint8_t *fw)
+{
+	const char *spd_cbfs_files[] = {
+		"spd.bin",
+		"sec-spd.bin",
+	};
+	int bytes_to_read;
+	int i;
+
+	for (i = 0; i < ARRAY_SIZE(spd_cbfs_files); i++) {
+		bytes_to_read = _spd_read_from_cbfs(spd_cbfs_files[i], intf,
+						    module, reg,
+						    num_bytes_to_read, spd,
+						    fw_size, fw);
+		if (bytes_to_read >= 0)
+			return bytes_to_read;
+	}
+	return -1;
 }
