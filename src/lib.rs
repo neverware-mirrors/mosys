@@ -278,12 +278,14 @@ impl<'a> Mosys<'a> {
                 }
 
                 // Format commands to C array of C char*
-                let mut args: Vec<_> = commands
+                // CStrings will corrupt if this is done in one step
+                let mut str_args: Vec<_> = commands
                     .iter()
-                    .map(|arg| {
-                        CString::new(arg.to_lowercase().as_str()).unwrap().as_ptr()
-                            as *mut std::os::raw::c_char
-                    })
+                    .map(|arg| CString::new(arg.to_lowercase().as_str()).unwrap())
+                    .collect();
+                let mut args: Vec<_> = str_args
+                    .iter()
+                    .map(|arg| arg.as_ptr() as *mut std::os::raw::c_char)
                     .collect();
                 args.push(std::ptr::null_mut());
                 let argv: *mut *mut std::os::raw::c_char = args.as_mut_ptr();
