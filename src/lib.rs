@@ -281,7 +281,7 @@ impl<'a> Mosys<'a> {
                 // CStrings will corrupt if this is done in one step
                 let mut str_args: Vec<_> = commands
                     .iter()
-                    .map(|arg| CString::new(arg.to_lowercase().as_str()).unwrap())
+                    .map(|arg| CString::new(arg.as_str()).unwrap())
                     .collect();
                 let mut args: Vec<_> = str_args
                     .iter()
