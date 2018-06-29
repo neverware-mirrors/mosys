@@ -61,6 +61,7 @@ int cros_ec_hello(struct platform_intf *intf, struct ec_cb *ec)
 
 	p.in_data = 0xa0b0c0d0;
 
+	MOSYS_CHECK(priv->cmd);
 	rv = priv->cmd(intf, ec, EC_CMD_HELLO, 0, &p,
 		       sizeof(p), &r, sizeof(r));
 	if (rv)
@@ -86,6 +87,7 @@ const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec)
 	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
 
+	MOSYS_CHECK(priv->cmd);
 	if (priv->cmd(intf, ec, EC_CMD_GET_VERSION, 0, &r, sizeof(r), NULL, 0))
 		return NULL;
 
@@ -124,6 +126,7 @@ int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec)
 	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
 
+	MOSYS_CHECK(priv->cmd);
 	rc = priv->cmd(intf, ec, EC_CMD_GET_BOARD_VERSION, 0,
 		       &r, sizeof(r), NULL, 0);
 	if (rc)
@@ -167,6 +170,7 @@ int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,
 	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
 
+	MOSYS_CHECK(priv->cmd);
 	rc = priv->cmd(intf, ec,EC_CMD_GET_CHIP_INFO, 0,
 		       info, sizeof(*info), NULL, 0);
 	if (rc)
@@ -193,6 +197,7 @@ int cros_ec_pd_chip_info(struct platform_intf *intf, struct ec_cb *ec, int port)
 	p.port = port;
 	p.renew = 0;
 
+	MOSYS_CHECK(priv->cmd);
 	rc = priv->cmd(intf, ec, EC_CMD_PD_CHIP_INFO, 0,
 		       &info, sizeof(info), &p, sizeof(p));
 	if (rc)
@@ -270,6 +275,7 @@ int cros_ec_detect(struct platform_intf *intf, struct ec_cb *ec)
 	/* Say hello to EC. */
 	request.in_data = 0xf0e0d0c0;  /* Expect EC will add on 0x01020304. */
 
+	MOSYS_CHECK(priv->cmd);
 	lprintf(LOG_DEBUG, "%s: sending HELLO request with 0x%08x\n",
 		__func__, request.in_data);
 	result  = priv->cmd(intf, ec, EC_CMD_HELLO, 0,
@@ -299,6 +305,7 @@ int cros_ec_vbnvcontext_read(struct platform_intf *intf, struct ec_cb *ec,
 	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
 
+	MOSYS_CHECK(priv->cmd);
 	lprintf(LOG_DEBUG, "%s: sending VBNV_CONTEXT read request\n",
 		__func__);
 	request.op = EC_VBNV_CONTEXT_OP_READ;
@@ -323,6 +330,7 @@ int cros_ec_vbnvcontext_write(struct platform_intf *intf, struct ec_cb *ec,
 	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
 
+	MOSYS_CHECK(priv->cmd);
 	lprintf(LOG_DEBUG, "%s: sending VBNV_CONTEXT write request\n",
 		__func__);
 	request.op = EC_VBNV_CONTEXT_OP_WRITE;
