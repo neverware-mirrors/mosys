@@ -50,9 +50,6 @@ struct sys_cb octopus_sys_cb = {
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
 	.customization		= sku_get_vpd_customization,
-#ifdef CONFIG_CROS_CONFIG
-	/* Only unibuild has the concept of a signature ID */
 	.signature_id           = sku_get_signature_id,
-#endif
 };
 

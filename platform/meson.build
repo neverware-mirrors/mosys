@@ -18,7 +18,9 @@ subdir('link')
 subdir('nami')
 subdir('nyan')
 subdir('oak')
-subdir('octopus')
+if use_cros_config
+  subdir('octopus')
+endif
 subdir('parrot')
 subdir('peach')
 subdir('pinky')

@@ -48,24 +48,6 @@
 #include "lib/elog.h"
 
 #include "octopus.h"
-#ifndef CONFIG_CROS_CONFIG
-
-struct probe_ids {
-	const char *names[2];
-	/**
-	 * Devices with SKU-based mapping should define sku_table,
-	 * otherwise use single_sku.
-	 */
-	struct sku_mapping *sku_table;
-	const struct sku_info single_sku;
-};
-
-static const struct probe_ids probe_id_list[] = {
-	{ { "Yorp", }, .single_sku = { .brand = "YORP" }, },
-	{ { NULL }, },
-};
-
-#endif /* CONFIG_CROS_CONFIG */
 
 struct platform_cmd *octopus_sub[] = {
 	&cmd_ec,
@@ -80,11 +62,10 @@ struct platform_cmd *octopus_sub[] = {
 
 int octopus_probe(struct platform_intf *intf)
 {
-#ifdef CONFIG_CROS_CONFIG
 	static struct sku_info sku_info;
 	int ret;
 
-	ret = cros_config_read_sku_info(intf, "Yorp,Bip,Phaser",
+	ret = cros_config_read_sku_info(intf, "Bip,Bobba,Fleex,Meep,Phaser,Yorp",
 					&sku_info);
 
 	/* If there was no error, indicate that we found a match */
@@ -94,40 +75,6 @@ int octopus_probe(struct platform_intf *intf)
 	}
 
 	return ret;
-#else
-	static int status, probed;
-	const struct probe_ids *pid;
-
-	if (probed)
-		return status;
-
-	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* FRID */
-		if (probe_frid((const char **)pid->names)) {
-			status = 1;
-			goto octopus_probe_exit;
-		}
-
-		/* SMBIOS */
-		if (probe_smbios(intf, (const char **)pid->names)) {
-			status = 1;
-			goto octopus_probe_exit;
-		}
-	}
-	return 0;
-
-octopus_probe_exit:
-	probed = 1;
-
-	/* Update canonical platform name */
-	intf->name = pid->names[0];
-	if (pid->sku_table) {
-		intf->sku_info = sku_find_info(intf, pid->sku_table);
-	} else {
-		intf->sku_info = &pid->single_sku;
-	}
-	return status;
-#endif /* CONFIG_CROS_CONFIG */
 }
 
 /* late setup routine; not critical to core functionality */
