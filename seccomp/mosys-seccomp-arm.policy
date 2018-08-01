@@ -29,6 +29,11 @@ rt_sigprocmask: 1
 tgkill: 1
 stat64: 1
 mmap2: 1
+ARM_set_tls: 1
+ugetrlimit: 1
+gettimeofday: 1
+set_tid_address: 1
+ftruncate: 1
 
 # Needed for cloning process
 brk: 1
@@ -43,3 +48,5 @@ pread64: 1
 geteuid: 1
 getppid: 1
 getcwd: 1
+getdents64: 1
+geteuid32: 1
