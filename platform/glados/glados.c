@@ -40,12 +40,15 @@
 
 #include "drivers/google/cros_ec.h"
 
+#include "lib/cros_config.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
 
 #include "glados.h"
+
+#ifndef CONFIG_CROS_CONFIG
 
 struct probe_ids {
 	const char *names[2];
@@ -83,6 +86,8 @@ static const struct probe_ids probe_id_list[] = {
 	{ { NULL }, },
 };
 
+#endif /* CONFIG_CROS_CONFIG */
+
 struct platform_cmd *glados_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
@@ -98,6 +103,20 @@ struct platform_cmd *glados_sub[] = {
 
 int glados_probe(struct platform_intf *intf)
 {
+#ifdef CONFIG_CROS_CONFIG
+	static struct sku_info sku_info;
+	int ret;
+
+	ret = cros_config_read_sku_info(intf, "Nautilus", &sku_info);
+
+	/* If there was no error, indicate that we found a match */
+	if (!ret) {
+		intf->sku_info = &sku_info;
+		return 1;
+	}
+
+	return ret;
+#else
 	static int status, probed;
 	const struct probe_ids *pid;
 
@@ -129,6 +148,7 @@ glados_probe_exit:
 		intf->sku_info = &pid->single_sku;
 	}
 	return status;
+#endif /* CONFIG_CROS_CONFIG */
 }
 
 /* late setup routine; not critical to core functionality */
