@@ -19,7 +19,6 @@ getpid: 1
 wait4: 1
 fcntl: 1
 lstat: 1
-fstat: 1
 ftruncate: 1
 set_robust_list: 1
 unlink: 1
@@ -31,6 +30,7 @@ tgkill: 1
 mmap: 1
 stat: 1
 iopl: 1
+pwrite64: 1
 
 # Needed for cloning process
 brk: 1
