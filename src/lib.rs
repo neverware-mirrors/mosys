@@ -298,6 +298,8 @@ impl<'a> Mosys<'a> {
                 if res == 0 {
                     return Ok(());
                 } else {
+                    // Log so we can catch mosys failures
+                    Log::Warning.logln(&format!("mosys invocation was: {:?}", &self.args))?;
                     return Err(MosysError::SubcommandFunctionError(res));
                 }
             }
