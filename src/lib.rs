@@ -90,6 +90,11 @@ impl<'a> Mosys<'a> {
         );
         opts.optflag("h", "help", "print this help");
         opts.optflag("V", "version", "print version");
+        opts.optflag(
+            "j",
+            "no-jail",
+            "don't use minijail (jail used by default)",
+        );
 
         let matches = opts.parse(&self.args)?;
 
@@ -702,18 +707,6 @@ mod tests {
             r, kv_pair_style_KV_STYLE_PAIR,
             "Should have change kv_pair_style"
         );
-    }
-
-    #[test]
-    fn test_no_commands_defined() {
-        let _test_lock = LOCK.lock().unwrap();
-        let args = ["someprogname", "-f", "-p", "Dummy", "-k", "command"];
-
-        let mut mosys = Mosys::new(&args).unwrap();
-        match mosys.run() {
-            Err(MosysError::NoCommandsDefined) => (),
-            _ => panic!("Should have returned error that platform has no commands"),
-        }
     }
 
     #[test]

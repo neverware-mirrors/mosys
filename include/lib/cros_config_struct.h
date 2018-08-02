@@ -61,6 +61,24 @@ struct config_map {
 	struct sku_info info;
 };
 
+/**
+ * identity_info - Contains key identity attributes of the system, which are
+ *    used to look up the corresponding config.
+ *
+ * Normally, this will contain the values detected on the system (via smbios
+ *    and vpd), but this can also be populated with fake values for testing
+ *    purposes.
+ *
+ * `smbios_name` SMBIOS name found.
+ * `sku_id` SKU id found.
+ * `whitelabel_tag` 'whitelabel-tag' from the VPD.
+ */
+struct identity_info {
+	const char *smbios_name;
+	int sku_id;
+	const char *whitelabel_tag;
+};
+
 #ifdef CONFIG_PLATFORM_ARCH_X86
 /**
  * cros_config_read_sku_info_struct() - read SKU information for current device
@@ -68,13 +86,12 @@ struct config_map {
  * Read information about the current device using generated struct data.
  *
  * @intf: Platform information, used to access SMBIOS name and SKU ID
- * @smbios_name: SMBIOS name read from the platform.
- * @sku_id: SKU ID read from the platform.
+ * @id_info: Contains key identity attributes of the system.
  * @sku_info: Returns SKU information on success
  * @return: 0 if OK, other value on error
  */
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
-				     const char *smbios_name, int sku_id,
+				     struct identity_info *id_info,
 				     struct sku_info *sku_info);
 #endif // CONFIG_PLATFORM_ARCH_X86
 
@@ -89,6 +106,7 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
  * @return: 0 if OK, other value on error
  */
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
+				     struct identity_info *id_info,
 				     struct sku_info *sku_info);
 #endif // CONFIG_PLATFORM_ARCH_ARMEL
 

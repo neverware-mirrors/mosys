@@ -5,7 +5,9 @@
 .balign 16
 .global __dtb_config_begin
 __dtb_config_begin:
+#ifndef CONFIG_TEST_CROS_CONFIG
 .incbin "lib/cros_config/config.dtb"
+#endif
 __dtb_config_end:
 .global __dtb_config_end
 .balign 16

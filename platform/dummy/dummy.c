@@ -33,10 +33,14 @@
 #include <unistd.h>
 
 #include "mosys/platform.h"
+#include "mosys/command_list.h"
 
 #include "drivers/google/cros_ec.h"
 
+#include "lib/cros_config.h"
+#include "lib/cros_config_struct.h"
 #include "lib/elog.h"
+#include "lib/sku.h"
 #include "lib/smbios.h"
 
 #include "dummy.h"
@@ -44,36 +48,70 @@
 const char *dummy_id_list[] = {"Dummy", NULL};
 
 struct platform_cmd *dummy_sub[] = {
-	// No commands
-	NULL};
+        &cmd_ec,
+        &cmd_eeprom,
+        &cmd_platform,
+        NULL};
 
 int dummy_probe(struct platform_intf *intf)
 {
-	// Always fail probe so we don't ever run on real hardware. We can
-	// force this platform in tests.
-	return 0;
+        // Always fail probe so we don't ever run on real hardware. We can
+        // force this platform in tests.
+        return 0;
 }
 
 struct eventlog_cb dummy_eventlog_cb = {
-	.print_type = &elog_print_type,
-	.print_data = &elog_print_data,
-	.print_multi = &elog_print_multi,
-	.verify = &elog_verify,
-	.verify_header = &elog_verify_header,
-	.fetch = &elog_fetch_from_smbios,
+        .print_type = &elog_print_type,
+        .print_data = &elog_print_data,
+        .print_multi = &elog_print_multi,
+        .verify = &elog_verify,
+        .verify_header = &elog_verify_header,
+        .fetch = &elog_fetch_from_smbios,
 };
 
 struct platform_cb dummy_cb = {
-	.ec = &cros_ec_cb,
-	.smbios = &smbios_sysinfo_cb,
-	.eventlog = &dummy_eventlog_cb,
+        .ec = &cros_ec_cb,
+        .eeprom = &dummy_eeprom_cb,
+        .smbios = &smbios_sysinfo_cb,
+        .eventlog = &dummy_eventlog_cb,
+#ifdef CONFIG_CROS_CONFIG
+        .sys = &dummy_sys_cb,
+#endif /* CONFIG_CROS_CONFIG */
+};
+
+static int dummy_setup_post(struct platform_intf *intf)
+{
+#ifdef CONFIG_CROS_CONFIG
+        static struct sku_info sku_info;
+
+        static struct identity_info id_info;
+        id_info.smbios_name = "Dummy";
+        id_info.sku_id = 8;
+        id_info.whitelabel_tag = "dummy_whitelabel";
+
+        int sku_ret;
+        sku_ret = internal_cros_config_read_sku_info(intf, &id_info, &sku_info);
+
+        /* If there was no error, indicate that we found a match */
+        if (!sku_ret) {
+                intf->sku_info = &sku_info;
+        } else {
+                return -1;
+        }
+#endif /* CONFIG_CROS_CONFIG */
+
+        if (dummy_ec_setup(intf) <= 0)
+                return -1;
+
+        return 0;
 };
 
 struct platform_intf platform_dummy = {
-	.type = PLATFORM_X86_64,
-	.name = "Dummy",
-	.id_list = dummy_id_list,
-	.sub = dummy_sub,
-	.cb = &dummy_cb,
-	.probe = &dummy_probe,
+        .type = PLATFORM_X86_64,
+        .name = "Dummy",
+        .id_list = dummy_id_list,
+        .sub = dummy_sub,
+        .cb = &dummy_cb,
+        .probe = &dummy_probe,
+        .setup_post = &dummy_setup_post,
 };

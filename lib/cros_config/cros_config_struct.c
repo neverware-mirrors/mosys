@@ -21,10 +21,9 @@ static const char *str_or_null(const char *in_str)
 }
 
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
-				     const char *smbios_name, int sku_id,
+				     struct identity_info *id_info,
 				     struct sku_info *sku_info)
 {
-	const char *whitelabel_tag = sku_get_whitelabel_from_vpd();
 	const char *customization_id = sku_get_vpd_customization(intf);
 	if (!customization_id)
 		customization_id = "";
@@ -34,8 +33,8 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 	    cros_config_get_config_map(&config_map_size);
 
 	lprintf(LOG_DEBUG, "%s: Checking config: smbios_name='%s', sku_id=%d, whitelabel_tag='%s', customization_id='%s'\n",
-		__func__, str_or_null(smbios_name), sku_id,
-		str_or_null(whitelabel_tag), str_or_null(customization_id));
+		__func__, str_or_null(id_info->smbios_name), id_info->sku_id,
+		str_or_null(id_info->whitelabel_tag), str_or_null(customization_id));
 	for (int i = 0; i < config_map_size; i++) {
 		const struct config_map *config = &configs[i];
 
@@ -43,12 +42,12 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 			i, config->smbios_match_name, config->sku_id,
 			config->whitelabel_tag, config->customization_id);
 		bool smbios_match = !*config->smbios_match_name ||
-		    !strcmp(smbios_name, config->smbios_match_name);
+		    !strcmp(id_info->smbios_name, config->smbios_match_name);
 		bool sku_match =
-		    (-1 == config->sku_id) || (sku_id == config->sku_id);
+		    (-1 == config->sku_id) || (id_info->sku_id == config->sku_id);
 		bool whitelabel_match =
 		    !*config->whitelabel_tag ||
-		    !strcmp(whitelabel_tag, config->whitelabel_tag);
+		    !strcmp(id_info->whitelabel_tag, config->whitelabel_tag);
 		bool customization_match =
 		    !*config->customization_id ||
 		    !strcmp(customization_id, config->customization_id);
@@ -72,9 +71,9 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
+				     struct identity_info *id_info,
 				     struct sku_info *sku_info)
 {
-	const char *whitelabel_tag = sku_get_whitelabel_from_vpd();
 	const char *customization_id = sku_get_vpd_customization(intf);
 	if (!customization_id)
 		customization_id = "";
@@ -89,7 +88,7 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 					 1, 1) == 0;
 		bool whitelabel_match =
 		    !strcmp("", config->whitelabel_tag) ||
-		    !strcmp(whitelabel_tag, config->whitelabel_tag);
+		    !strcmp(id_info->whitelabel_tag, config->whitelabel_tag);
 		bool customization_match =
 		    !strcmp("", config->customization_id) ||
 		    !strcmp(customization_id, config->customization_id);

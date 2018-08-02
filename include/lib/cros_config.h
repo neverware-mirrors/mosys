@@ -34,6 +34,7 @@
 
 struct platform_intf;
 struct sku_info;
+struct identity_info;
 
 /**
  * cros_config_read_sku_info() - read SKU information for current model
@@ -49,6 +50,7 @@ struct sku_info;
 int cros_config_read_sku_info(struct platform_intf *intf,
 			      const char *find_platform_names,
 			      struct sku_info *sku_info);
+
 /**
  * cros_config_read_forced_sku_info() - read SKU information for current model
  * forcing the sku to a passed in value.
@@ -75,16 +77,12 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
  *
  * @fdt: Device tree file
  * @sku_info: Returns SKU information on success
- * @find_smbios_name: SMBIOS name to look up
- * @find_wl_name: Whitelabel name to look up (this is either a model name or a
- *    whitelabel tag depending on the schema used)
- * @find_sku_id: SKU ID to look up
+ * @id_info: Contains key identity attributes of the system
  * @return: 0 if OK, -ENOENT if @find_platform_names does not contain the SMBIOS
  * name for this device, or -1 for any other error
  */
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
-			  const char *find_smbios_name, int find_sku_id,
-			  const char *find_wl_name,
+			  struct identity_info *id_info,
 			  const char **platform_namep);
 
 
@@ -98,5 +96,21 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
  */
 int cros_config_smbios_platform_name_match(struct platform_intf *intf,
 					const char *find_platform_names);
+
+/**
+ * internal_cros_config_read_sku_info() - read SKU information for current
+ *    model after getting identity information.
+ *
+ * This is called intenally by cros_config_read_sku_info. It's called
+ *    externally for testing.
+ *
+ * @intf: Platform information, used to access SMBIOS name and SKU ID
+ * @id_info: Contains key identity attributes of the system.
+ * @sku_info: Returns SKU information on success
+ * @return: 0 if OK, other value on error
+ */
+int internal_cros_config_read_sku_info(struct platform_intf *intf,
+			               struct identity_info *id_info,
+			               struct sku_info *sku_info);
 
 #endif

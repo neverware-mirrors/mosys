@@ -11,3 +11,10 @@ option(
   value: 'false',
   description: 'If set to true, cros_config will be used',
 )
+
+option(
+  'test_cros_config',
+  type: 'boolean',
+  value: 'false',
+  description: 'If set to true, use fake configuration for testing cros_config',
+)
