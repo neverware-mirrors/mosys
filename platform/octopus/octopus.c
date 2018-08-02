@@ -60,28 +60,29 @@ struct platform_cmd *octopus_sub[] = {
 	NULL
 };
 
+static const char *platform_names = "Bip,Bobba,Fleex,Meep,Phaser,Yorp";
+
 int octopus_probe(struct platform_intf *intf)
 {
-	static struct sku_info sku_info;
-	int ret;
-
-	ret = cros_config_read_sku_info(intf, "Bip,Bobba,Fleex,Meep,Phaser,Yorp",
-					&sku_info);
-
-	/* If there was no error, indicate that we found a match */
-	if (!ret) {
-		intf->sku_info = &sku_info;
+	/* Perform a shallow probe based solely on smbios name. */
+	if (!cros_config_smbios_platform_name_match(intf, platform_names))
 		return 1;
-	}
 
-	return ret;
+	return 0;
 }
 
 /* late setup routine; not critical to core functionality */
 static int octopus_setup_post(struct platform_intf *intf)
 {
+	static struct sku_info sku_info;
+
+	/* If there was no error fill in the sku info. */
+	if (!cros_config_read_sku_info(intf, platform_names, &sku_info))
+		intf->sku_info = &sku_info;
+
 	if (cros_ec_setup(intf) < 0)
 		return -1;
+
 	return 0;
 }
 

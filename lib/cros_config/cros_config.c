@@ -415,3 +415,27 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	return 0;
 #endif // CONFIG_PLATFORM_ARCH_X86
 }
+
+int cros_config_smbios_platform_name_match(struct platform_intf *intf,
+					const char *find_platform_names)
+{
+#ifdef CONFIG_PLATFORM_ARCH_X86
+	const char *smbios_name;
+
+	smbios_name = smbios_sysinfo_get_name(intf);
+	if (!smbios_name) {
+		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
+		return -ENOENT;
+	}
+
+	if (!string_in_list(smbios_name, find_platform_names)) {
+		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
+			__func__, smbios_name, find_platform_names);
+		return -ENOENT;
+	}
+
+	return 0;
+#else // CONFIG_PLATFORM_ARCH_X86
+	return -ENOENT;
+#endif
+}

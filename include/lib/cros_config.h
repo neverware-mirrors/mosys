@@ -70,4 +70,16 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 			  const char *find_wl_name,
 			  const char **platform_namep);
 
+
+/**
+ * cros_config_smbios_platform_name_match() - shallow match on sbmios name
+ *
+ * @intf: Platform information, used to access SMBIOS name and SKU ID
+ * @find_platform_names: Comma-separated list of platform names that are
+ *    permitted
+ * @return: 0 if OK, other value on error
+ */
+int cros_config_smbios_platform_name_match(struct platform_intf *intf,
+					const char *find_platform_names);
+
 #endif
