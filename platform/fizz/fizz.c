@@ -107,7 +107,6 @@ struct eventlog_cb fizz_eventlog_cb = {
 
 struct platform_cb fizz_cb = {
 	.ec		= &cros_ec_cb,
-	.pd		= &cros_pd_cb,
 	.fp		= &cros_fp_cb,
 	.eeprom		= &fizz_eeprom_cb,
 	.memory		= &fizz_memory_cb,
