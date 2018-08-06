@@ -41,6 +41,7 @@ extern "C" {
     pub fn minijail_namespace_vfs(j: *mut minijail);
     pub fn minijail_namespace_enter_vfs(j: *mut minijail, ns_path: *const c_char);
     pub fn minijail_new_session_keyring(j: *mut minijail);
+    pub fn minijail_skip_setting_securebits(j: *mut minijail, securebits_skip_mask: u64);
     pub fn minijail_skip_remount_private(j: *mut minijail);
     pub fn minijail_namespace_ipc(j: *mut minijail);
     pub fn minijail_namespace_net(j: *mut minijail);

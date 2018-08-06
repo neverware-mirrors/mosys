@@ -25,6 +25,10 @@ fn main() {
     j.use_caps(0x220000);
     j.set_ambient_caps();
 
+    // Don't set securebits because this may be inside another minijail.
+    // See b/112030238.
+    j.skip_setting_securebits(0xff);
+
     j.namespace_vfs();
     j.remount_proc_readonly();
 

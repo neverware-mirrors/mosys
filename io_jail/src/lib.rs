@@ -288,6 +288,9 @@ impl Minijail {
     pub fn namespace_vfs(&mut self) {
         unsafe { libminijail::minijail_namespace_vfs(self.jail); }
     }
+    pub fn skip_setting_securebits(&mut self, securebits_skip_mask: u64) {
+        unsafe { libminijail::minijail_skip_setting_securebits(self.jail, securebits_skip_mask); }
+    }
     pub fn new_session_keyring(&mut self) {
         unsafe { libminijail::minijail_new_session_keyring(self.jail); }
     }
