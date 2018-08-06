@@ -39,7 +39,6 @@ ftruncate: 1
 brk: 1
 access: 1
 mprotect: 1
-arch_prctl: 1
 uname: 1
 rt_sigaction: 1
 rt_sigreturn: 1
