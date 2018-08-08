@@ -158,7 +158,7 @@ struct platform_cb dragonegg_cb = {
 
 struct platform_intf platform_dragonegg = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Glados",
+	.name		= "Dragonegg",
 	.sub		= dragonegg_sub,
 	.cb		= &dragonegg_cb,
 	.probe		= &dragonegg_probe,
