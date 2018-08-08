@@ -29,7 +29,6 @@ fn main() {
     // See b/112030238.
     j.skip_setting_securebits(0xff);
 
-    j.namespace_vfs();
     j.remount_proc_readonly();
 
     j.namespace_net();
