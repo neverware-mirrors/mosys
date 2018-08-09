@@ -21,17 +21,24 @@ fn main() {
     });
 
     let mut j = Minijail::new().unwrap();
-    // needs CAP_SYS_RAWIO and CAP_SYS_ADMIN
-    j.use_caps(0x220000);
-    j.set_ambient_caps();
 
-    // Don't set securebits because this may be inside another minijail.
-    // See b/112030238.
-    j.skip_setting_securebits(0xff);
+    // For unknown reasons, this code slows boot on arm machines.
+    // See crbug.com/872187 for more information.
+    #[cfg(target_arch = "x86_64")]
+    {
+        // needs CAP_SYS_RAWIO and CAP_SYS_ADMIN
+        j.use_caps(0x220000);
+        j.set_ambient_caps();
 
-    j.remount_proc_readonly();
+        // Don't set securebits because this may be inside another minijail.
+        // See b/112030238.
+        j.skip_setting_securebits(0xff);
 
-    j.namespace_net();
+        j.remount_proc_readonly();
+
+        j.namespace_net();
+    }
+
     j.no_new_privs();
 
     j.set_seccomp_filter_tsync();
