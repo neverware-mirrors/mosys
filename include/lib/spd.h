@@ -112,6 +112,8 @@ enum ddr_freq {
 	DDR_933,
 	DDR_1067,
 	DDR_1400,
+
+	DDR_FREQ_MAX
 };
 
 extern const char *ddr_freq_prettyprint[];

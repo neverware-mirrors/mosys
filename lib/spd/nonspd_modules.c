@@ -694,6 +694,13 @@ static const struct nonspd_mem_info samsung_lpddr4_k4f6e304hb_mgch = {
 		  'M', 'G', 'C', 'H' },
 };
 
+// This one is reserved for storing mem info from SMBIOS if no explicit entry
+// was added above.
+static struct nonspd_mem_info part_extracted_from_smbios = {
+	.part_num		=
+		{ 'U', 'N', 'P', 'R', 'O', 'V', 'I', 'S', 'I', 'O', 'N', 'E', 'D'},
+};
+
 static const struct nonspd_mem_info *nospdmemory[] = {
 	&elpida_lpddr3_edfa164a2ma_jd_f,
 	&elpida_lpddr3_f8132a3ma_gd_f,
@@ -708,9 +715,9 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&hynix_lpddr3_h9ccnnnbltblar_nud,
 	&hynix_lpddr4_h9hcnnn8kumlhr,
 	&hynix_lpddr4_h9hcnnnbpumlhr,
-        &micron_lpddr3_mt52l256m32d1pf_107wtb,
-        &micron_lpddr3_mt52l256m64d2pp_107wtb,
-        &micron_lpddr3_mt52l512m32d2pf_107wtb,
+	&micron_lpddr3_mt52l256m32d1pf_107wtb,
+	&micron_lpddr3_mt52l256m64d2pp_107wtb,
+	&micron_lpddr3_mt52l512m32d2pf_107wtb,
 	&micron_lpddr4_mt53b256m32d1np,
 	&micron_lpddr4_mt53b512m32d2np,
 	&micron_lpddr4_mt53e512m32d2np,
@@ -736,6 +743,50 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&samsung_lpddr4_k4f8e304hb_mgcj,
 };
 
+static int transfer_speed_from_smbios_to_nonspd_mem_info(
+	struct smbios_table *table,
+	struct nonspd_mem_info *info)
+{
+	for (int index = DDR_333; index < DDR_FREQ_MAX; index++) {
+		if (table->data.mem_device.speed == atoi(ddr_freq_prettyprint[index])) {
+			info->ddr_freq[0] = index;
+			return 0;
+		}
+	}
+
+	lprintf(LOG_ERR, "%s: mem speed %hu in SMBIOS is out of range.",
+			__func__, table->data.mem_device.speed);
+	return -1;
+}
+
+static int extract_mem_info_from_smbios(
+	struct smbios_table *table,
+	struct nonspd_mem_info *info)
+{
+	const char *smbios_part_num;
+	size_t smbios_part_num_len;
+	uint32_t size;
+
+	smbios_part_num = table->string[table->data.mem_device.part_number];
+	smbios_part_num_len = strnlen(smbios_part_num, SPD_DEFAULT_PART_LEN);
+
+	if (!smbios_part_num_len ||
+		smbios_part_num_len + 1 > sizeof(info->part_num)) {
+		lprintf(LOG_ERR, "%s: SMBIOS Memory info table: part num is missing. "
+				"Or len of part number %lu is larger then buffer %lu."
+				, __func__, (unsigned long)smbios_part_num_len,
+				(unsigned long)sizeof(info->part_num));
+		return -1;
+	}
+
+	size = (table->data.mem_device.size & 0x7fff) * 8;
+	info->module_size_mbits =
+		(table->data.mem_device.size & 0x8000 ? size * 1024 : size);
+
+	strncpy((char *)info->part_num, smbios_part_num, SPD_DEFAULT_PART_LEN);
+	return transfer_speed_from_smbios_to_nonspd_mem_info(table, info);
+}
+
 int spd_set_nonspd_info(struct platform_intf *intf,
                         const struct nonspd_mem_info **info)
 {
@@ -759,10 +810,16 @@ int spd_set_nonspd_info(struct platform_intf *intf,
 		}
 	}
 
-	if (index == ARRAY_SIZE(nospdmemory)) {
-		lprintf(LOG_ERR, "%s: non SPD info missing\n", __func__);
+	if (index < ARRAY_SIZE(nospdmemory)) {
+		return 0;
+	}
+
+	// memory device from SMBIOS is mapped into a nonspd_mem_info.
+	if (extract_mem_info_from_smbios(&table, &part_extracted_from_smbios)) {
 		return -1;
 	}
+
+	*info = &part_extracted_from_smbios;
 
 	return 0;
 }
