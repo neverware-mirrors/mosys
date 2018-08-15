@@ -362,6 +362,44 @@ err:
 	return -1;
 }
 
+#ifdef CONFIG_PLATFORM_ARCH_X86
+/** internal function with common code to read sku info */
+int internal_cros_config_read_sku_info(struct platform_intf *intf,
+			               const int sku_number,
+			               struct sku_info *sku_info)
+{
+	const char *smbios_name, *platform_name;
+	extern char __dtb_config_begin[];
+	char *fdt = __dtb_config_begin;
+	int ret;
+	lprintf(LOG_DEBUG, "%s: Yaml lookup SMBIOS name '%s', SKU ID %d\n",
+                __func__, smbios_name ? smbios_name : "(null)", sku_number);
+
+	ret = cros_config_read_sku_info_struct(intf, smbios_name, sku_number,
+					       sku_info);
+	if (!ret)
+		return 0;
+
+	/* Fall back to using device tree if yaml-based config is not present */
+	lprintf(LOG_DEBUG, "%s: Yaml lookup failed, trying device tree: "
+	       "SMBIOS name '%s', SKU ID %d\n",
+                __func__, smbios_name ? smbios_name : "(null)", sku_number);
+	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_number,
+				    NULL, &platform_name);
+	if (ret) {
+		if (ret != -ENOENT)
+			lprintf(LOG_ERR,
+				"%s: Failed to read master configuration\n",
+				__func__);
+		return -1;
+	}
+	intf->name = platform_name;
+
+	return 0;
+}
+
+#endif // CONFIG_PLATFORM_ARCH_X86
+
 int cros_config_read_sku_info(struct platform_intf *intf,
 			      const char *find_platform_names,
 			      struct sku_info *sku_info)
@@ -372,8 +410,6 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 
 #ifdef CONFIG_PLATFORM_ARCH_X86
 	const char *smbios_name, *platform_name;
-	extern char __dtb_config_begin[];
-	char *fdt = __dtb_config_begin;
 	int sku_id;
 	int ret;
 
@@ -390,28 +426,36 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 			__func__, smbios_name, find_platform_names);
 		return -ENOENT;
 	}
-	lprintf(LOG_DEBUG, "%s: Looking up SMBIOS name '%s', SKU ID %d\n",
-                __func__, smbios_name ? smbios_name : "(null)", sku_id);
+	return internal_cros_config_read_sku_info(intf, sku_id, sku_info);
+#endif // CONFIG_PLATFORM_ARCH_X86
+}
 
-	lprintf(LOG_DEBUG, "Yaml lookup:\n");
-	ret = cros_config_read_sku_info_struct(intf, smbios_name, sku_id,
-					       sku_info);
-	if (!ret)
-		return 0;
+int cros_config_read_forced_sku_info(struct platform_intf *intf,
+			             const char *find_platform_names,
+			             const int forced_sku_number,
+			             struct sku_info *sku_info)
+{
+#ifdef CONFIG_PLATFORM_ARCH_ARMEL
+	return cros_config_read_sku_info_struct(intf, sku_info);
+#endif // CONFIG_PLATFORM_ARCH_ARMEL
 
-	/* Fall back to using device tree if yaml-based config is not present */
-	lprintf(LOG_DEBUG, "Yaml lookup failed, trying device tree:\n");
-	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_id, NULL,
-				    &platform_name);
-	if (ret) {
-		if (ret != -ENOENT)
-			lprintf(LOG_ERR,
-				"%s: Failed to read master configuration\n",
-				__func__);
-		return -1;
+#ifdef CONFIG_PLATFORM_ARCH_X86
+	const char *smbios_name, *platform_name;
+	extern char __dtb_config_begin[];
+	char *fdt = __dtb_config_begin;
+	int ret;
+
+	smbios_name = smbios_sysinfo_get_name(intf);
+	if (!smbios_name)
+		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
+
+	if (smbios_name &&
+	    !string_in_list(smbios_name, find_platform_names)) {
+		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
+			__func__, smbios_name, find_platform_names);
+		return -ENOENT;
 	}
-	intf->name = platform_name;
-
-	return 0;
+	return internal_cros_config_read_sku_info(intf, forced_sku_number,
+						  sku_info);
 #endif // CONFIG_PLATFORM_ARCH_X86
 }

@@ -86,7 +86,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { NULL }, },
 };
 
-#endif /* CONFIG_CROS_CONFIG */
+#endif /* ! CONFIG_CROS_CONFIG */
 
 struct platform_cmd *glados_sub[] = {
 	&cmd_ec,
@@ -107,12 +107,35 @@ int glados_probe(struct platform_intf *intf)
 	static struct sku_info sku_info;
 	int ret;
 
-	ret = cros_config_read_sku_info(intf, "Nautilus", &sku_info);
+	if (!cros_config_smbios_platform_name_match(intf, "Soraka")) {
+		/** Soraka will always work correctly, no hacks needed */
+		ret = cros_config_read_sku_info(intf, "Soraka", &sku_info);
+		if (!ret) {
+			intf->sku_info = &sku_info;
+			return 1;
+		}
+		return 0;
+	}
 
-	/* If there was no error, indicate that we found a match */
-	if (!ret) {
-		intf->sku_info = &sku_info;
-		return 1;
+	if (!cros_config_smbios_platform_name_match(intf, "Nautilus")) {
+		/** Nautilus uni-build will work correctly, no hacks needed. */
+		ret = cros_config_read_sku_info(intf, "Nautilus", &sku_info);
+		if (!ret) {
+			intf->sku_info = &sku_info;
+			return 1;
+		}
+		/** If we get here we know we are a Nautilus unibuild w/o
+		 * upgraded bios, need to force the read of sku info with
+		 * sku_id zero. */
+		lprintf(LOG_DEBUG,
+			"%s: read_sku_info failed for Nautilus, force sku=0\n",
+			__func__);
+		ret = cros_config_read_forced_sku_info(intf, "Nautilus", 0,
+						       &sku_info);
+		if (!ret) {
+			intf->sku_info = &sku_info;
+			return 1;
+		}
 	}
 
 	return ret;

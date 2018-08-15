@@ -49,6 +49,23 @@ struct sku_info;
 int cros_config_read_sku_info(struct platform_intf *intf,
 			      const char *find_platform_names,
 			      struct sku_info *sku_info);
+/**
+ * cros_config_read_forced_sku_info() - read SKU information for current model
+ * forcing the sku to a passed in value.
+ *
+ * Read information about the current model.
+ *
+ * @intf: Platform information, used to access SMBIOS name and SKU ID
+ * @find_platform_names: Comma-separated list of platform names that are
+ *    permitted
+ * @forced_sku_number: forced sku number
+ * @sku_info: Returns SKU information on success
+ * @return: 0 if OK, other value on error
+ */
+int cros_config_read_forced_sku_info(struct platform_intf *intf,
+			             const char *find_platform_names,
+			             const int forced_sku_number,
+			             struct sku_info *sku_info);
 
 /**
  * cros_config_setup_sku() - read SKU information (internal functions)
