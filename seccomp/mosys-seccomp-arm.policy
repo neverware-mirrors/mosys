@@ -34,6 +34,7 @@ ugetrlimit: 1
 gettimeofday: 1
 set_tid_address: 1
 ftruncate: 1
+pipe: 1
 
 # Needed for cloning process
 brk: 1
