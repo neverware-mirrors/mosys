@@ -29,6 +29,7 @@ tgkill: 1
 mmap: arg2 in 0xfffffffb || arg2 in 0xfffffffd
 set_tid_address: 1
 ftruncate: 1
+fadvise64: 1
 
 # Needed for cloning process
 brk: 1
