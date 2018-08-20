@@ -366,9 +366,10 @@ err:
 /** internal function with common code to read sku info */
 int internal_cros_config_read_sku_info(struct platform_intf *intf,
 			               const int sku_number,
+				       const char *smbios_name,
 			               struct sku_info *sku_info)
 {
-	const char *smbios_name, *platform_name;
+	const char *platform_name;
 	extern char __dtb_config_begin[];
 	char *fdt = __dtb_config_begin;
 	int ret;
@@ -409,9 +410,8 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 #endif // CONFIG_PLATFORM_ARCH_ARMEL
 
 #ifdef CONFIG_PLATFORM_ARCH_X86
-	const char *smbios_name, *platform_name;
+	const char *smbios_name;
 	int sku_id;
-	int ret;
 
 	smbios_name = smbios_sysinfo_get_name(intf);
 	if (!smbios_name)
@@ -426,7 +426,8 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 			__func__, smbios_name, find_platform_names);
 		return -ENOENT;
 	}
-	return internal_cros_config_read_sku_info(intf, sku_id, sku_info);
+	return internal_cros_config_read_sku_info(intf, sku_id, smbios_name,
+						  sku_info);
 #endif // CONFIG_PLATFORM_ARCH_X86
 }
 
@@ -440,10 +441,7 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 #endif // CONFIG_PLATFORM_ARCH_ARMEL
 
 #ifdef CONFIG_PLATFORM_ARCH_X86
-	const char *smbios_name, *platform_name;
-	extern char __dtb_config_begin[];
-	char *fdt = __dtb_config_begin;
-	int ret;
+	const char *smbios_name;
 
 	smbios_name = smbios_sysinfo_get_name(intf);
 	if (!smbios_name)
@@ -456,6 +454,30 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 		return -ENOENT;
 	}
 	return internal_cros_config_read_sku_info(intf, forced_sku_number,
-						  sku_info);
+						  smbios_name, sku_info);
 #endif // CONFIG_PLATFORM_ARCH_X86
+}
+
+int cros_config_smbios_platform_name_match(struct platform_intf *intf,
+					   const char *find_platform_names)
+{
+#ifdef CONFIG_PLATFORM_ARCH_X86
+	const char *smbios_name;
+
+	smbios_name = smbios_sysinfo_get_name(intf);
+	if (!smbios_name) {
+		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
+		return -ENOENT;
+	}
+
+	if (!string_in_list(smbios_name, find_platform_names)) {
+		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
+			__func__, smbios_name, find_platform_names);
+		return -ENOENT;
+	}
+
+	return 0;
+#else // CONFIG_PLATFORM_ARCH_X86
+	return -ENOENT;
+#endif
 }

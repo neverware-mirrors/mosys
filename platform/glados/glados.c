@@ -105,7 +105,7 @@ int glados_probe(struct platform_intf *intf)
 {
 #ifdef CONFIG_CROS_CONFIG
 	static struct sku_info sku_info;
-	int ret;
+	int ret = 0;
 
 	if (!cros_config_smbios_platform_name_match(intf, "Soraka")) {
 		/** Soraka will always work correctly, no hacks needed */
