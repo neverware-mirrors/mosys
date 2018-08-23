@@ -42,6 +42,11 @@ In summary, all of this should look something like:
 To build the experimental Rust support, first build libmosys.a using the
 instructions above. Then run: "MESON_BUILD_ROOT=output_dir cargo build".
 
+To run tests:
+  CC=clang meson -Darch=amd64 -Duse_cros_config=true -Dtest_cros_config=true out
+  ninja -C out
+  USE=unibuild MESON_BUILD_ROOT=out cargo test
+
 Usage
 -----
 Mosys uses a natural language syntax to navigate thru a command hierarchy for
@@ -58,3 +63,15 @@ are defined in the system's stdlib.h. In case of failure, mosys will also print
 a message to stderr to let the user know.
 
 Use "mosys -t" to display the command tree for the host platform.
+
+Debugging
+---------
+Mosys uses a minijail to restrict behavior. This can sometimes restrict desired
+behavior, especially system calls not whitelisted by the seccom filter.
+If a subcommand is returning with an error that should be passing, this might
+be why. In order to debug this, run seccomp_debug.sh with the failing command.
+This will print out the system calls that caused the run to fail.
+
+Ex. 'mosys platform id' failing on DUT
+On the DUT, copy over seccomp_debug.sh and run:
+  ./seccomp_debug.sh mosys platform id
