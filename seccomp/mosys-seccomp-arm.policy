@@ -39,6 +39,7 @@ statfs: 1
 prctl: 1
 sigreturn: 1
 arm_fadvise64_64: 1
+_llseek: 1
 
 # Needed for cloning process
 brk: 1
