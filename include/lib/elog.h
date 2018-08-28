@@ -296,6 +296,16 @@ struct elog_event_mem_cache_update {
 #define ELOG_TYPE_S0IX_ENTER              0xaf
 #define ELOG_TYPE_S0IX_EXIT               0xb0
 
+/* Extended events */
+#define ELOG_TYPE_EXTENDED_EVENT          0xb1
+#define  ELOG_SLEEP_PENDING_PM1_WAKE       0x01
+#define  ELOG_SLEEP_PENDING_GPE0_WAKE      0x02
+
+struct elog_event_extended_event {
+	uint8_t event_type;
+	uint32_t event_complement;
+} __attribute__ ((packed));
+
 /* Recovery reason codes for EVENT_TYPE_CROS_RECOVERY_MODE */
 /* Recovery not requested. */
 #define VBNV_RECOVERY_NOT_REQUESTED   0x00
