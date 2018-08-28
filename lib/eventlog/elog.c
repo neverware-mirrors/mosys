@@ -121,6 +121,7 @@ int elog_print_type(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ ELOG_TYPE_THERM_TRIP, "CPU Thermal Trip" },
 		{ ELOG_TYPE_CR50_UPDATE, "cr50 Update Reset" },
 		{ ELOG_TYPE_EC_DEVICE_EVENT, "EC Device" },
+		{ ELOG_TYPE_EXTENDED_EVENT, "Extended Event" },
 		{ 0x0, NULL },
 	};
 
@@ -515,6 +516,14 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 		{ 0, NULL },
 	};
 
+	static struct valstr extended_event_subtypes[] = {
+		{ ELOG_SLEEP_PENDING_PM1_WAKE,
+		  "S3 failed due to pending wake event, PM1" },
+		{ ELOG_SLEEP_PENDING_GPE0_WAKE,
+		  "S3 failed due to pending wake event, GPE0" },
+		{ 0, NULL },
+	};
+
 	switch (entry->type) {
 	case SMBIOS_EVENT_TYPE_LOGCLEAR:
 	{
@@ -605,6 +614,15 @@ int elog_print_data(struct platform_intf *intf, struct smbios_log_entry *entry,
 			    val2str(event->slot, mem_cache_slots));
 		kv_pair_add(kv, "status",
 			    val2str(event->status, mem_cache_statuses));
+		break;
+	}
+	case ELOG_TYPE_EXTENDED_EVENT:
+	{
+		struct elog_event_extended_event *event;
+		event = (void *)&entry->data[0];
+		kv_pair_add(kv, "event_type",
+			    val2str(event->event_type, extended_event_subtypes));
+		kv_pair_fmt(kv, "event_complement", "0x%X", event->event_complement);
 		break;
 	}
 	default:
