@@ -35,12 +35,4 @@
 #include "mosys/platform.h"
 #include <inttypes.h>
 
-#define DUMMY_HOST_FIRMWARE_ROM_SIZE             8192
-
-/* platform callbacks */
-extern struct eeprom_cb dummy_eeprom_cb;         /* eeprom.c */
-extern struct sys_cb dummy_sys_cb;               /* sys.c */
-
-extern int dummy_ec_setup(struct platform_intf *intf);
-
 #endif /* PLATFORM_DUMMY_H_ */

@@ -16,10 +16,6 @@ use_cros_config = get_option('use_cros_config') == true
 if use_cros_config
   conf_data.set('CONFIG_CROS_CONFIG', 1)
 endif
-test_cros_config = get_option('test_cros_config') == true
-if test_cros_config
-  conf_data.set('CONFIG_TEST_CROS_CONFIG', 1)
-endif
 
 # Setting on a per-arch basis
 arch = get_option('arch')

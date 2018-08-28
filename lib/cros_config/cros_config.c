@@ -286,7 +286,8 @@ static bool string_in_list(const char *name, const char *list)
 }
 
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
-			  struct identity_info *id_info,  const char **platform_namep)
+			  const char *find_smbios_name, int find_sku_id,
+			  const char *find_wl_name, const char **platform_namep)
 {
 	int mapping_node, model_node;
 	int wl_tag_node;
@@ -298,8 +299,8 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	if (mapping_node < 0)
 		return cros_config_fdt_err("find mapping", mapping_node);
 
-	phandle = check_sku_maps(fdt, mapping_node, id_info->smbios_name,
-				 id_info->sku_id, platform_namep);
+	phandle = check_sku_maps(fdt, mapping_node, find_smbios_name,
+				 find_sku_id, platform_namep);
 	if (phandle <= 0)
 		goto err;
 	model_node = follow_phandle(fdt, phandle, &target);
@@ -314,8 +315,7 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 	 * whitelabel tag.
 	 */
 	wl_tag_node =
-	    cros_config_lookup_whitelabel(fdt, model_node,
-					id_info->whitelabel_tag);
+	    cros_config_lookup_whitelabel(fdt, model_node, find_wl_name);
 	if (wl_tag_node < 0) {
 		goto err;
 	} else if (wl_tag_node) {
@@ -362,32 +362,11 @@ err:
 	return -1;
 }
 
-int internal_read_identity_info(struct platform_intf *intf,
-				const char *find_platform_names,
-				struct identity_info *info)
-{
-	info->smbios_name = smbios_sysinfo_get_name(intf);
-	info->sku_id = smbios_sysinfo_get_sku_number(intf);
-	info->whitelabel_tag = sku_get_whitelabel_from_vpd();
-	if (!info->smbios_name)
-		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
-
-	if (info->sku_id == -1)
-		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
-
-	if (info->smbios_name &&
-	    !string_in_list(info->smbios_name, find_platform_names)) {
-		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
-			__func__, info->smbios_name, find_platform_names);
-		return -ENOENT;
-	}
-	return 0;
-}
-
 #ifdef CONFIG_PLATFORM_ARCH_X86
 /** internal function with common code to read sku info */
 int internal_cros_config_read_sku_info(struct platform_intf *intf,
-			               struct identity_info *id_info,
+			               const int sku_number,
+				       const char *smbios_name,
 			               struct sku_info *sku_info)
 {
 	const char *platform_name;
@@ -395,21 +374,19 @@ int internal_cros_config_read_sku_info(struct platform_intf *intf,
 	char *fdt = __dtb_config_begin;
 	int ret;
 	lprintf(LOG_DEBUG, "%s: Yaml lookup SMBIOS name '%s', SKU ID %d\n",
-                __func__,
-				id_info->smbios_name ? id_info->smbios_name : "(null)",
-				id_info->sku_id);
+                __func__, smbios_name ? smbios_name : "(null)", sku_number);
 
-	ret = cros_config_read_sku_info_struct(intf, id_info, sku_info);
+	ret = cros_config_read_sku_info_struct(intf, smbios_name, sku_number,
+					       sku_info);
 	if (!ret)
 		return 0;
 
 	/* Fall back to using device tree if yaml-based config is not present */
 	lprintf(LOG_DEBUG, "%s: Yaml lookup failed, trying device tree: "
 	       "SMBIOS name '%s', SKU ID %d\n",
-                __func__,
-				id_info->smbios_name ? id_info->smbios_name : "(null)",
-				id_info->sku_id);
-	ret = cros_config_setup_sku(fdt, sku_info, id_info, &platform_name);
+                __func__, smbios_name ? smbios_name : "(null)", sku_number);
+	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_number,
+				    NULL, &platform_name);
 	if (ret) {
 		if (ret != -ENOENT)
 			lprintf(LOG_ERR,
@@ -429,18 +406,28 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 			      struct sku_info *sku_info)
 {
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
-	static struct identity_info id_info;
-	internal_read_identity_info(intf, find_platform_names, &id_info);
-	return cros_config_read_sku_info_struct(intf, &id_info, sku_info);
+	return cros_config_read_sku_info_struct(intf, sku_info);
 #endif // CONFIG_PLATFORM_ARCH_ARMEL
 
 #ifdef CONFIG_PLATFORM_ARCH_X86
-	static struct identity_info id_info;
-	int ret = internal_read_identity_info(intf, find_platform_names,
-						&id_info);
-	if (ret < 0)
-		return ret;
-	return internal_cros_config_read_sku_info(intf, &id_info, sku_info);
+	const char *smbios_name;
+	int sku_id;
+
+	smbios_name = smbios_sysinfo_get_name(intf);
+	if (!smbios_name)
+		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
+	sku_id = smbios_sysinfo_get_sku_number(intf);
+	if (sku_id == -1)
+		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
+
+	if (smbios_name &&
+	    !string_in_list(smbios_name, find_platform_names)) {
+		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
+			__func__, smbios_name, find_platform_names);
+		return -ENOENT;
+	}
+	return internal_cros_config_read_sku_info(intf, sku_id, smbios_name,
+						  sku_info);
 #endif // CONFIG_PLATFORM_ARCH_X86
 }
 
@@ -450,20 +437,24 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 			             struct sku_info *sku_info)
 {
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
-	static struct identity_info id_info;
-	internal_read_identity_info(intf, find_platform_names, &id_info);
-	return cros_config_read_sku_info_struct(intf, &id_info, sku_info);
+	return cros_config_read_sku_info_struct(intf, sku_info);
 #endif // CONFIG_PLATFORM_ARCH_ARMEL
 
 #ifdef CONFIG_PLATFORM_ARCH_X86
-	static struct identity_info id_info;
-	int ret = internal_read_identity_info(intf, find_platform_names,
-						&id_info);
-	if (ret < 0)
-		return ret;
+	const char *smbios_name;
 
-	id_info.sku_id = forced_sku_number;
-	return internal_cros_config_read_sku_info(intf, &id_info, sku_info);
+	smbios_name = smbios_sysinfo_get_name(intf);
+	if (!smbios_name)
+		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
+
+	if (smbios_name &&
+	    !string_in_list(smbios_name, find_platform_names)) {
+		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
+			__func__, smbios_name, find_platform_names);
+		return -ENOENT;
+	}
+	return internal_cros_config_read_sku_info(intf, forced_sku_number,
+						  smbios_name, sku_info);
 #endif // CONFIG_PLATFORM_ARCH_X86
 }
 

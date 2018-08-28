@@ -20,44 +20,42 @@ fn main() {
         process::exit(1);
     });
 
-    if !args.contains(&String::from("--no-jail")) {
-        let mut j = Minijail::new().unwrap();
-    
-        // For unknown reasons, this code slows boot on arm machines.
-        // See crbug.com/872187 for more information.
-        #[cfg(target_arch = "x86_64")]
-        {
-            // needs CAP_SYS_RAWIO and CAP_SYS_ADMIN
-            j.use_caps(0x220000);
-            j.set_ambient_caps();
-    
-            // Don't set securebits because this may be inside another minijail.
-            // See b/112030238.
-            j.skip_setting_securebits(0xff);
-    
-            j.remount_proc_readonly();
-    
-            j.namespace_net();
-        }
-    
-        j.no_new_privs();
-    
-        j.set_seccomp_filter_tsync();
-        j.log_seccomp_filter_failures();
-    
-        let policy_path = Path::new("/usr/share/policy/mosys-seccomp.policy");
-        if let Err(err) = j.parse_seccomp_filters(policy_path) {
-            eprintln!("Minijail failed to parse seccomp policy. Error: {}", err);
-            eprintln!("This error is expected in initramfs environments.");
-        } else {
-            j.use_seccomp_filter();
-        }
-    
-        j.run_as_init();
-    
-        // Jail will be destoryed when it is dropped
-        j.enter();
+    let mut j = Minijail::new().unwrap();
+
+    // For unknown reasons, this code slows boot on arm machines.
+    // See crbug.com/872187 for more information.
+    #[cfg(target_arch = "x86_64")]
+    {
+        // needs CAP_SYS_RAWIO and CAP_SYS_ADMIN
+        j.use_caps(0x220000);
+        j.set_ambient_caps();
+
+        // Don't set securebits because this may be inside another minijail.
+        // See b/112030238.
+        j.skip_setting_securebits(0xff);
+
+        j.remount_proc_readonly();
+
+        j.namespace_net();
     }
+
+    j.no_new_privs();
+
+    j.set_seccomp_filter_tsync();
+    j.log_seccomp_filter_failures();
+
+    let policy_path = Path::new("/usr/share/policy/mosys-seccomp.policy");
+    if let Err(err) = j.parse_seccomp_filters(policy_path) {
+        eprintln!("Minijail failed to parse seccomp policy. Error: {}", err);
+        eprintln!("This error is expected in initramfs environments.");
+    } else {
+        j.use_seccomp_filter();
+    }
+
+    j.run_as_init();
+
+    // Jail will be destoryed when it is dropped
+    j.enter();
 
     if let Err(err) = mosys.run() {
         eprintln!("Application error: {}", err);
