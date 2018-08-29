@@ -92,13 +92,3 @@ libmosys = static_library(
   objects: objects,
   pic: true,
 )
-
-# Mosys dynamic executable
-executable(
-  'mosys',
-  ['mosys.c'],
-  include_directories: include_common,
-  link_with: [libmosys],
-  install: true,
-  install_dir: '/usr/sbin',
-)

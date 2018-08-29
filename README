@@ -18,31 +18,73 @@ its usefulness may be extremely limited.
 
 Configuration & Building
 ------------------------
-Mosys uses the Meson build system. Run "meson -D${arch?} output_dir" to
-configure and then "ninja -C output_dir" to build. "ninja -C output_dir test"
-will run tests and "ninja -C output_dir install" will install. Chrome OS
-contributors will want to use cros_workon instead.
+Dependencies:
+  libfmap
+  libuuid
+  libfdt (typically from the dtc package in your distribution)
+
+Mosys is a two-stage compile: the first stage is for all of the C components and
+uses the Meson build system and the second stage is Rust Cargo for all of the
+Rust components.
+
+Chrome OS contributors will want to use cros_workon instead. Using the ebuild is
+vastly easier than trying to build manually.
 
 See meson.build for valid arch options.
 
-Other flags of interest:
+Flags of interest:
 -Duse_cros_config=true/false: whether to enable linking to cros_config for
-                              Chrome OS. See Chrome OS example in mosys ebuild.
+                              Chrome OS. See Chrome OS example in Mosys ebuild.
 
-Note that you might have better luck compiling mosys with Clang while -Werror is
+Note that you might have better luck compiling Mosys with Clang while -Werror is
 enabled. This is because we (Chromium) use Clang as our default compiler. To do
 that, add CC=clang before you invoke Meson.
 
-In summary, all of this should look something like:
-  CC=clang meson -Darch=amd64 -Duse_cros_config=true out
-  ninja -C out
-  ninja -C out test
-  ninja -C out install
+All of this should look something like, for the C components:
+  CC=clang meson -Darch=amd64 output_dir
+  ninja -C output_dir
 
-To build the experimental Rust support, first build libmosys.a using the
-instructions above. Then run: "MESON_BUILD_ROOT=output_dir cargo build".
+or:
+  CC=clang meson -Darch=amd64 -Duse_cros_config=true output_dir
+  ninja -C output_dir
 
-To run tests:
+To build with use_cros_config=true, you need two files that are dynamically
+provided as inputs to the build process from other ebuilds in the Chrome OS
+build system:
+  lib/cros_config/config.dtb
+  lib/cros_config/cros_config_data.c
+
+If you just want to compile something quickly, you can do:
+  touch lib/cros_config/config.dtb
+  cp lib/cros_config/dummy_cros_config_data.c lib/cros_config/cros_config_data.c
+
+and then run the `meson` command as above.
+
+Then, to build the Rust components, first build the C components using the
+instructions above. Then, run:
+
+  MESON_BUILD_ROOT=output_dir cargo build
+
+If you are building with use_cros_config, as above, instead you will do:
+
+  MESON_BUILD_ROOT=output_dir USE=unibuild cargo build
+
+In the end, this will output a "target/debug/mosys" binary that is dynamically
+linked. Use `--release` argument to `cargo` to get a release build.
+
+The `mosys` binary that is output will typically abort on most platforms when
+run as a user without root privs. To try to work with this locally without
+moving it to a target platform, you can run:
+
+  sudo mosys --help
+
+or:
+
+  sudo mosys -j -p dummy
+
+to disable the Minijail and force the platform to the "dummy" platform.
+
+To run tests (with cros_config enabled):
   CC=clang meson -Darch=amd64 -Duse_cros_config=true -Dtest_cros_config=true out
   ninja -C out
   USE=unibuild MESON_BUILD_ROOT=out cargo test
@@ -59,7 +101,7 @@ type of information such as "smbios" or "vpd".
 
 Mosys returns EXIT_SUCCESS upon successful completion of a command, or
 EXIT_FAILURE if a command is not supported on a given platform. These values
-are defined in the system's stdlib.h. In case of failure, mosys will also print
+are defined in the system's stdlib.h. In case of failure, Mosys will also print
 a message to stderr to let the user know.
 
 Use "mosys -t" to display the command tree for the host platform.
