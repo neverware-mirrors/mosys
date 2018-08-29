@@ -37,6 +37,12 @@ statfs: 1
 sigreturn: 1
 fadvise64: 1
 
+# Implicitly added when Minijail log_seccomp_filter_failures() is used
+connect: 1
+sendto: 1
+socket:1
+writev: 1
+
 # Needed for cloning process
 access: 1
 arch_prctl: 1

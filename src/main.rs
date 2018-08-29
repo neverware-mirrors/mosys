@@ -42,7 +42,6 @@ fn main() {
     j.no_new_privs();
 
     j.set_seccomp_filter_tsync();
-    j.log_seccomp_filter_failures();
 
     let policy_path = Path::new("/usr/share/policy/mosys-seccomp.policy");
     if let Err(err) = j.parse_seccomp_filters(policy_path) {
