@@ -265,6 +265,7 @@ static int cros_config_lookup_whitelabel(const char *fdt, int model_nodep,
 	return wl_tag;
 }
 
+#ifdef CONFIG_PLATFORM_ARCH_X86
 /**
  * string_in_list() - Check if a name is in a comma-separated list
  *
@@ -284,6 +285,7 @@ static bool string_in_list(const char *name, const char *list)
 
 	return false;
 }
+#endif // CONFIG_PLATFORM_ARCH_X86
 
 int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 			  const char *find_smbios_name, int find_sku_id,

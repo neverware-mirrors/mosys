@@ -39,7 +39,10 @@ cc = meson.get_compiler('c')
 if (cc.has_argument('-Wno-address-of-packed-member'))
   add_global_arguments(['-Wno-address-of-packed-member'], language: 'c')
 endif
+add_global_arguments('-Wall', language : 'c')
 add_global_arguments('-Werror', language : 'c')
+add_global_arguments('-Wstrict-prototypes', language : 'c')
+add_global_arguments('-Wundef', language : 'c')
 
 # External libs used by Mosys
 fmap_dep = dependency('fmap')
