@@ -35,6 +35,12 @@ set_tid_address: 1
 ftruncate: 1
 fadvise64: 1
 
+# Implicitly added when Minijail log_seccomp_filter_failures() is used
+socket: 1
+connect: 1
+send: 1
+writev: 1
+
 # Needed for cloning process
 brk: 1
 # Don't allow mprotect with both PROT_WRITE and PROT_EXEC

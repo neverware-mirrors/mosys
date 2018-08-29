@@ -41,6 +41,12 @@ sigreturn: 1
 arm_fadvise64_64: 1
 _llseek: 1
 
+# Implicitly added when Minijail log_seccomp_filter_failures() is used
+socket: 1
+connect: 1
+send: 1
+writev: 1
+
 # Needed for cloning process
 brk: 1
 access: 1
