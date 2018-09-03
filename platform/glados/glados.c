@@ -80,6 +80,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { "Nocturne", }, .single_sku = { .brand = "NBQS", }, },
 	{ { "Pbody", }, },
 	{ { "Poppy" }, .single_sku = { .brand = "LOGG", }, },
+	{ { "Rammus", }, },
 	{ { "Sentry", }, .single_sku = { .brand = "LEAJ", }, },
 	{ { "Skylake", }, },
 	{ { "Soraka", }, .single_sku = { .brand = "ARBI", }, },
@@ -107,9 +108,10 @@ int glados_probe(struct platform_intf *intf)
 	static struct sku_info sku_info;
 	int ret = 0;
 
-	if (!cros_config_smbios_platform_name_match(intf, "Soraka")) {
-		/** Soraka will always work correctly, no hacks needed */
-		ret = cros_config_read_sku_info(intf, "Soraka", &sku_info);
+	if (!cros_config_smbios_platform_name_match(intf, "Soraka,Rammus")) {
+		/** Soraka,Rammus will always work correctly, no hacks needed */
+		ret = cros_config_read_sku_info(intf, "Soraka,Rammus",
+					        &sku_info);
 		if (!ret) {
 			intf->sku_info = &sku_info;
 			return 1;
