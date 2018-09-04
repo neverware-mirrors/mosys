@@ -34,7 +34,6 @@ unlink: 1
 wait4: 1
 write: 1
 statfs: 1
-sigreturn: 1
 fadvise64: 1
 
 # Needed for cloning process
