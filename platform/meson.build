@@ -4,6 +4,7 @@ libmosys_src += files(
 
 subdir('auron')
 subdir('beltino')
+subdir('cheza')
 subdir('cyan')
 subdir('cyclone')
 subdir('daisy')

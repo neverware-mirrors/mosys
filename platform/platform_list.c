@@ -40,6 +40,7 @@ extern struct platform_intf platform_dummy;
 /* production platforms */
 extern struct platform_intf platform_auron;
 extern struct platform_intf platform_beltino;
+extern struct platform_intf platform_cheza;
 extern struct platform_intf platform_coral;
 extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_cyclone;
@@ -107,6 +108,9 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_smaug,
 	&platform_spring,
 	&platform_storm,
+#ifdef CONFIG_CROS_CONFIG
+	&platform_cheza,
+#endif // CONFIG_CROS_CONFIG
 #endif // CONFIG_PLATFORM_ARCH_ARMEL
 	NULL
 };
