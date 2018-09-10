@@ -64,11 +64,11 @@ static struct platform_cmd *cheza_sub[] = {
 
 static int cheza_probe(struct platform_intf *intf)
 {
+	static const char* platform_arr[] = {"cheza"};
 	static struct sku_info sku_info;
-	int ret;
 
-	ret = cros_config_read_sku_info(intf, "google,cheza", &sku_info);
-
+	int ret = cros_config_read_sku_info_fdt(intf, platform_arr, 1,
+						&sku_info);
 	/* If there was no error, indicate that we found a match */
 	if (!ret) {
 		intf->sku_info = &sku_info;

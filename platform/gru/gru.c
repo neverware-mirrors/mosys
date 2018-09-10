@@ -88,11 +88,11 @@ struct platform_cmd *gru_sub[] = {
 static int gru_probe(struct platform_intf *intf)
 {
 #ifdef CONFIG_CROS_CONFIG
+	static const char* platform_arr[] = {"gru"};
 	static struct sku_info sku_info;
-	int ret;
 
-	ret = cros_config_read_sku_info(intf, "google,gru", &sku_info);
-
+	int ret = cros_config_read_sku_info_fdt(intf, platform_arr, 1,
+						&sku_info);
 	/* If there was no error, indicate that we found a match */
 	if (!ret) {
 		intf->sku_info = &sku_info;

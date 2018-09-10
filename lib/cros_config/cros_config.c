@@ -404,23 +404,50 @@ int internal_cros_config_read_sku_info(struct platform_intf *intf,
 
 #endif // CONFIG_PLATFORM_ARCH_X86
 
+int cros_config_read_sku_info_fdt(struct platform_intf *intf,
+			          const char *compat_platform_names[],
+				  int compat_platform_names_size,
+			      	  struct sku_info *sku_info)
+{
+#ifdef CONFIG_PLATFORM_ARCH_ARMEL
+	static const int MAX_NAME_LEN = 256;
+	static const int NO_PARTIAL_MATCHES = 0;
+	// probe_fdt_compatible() returns an index of the matching name
+	// found in the find_platform_names list. Success is an index
+	// that is greater than or equal zero.
+	for (int i = 0; i < compat_platform_names_size; ++i) {
+		char platform_name[MAX_NAME_LEN+1];
+		platform_name[MAX_NAME_LEN] = '\0';
+		int ret = snprintf(platform_name, MAX_NAME_LEN, "google,%s",
+			 compat_platform_names[i]);
+		if (ret >= MAX_NAME_LEN) {
+			lprintf(LOG_ERR, "Platform name exceeded %d chars\n",
+				MAX_NAME_LEN);
+			return -1;
+		}
+		const char* compat_names = &platform_name[0];
+		// probe_fdt_compatible() takes a const char* const []
+		// as the first parameter, we are only passing one name
+		// to check at a time requiring full name matches.
+		int found = probe_fdt_compatible(&compat_names, 1,
+						 NO_PARTIAL_MATCHES);
+		if (found >= 0) {
+			// Platform is compatible, now read the sku info to see
+			// if we can find a device match.
+			return cros_config_read_sku_info_struct(intf, sku_info);
+		}
+	}
+	return -1;
+#else // CONFIG_PLATFORM_ARCH_ARMEL
+	lprintf(LOG_ERR, "Only ARM platforms should call %s\n", __func__);
+	return -1;
+#endif
+}
+
 int cros_config_read_sku_info(struct platform_intf *intf,
 			      const char *find_platform_names,
 			      struct sku_info *sku_info)
 {
-#ifdef CONFIG_PLATFORM_ARCH_ARMEL
-	// probe_fdt_compatible() returns an index of the matching name
-	// found in the find_platform_names list. Success is an index
-	// that is greater than or equal zero.
-	int found = probe_fdt_compatible(&find_platform_names, 1, 0);
-	if (found >= 0) {
-		// Platform is compatible, now read the sku info to see
-		// if we can find a device match.
-		return cros_config_read_sku_info_struct(intf, sku_info);
-	}
-	return -1;
-#endif // CONFIG_PLATFORM_ARCH_ARMEL
-
 #ifdef CONFIG_PLATFORM_ARCH_X86
 	const char *smbios_name;
 	int sku_id;
@@ -440,18 +467,18 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	}
 	return internal_cros_config_read_sku_info(intf, sku_id, smbios_name,
 						  sku_info);
-#endif // CONFIG_PLATFORM_ARCH_X86
+#else // CONFIG_PLATFORM_ARCH_X86
+	lprintf(LOG_ERR, "Only X86 platforms should call %s\n", __func__);
+	return -1;
+#endif
 }
 
+// TODO(gmeinke): combine read forced sku with existing read function.
 int cros_config_read_forced_sku_info(struct platform_intf *intf,
 			             const char *find_platform_names,
 			             const int forced_sku_number,
 			             struct sku_info *sku_info)
 {
-#ifdef CONFIG_PLATFORM_ARCH_ARMEL
-	return cros_config_read_sku_info_struct(intf, sku_info);
-#endif // CONFIG_PLATFORM_ARCH_ARMEL
-
 #ifdef CONFIG_PLATFORM_ARCH_X86
 	const char *smbios_name;
 
@@ -467,7 +494,10 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 	}
 	return internal_cros_config_read_sku_info(intf, forced_sku_number,
 						  smbios_name, sku_info);
-#endif // CONFIG_PLATFORM_ARCH_X86
+#else // CONFIG_PLATFORM_ARCH_X86
+	lprintf(LOG_ERR, "Only X86 platforms should call %s\n", __func__);
+	return -1;
+#endif
 }
 
 int cros_config_smbios_platform_name_match(struct platform_intf *intf,

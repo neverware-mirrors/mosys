@@ -49,6 +49,28 @@ struct sku_info;
 int cros_config_read_sku_info(struct platform_intf *intf,
 			      const char *find_platform_names,
 			      struct sku_info *sku_info);
+
+/**
+ * cros_config_read_sku_info_fdt() - read SKU information for current ARM
+ * model using the ARM FDT information.
+ *
+ * Read information about the current ARM model.
+ *
+ * @intf: Platform information, used to access ARM FDT name and SKU ID
+ * @compat_platform_names: Array of platform names that are permitted,
+ *    use the platform id not including the leading 'google,'. Platform
+ *    id 'google,gru' should pass in only 'gru'. Platform ids are currently
+ *    limited to 256 chars.
+ * @compat_platform_names_size: Number of elements in the
+ *    compat_platform_names array
+ * @sku_info: Returns SKU information on success
+ * @return: 0 if OK, other value on error
+ */
+int cros_config_read_sku_info_fdt(struct platform_intf *intf,
+			          const char *compat_platform_names[],
+				  int compat_platform_names_size,
+			      	  struct sku_info *sku_info);
+
 /**
  * cros_config_read_forced_sku_info() - read SKU information for current model
  * forcing the sku to a passed in value.
@@ -86,7 +108,6 @@ int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
 			  const char *find_smbios_name, int find_sku_id,
 			  const char *find_wl_name,
 			  const char **platform_namep);
-
 
 /**
  * cros_config_smbios_platform_name_match() - shallow match on sbmios name
