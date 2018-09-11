@@ -21,8 +21,6 @@ endif
 arch = get_option('arch')
 if arch == 'x86' or arch == 'x86_64' or arch == 'amd64'
   conf_data.set('CONFIG_PLATFORM_ARCH_X86', 1)
-elif arch == 'mip'
-  conf_data.set('CONFIG_PLATFORM_ARCH_MIPSEL', 1)
 elif arch == 'arm' or arch == 'arm64'
   conf_data.set('CONFIG_PLATFORM_ARCH_ARMEL', 1)
 endif
