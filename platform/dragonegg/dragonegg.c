@@ -63,7 +63,7 @@ struct probe_ids {
 
 /* sku_info: brand, model, chassis, customization */
 static const struct probe_ids probe_id_list[] = {
-	{ { "Google Dragon Egg", }, },
+	{ { "Dragonegg", }, },
 	{ { NULL }, },
 };
 
