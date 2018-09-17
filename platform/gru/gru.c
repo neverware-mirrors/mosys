@@ -67,7 +67,6 @@ struct gru_probe_id {
 	[GRU]		= { "Gru", "google,gru-rev", { .brand = "LOGA" } },
 	[KEVIN]		= { "Kevin", "google,kevin-rev", { .brand = "SMAJ" } },
 	[RAINIER]	= { "Rainier", "google,rainier-rev" },
-	[SCARLET]	= { "Scarlet", "google,scarlet-rev", { .brand = "DXZT" } },
 };
 
 #define GRU_CMD_EC_NUM	0
