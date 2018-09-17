@@ -2,6 +2,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+faccessat: 1
+newfstatat: 1
+sigaltstack: 1
+getrlimit: 1
 close: 1
 exit_group: 1
 munmap: 1
