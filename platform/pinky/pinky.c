@@ -110,7 +110,7 @@ static int pinky_probe(struct platform_intf *intf)
 	for (i = 0; i < ARRAY_SIZE(veyron_id_list); i++) {
 		const char **compat = &veyron_id_list[i].fdt_compat;
 
-		if (probe_fdt_compatible(compat, 1, 1) == 0) {
+		if (probe_fdt_compatible(compat, 1, 1, 0) == 0) {
 			lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT "
 				"compatible node.\n", veyron_id_list[i].name);
 			intf->name = veyron_id_list[i].name;

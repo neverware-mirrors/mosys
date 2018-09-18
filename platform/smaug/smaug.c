@@ -73,7 +73,7 @@ int probe(struct platform_intf *intf)
 	int index;
 
 	index = probe_fdt_compatible(&id_list[0],
-					ARRAY_SIZE(id_list), 0);
+					ARRAY_SIZE(id_list), 0, 0);
 	if (index >= 0) {
 		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
 				"node.\n", id_list[index]);
