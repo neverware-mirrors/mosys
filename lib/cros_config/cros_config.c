@@ -368,16 +368,16 @@ err:
 #ifdef CONFIG_PLATFORM_ARCH_X86
 /** internal function with common code to read sku info */
 int internal_cros_config_read_sku_info(struct platform_intf *intf,
-			               const int sku_number,
+				       const int sku_number,
 				       const char *smbios_name,
-			               struct sku_info *sku_info)
+				       struct sku_info *sku_info)
 {
 	const char *platform_name;
 	extern char __dtb_config_begin[];
 	char *fdt = __dtb_config_begin;
 	int ret;
 	lprintf(LOG_DEBUG, "%s: Yaml lookup SMBIOS name '%s', SKU ID %d\n",
-                __func__, smbios_name ? smbios_name : "(null)", sku_number);
+		__func__, smbios_name ? smbios_name : "(null)", sku_number);
 
 	ret = cros_config_read_sku_info_struct(intf, smbios_name, sku_number,
 					       sku_info);
@@ -385,9 +385,10 @@ int internal_cros_config_read_sku_info(struct platform_intf *intf,
 		return 0;
 
 	/* Fall back to using device tree if yaml-based config is not present */
-	lprintf(LOG_DEBUG, "%s: Yaml lookup failed, trying device tree: "
-	       "SMBIOS name '%s', SKU ID %d\n",
-                __func__, smbios_name ? smbios_name : "(null)", sku_number);
+	lprintf(LOG_DEBUG,
+		"%s: Yaml lookup failed, trying device tree: "
+		"SMBIOS name '%s', SKU ID %d\n",
+		__func__, smbios_name ? smbios_name : "(null)", sku_number);
 	ret = cros_config_setup_sku(fdt, sku_info, smbios_name, sku_number,
 				    NULL, &platform_name);
 	if (ret) {
@@ -405,9 +406,9 @@ int internal_cros_config_read_sku_info(struct platform_intf *intf,
 #endif // CONFIG_PLATFORM_ARCH_X86
 
 int cros_config_read_sku_info_fdt(struct platform_intf *intf,
-			          const char *compat_platform_names[],
+				  const char *compat_platform_names[],
 				  int compat_platform_names_size,
-			      	  struct sku_info *sku_info)
+				  struct sku_info *sku_info)
 {
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
 	static const int MAX_NAME_LEN = 256;
@@ -417,21 +418,21 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 	// found in the find_platform_names list. Success is an index
 	// that is greater than or equal zero.
 	for (int i = 0; i < compat_platform_names_size; ++i) {
-		char platform_name[MAX_NAME_LEN+1];
+		char platform_name[MAX_NAME_LEN + 1];
 		platform_name[MAX_NAME_LEN] = '\0';
 		int ret = snprintf(platform_name, MAX_NAME_LEN, "google,%s",
-			 compat_platform_names[i]);
+				   compat_platform_names[i]);
 		if (ret >= MAX_NAME_LEN) {
 			lprintf(LOG_ERR, "Platform name exceeded %d chars\n",
 				MAX_NAME_LEN);
 			return -1;
 		}
-		const char* compat_names = &platform_name[0];
+		const char *compat_names = &platform_name[0];
 		// probe_fdt_compatible() takes a const char* const []
 		// as the first parameter, we are only passing one name
 		// to check at a time requiring full name matches.
-		int found = probe_fdt_compatible(&compat_names, 1,
-						 NO_PARTIAL_MATCHES, NO_REGEX_MATCHES);
+		int found = probe_fdt_compatible(
+		    &compat_names, 1, NO_PARTIAL_MATCHES, NO_REGEX_MATCHES);
 		if (found >= 0) {
 			// Platform is compatible, now read the sku info to see
 			// if we can find a device match.
@@ -460,8 +461,7 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	if (sku_id == -1)
 		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
 
-	if (smbios_name &&
-	    !string_in_list(smbios_name, find_platform_names)) {
+	if (smbios_name && !string_in_list(smbios_name, find_platform_names)) {
 		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
 			__func__, smbios_name, find_platform_names);
 		return -ENOENT;
@@ -476,9 +476,9 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 
 // TODO(gmeinke): combine read forced sku with existing read function.
 int cros_config_read_forced_sku_info(struct platform_intf *intf,
-			             const char *find_platform_names,
-			             const int forced_sku_number,
-			             struct sku_info *sku_info)
+				     const char *find_platform_names,
+				     const int forced_sku_number,
+				     struct sku_info *sku_info)
 {
 #ifdef CONFIG_PLATFORM_ARCH_X86
 	const char *smbios_name;
@@ -487,8 +487,7 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 	if (!smbios_name)
 		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
 
-	if (smbios_name &&
-	    !string_in_list(smbios_name, find_platform_names)) {
+	if (smbios_name && !string_in_list(smbios_name, find_platform_names)) {
 		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
 			__func__, smbios_name, find_platform_names);
 		return -ENOENT;

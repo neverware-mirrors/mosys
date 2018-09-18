@@ -33,16 +33,21 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 	const struct config_map *configs =
 	    cros_config_get_config_map(&config_map_size);
 
-	lprintf(LOG_DEBUG, "%s: Checking config: smbios_name='%s', sku_id=%d, whitelabel_tag='%s', customization_id='%s'\n",
+	lprintf(LOG_DEBUG,
+		"%s: Checking config: smbios_name='%s', sku_id=%d, "
+		"whitelabel_tag='%s', customization_id='%s'\n",
 		__func__, str_or_null(smbios_name), sku_id,
 		str_or_null(whitelabel_tag), str_or_null(customization_id));
 	for (int i = 0; i < config_map_size; i++) {
 		const struct config_map *config = &configs[i];
 
-		lprintf(LOG_DEBUG, "   item %d: smbios_match_name='%s', sku_id=%d, whitelabel_tag='%s', customization_id='%s'\n",
+		lprintf(LOG_DEBUG,
+			"   item %d: smbios_match_name='%s', sku_id=%d, "
+			"whitelabel_tag='%s', customization_id='%s'\n",
 			i, config->smbios_match_name, config->sku_id,
 			config->whitelabel_tag, config->customization_id);
-		bool smbios_match = !*config->smbios_match_name ||
+		bool smbios_match =
+		    !*config->smbios_match_name ||
 		    !strcmp(smbios_name, config->smbios_match_name);
 		bool sku_match =
 		    (-1 == config->sku_id) || (sku_id == config->sku_id);
@@ -56,10 +61,12 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 		    whitelabel_match) {
 			intf->name = config->platform_name;
 			memcpy(sku_info, &config->info, sizeof(*sku_info));
-			lprintf(LOG_DEBUG, "   - Found, name='%s', model='%s', brand='%s'\n",
-				str_or_null(intf->name),
-				str_or_null(sku_info->model),
-				str_or_null(sku_info->brand));
+			lprintf(
+			    LOG_DEBUG,
+			    "   - Found, name='%s', model='%s', brand='%s'\n",
+			    str_or_null(intf->name),
+			    str_or_null(sku_info->model),
+			    str_or_null(sku_info->brand));
 
 			return 0;
 		}
@@ -103,4 +110,3 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 	return -1;
 }
 #endif // CONFIG_PLATFORM_ARCH_ARMEL
-
