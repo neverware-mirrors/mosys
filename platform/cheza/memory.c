@@ -37,7 +37,8 @@
 
 #include "cheza.h"
 
-// TODO(b/112001885): Finish implementation of memory.
+static int cheza_dimm_count;
+static const struct nonspd_mem_info *cheza_mem_info;
 
 /* read RAM code and fill in values needed by memory commands */
 static int read_ram_code(struct platform_intf *intf)
@@ -55,8 +56,12 @@ static int read_ram_code(struct platform_intf *intf)
 	}
 
 	switch (ram_code) {
+	case 0:
+		cheza_dimm_count = 1;
+		cheza_mem_info = &samsung_lpddr4_k3uh5h50mm_agcj;
+		break;
 	default:
-		lprintf(LOG_ERR, "read_ram_code() not implemented");
+		lprintf(LOG_ERR, "Unknown ram code.\n");
 		ret = -1;
 		break;
 	}
@@ -77,7 +82,7 @@ static int dimm_count(struct platform_intf *intf)
 	if (read_ram_code(intf) < 0)
 		return -1;
 
-	return -1;
+	return cheza_dimm_count;
 }
 
 static int get_mem_info(struct platform_intf *intf,
@@ -86,7 +91,8 @@ static int get_mem_info(struct platform_intf *intf,
 	if (read_ram_code(intf) < 0)
 		return -1;
 
-	return -1;
+	*info = cheza_mem_info;
+	return 0;
 }
 
 struct memory_cb cheza_memory_cb = {

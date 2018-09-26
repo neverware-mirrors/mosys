@@ -630,6 +630,22 @@ static const struct nonspd_mem_info micron_lpddr4_mt53e512m32d2np = {
 		  '2', 'N', 'P'},
 };
 
+const struct nonspd_mem_info samsung_lpddr4_k3uh5h50mm_agcj = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
+
+	.module_size_mbits	= 32768,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_1355 },
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'K', '3', 'U', 'H', '5', 'H', '5', '0', 'M', 'M', '-',
+		  'A', 'G', 'C', 'J' },
+};
+
 static const struct nonspd_mem_info samsung_lpddr4_k4f6e304hb_mgcj = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
 
@@ -737,6 +753,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&samsung_lpddr3_k4e8e304ed_egcc,
 	&samsung_lpddr3_k4e8e304ee_egce,
 	&samsung_lpddr3_k4e8e324eb_egcf,
+	&samsung_lpddr4_k3uh5h50mm_agcj,
 	&samsung_lpddr4_k4f6e304hb_mgch,
 	&samsung_lpddr4_k4f6e304hb_mgcj,
 	&samsung_lpddr4_k4f6e3s4hm_mgcj,

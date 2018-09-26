@@ -134,6 +134,7 @@ extern const struct nonspd_mem_info samsung_lpddr3_k4e6e304eb_egcf;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e304ed_egcc;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e304ee_egce;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e324eb_egcf;
+extern const struct nonspd_mem_info samsung_lpddr4_k3uh5h50mm_agcj;
 
 int spd_set_nonspd_info(struct platform_intf *intf,
                         const struct nonspd_mem_info **info);
