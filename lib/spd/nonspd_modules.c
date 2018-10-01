@@ -781,18 +781,19 @@ static int extract_mem_info_from_smbios(
 	struct nonspd_mem_info *info)
 {
 	const char *smbios_part_num;
-	size_t smbios_part_num_len;
+	size_t smbios_part_num_len, max_part_num_len;
 	uint32_t size;
 
+	max_part_num_len = sizeof(info->part_num) - 1;
 	smbios_part_num = table->string[table->data.mem_device.part_number];
-	smbios_part_num_len = strnlen(smbios_part_num, SPD_DEFAULT_PART_LEN);
+	smbios_part_num_len = strlen(smbios_part_num);
 
 	if (!smbios_part_num_len ||
-		smbios_part_num_len + 1 > sizeof(info->part_num)) {
+		smbios_part_num_len > max_part_num_len) {
 		lprintf(LOG_ERR, "%s: SMBIOS Memory info table: part num is missing. "
 				"Or len of part number %lu is larger then buffer %lu."
 				, __func__, (unsigned long)smbios_part_num_len,
-				(unsigned long)sizeof(info->part_num));
+				(unsigned long)max_part_num_len);
 		return -1;
 	}
 
@@ -800,7 +801,7 @@ static int extract_mem_info_from_smbios(
 	info->module_size_mbits =
 		(table->data.mem_device.size & 0x8000 ? size * 1024 : size);
 
-	strncpy((char *)info->part_num, smbios_part_num, SPD_DEFAULT_PART_LEN);
+	strncpy((char *)info->part_num, smbios_part_num, max_part_num_len);
 	return transfer_speed_from_smbios_to_nonspd_mem_info(table, info);
 }
 
