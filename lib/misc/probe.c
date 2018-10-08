@@ -35,7 +35,6 @@
 #include <ctype.h>
 #include <string.h>
 #include <limits.h>
-#include <regex.h>
 #include <unistd.h>
 
 #include "mosys/alloc.h"
@@ -309,7 +308,7 @@ char *fdt_model(void)
 
 #define FDT_COMPATIBLE	"/proc/device-tree/compatible"
 int probe_fdt_compatible(const char * const id_list[], int num_ids,
-			 int allow_partial, int allow_regex)
+			 int allow_partial)
 {
 	int ret = -1, i, fd;
 	char path[PATH_MAX];
@@ -354,25 +353,6 @@ int probe_fdt_compatible(const char * const id_list[], int num_ids,
 					id_list[i], strlen(id_list[i]));
 			} else {
 				cmp = strcmp(&compat[0], id_list[i]);
-			}
-
-			if (cmp && allow_regex) {
-				regex_t regex;
-				if (regcomp(&regex, id_list[i],
-					    REG_EXTENDED | REG_ICASE |
-						REG_NOSUB) == 0) {
-					cmp = regexec(&regex, &compat[0], 0,
-						      NULL, 0);
-					regfree(&regex);
-				} else {
-					/* This is not necessarily an error
-					 since it may just be a partial match
-					 that's not a valid regex pattern. */
-					lprintf(LOG_DEBUG,
-						"Failed compiling regex "
-						"pattern: \"%s\"\n",
-						id_list[i]);
-				}
 			}
 
 			if (!cmp) {

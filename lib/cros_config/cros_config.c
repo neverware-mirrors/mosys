@@ -413,7 +413,6 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
 	static const int MAX_NAME_LEN = 256;
 	static const int NO_PARTIAL_MATCHES = 0;
-	static const int NO_REGEX_MATCHES = 0;
 	// probe_fdt_compatible() returns an index of the matching name
 	// found in the find_platform_names list. Success is an index
 	// that is greater than or equal zero.
@@ -431,8 +430,8 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 		// probe_fdt_compatible() takes a const char* const []
 		// as the first parameter, we are only passing one name
 		// to check at a time requiring full name matches.
-		int found = probe_fdt_compatible(
-		    &compat_names, 1, NO_PARTIAL_MATCHES, NO_REGEX_MATCHES);
+		int found = probe_fdt_compatible(&compat_names, 1,
+						 NO_PARTIAL_MATCHES);
 		if (found >= 0) {
 			// Platform is compatible, now read the sku info to see
 			// if we can find a device match.

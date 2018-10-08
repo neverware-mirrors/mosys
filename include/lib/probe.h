@@ -129,13 +129,12 @@ extern char *fdt_model(void);
  * @id_list:		Known platform IDs to compare with
  * @num_ids:		Number of known platform IDs
  * @allow_partial:	Allow partial match (0=no, 1=yes)
- * @allow_regex:	Allow regex match (0=no, 1=yes)
  *
  * returns the index of the platform ID if found
  * returns <0 to indicate error
  */
 extern int probe_fdt_compatible(const char * const id_list[],
-				int num_ids, int allow_partial, int allow_regex);
+				int num_ids, int allow_partial);
 
 
 /*

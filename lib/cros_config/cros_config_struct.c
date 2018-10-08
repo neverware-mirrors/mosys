@@ -91,9 +91,8 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 	    cros_config_get_config_map(&config_map_size);
 	for (int i = 0; i < config_map_size; i++) {
 		const struct config_map *config = &configs[i];
-		bool device_match =
-		    probe_fdt_compatible(&config->device_tree_compatible_match,
-					 1, 1, 1) == 0;
+		bool device_match = probe_fdt_compatible(
+			&config->device_tree_compatible_match, 1, 1) == 0;
 		bool whitelabel_match =
 		    !strcmp("", config->whitelabel_tag) ||
 		    !strcmp(whitelabel_tag, config->whitelabel_tag);

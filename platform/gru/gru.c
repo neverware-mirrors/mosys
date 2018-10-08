@@ -105,7 +105,7 @@ static int gru_probe(struct platform_intf *intf)
 	for (i = 0; i < ARRAY_SIZE(gru_id_list); i++) {
 		const char **compat = &gru_id_list[i].fdt_compat;
 
-		if (probe_fdt_compatible(compat, 1, 1, 0) == 0) {
+		if (probe_fdt_compatible(compat, 1, 1) == 0) {
 			lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT "
 				"compatible node.\n", gru_id_list[i].name);
 			intf->name = gru_id_list[i].name;
