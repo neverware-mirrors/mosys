@@ -38,7 +38,7 @@ fadvise64: 1
 # Implicitly added when Minijail log_seccomp_filter_failures() is used
 socket: 1
 connect: 1
-send: 1
+sendto: 1
 writev: 1
 
 # Needed for cloning process
