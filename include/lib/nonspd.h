@@ -85,7 +85,7 @@ struct nonspd_mem_info {
 	uint8_t serial_num[4];
 
 	/* Module Part Number */
-	uint8_t part_num[23];
+	uint8_t part_num[33];
 
 	/* DRAM Manufacturer ID */
 	struct {
