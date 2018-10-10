@@ -43,6 +43,7 @@
 
 #include "lib/cros_config.h"
 #include "lib/cros_config_struct.h"
+#include "lib/fdt.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
@@ -413,6 +414,14 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
 	static const int MAX_NAME_LEN = 256;
 	static const int NO_PARTIAL_MATCHES = 0;
+	int sku_id;
+
+	sku_id = fdt_get_sku_id();
+	if (sku_id < 0) {
+		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
+		return -1;
+	}
+
 	// probe_fdt_compatible() returns an index of the matching name
 	// found in the find_platform_names list. Success is an index
 	// that is greater than or equal zero.
@@ -435,7 +444,9 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 		if (found >= 0) {
 			// Platform is compatible, now read the sku info to see
 			// if we can find a device match.
-			return cros_config_read_sku_info_struct(intf, sku_info);
+			return cros_config_read_sku_info_struct(intf, NULL,
+								sku_id,
+								sku_info);
 		}
 	}
 	return -1;
