@@ -36,10 +36,6 @@
 #include "lib/fdt.h"
 #include "lib/sku.h"
 
-/* Cheza uses device-tree compatible typle: google,<family>-<name>-rev<N>,
- * ie "google,cheza-rev0".
- */
-
 static char *cheza_get_version(struct platform_intf *intf)
 {
 	uint32_t board_id;

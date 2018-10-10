@@ -36,12 +36,6 @@
 #include "lib/fdt.h"
 #include "lib/sku.h"
 
-/* Gru uses device-tree compatible typle: google,<family>-<name>-rev<N>,
- * ie "google,gru-gru-rev0"
- * Scarlet uses an additional sku<X> suffix:
- * google,<family>-<name>-rev<N>-sku<X> -- e.g., "google,gru-scarlet-rev5-sku6"
- */
-
 static char *gru_get_version(struct platform_intf *intf)
 {
 	uint32_t board_id;

@@ -61,14 +61,13 @@ struct config_map {
 	struct sku_info info;
 };
 
-#ifdef CONFIG_PLATFORM_ARCH_X86
 /**
  * cros_config_read_sku_info_struct() - read SKU information for current device
  *
  * Read information about the current device using generated struct data.
  *
  * @intf: Platform information, used to access SMBIOS name and SKU ID
- * @smbios_name: SMBIOS name read from the platform.
+ * @smbios_name: SMBIOS name read from the platform, pass NULL for ARM
  * @sku_id: SKU ID read from the platform.
  * @sku_info: Returns SKU information on success
  * @return: 0 if OK, other value on error
@@ -76,21 +75,6 @@ struct config_map {
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
 				     const char *smbios_name, int sku_id,
 				     struct sku_info *sku_info);
-#endif // CONFIG_PLATFORM_ARCH_X86
-
-#ifdef CONFIG_PLATFORM_ARCH_ARMEL
-/**
- * cros_config_read_sku_info_struct() - read SKU information for current device
- *
- * Read information about the current device using generated struct data.
- *
- * @intf: Platform information, used to access device identity information.
- * @sku_info: Returns SKU information on success
- * @return: 0 if OK, other value on error
- */
-int cros_config_read_sku_info_struct(struct platform_intf *intf,
-				     struct sku_info *sku_info);
-#endif // CONFIG_PLATFORM_ARCH_ARMEL
 
 /**
  * cros_config_get_config_map() - Returns a handle to the config map.
