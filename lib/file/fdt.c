@@ -98,11 +98,6 @@ static int fdt_get_uint32_val(const char *path, uint32_t *val)
 	return 0;
 }
 
-/*
- * fdt_get_ram_code - Obtain RAM code from FDT ram-code node
- *
- * returns 0 to indicate success, <0 to indicate failure.
- */
 int fdt_get_ram_code(uint32_t *ram_code)
 {
 	if (fdt_get_uint32_val(FDT_RAM_CODE_PATH, ram_code) < 0) {
@@ -119,11 +114,6 @@ int fdt_get_ram_code(uint32_t *ram_code)
 	return 0;
 }
 
-/*
- * fdt_get_board_id - Obtain board ID code from FDT board-id node
- *
- * returns 0 to indicate success, <0 to indicate failure.
- */
 int fdt_get_board_id(uint32_t *board_id)
 {
 	if (fdt_get_uint32_val(FDT_BOARD_ID_PATH, board_id) < 0) {
@@ -140,20 +130,22 @@ int fdt_get_board_id(uint32_t *board_id)
 	return 0;
 }
 
-int fdt_get_sku_id(uint32_t *sku_id)
+int fdt_get_sku_id(void)
 {
-	if (fdt_get_uint32_val(FDT_SKU_ID_PATH, sku_id) < 0) {
+	uint32_t sku_id = 0xffffffff;
+
+	if (fdt_get_uint32_val(FDT_SKU_ID_PATH, &sku_id) < 0) {
 		lprintf(LOG_ERR, "%s: Error when reading board ID\n", __func__);
 		return -1;
 	}
 
-	if (*sku_id == 0xffffffff) {
+	if (sku_id == 0xffffffff) {
 		lprintf(LOG_ERR, "%s: sku_id is invalid.\n", __func__);
 		return -1;
 	}
 
-	lprintf(LOG_DEBUG, "%s: sku_id: %u\n", __func__, *sku_id);
-	return 0;
+	lprintf(LOG_DEBUG, "%s: sku_id: %u\n", __func__, sku_id);
+	return sku_id;
 }
 
 static enum vbnv_storage_media fdt_get_vbnv_storage(void)
@@ -183,11 +175,6 @@ static enum vbnv_storage_media fdt_get_vbnv_storage(void)
 	return ret;
 }
 
-/*
- * fdt_set_nvram_cb - Set platform's nvram callbacks based on FDT
- *
- * returns 0 to indicate success, <0 to indicate failure.
- */
 int fdt_set_nvram_cb(struct platform_intf *intf)
 {
 	switch (fdt_get_vbnv_storage()) {

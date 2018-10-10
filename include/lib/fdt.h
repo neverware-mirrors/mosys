@@ -36,10 +36,27 @@
 
 #include <mosys/platform.h>
 
+/*
+ * fdt_get_ram_code - Obtain RAM code from FDT ram-code node
+ *
+ * returns 0 to indicate success, <0 to indicate failure.
+ */
 extern int fdt_get_ram_code(uint32_t *ram_code);
-extern int fdt_get_board_id(uint32_t *board_id);
-extern int fdt_get_sku_id(uint32_t *sku_id);
 
+/*
+ * fdt_get_board_id - Obtain board ID code from FDT board-id node
+ *
+ * returns 0 to indicate success, <0 to indicate failure.
+ */
+extern int fdt_get_board_id(uint32_t *board_id);
+
+/*
+ * fdt_get_sku_id  -  return platform SKU ID from FDT sku-id node
+ *
+ * returns SKU ID in integer
+ * returns -1 if not found, other <0 values indicate invalid SKU ID
+ */
+extern int fdt_get_sku_id(void);
 
 enum vbnv_storage_media {
 	VBNV_STORAGE_UNKNOWN	= -1,
@@ -50,6 +67,11 @@ enum vbnv_storage_media {
 				 * and in some PMIC/RTC chips */
 };
 
+/*
+ * fdt_set_nvram_cb - Set platform's nvram callbacks based on FDT
+ *
+ * returns 0 to indicate success, <0 to indicate failure.
+ */
 extern int fdt_set_nvram_cb(struct platform_intf *intf);
 
 #endif	/* MOSYS_LIB_FDT_H__ */

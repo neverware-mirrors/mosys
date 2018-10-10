@@ -56,12 +56,7 @@ static char *gru_get_version(struct platform_intf *intf)
 
 static int gru_get_sku_id(struct platform_intf *intf)
 {
-	uint32_t sku_id;
-
-	if (fdt_get_sku_id(&sku_id) < 0)
-		return -1;
-
-	return sku_id;
+	return fdt_get_sku_id();
 }
 
 static char *gru_get_vendor(struct platform_intf *intf)
