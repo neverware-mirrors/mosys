@@ -6,7 +6,7 @@ faccessat: 1
 newfstatat: 1
 sigaltstack: 1
 getrlimit: 1
-prlimit64: arg2 != 0 && arg3 == 0
+prlimit64: arg2 == 0 && arg3 != 0
 close: 1
 exit_group: 1
 munmap: 1
