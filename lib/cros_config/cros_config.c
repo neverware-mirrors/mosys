@@ -411,6 +411,17 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 				  int compat_platform_names_size,
 				  struct sku_info *sku_info)
 {
+	return cros_config_read_default_sku_info_fdt(intf,
+		compat_platform_names, compat_platform_names_size,
+		-1, sku_info);
+}
+
+int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
+					  const char *compat_platform_names[],
+					  int compat_platform_names_size,
+					  const int default_sku_id,
+					  struct sku_info *sku_info)
+{
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
 	static const int MAX_NAME_LEN = 256;
 	static const int NO_PARTIAL_MATCHES = 0;
@@ -419,7 +430,12 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 	sku_id = fdt_get_sku_id();
 	if (sku_id < 0) {
 		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
-		return -1;
+		if (default_sku_id >= 0) {
+			sku_id = default_sku_id;
+			lprintf(LOG_DEBUG, "%s: Force SKU ID to %u\n",
+				__func__, default_sku_id);
+		} else
+			return -1;
 	}
 
 	// probe_fdt_compatible() returns an index of the matching name

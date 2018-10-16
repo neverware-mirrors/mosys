@@ -70,6 +70,31 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 			          const char *compat_platform_names[],
 				  int compat_platform_names_size,
 			      	  struct sku_info *sku_info);
+/**
+ * cros_config_read_default_sku_info_fdt() - read SKU information for current
+ * ARM model using the ARM FDT information with a default SKU ID to fall back
+ * to when no valid SKU ID is found through FDT.
+ *
+ * Read information about the current ARM model.
+ *
+ * @intf: Platform information, used to access ARM FDT name and SKU ID
+ * @compat_platform_names: Array of platform names that are permitted,
+ *    use the platform id not including the leading 'google,'. Platform
+ *    id 'google,gru' should pass in only 'gru'. Platform ids are currently
+ *    limited to 256 chars.
+ * @compat_platform_names_size: Number of elements in the
+ *    compat_platform_names array
+ * @default_sku_id: The fallback sku id if fdt_get_sku_id() returns
+ *    invalid (<0) sku id. Pass negative value here if we don't want to
+ *    fall back.
+ * @sku_info: Returns SKU information on success
+ * @return: 0 if OK, other value on error
+ */
+int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
+					  const char *compat_platform_names[],
+					  int compat_platform_names_size,
+					  const int default_sku_id,
+					  struct sku_info *sku_info);
 
 /**
  * cros_config_read_forced_sku_info() - read SKU information for current model
