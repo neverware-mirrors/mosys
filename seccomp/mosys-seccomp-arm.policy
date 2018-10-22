@@ -62,3 +62,4 @@ getppid: 1
 getcwd: 1
 getdents64: 1
 geteuid32: 1
+prlimit64: arg2 == 0 && arg3 != 0
