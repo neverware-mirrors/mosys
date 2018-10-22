@@ -34,6 +34,7 @@
 
 #include "gru.h"
 #include "drivers/google/cros_ec.h"
+#include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -54,16 +55,32 @@ enum gru_boards {
 
 static enum gru_boards probed_board = UNKNOWN;
 
+static struct sku_info
+	sku_dumo = { .brand = "MCDN", .model = "dumo" },
+	sku_scarlet = { .brand = "DXZT", .model = "scarlet" };
+
+/* Map SKU 0 to Dumo and any other SKU IDs to Dru/Scarlet */
+static struct sku_mapping scarlet_sku_table[] = {
+	{ 0, &sku_dumo },
+	{ SKU_NUMBER_ANY, &sku_scarlet },
+};
+
 struct gru_probe_id {
 	const char *name;
 	const char *fdt_compat;
 	int has_ec;
 	const struct sku_info single_sku;
+	/*
+	 * Devices with SKU-based mapping should define sku_table,
+	 * otherwise use single_sku.
+	 */
+	struct sku_mapping *sku_table;
 } gru_id_list[] = {
 	[BOB]		= { "Bob", "google,bob-rev", 1, { .brand = "ASUO" } },
 	[GRU]		= { "Gru", "google,gru-rev", 1, { .brand = "LOGA" } },
 	[KEVIN]		= { "Kevin", "google,kevin-rev", 1, { .brand = "SMAJ" } },
-	[SCARLET]	= { "Scarlet", "google,scarlet-rev", 1, { .brand = "DXZT" } },
+	[SCARLET]	= { "Scarlet", "google,scarlet-rev", 1,
+			    .sku_table = scarlet_sku_table }
 };
 
 #define GRU_CMD_EC_NUM	0
@@ -92,8 +109,12 @@ static int gru_probe(struct platform_intf *intf)
 			lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT "
 				"compatible node.\n", gru_id_list[i].name);
 			intf->name = gru_id_list[i].name;
-			intf->sku_info = &gru_id_list[i].single_sku;
 			probed_board = i;
+			if (i == SCARLET)
+				intf->sku_info = sku_find_info(intf,
+					gru_id_list[i].sku_table);
+			else
+				intf->sku_info = &gru_id_list[i].single_sku;
 			break;
 		}
 	}
