@@ -43,6 +43,9 @@
 enum cyclone_memory_config {
 	SAMSUNG_DDR3_1600_512M,
 	NANYA_DDR3L_1600_512M,
+	SAMSUNG_DDR3_1600_512M_2,
+	NANYA_DDR3L_1600_512M_2,
+	HYNIX_DDR3L_1600_512M,
 	MEM_UNKNOWN,
 };
 
@@ -56,6 +59,9 @@ enum cyclone_board_id {
 	BOARD_ID_GALE_DVT_CONFIG_B = 8, /* 002 */
 	BOARD_ID_GALE_CR_CONFIG_A = 9, /* 012 */
 	BOARD_ID_GALE_CR_CONFIG_B = 10, /* 020 */
+	BOARD_ID_GALE_CR_CONFIG_C = 11, /* 021 */
+	BOARD_ID_GALE_CR_CONFIG_D = 12, /* 022 */
+	BOARD_ID_GALE_CR_CONFIG_E = 13, /* 102 */
 };
 
 /*
@@ -87,6 +93,12 @@ static enum cyclone_memory_config get_memory_config(struct platform_intf *intf)
 		case BOARD_ID_GALE_DVT_CONFIG_B:
 		case BOARD_ID_GALE_CR_CONFIG_B:
 			return NANYA_DDR3L_1600_512M;
+		case BOARD_ID_GALE_CR_CONFIG_C:
+			return SAMSUNG_DDR3_1600_512M_2;
+		case BOARD_ID_GALE_CR_CONFIG_D:
+			return NANYA_DDR3L_1600_512M_2;
+		case BOARD_ID_GALE_CR_CONFIG_E:
+			return HYNIX_DDR3L_1600_512M;
 		}
 	}
 	else {
@@ -109,6 +121,15 @@ static int get_mem_info(struct platform_intf *intf,
 		break;
 	case NANYA_DDR3L_1600_512M:
 		*info = &nanya_ddr3l_nt5cc256m16dp_di;
+		break;
+	case SAMSUNG_DDR3_1600_512M_2:
+		*info = &samsung_k4b4g1646e_byma;
+		break;
+	case NANYA_DDR3L_1600_512M_2:
+		*info = &nanya_ddr3l_nt5cc256m16er_ek;
+		break;
+	case HYNIX_DDR3L_1600_512M:
+		*info = &hynix_ddr3l_h5tc4g63efr_rda;
 		break;
 	default:
 		return -1;

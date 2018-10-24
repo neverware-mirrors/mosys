@@ -118,6 +118,24 @@ const struct nonspd_mem_info hynix_ddr3l_h5tc4g63cfr_pba = {
                   'P', 'B', 'A'},
 };
 
+const struct nonspd_mem_info hynix_ddr3l_h5tc4g63efr_rda = {
+        .dram_type              = SPD_DRAM_TYPE_DDR3,
+        .module_type.ddr3_type  = DDR3_MODULE_TYPE_UNDEFINED,
+
+        .module_size_mbits      = 4096,
+        .num_ranks              = 1,
+        .device_width           = 16,
+        .ddr_freq               = { DDR_400, DDR_533, DDR_667, DDR_800, DDR_933 },
+
+        .module_mfg_id          = { .msb = 0xad, .lsb = 0x80 },
+        .dram_mfg_id            = { .msb = 0xad, .lsb = 0x80 },
+
+        .serial_num             = { 0, 0, 0, 0 },
+        .part_num               =
+                { 'H', '5', 'T', 'C', '4', 'G', '6', '3', 'E', 'F', 'R', '-',
+                  'R', 'D', 'A'},
+};
+
 const struct nonspd_mem_info hynix_lpddr3_h9ccnnn8gtmlar_nud = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR3,
         .module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
@@ -322,6 +340,22 @@ const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16dp_di = {
 				    'M', '1', '6', 'D', 'P', '-', 'D', 'I' },
 };
 
+const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16er_ek = {
+	.dram_type		= SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+
+	.module_size_mbits	= 4096,
+	.num_ranks		= 1,
+	.device_width		= 16,
+	.ddr_freq 		= { DDR_400, DDR_533, DDR_667, DDR_800, DDR_933 },
+	.module_mfg_id		= { .msb = 0x0b, .lsb = 0x03 },
+	.dram_mfg_id		= { .msb = 0x0b, .lsb = 0x03 },
+
+	.serial_num 		= { 0, 0, 0, 0 },
+	.part_num		= { 'N', 'T', '5', 'C', 'C', '2', '5', '6',
+				    'M', '1', '6', 'E', 'R', '-', 'E', 'K' },
+};
+
 const struct nonspd_mem_info samsung_k4b4g1646d = {
 	.dram_type		= SPD_DRAM_TYPE_DDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
@@ -356,6 +390,24 @@ const struct nonspd_mem_info samsung_k4b4g1646e = {
 	.part_num		=
 		{ 'K', '4', 'B', '4', 'G', '1', '6', '4', '6', 'E',
 		  '-', 'B', 'Y', 'K', '0' },
+};
+
+const struct nonspd_mem_info samsung_k4b4g1646e_byma = {
+	.dram_type		= SPD_DRAM_TYPE_DDR3,
+	.module_type.ddr3_type	= DDR3_MODULE_TYPE_UNDEFINED,
+
+	.module_size_mbits	= 4096,
+	.num_ranks		= 1,
+	.device_width		= 16,
+	.ddr_freq 		= { DDR_400, DDR_533, DDR_667, DDR_800, DDR_933 },
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.serial_num 		= { 0, 0, 0, 0 },
+	.part_num		=
+		{ 'K', '4', 'B', '4', 'G', '1', '6', '4', '6', 'E',
+		  '-', 'B', 'Y', 'M', 'A' },
 };
 
 const struct nonspd_mem_info samsung_ddr3l_k4b4g1646d_byk0 = {
@@ -668,6 +720,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&elpida_lpddr3_fa232a2ma_gc_f,
 	&hynix_ddr3l_h5tc4g63afr_pba,
 	&hynix_ddr3l_h5tc4g63cfr_pba,
+	&hynix_ddr3l_h5tc4g63efr_rda,
 	&hynix_lpddr3_h9ccnnn8gtmlar_nud,
 	&hynix_lpddr3_h9ccnnnbjtalar_nud,
 	&hynix_lpddr3_h9ccnnnbjtmlar_nud,
@@ -685,8 +738,10 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&micron_mt52l256m32d1pf,
 	&micron_mt52l512m32d2pf,
 	&nanya_ddr3l_nt5cc256m16dp_di,
+	&nanya_ddr3l_nt5cc256m16er_ek,
 	&samsung_k4b4g1646d,
 	&samsung_k4b4g1646e,
+	&samsung_k4b4g1646e_byma,
 	&samsung_ddr3l_k4b4g1646d_byk0,
 	&samsung_ddr3l_k4b4g1646q_hyk0,
 	&samsung_ddr3l_k4b8g1646q_myk0,
