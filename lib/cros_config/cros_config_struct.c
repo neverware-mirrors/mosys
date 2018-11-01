@@ -63,11 +63,9 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 		bool sku_match =
 		    (-1 == config->sku_id) || (sku_id == config->sku_id);
 		bool whitelabel_match =
-		    !*config->whitelabel_tag ||
-		    !strcmp(whitelabel_tag, config->whitelabel_tag);
+			!strcmp(whitelabel_tag, config->whitelabel_tag);
 		bool customization_match =
-		    !*config->customization_id ||
-		    !strcmp(customization_id, config->customization_id);
+			!strcmp(customization_id, config->customization_id);
 		if (device_match && sku_match && customization_match &&
 		    whitelabel_match) {
 			intf->name = config->platform_name;
