@@ -61,6 +61,7 @@ extern struct platform_intf platform_pinky;
 extern struct platform_intf platform_rambi;
 extern struct platform_intf platform_reef;
 extern struct platform_intf platform_samus;
+extern struct platform_intf platform_sarien;
 extern struct platform_intf platform_skate;
 extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_smaug;
@@ -90,6 +91,7 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_kahlee,
 	&platform_nami,
 	&platform_octopus,
+	&platform_sarien,
 #endif // CONFIG_PLATFORM_ARCH_X86
 /* experimental platforms */
 	&platform_dummy,
