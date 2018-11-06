@@ -115,26 +115,6 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 			             struct sku_info *sku_info);
 
 /**
- * cros_config_setup_sku() - read SKU information (internal functions)
- *
- * Read information about a particular SKU ID. Only use this directly for
- * testing.
- *
- * @fdt: Device tree file
- * @sku_info: Returns SKU information on success
- * @find_smbios_name: SMBIOS name to look up
- * @find_wl_name: Whitelabel name to look up (this is either a model name or a
- *    whitelabel tag depending on the schema used)
- * @find_sku_id: SKU ID to look up
- * @return: 0 if OK, -ENOENT if @find_platform_names does not contain the SMBIOS
- * name for this device, or -1 for any other error
- */
-int cros_config_setup_sku(const char *fdt, struct sku_info *sku_info,
-			  const char *find_smbios_name, int find_sku_id,
-			  const char *find_wl_name,
-			  const char **platform_namep);
-
-/**
  * cros_config_smbios_platform_name_match() - shallow match on sbmios name
  *
  * @intf: Platform information, used to access SMBIOS name and SKU ID

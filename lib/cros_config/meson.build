@@ -6,6 +6,3 @@ if use_cros_config
   )
 endif
 
-cros_config_dtb_src = files(
-  'config.dtb.S',
-)

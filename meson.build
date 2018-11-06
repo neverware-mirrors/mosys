@@ -59,28 +59,12 @@ deps = [
   fmap_dep,
   uuid_dep,
 ]
-link_whole = []
-objects = []
 
 # Cros config is a special snowflake.
 if use_cros_config
   libmosys_src += mosys_lib_cros_config_src
   fdt_dep = meson.get_compiler('c').find_library('fdt')
   deps += fdt_dep
-  dtb_lib = static_library(
-    'cros_config_dtb',
-    cros_config_dtb_src,
-    c_args: [
-      '-D__ASSEMBLY__',
-      '-c',
-    ],
-    link_args: [
-      '-znoexecstack',
-      '-r',
-    ],
-  )
-  link_whole += dtb_lib
-  objects = dtb_lib.extract_all_objects()
 endif
 
 # Lib momsys shared library target
@@ -89,7 +73,5 @@ libmosys = static_library(
   libmosys_src,
   dependencies: deps,
   include_directories: include_common,
-  link_whole: link_whole,
-  objects: objects,
   pic: true,
 )

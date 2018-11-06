@@ -48,14 +48,12 @@ or:
   CC=clang meson -Darch=amd64 -Duse_cros_config=true output_dir
   ninja -C output_dir
 
-To build with use_cros_config=true, you need two files that are dynamically
+To build with use_cros_config=true, you need one file that is dynamically
 provided as inputs to the build process from other ebuilds in the Chrome OS
 build system:
-  lib/cros_config/config.dtb
   lib/cros_config/cros_config_data.c
 
 If you just want to compile something quickly, you can do:
-  touch lib/cros_config/config.dtb
   cp lib/cros_config/dummy_cros_config_data.c lib/cros_config/cros_config_data.c
 
 and then run the `meson` command as above.
