@@ -272,6 +272,7 @@ enum smbios_memory_type {
 	SMBIOS_MEMORY_TYPE_DDR2_FBDIMM = 0x14,
 	SMBIOS_MEMORY_TYPE_DDR3 = 0x18,
 	SMBIOS_MEMORY_TYPE_DDR4 = 0x1A,
+	SMBIOS_MEMORY_TYPE_LPDDR4 = 0x1E,
 };
 
 /* memory device type details (bitmask) */
