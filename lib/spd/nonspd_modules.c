@@ -831,6 +831,28 @@ static int transfer_speed_from_smbios_to_nonspd_mem_info(
 	return -1;
 }
 
+enum spd_dram_type map_smbios_mem_type_to_spd(struct smbios_table *table)
+{
+	switch (table->data.mem_device.type) {
+	case SMBIOS_MEMORY_TYPE_DDR:
+		return SPD_DRAM_TYPE_DDR;
+	case SMBIOS_MEMORY_TYPE_DDR2:
+		return SPD_DRAM_TYPE_DDR2;
+	case SMBIOS_MEMORY_TYPE_DDR2_FBDIMM:
+		return SPD_DRAM_TYPE_FBDIMM;
+	case SMBIOS_MEMORY_TYPE_DDR3:
+		return SPD_DRAM_TYPE_DDR3;
+	case SMBIOS_MEMORY_TYPE_DDR4:
+		return SPD_DRAM_TYPE_DDR4;
+	case SMBIOS_MEMORY_TYPE_LPDDR4:
+		return SPD_DRAM_TYPE_LPDDR4;
+	default:
+		lprintf(LOG_ERR, "%s: Unknown SMBIOS memory type: %d\n",
+			__func__, table->data.mem_device.type);
+		return 0;
+	}
+}
+
 static int extract_mem_info_from_smbios(
 	struct smbios_table *table,
 	struct nonspd_mem_info *info)
@@ -857,6 +879,9 @@ static int extract_mem_info_from_smbios(
 		(table->data.mem_device.size & 0x8000 ? size * 1024 : size);
 
 	strncpy((char *)info->part_num, smbios_part_num, max_part_num_len);
+
+	info->dram_type = map_smbios_mem_type_to_spd(table);
+
 	return transfer_speed_from_smbios_to_nonspd_mem_info(table, info);
 }
 
