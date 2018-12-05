@@ -44,20 +44,25 @@
 #include "lib/generic_callbacks.h"
 #include "lib/math.h"
 #include "lib/probe.h"
+#include "lib/sku.h"
 
 #include "oak.h"
 
-static int probed_board = -1;
+static int oak_probed_board = -1;
+static int kukui_probed_board = -1;
 
-struct oak_probe_id {
+struct probe_id {
 	const char *name;
 	const char *fdt_compat;
+	const struct sku_info single_sku;
 	int has_pd;
-} oak_id_list[] = {
-	{ "Elm", "google,elm", 0 },
-	{ "Hana", "google,hana", 0 },
-	{ "Oak", "google,oak", 1 },
-	{ "Rowan", "google,rowan", 0 },
+} oak_probe_id_list[] = {
+	{ "Elm", "google,elm", { .brand = "ACAZ" }, 0 },
+	{ "Hana", "google,hana", { .brand = "LEAO" }, 0 },
+	{ "Oak", "google,oak", { .brand = NULL }, 1 },
+	{ "Rowan", "google,rowan", { .brand = NULL }, 0 },
+}, kukui_probe_id_list[] = {
+	{ "Kukui", "google,kukui", { .brand = "ZZCR" }, 0 },
 };
 
 #define OAK_CMD_PD_NUM	0
@@ -69,7 +74,6 @@ struct platform_cmd *oak_sub[] = {
 
 	&cmd_ec,
 	&cmd_eeprom,
-//	&cmd_gpio,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
@@ -82,20 +86,42 @@ static int oak_probe(struct platform_intf *intf)
 {
 	int i;
 
-	for (i = 0; i < ARRAY_SIZE(oak_id_list); i++) {
-		const char **compat = &oak_id_list[i].fdt_compat;
+	for (i = 0; i < ARRAY_SIZE(oak_probe_id_list); i++) {
+		const char **compat = &oak_probe_id_list[i].fdt_compat;
 
 		if (probe_fdt_compatible(compat, 1, 1) == 0) {
 			lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT "
-				"compatible node.\n", oak_id_list[i].name);
-			intf->name = oak_id_list[i].name;
-			probed_board = i;
+				"compatible node.\n", oak_probe_id_list[i].name);
+			intf->name = oak_probe_id_list[i].name;
+			intf->sku_info = &oak_probe_id_list[i].single_sku;
+			oak_probed_board = i;
 			break;
 		}
 	}
 
-	lprintf(LOG_DEBUG, "%s: probed_board: %d\n", __func__, probed_board);
-	return probed_board > -1 ? 1 : 0;
+	lprintf(LOG_DEBUG, "%s: probed_board: %d\n", __func__, oak_probed_board);
+	return oak_probed_board > -1 ? 1 : 0;
+}
+
+static int kukui_probe(struct platform_intf *intf)
+{
+	int i;
+
+	for (i = 0; i < ARRAY_SIZE(kukui_probe_id_list); i++) {
+		const char **compat = &kukui_probe_id_list[i].fdt_compat;
+
+		if (probe_fdt_compatible(compat, 1, 1) == 0) {
+			lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT "
+				"compatible node.\n", oak_probe_id_list[i].name);
+			intf->name = kukui_probe_id_list[i].name;
+			intf->sku_info = &kukui_probe_id_list[i].single_sku;
+			kukui_probed_board = i;
+			break;
+		}
+	}
+
+	lprintf(LOG_DEBUG, "%s: probed_board: %d\n", __func__, kukui_probed_board);
+	return kukui_probed_board > -1 ? 1 : 0;
 }
 
 static int oak_setup_post(struct platform_intf *intf)
@@ -103,7 +129,7 @@ static int oak_setup_post(struct platform_intf *intf)
 	if (cros_ec_setup(intf) < 0)
 		return -1;
 
-	if (oak_id_list[probed_board].has_pd) {
+	if (oak_probe_id_list[oak_probed_board].has_pd) {
 		if (cros_pd_setup(intf) < 0)
 			return -1;
 	} else {
@@ -116,6 +142,26 @@ static int oak_setup_post(struct platform_intf *intf)
 
 	return 0;
 }
+
+static int kukui_setup_post(struct platform_intf *intf)
+{
+	if (cros_ec_setup(intf) < 0)
+		return -1;
+
+	if (kukui_probe_id_list[kukui_probed_board].has_pd) {
+		if (cros_pd_setup(intf) < 0)
+			return -1;
+	} else {
+		intf->cb->pd = NULL;
+		intf->sub = &oak_sub[OAK_CMD_PD_NUM + 1];
+	}
+
+	if (fdt_set_nvram_cb(intf) < 0)
+		return -1;
+
+	return 0;
+}
+
 
 static int oak_destroy(struct platform_intf *intf)
 {
@@ -139,8 +185,17 @@ struct eventlog_cb oak_eventlog_cb = {
 struct platform_cb oak_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &oak_eeprom_cb,
-//	.gpio		= &oak_gpio_cb,
 	.memory		= &oak_memory_cb,
+	.pd		= &cros_pd_cb,
+	.psu		= &generic_psu_battery_cb,
+	.sys		= &oak_sys_cb,
+	.eventlog	= &oak_eventlog_cb,
+};
+
+struct platform_cb kukui_cb = {
+	.ec		= &cros_ec_cb,
+	.eeprom 	= &kukui_eeprom_cb,
+	.memory		= &kukui_memory_cb,
 	.pd		= &cros_pd_cb,
 	.psu		= &generic_psu_battery_cb,
 	.sys		= &oak_sys_cb,
@@ -155,5 +210,14 @@ struct platform_intf platform_oak = {
 	.probe		= &oak_probe,
 	.setup_post	= &oak_setup_post,
 	.destroy	= &oak_destroy,
-	.version_id	= "google,oak",
+};
+
+struct platform_intf platform_kukui = {
+	.type		= PLATFORM_ARMV8,
+	.name		= "Kukui",
+	.sub		= oak_sub,
+	.cb		= &kukui_cb,
+	.probe		= &kukui_probe,
+	.setup_post	= &kukui_setup_post,
+	.destroy	= &oak_destroy,
 };

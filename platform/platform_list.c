@@ -50,6 +50,7 @@ extern struct platform_intf platform_fizz;
 extern struct platform_intf platform_glados;
 extern struct platform_intf platform_gru;
 extern struct platform_intf platform_kahlee;
+extern struct platform_intf platform_kukui;
 extern struct platform_intf platform_link;
 extern struct platform_intf platform_nami;
 extern struct platform_intf platform_nyan;
@@ -102,6 +103,7 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_cyclone,
 	&platform_daisy,
 	&platform_gru,
+	&platform_kukui,
 	&platform_nyan,
 	&platform_oak,
 	&platform_peach,

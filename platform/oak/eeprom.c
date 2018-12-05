@@ -46,9 +46,15 @@
 
 #include "oak.h"
 
-static int host_firmware_size(struct platform_intf *intf)
+// TODO: probe firmware size from flashrom
+static int oak_host_firmware_size(struct platform_intf *intf)
 {
 	return OAK_HOST_FIRMWARE_ROM_SIZE;
+}
+
+static int kukui_host_firmware_size(struct platform_intf *intf)
+{
+	return KUKUI_HOST_FIRMWARE_ROM_SIZE;
 }
 
 static int host_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
@@ -84,8 +90,16 @@ static int host_firmware_write_by_name(struct platform_intf *intf,
 	return flashrom_write_by_name(len, data, HOST_FIRMWARE, name);
 }
 
-static struct eeprom_dev host_firmware = {
-	.size		= host_firmware_size,
+static struct eeprom_dev oak_host_firmware = {
+	.size		= oak_host_firmware_size,
+	.read		= host_firmware_read,
+	.write_by_name  = host_firmware_write_by_name,
+	.read_by_name	= host_firmware_read_by_name,
+	.get_map	= eeprom_get_fmap,
+};
+
+static struct eeprom_dev kukui_host_firmware = {
+	.size		= kukui_host_firmware_size,
 	.read		= host_firmware_read,
 	.write_by_name  = host_firmware_write_by_name,
 	.read_by_name	= host_firmware_read_by_name,
@@ -128,12 +142,29 @@ static struct eeprom_dev ec_firmware = {
 	.get_map	= eeprom_get_fmap,
 };
 
-static struct eeprom eeproms[] = {
+static struct eeprom oak_eeproms[] = {
 	{
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
 		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
-		.device		= &host_firmware,
+		.device		= &oak_host_firmware,
+		.regions	= &host_firmware_regions[0],
+	},
+	{
+		.name		= "ec_firmware",
+		.type		= EEPROM_TYPE_FW,
+		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
+		.device		= &ec_firmware,
+	},
+	{ 0 },
+};
+
+static struct eeprom kukui_eeproms[] = {
+	{
+		.name		= "host_firmware",
+		.type		= EEPROM_TYPE_FW,
+		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
+		.device		= &kukui_host_firmware,
 		.regions	= &host_firmware_regions[0],
 	},
 	{
@@ -146,5 +177,9 @@ static struct eeprom eeproms[] = {
 };
 
 struct eeprom_cb oak_eeprom_cb = {
-	.eeprom_list	= eeproms,
+	.eeprom_list	= oak_eeproms,
+};
+
+struct eeprom_cb kukui_eeprom_cb = {
+	.eeprom_list	= kukui_eeproms,
 };

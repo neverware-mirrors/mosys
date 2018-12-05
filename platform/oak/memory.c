@@ -38,8 +38,9 @@
 #include "oak.h"
 
 #define OAK_DIMM_COUNT 2
+// TODO: kukui dimm count, memory_config
 
-enum oak_memory_config {
+enum memory_config {
 	HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G,
 	HYNIX_DDR3_H9CCNNNBJTALAR_NUD_2G,
 	HYNIX_DDR3_H9CCNNNBLTBLAR_NUD_2G,
@@ -52,7 +53,7 @@ enum oak_memory_config {
 	MEM_UNKNOWN,
 };
 
-static int get_memory_config(struct platform_intf *intf)
+static int oak_get_memory_config(struct platform_intf *intf)
 {
 	uint32_t ram_code;
 
@@ -88,6 +89,23 @@ static int get_memory_config(struct platform_intf *intf)
 	return MEM_UNKNOWN;
 }
 
+static int kukui_get_memory_config(struct platform_intf *intf)
+{
+	uint32_t ram_code;
+
+	if (fdt_get_ram_code(&ram_code) < 0) {
+		lprintf(LOG_ERR, "Unable to obtain RAM code.\n");
+		return -1;
+	}
+
+	switch (ram_code) {
+	default:
+		lprintf(LOG_ERR, "Not implemented\n");
+	}
+
+	return MEM_UNKNOWN;
+}
+
 /*
  * dimm_count  -  return total number of dimm slots
  *
@@ -95,16 +113,16 @@ static int get_memory_config(struct platform_intf *intf)
  *
  * returns dimm slot count
  */
-static int dimm_count(struct platform_intf *intf)
+static int oak_dimm_count(struct platform_intf *intf)
 {
 	return OAK_DIMM_COUNT;
 
 }
 
-static int get_mem_info(struct platform_intf *intf,
+static int oak_get_mem_info(struct platform_intf *intf,
 			const struct nonspd_mem_info **info)
 {
-	switch (get_memory_config(intf)) {
+	switch (oak_get_memory_config(intf)) {
 	case HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G:
 		*info = &hynix_lpddr3_h9ccnnn8gtmlar_nud;
 		break;
@@ -138,7 +156,22 @@ static int get_mem_info(struct platform_intf *intf,
 	return 0;
 }
 
+static int kukui_get_mem_info(struct platform_intf *intf,
+			const struct nonspd_mem_info **info)
+{
+	switch (kukui_get_memory_config(intf)) {
+	default:
+		return -1;
+	}
+	return 0;
+}
+
 struct memory_cb oak_memory_cb = {
-	.dimm_count		= dimm_count,
-	.nonspd_mem_info	= &get_mem_info,
+	.dimm_count		= oak_dimm_count,
+	.nonspd_mem_info	= &oak_get_mem_info,
+};
+
+struct memory_cb kukui_memory_cb = {
+	.dimm_count		= oak_dimm_count,
+	.nonspd_mem_info	= &kukui_get_mem_info,
 };
