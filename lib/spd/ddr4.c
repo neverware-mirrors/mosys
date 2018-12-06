@@ -158,10 +158,10 @@ int spd_print_field_ddr4(struct platform_intf *intf, struct kv_pair *kv,
 
 	case SPD_GET_PART_NUMBER:
 	{
-		char part[20];
+		char part[21];
 
-		memcpy(part, &byte[DDR4_SPD_REG_MODULE_PART_NUM_0], 19);
-		part[19] = '\0';
+		memcpy(part, &byte[DDR4_SPD_REG_MODULE_PART_NUM_0], 20);
+		part[20] = '\0';
 		kv_pair_fmt(kv, "part_number", "%s", part);
 
 		ret = 1;
