@@ -32,6 +32,8 @@
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
+#include "drivers/google/cros_ec.h"
+
 #include "lib/probe.h"
 #include "lib/fdt.h"
 
@@ -53,17 +55,8 @@ static char *oak_get_name(struct platform_intf *intf)
 	return ret;
 }
 
-static char *oak_get_version(struct platform_intf *intf)
-{
-	char *ret = NULL;
-
-	ret = mosys_strdup(intf->version_id);
-
-	return ret;
-}
-
 struct sys_cb oak_sys_cb = {
 	.vendor			= &oak_get_vendor,
 	.name			= &oak_get_name,
-	.version		= &oak_get_version,
+	.version		= &cros_ec_board_version_str,
 };
