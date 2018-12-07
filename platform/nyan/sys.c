@@ -31,6 +31,9 @@
 
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
+
+#include "drivers/google/cros_ec.h"
+
 #include "nyan.h"
 
 static char *nyan_get_name(struct platform_intf *intf)
@@ -56,17 +59,8 @@ static char *nyan_get_vendor(struct platform_intf *intf)
 	return ret;
 }
 
-static char *nyan_get_version(struct platform_intf *intf)
-{
-	char *ret = NULL;
-
-	ret = mosys_strdup(intf->version_id);
-
-	return ret;
-}
-
 struct sys_cb nyan_sys_cb = {
 	.name		= &nyan_get_name,
 	.vendor		= &nyan_get_vendor,
-	.version	= &nyan_get_version,
+	.version	= &cros_ec_board_version_str,
 };

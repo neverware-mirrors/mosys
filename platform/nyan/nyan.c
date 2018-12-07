@@ -109,7 +109,6 @@ int nyan_probe(struct platform_intf *intf)
 
 		value = gpio_get_in_tristate_values(intf, gpio, ARRAY_SIZE(gpio));
 		sprintf(str, "google,nyan-big-rev%d", value);
-		intf->version_id = str;
 
 		return 1;
 	}
@@ -204,5 +203,4 @@ struct platform_intf platform_nyan = {
 	.probe		= &nyan_probe,
 	.setup_post	= &nyan_setup_post,
 	.destroy	= &nyan_destroy,
-	.version_id   = "google,nyan",
 };
