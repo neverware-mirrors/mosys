@@ -57,11 +57,16 @@ static enum gru_boards probed_board = UNKNOWN;
 
 static struct sku_info
 	sku_dumo = { .brand = "MCDN", .model = "dumo" },
+
+	/* Druwl brand code will be supported via CL:*727042. */
+	sku_druwl = { .brand = "", .model = "druwl" },
+
 	sku_scarlet = { .brand = "DXZT", .model = "scarlet" };
 
 /* Map SKU 0 to Dumo and any other SKU IDs to Dru/Scarlet */
 static struct sku_mapping scarlet_sku_table[] = {
 	{ 0, &sku_dumo },
+	{ 2, &sku_druwl },
 	{ SKU_NUMBER_ANY, &sku_scarlet },
 };
 
