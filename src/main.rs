@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-extern crate mosys;
 extern crate io_jail;
+extern crate mosys;
 
 use std::env;
 use std::path::Path;
 use std::process;
 
-use mosys::Mosys;
 use io_jail::Minijail;
+use mosys::Mosys;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
