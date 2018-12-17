@@ -39,6 +39,7 @@
 
 #include "drivers/google/cros_ec.h"
 
+#include "lib/cros_config.h"
 #include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/generic_callbacks.h"
@@ -105,6 +106,20 @@ static int oak_probe(struct platform_intf *intf)
 
 static int kukui_probe(struct platform_intf *intf)
 {
+#ifdef CONFIG_CROS_CONFIG
+	static const char* platform_arr[] = {"kukui"};
+	static struct sku_info sku_info;
+
+	int ret = cros_config_read_sku_info_fdt(intf, platform_arr, 1,
+						&sku_info);
+	/* If there was no error, indicate that we found a match */
+	if (!ret) {
+		intf->sku_info = &sku_info;
+		return 1;
+	}
+
+	return ret;
+#else
 	int i;
 
 	for (i = 0; i < ARRAY_SIZE(kukui_probe_id_list); i++) {
@@ -122,6 +137,7 @@ static int kukui_probe(struct platform_intf *intf)
 
 	lprintf(LOG_DEBUG, "%s: probed_board: %d\n", __func__, kukui_probed_board);
 	return kukui_probed_board > -1 ? 1 : 0;
+#endif /* CONFIG_CROS_CONFIG */
 }
 
 static int oak_setup_post(struct platform_intf *intf)

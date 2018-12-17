@@ -36,6 +36,7 @@
 
 #include "lib/probe.h"
 #include "lib/fdt.h"
+#include "lib/sku.h"
 
 static char *oak_get_vendor(struct platform_intf *intf)
 {
@@ -59,4 +60,8 @@ struct sys_cb oak_sys_cb = {
 	.vendor			= &oak_get_vendor,
 	.name			= &oak_get_name,
 	.version		= &cros_ec_board_version_str,
+#ifdef CONFIG_CROS_CONFIG
+	/* Only unibuild has the concept of a signature ID */
+	.signature_id		= sku_get_signature_id,
+#endif
 };
