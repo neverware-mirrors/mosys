@@ -294,6 +294,13 @@ static ssize_t find_spd_by_part_number(struct platform_intf *intf, int dimm,
 		goto out;
 	}
 
+	// Legacy firmware doesn't remove trailing whitespaces from SPD part
+	// number so needs to check again; otherwise the part number might never
+	// matches to spd_part_num[] below which did remove trailing whitespaces.
+	while (smbios_part_num_len > 0 &&
+	       smbios_part_num[smbios_part_num_len - 1] == ' ')
+		smbios_part_num_len--;
+
 	num_spd = spd_file_len / info->spd_len;
 
 	for (i = 0; i < num_spd; i++) {
