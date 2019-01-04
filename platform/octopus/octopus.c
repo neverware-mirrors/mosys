@@ -60,7 +60,8 @@ struct platform_cmd *octopus_sub[] = {
 	NULL
 };
 
-static const char *platform_names = "Ampton,Bip,Bobba,Fleex,Meep,Phaser,Yorp";
+static const char *platform_names = "Ampton,Bip,Bobba,Casta,Fleex,Meep,Phaser,"
+				    "Yorp";
 
 int octopus_probe(struct platform_intf *intf)
 {
