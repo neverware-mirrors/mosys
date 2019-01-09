@@ -49,6 +49,7 @@ extern struct platform_intf platform_dragonegg;
 extern struct platform_intf platform_fizz;
 extern struct platform_intf platform_glados;
 extern struct platform_intf platform_gru;
+extern struct platform_intf platform_hatch;
 extern struct platform_intf platform_kahlee;
 extern struct platform_intf platform_kukui;
 extern struct platform_intf platform_link;
@@ -90,6 +91,7 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_CROS_CONFIG
 	&platform_fizz,
 	&platform_kahlee,
+	&platform_hatch,
 	&platform_nami,
 	&platform_octopus,
 	&platform_sarien,
