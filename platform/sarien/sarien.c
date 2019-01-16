@@ -40,7 +40,7 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
-#include "drivers/google/cros_ec.h"
+#include "drivers/google/wilco_ec.h"
 
 #include "lib/cros_config.h"
 #include "lib/smbios.h"
@@ -99,7 +99,7 @@ struct eventlog_cb sarien_eventlog_cb = {
 };
 
 struct platform_cb sarien_cb = {
-	.ec		= &cros_ec_cb,
+	.ec		= &wilco_ec_cb,
 	.eeprom		= &sarien_eeprom_cb,
 	.memory		= &sarien_memory_cb,
 	.nvram		= &sarien_nvram_cb,
