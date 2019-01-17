@@ -70,6 +70,7 @@ enum spd_dram_type {
 	SPD_DRAM_TYPE_LPDDR3	= 0xf1,
 	SPD_DRAM_TYPE_DDR4      = 0x0c,
 	SPD_DRAM_TYPE_LPDDR4	= 0x10,
+	SPD_DRAM_TYPE_LPDDR4X	= 0x11,
 };
 
 enum ddr3_module_type {
@@ -113,6 +114,7 @@ enum ddr_freq {
 	DDR_1067,
 	DDR_1355,
 	DDR_1400,
+	DDR_1600,
 
 	DDR_FREQ_MAX
 };

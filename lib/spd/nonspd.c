@@ -86,6 +86,9 @@ int nonspd_print_field(struct kv_pair *kv,
 		case SPD_DRAM_TYPE_LPDDR4:
 			kv_pair_add(kv, "dram", "LPDDR4");
 			break;
+		case SPD_DRAM_TYPE_LPDDR4X:
+			kv_pair_add(kv, "dram", "LPDDR4X");
+			break;
 		default:
 			break;
 		}
@@ -240,6 +243,9 @@ int nonspd_print_field(struct kv_pair *kv,
 				break;
 			case SPD_DRAM_TYPE_LPDDR4:
 				string_builder_strcat(speeds, "LPDDR4-");
+				break;
+			case SPD_DRAM_TYPE_LPDDR4X:
+				string_builder_strcat(speeds, "LPDDR4X-");
 				break;
 			default:
 				break;
