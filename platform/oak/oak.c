@@ -107,10 +107,10 @@ static int oak_probe(struct platform_intf *intf)
 static int kukui_probe(struct platform_intf *intf)
 {
 #ifdef CONFIG_CROS_CONFIG
-	static const char* platform_arr[] = {"kukui"};
+	static const char* platform_arr[] = {"kukui", "flapjack"};
 	static struct sku_info sku_info;
 
-	int ret = cros_config_read_sku_info_fdt(intf, platform_arr, 1,
+	int ret = cros_config_read_sku_info_fdt(intf, platform_arr, 2,
 						&sku_info);
 	/* If there was no error, indicate that we found a match */
 	if (!ret) {
@@ -231,6 +231,16 @@ struct platform_intf platform_oak = {
 struct platform_intf platform_kukui = {
 	.type		= PLATFORM_ARMV8,
 	.name		= "Kukui",
+	.sub		= oak_sub,
+	.cb		= &kukui_cb,
+	.probe		= &kukui_probe,
+	.setup_post	= &kukui_setup_post,
+	.destroy	= &oak_destroy,
+};
+
+struct platform_intf platform_flapjack = {
+	.type		= PLATFORM_ARMV8,
+	.name		= "Flapjack",
 	.sub		= oak_sub,
 	.cb		= &kukui_cb,
 	.probe		= &kukui_probe,
