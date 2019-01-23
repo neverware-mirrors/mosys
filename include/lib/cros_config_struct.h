@@ -38,19 +38,20 @@
 /**
  * config_map - a struct to hold a mapping of config identity to config.
  *
+ * TODO(chromium:925078): Update description of platform name.
  * `platform_name` Platform name from identity.
  *         Ignored now since mosys conditionally calls cros_config already.
  * `smbios_match_name` SMBIOS name to match.
+ * `firmware_name_match` String used to match against firmware output, e.g.
+           SMBIOS name on x86 or device-tree compatible string on ARM.
  * `sku_id` SKU id to match.
  * `customization_id` 'customization-id' to match from the VPD.
  * `whitelabel_tag` 'whitelabel-tag' to match from the VPD.
  * 'sku_info' Corresonding sku_info for these attributes.
  */
 struct config_map {
-	// [x86 only] Set to "" if match is not required.
-	const char *smbios_match_name;
-	// [ARM only]
-	const char *device_tree_compatible_match;
+	// Set to "" if match is not required.
+	const char *firmware_name_match;
 	// Set to -1 if match is not required.
 	int sku_id;
 	const char *platform_name;
