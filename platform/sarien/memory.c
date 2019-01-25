@@ -45,15 +45,27 @@
 #include "sarien.h"
 
 #define SARIEN_DIMM_COUNT	2
+#define SARIEN_SPD_PAGE_0_ADDR	0x36
+#define SARIEN_SPD_PAGE_1_ADDR	0x37
+
+static int sarien_dimm_count(struct platform_intf *intf)
+{
+	return SARIEN_DIMM_COUNT;
+}
 
 static int sarien_spd_read(struct platform_intf *intf,
 		 int dimm, int reg, int spd_len, uint8_t *spd_buf)
 {
 	int bus;
 	int address;
+	uint8_t page_sel = 0;
 
 	bus = intf->cb->memory->dimm_map(intf, DIMM_TO_BUS, dimm);
 	address = intf->cb->memory->dimm_map(intf, DIMM_TO_ADDRESS, dimm);
+
+	/* First ensure SPD is pointing at page 0 */
+	intf->op->i2c->smbus_write_reg(intf, bus, SARIEN_SPD_PAGE_0_ADDR,
+				       0, sizeof(page_sel), &page_sel);
 
 	return spd_read_i2c(intf, bus, address, reg, spd_len, spd_buf);
 }
@@ -142,7 +154,7 @@ static struct memory_spd_cb sarien_spd_cb = {
 };
 
 struct memory_cb sarien_memory_cb = {
-	.dimm_count	= smbios_dimm_count,
+	.dimm_count	= sarien_dimm_count,
 	.dimm_speed	= smbios_dimm_speed,
 	.dimm_map	= dimm_sarien_dimm_map,
 	.spd		= &sarien_spd_cb,
