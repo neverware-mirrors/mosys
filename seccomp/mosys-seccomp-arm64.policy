@@ -56,3 +56,5 @@ geteuid: 1
 getppid: 1
 getcwd: 1
 getdents64: 1
+prctl: 1
+statfs: 1
