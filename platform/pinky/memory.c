@@ -117,6 +117,10 @@ static int read_ram_code(struct platform_intf *intf)
 				pinky_dimm_count = 2;
 				pinky_mem_info = &micron_lpddr3_mt52l256m64d2pp_107wtb;
 				break;
+			case 19:
+				pinky_dimm_count = 1;
+				pinky_mem_info = &hynix_lpddr3_h9ccnnnbktmlbr_ntd;
+				break;
 			default:
 				ret = -1;
 				break;

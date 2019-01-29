@@ -238,6 +238,23 @@ const struct nonspd_mem_info hynix_lpddr3_h9ccnnnbltblar_nud = {
 		  'A', 'R', '-', 'N', 'U', 'D',},
 };
 
+const struct nonspd_mem_info hynix_lpddr3_h9ccnnnbktmlbr_ntd = {
+	.dram_type              = SPD_DRAM_TYPE_LPDDR3,
+	.module_type.ddr3_type  = DDR3_MODULE_TYPE_SO_DIMM,
+
+	.module_size_mbits      = 16384,
+	.num_ranks              = 2,
+	.device_width           = 32,
+        .ddr_freq               = { DDR_333, DDR_400, DDR_533, DDR_667, DDR_800 },
+
+	.module_mfg_id          = { .msb = 0xad, .lsb = 0x80 },
+	.dram_mfg_id            = { .msb = 0xad, .lsb = 0x80 },
+
+	.part_num =
+		{ 'H', '9', 'C', 'C', 'N', 'N', 'N', 'B', 'K', 'T', 'M', 'L',
+		  'B', 'R', '-', 'N', 'T', 'D',},
+};
+
 const struct nonspd_mem_info hynix_lpddr4_h9hcnnn8kumlhr = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR4,
 
@@ -798,6 +815,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&hynix_ddr3l_h5tc8g63amr_pba,
 	&hynix_lpddr3_h9ccnnnbptblbr_nud,
 	&hynix_lpddr3_h9ccnnnbltblar_nud,
+        &hynix_lpddr3_h9ccnnnbktmlbr_ntd,
 	&hynix_lpddr4_h9hcnnn8kumlhr,
 	&hynix_lpddr4_h9hcnnnbpumlhr,
 	&hynix_lpddr4x_h9hcnnncpmalhr_nee,
