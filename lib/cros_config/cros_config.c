@@ -72,18 +72,6 @@ static bool string_in_list(const char *name, const char *list)
 }
 #endif // CONFIG_PLATFORM_ARCH_X86
 
-
-#ifdef CONFIG_PLATFORM_ARCH_X86
-/** internal function with common code to read sku info */
-int internal_cros_config_read_sku_info(struct platform_intf *intf,
-				       const int sku_number,
-				       struct sku_info *sku_info)
-{
-	return cros_config_read_sku_info_struct(intf, sku_number, sku_info);
-}
-
-#endif // CONFIG_PLATFORM_ARCH_X86
-
 int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 				  const char *compat_platform_names[],
 				  int compat_platform_names_size,
@@ -169,7 +157,7 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 			__func__, smbios_name, find_platform_names);
 		return -ENOENT;
 	}
-	return internal_cros_config_read_sku_info(intf, sku_id, sku_info);
+	return cros_config_read_sku_info_struct(intf, sku_id, sku_info);
 #else // CONFIG_PLATFORM_ARCH_X86
 	lprintf(LOG_ERR, "Only X86 platforms should call %s\n", __func__);
 	return -1;
@@ -194,7 +182,7 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 			__func__, smbios_name, find_platform_names);
 		return -ENOENT;
 	}
-	return internal_cros_config_read_sku_info(intf, forced_sku_number,
+	return cros_config_read_sku_info_struct(intf, forced_sku_number,
 						  sku_info);
 #else // CONFIG_PLATFORM_ARCH_X86
 	lprintf(LOG_ERR, "Only X86 platforms should call %s\n", __func__);
