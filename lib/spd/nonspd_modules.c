@@ -916,6 +916,8 @@ static int extract_mem_info_from_smbios(
 	strncpy((char *)info->part_num, smbios_part_num, max_part_num_len);
 
 	info->dram_type = map_smbios_mem_type_to_spd(table);
+	info->num_ranks = table->data.mem_device.attributes & 0xf;
+	info->device_width = table->data.mem_device.data_width;
 
 	return transfer_speed_from_smbios_to_nonspd_mem_info(table, info);
 }

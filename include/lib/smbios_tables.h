@@ -246,6 +246,7 @@ struct smbios_table_memory_device {
 	uint8_t serial_number;			/* string */
 	uint8_t asset_tag;			/* string */
 	uint8_t part_number;			/* string */
+        uint8_t attributes;			/* number of rank in dimm */
 } __attribute__ ((packed));
 
 /* memory device types */
