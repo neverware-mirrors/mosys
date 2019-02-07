@@ -77,14 +77,9 @@ static bool string_in_list(const char *name, const char *list)
 /** internal function with common code to read sku info */
 int internal_cros_config_read_sku_info(struct platform_intf *intf,
 				       const int sku_number,
-				       const char *smbios_name,
 				       struct sku_info *sku_info)
 {
-	lprintf(LOG_DEBUG, "%s: JSON lookup SMBIOS name '%s', SKU ID %d\n",
-		__func__, smbios_name ? smbios_name : "(null)", sku_number);
-
-	return cros_config_read_sku_info_struct(intf, smbios_name, sku_number,
-					       sku_info);
+	return cros_config_read_sku_info_struct(intf, sku_number, sku_info);
 }
 
 #endif // CONFIG_PLATFORM_ARCH_X86
@@ -143,9 +138,8 @@ int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
 		if (found >= 0) {
 			// Platform is compatible, now read the sku info to see
 			// if we can find a device match.
-			return cros_config_read_sku_info_struct(intf, NULL,
-								sku_id,
-								sku_info);
+			return cros_config_read_sku_info_struct(
+			    intf, sku_id, sku_info);
 		}
 	}
 	return -1;
@@ -175,8 +169,7 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 			__func__, smbios_name, find_platform_names);
 		return -ENOENT;
 	}
-	return internal_cros_config_read_sku_info(intf, sku_id, smbios_name,
-						  sku_info);
+	return internal_cros_config_read_sku_info(intf, sku_id, sku_info);
 #else // CONFIG_PLATFORM_ARCH_X86
 	lprintf(LOG_ERR, "Only X86 platforms should call %s\n", __func__);
 	return -1;
@@ -202,7 +195,7 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 		return -ENOENT;
 	}
 	return internal_cros_config_read_sku_info(intf, forced_sku_number,
-						  smbios_name, sku_info);
+						  sku_info);
 #else // CONFIG_PLATFORM_ARCH_X86
 	lprintf(LOG_ERR, "Only X86 platforms should call %s\n", __func__);
 	return -1;

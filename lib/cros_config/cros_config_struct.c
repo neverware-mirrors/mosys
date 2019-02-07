@@ -19,9 +19,7 @@ static const char *str_or_null(const char *in_str)
 	return in_str ?: "(null)";
 }
 
-/* TODO(chromium:894995): Normalize the platform match for x86 and ARM. */
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
-				     const char *smbios_name,
 				     int sku_id,
 				     struct sku_info *sku_info)
 {
@@ -35,9 +33,6 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 	    cros_config_get_config_map(&config_map_size);
 
 	lprintf(LOG_DEBUG, "%s: Checking config: ", __func__);
-#ifdef CONFIG_PLATFORM_ARCH_X86
-	lprintf(LOG_DEBUG, "smbios_name='%s', ", str_or_null(smbios_name));
-#endif
 	lprintf(LOG_DEBUG, "sku_id=%d, whitelabel_tag='%s', "
 		"customization_id='%s'\n", sku_id,
 		str_or_null(whitelabel_tag), str_or_null(customization_id));
@@ -55,7 +50,7 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 
 #ifdef CONFIG_PLATFORM_ARCH_X86
 		device_match = !*config->firmware_name_match ||
-			!strcmp(smbios_name, config->firmware_name_match);
+			!strcmp(smbios_sysinfo_get_name(intf), config->firmware_name_match);
 #else
 		device_match =
 		    probe_fdt_compatible(&config->firmware_name_match, 1, 1) == 0;
