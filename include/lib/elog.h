@@ -280,7 +280,7 @@ struct elog_event_mem_cache_update {
 /* CPU Thermal Trip */
 #define ELOG_TYPE_THERM_TRIP             0xab
 
-/* Cr50 */
+/* Cr50 FW update */
 #define ELOG_TYPE_CR50_UPDATE            0xac
 
 /* Deep Sx wake variant */
@@ -300,6 +300,9 @@ struct elog_event_mem_cache_update {
 #define ELOG_TYPE_EXTENDED_EVENT          0xb1
 #define  ELOG_SLEEP_PENDING_PM1_WAKE       0x01
 #define  ELOG_SLEEP_PENDING_GPE0_WAKE      0x02
+
+/* Cr50 reset to enable TPM */
+#define ELOG_TYPE_CR50_NEED_RESET         0xb2
 
 struct elog_event_extended_event {
 	uint8_t event_type;
