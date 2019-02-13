@@ -247,6 +247,7 @@ static void io_write_test(void **state)
 
 int io_unittest(struct platform_intf *_intf)
 {
+	// TODO(chromium:910641): Enable this unittest.
 	int ret;
 	char root_prefix_for_test[PATH_MAX];
 	char *root_prefix_orig;

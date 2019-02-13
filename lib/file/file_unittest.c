@@ -106,6 +106,7 @@ static void sysfs_lowest_smbus_test(void **state) {
 
 int file_unittest(struct platform_intf *intf)
 {
+	// TODO(chromium:910641): Enable this unittest.
 	UnitTest tests[] = {
 		unit_test(scanft_test),
 		unit_test(sysfs_lowest_smbus_test),

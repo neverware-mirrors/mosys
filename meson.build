@@ -47,6 +47,7 @@ fmap_dep = dependency('fmap')
 uuid_dep = dependency('uuid')
 
 libmosys_src = files()
+unittest_src = files()
 
 # Subdirs with source to link against
 subdir('core')
@@ -75,3 +76,6 @@ libmosys = static_library(
   include_directories: include_common,
   pic: true,
 )
+
+# Tests need the libmosys library, so they must be configured at the end.
+subdir('unittests')

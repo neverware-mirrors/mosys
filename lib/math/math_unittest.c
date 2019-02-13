@@ -29,13 +29,18 @@
  */
 
 #include <limits.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <setjmp.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "cmockery.h"
+// cmocka doesn't include some headers it uses, e.g. setjmp. Prevent
+// clang-format from putting the headers in order, so it gets the above
+// includes.
+// clang-format off
+#include <cmocka.h>
+// clang-format on
 
 #include "mosys/platform.h"
 
@@ -53,7 +58,7 @@ static void ctz_test(void **state)
 	 * common sizes */
 	u = -1;
 	assert_int_equal(0, ctz(u));
-	u = 0;	/* The corner case for the "cast to float" algorithm */
+	u = 0; /* The corner case for the "cast to float" algorithm */
 	assert_int_equal(0, ctz(u));
 	u = 1;
 	assert_int_equal(0, ctz(u));
@@ -142,14 +147,15 @@ static void macro_unittest(void **state)
 	assert_int_equal(5, __abs(-2 + -3));
 }
 
-int math_unittest(void)
+int main(void)
 {
-	UnitTest tests[] = {
-		unit_test(ctz_test),
-		unit_test(logbase2_test),
-		unit_test(rolling8_csum_test),
-		unit_test(macro_unittest),
+	const struct CMUnitTest tests[] = {
+	    cmocka_unit_test(ctz_test),
+	    cmocka_unit_test(logbase2_test),
+	    cmocka_unit_test(rolling8_csum_test),
+	    cmocka_unit_test(macro_unittest),
 	};
 
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, /*group_setup=*/NULL,
+				      /*group_teardown=*/NULL);
 }
