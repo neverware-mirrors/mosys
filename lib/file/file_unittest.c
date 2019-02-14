@@ -116,9 +116,10 @@ static void scanft_test(void **state)
 
 static void sysfs_lowest_smbus_test(void **state)
 {
-	// TODO(chromium:910641): Enable this test.
-	skip();
+	char testdata_root[PATH_MAX];
 	char root[PATH_MAX];
+
+	get_testdata_root(testdata_root);
 
 	/*
 	 * Find "needle" in haystack of sysfs-style i2c-<bus> directories.
@@ -129,24 +130,24 @@ static void sysfs_lowest_smbus_test(void **state)
 	 * test3/ : needle is i2c-2, hay is in i2c-0 and i2c-1
 	 * test4/ : needles are in i2c-0 and i2c-2, hay is in i2c-1
 	 */
-	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+	snprintf(root, sizeof(root), "%s/%s", testdata_root,
 		 "sysfs_lowest_smbus_test/test0/");
 	assert_int_equal(-1, sysfs_lowest_smbus(root, "needle"));
 
-	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+	snprintf(root, sizeof(root), "%s/%s", testdata_root,
 		 "sysfs_lowest_smbus_test/test1/");
 	assert_int_equal(0, sysfs_lowest_smbus(root, "needle"));
 
-	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+	snprintf(root, sizeof(root), "%s/%s", testdata_root,
 		 "sysfs_lowest_smbus_test/test2");
 	assert_int_equal(1, sysfs_lowest_smbus(root, "needle"));
 
-	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+	snprintf(root, sizeof(root), "%s/%s", testdata_root,
 		 "sysfs_lowest_smbus_test/test3");
 	assert_int_equal(2, sysfs_lowest_smbus(root, "needle"));
 
 	/* test invalid path */
-	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+	snprintf(root, sizeof(root), "%s/%s", testdata_root,
 		 "sysfs_lowest_smbus_test/nothing");
 	assert_int_equal(-1, sysfs_lowest_smbus(root, "needle"));
 }
