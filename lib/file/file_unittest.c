@@ -32,8 +32,14 @@
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <unistd.h>
 
-#include "cmockery.h"
+// cmocka doesn't include some headers it uses, e.g. setjmp. Prevent
+// clang-format from putting the headers in order, so it gets the above
+// includes.
+// clang-format off
+#include <cmocka.h>
+// clang-format on
 
 #include "mosys/globals.h"
 #include "mosys/list.h"
@@ -41,25 +47,61 @@
 
 #include "lib/file.h"
 
+// Reads the root of the testdata directory into <buf>. Note that it is assumed
+// <buf> is of size at least PATH_MAX.
+static void get_testdata_root(char *buf)
+{
+	char cwd[PATH_MAX];
+	char *ret = getcwd(cwd, PATH_MAX);
+	assert_non_null(ret);
+
+	snprintf(buf, PATH_MAX, "%s/testdata", cwd);
+}
+
 static void scanft_test(void **state)
 {
+	// The relevant directories for this test are structured as:
+	//
+	// ├── dir1
+	// │   ├── dir2_symlink -> ../dir2
+	// │   ├── needle0
+	// │   └── subdir
+	// │       ├── needle1
+	// │       └── self_symlink -> ../subdir
+	// └── dir2
+	//     └── needle2
+	//
+	// The scan will start in "dir1", which contains symlinks to dir2.
 	struct ll_node *list = NULL;
+	char testdata_root[PATH_MAX];
 	char root[PATH_MAX];
 
-	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
-		 "scanft_test/");
+	get_testdata_root(testdata_root);
+
+	snprintf(root, sizeof(root), "%s/%s", testdata_root,
+		 "scanft_test/dir1/");
 
 	/* The first needle should be in given root. */
-	assert_true(scanft(&list, root, "needle0", NULL, -1, 0) != NULL);
+	assert_non_null(scanft(&list, root, /*filename=*/"needle0",
+			       /*str=*/NULL,
+			       /*maxdepth=*/0, /*symdepth=*/0));
 	list_cleanup(&list);
 
 	/* The second needle requires some basic recursion to find. */
-	assert_true(scanft(&list, root, "needle1", NULL, , -1, 1) != NULL);
+	assert_null(scanft(&list, root, /*filename=*/"needle1", /*str=*/NULL,
+			   /*maxdepth=*/0, /*symdepth=*/0));
+	assert_non_null(scanft(&list, root, /*filename=*/"needle1",
+			       /*str=*/NULL,
+			       /*maxdepth=*/-1, /*symdepth=*/0));
 	list_cleanup(&list);
 
-	/* The third needle should requires recursion and symlink
+	/* The third needle requires recursion and symlink
 	 * handling to find. */
-	assert_true(scanft(&list, root, "needle2", NULL, -1, 1) != NULL);
+	assert_null(scanft(&list, root, /*filename=*/"needle2", /*str=*/NULL,
+			   /*maxdepth=*/-1, /*symdepth=*/0));
+	assert_non_null(scanft(&list, root, /*filename=*/"needle2",
+			       /*str=*/NULL,
+			       /*maxdepth=*/-1, /*symdepth=*/1));
 	list_cleanup(&list);
 
 	/*
@@ -67,12 +109,15 @@ static void scanft_test(void **state)
 	 * self-referencing directory symlink has been added to the hierarchy to
 	 * test symlink depth handling.
 	 */
-	assert_true(scanft(&list, root, "needle3", NULL, -1, 100) == NULL);
+	assert_null(scanft(&list, root, /*filename=*/"needle3", /*str=*/NULL,
+			   /*maxdepth=*/-1, /*symdepth=*/100));
 	list_cleanup(&list);
 }
 
 static void sysfs_lowest_smbus_test(void **state)
 {
+	// TODO(chromium:910641): Enable this test.
+	skip();
 	char root[PATH_MAX];
 
 	/*
@@ -106,13 +151,13 @@ static void sysfs_lowest_smbus_test(void **state)
 	assert_int_equal(-1, sysfs_lowest_smbus(root, "needle"));
 }
 
-int file_unittest(struct platform_intf *intf)
+int main(void)
 {
-	// TODO(chromium:910641): Enable this unittest.
-	UnitTest tests[] = {
-	    unit_test(scanft_test),
-	    unit_test(sysfs_lowest_smbus_test),
+	const struct CMUnitTest tests[] = {
+	    cmocka_unit_test(scanft_test),
+	    cmocka_unit_test(sysfs_lowest_smbus_test),
 	};
 
-	return run_tests(tests);
+	return cmocka_run_group_tests(tests, /*group_setup=*/NULL,
+				      /*group_teardown=*/NULL);
 }
