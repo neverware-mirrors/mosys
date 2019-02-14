@@ -4,3 +4,7 @@ libmosys_src += files(
   'io.c',
   'pci.c',
 )
+
+unittest_src += files (
+  'io_unittest.c'
+)
