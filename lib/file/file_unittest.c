@@ -29,9 +29,9 @@
  */
 
 #include <limits.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <setjmp.h>
 
 #include "cmockery.h"
 
@@ -41,19 +41,20 @@
 
 #include "lib/file.h"
 
-static void scanft_test(void **state) {
+static void scanft_test(void **state)
+{
 	struct ll_node *list = NULL;
 	char root[PATH_MAX];
 
-	snprintf(root, sizeof(root), "%s/%s",
-	         mosys_get_root_prefix(), "scanft_test/");
+	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+		 "scanft_test/");
 
 	/* The first needle should be in given root. */
 	assert_true(scanft(&list, root, "needle0", NULL, -1, 0) != NULL);
 	list_cleanup(&list);
 
 	/* The second needle requires some basic recursion to find. */
-	assert_true(scanft(&list, root, "needle1", NULL,, -1, 1) != NULL);
+	assert_true(scanft(&list, root, "needle1", NULL, , -1, 1) != NULL);
 	list_cleanup(&list);
 
 	/* The third needle should requires recursion and symlink
@@ -70,7 +71,8 @@ static void scanft_test(void **state) {
 	list_cleanup(&list);
 }
 
-static void sysfs_lowest_smbus_test(void **state) {
+static void sysfs_lowest_smbus_test(void **state)
+{
 	char root[PATH_MAX];
 
 	/*
@@ -82,25 +84,25 @@ static void sysfs_lowest_smbus_test(void **state) {
 	 * test3/ : needle is i2c-2, hay is in i2c-0 and i2c-1
 	 * test4/ : needles are in i2c-0 and i2c-2, hay is in i2c-1
 	 */
-	snprintf(root, sizeof(root), "%s/%s",
-	         mosys_get_root_prefix(), "sysfs_lowest_smbus_test/test0/");
+	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+		 "sysfs_lowest_smbus_test/test0/");
 	assert_int_equal(-1, sysfs_lowest_smbus(root, "needle"));
 
-	snprintf(root, sizeof(root), "%s/%s",
-	         mosys_get_root_prefix(), "sysfs_lowest_smbus_test/test1/");
+	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+		 "sysfs_lowest_smbus_test/test1/");
 	assert_int_equal(0, sysfs_lowest_smbus(root, "needle"));
 
-	snprintf(root, sizeof(root), "%s/%s",
-	         mosys_get_root_prefix(), "sysfs_lowest_smbus_test/test2");
+	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+		 "sysfs_lowest_smbus_test/test2");
 	assert_int_equal(1, sysfs_lowest_smbus(root, "needle"));
 
-	snprintf(root, sizeof(root), "%s/%s",
-	         mosys_get_root_prefix(), "sysfs_lowest_smbus_test/test3");
+	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+		 "sysfs_lowest_smbus_test/test3");
 	assert_int_equal(2, sysfs_lowest_smbus(root, "needle"));
 
 	/* test invalid path */
-	snprintf(root, sizeof(root), "%s/%s",
-	         mosys_get_root_prefix(), "sysfs_lowest_smbus_test/nothing");
+	snprintf(root, sizeof(root), "%s/%s", mosys_get_root_prefix(),
+		 "sysfs_lowest_smbus_test/nothing");
 	assert_int_equal(-1, sysfs_lowest_smbus(root, "needle"));
 }
 
@@ -108,8 +110,8 @@ int file_unittest(struct platform_intf *intf)
 {
 	// TODO(chromium:910641): Enable this unittest.
 	UnitTest tests[] = {
-		unit_test(scanft_test),
-		unit_test(sysfs_lowest_smbus_test),
+	    unit_test(scanft_test),
+	    unit_test(sysfs_lowest_smbus_test),
 	};
 
 	return run_tests(tests);
