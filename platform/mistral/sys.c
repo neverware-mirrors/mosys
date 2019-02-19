@@ -49,8 +49,14 @@ static char *mistral_get_name(struct platform_intf *intf)
 	return mosys_strdup(intf->name);
 }
 
+static char *mistral_get_brand(struct platform_intf *intf)
+{
+	return mosys_strdup("BAMH");
+}
+
 struct sys_cb mistral_sys_cb = {
 	.vendor			= &mistral_get_vendor,
 	.name			= &mistral_get_name,
 	.version		= &mistral_get_version,
+	.brand			= &mistral_get_brand,
 };
