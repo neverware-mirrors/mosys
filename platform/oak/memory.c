@@ -47,6 +47,7 @@ enum memory_config {
 	HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G,
 	MICRON_DDR3_MT52L256M32D1PF_107WTB_1G,
 	MICRON_DDR3_MT52L512M32D2PF_107WTB_2G,
+	MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G,
 	SAMSUNG_DDR3_K4E6E304EB_EGCF_2G,
 	SAMSUNG_DDR3_K4E6E304EE_EGCE_2G,
 	SAMSUNG_DDR3_K4E8E304EE_EGCE_1G,
@@ -102,6 +103,8 @@ static int kukui_get_memory_config(struct platform_intf *intf)
 	switch (ram_code) {
 	case 1:
 		return HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G;
+	case 2:
+		return MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G;
 	default:
 		lprintf(LOG_ERR, "Not implemented\n");
 	}
@@ -165,6 +168,9 @@ static int kukui_get_mem_info(struct platform_intf *intf,
 	switch (kukui_get_memory_config(intf)) {
 	case HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G:
 		*info = &hynix_lpddr4x_h9hcnnncpmalhr_nee;
+		break;
+	case MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G:
+		*info = &micron_lpddr4x_mt53e1g32d4nq_046wte;
 		break;
 	default:
 		return -1;

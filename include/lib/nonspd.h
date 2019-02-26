@@ -124,6 +124,7 @@ extern const struct nonspd_mem_info micron_mt52l512m32d2pf;
 extern const struct nonspd_mem_info micron_lpddr3_mt52l256m32d1pf_107wtb;
 extern const struct nonspd_mem_info micron_lpddr3_mt52l256m64d2pp_107wtb;
 extern const struct nonspd_mem_info micron_lpddr3_mt52l512m32d2pf_107wtb;
+extern const struct nonspd_mem_info micron_lpddr4x_mt53e1g32d4nq_046wte;
 extern const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16dp_di;
 extern const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16er_ek;
 extern const struct nonspd_mem_info samsung_k4b4g1646d;
