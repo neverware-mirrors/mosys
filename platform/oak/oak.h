@@ -47,6 +47,7 @@ extern struct nvram_cb cros_ec_nvram_cb;
 extern struct nvram_cb cros_spi_flash_nvram_cb;
 extern struct oak_psu_cb oak_psu_cb;
 extern struct sys_cb oak_sys_cb;
+extern struct sys_cb kukui_sys_cb;
 
 /* functions called by setup routines */
 extern int oak_vpd_setup(struct platform_intf *intf);

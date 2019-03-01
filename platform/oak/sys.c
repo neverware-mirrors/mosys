@@ -47,6 +47,12 @@ static char *oak_get_vendor(struct platform_intf *intf)
 	return ret;
 }
 
+static int kukui_get_sku_id(struct platform_intf *intf)
+{
+	return fdt_get_sku_id();
+}
+
+
 static char *oak_get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
@@ -60,6 +66,17 @@ struct sys_cb oak_sys_cb = {
 	.vendor			= &oak_get_vendor,
 	.name			= &oak_get_name,
 	.version		= &cros_ec_board_version_str,
+#ifdef CONFIG_CROS_CONFIG
+	/* Only unibuild has the concept of a signature ID */
+	.signature_id		= sku_get_signature_id,
+#endif
+};
+
+struct sys_cb kukui_sys_cb = {
+	.vendor			= &oak_get_vendor,
+	.name			= &oak_get_name,
+	.version		= &cros_ec_board_version_str,
+	.sku_number		= &kukui_get_sku_id,
 #ifdef CONFIG_CROS_CONFIG
 	/* Only unibuild has the concept of a signature ID */
 	.signature_id		= sku_get_signature_id,

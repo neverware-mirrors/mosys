@@ -214,7 +214,7 @@ struct platform_cb kukui_cb = {
 	.memory		= &kukui_memory_cb,
 	.pd		= &cros_pd_cb,
 	.psu		= &generic_psu_battery_cb,
-	.sys		= &oak_sys_cb,
+	.sys		= &kukui_sys_cb,
 	.eventlog	= &oak_eventlog_cb,
 };
 
