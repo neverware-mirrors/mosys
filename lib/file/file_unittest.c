@@ -51,11 +51,10 @@
 // <buf> is of size at least PATH_MAX.
 static void get_testdata_root(char *buf)
 {
-	char cwd[PATH_MAX];
-	char *ret = getcwd(cwd, PATH_MAX);
-	assert_non_null(ret);
+	char *src = getenv("SRC");
+	assert_non_null(src);
 
-	snprintf(buf, PATH_MAX, "%s/testdata", cwd);
+	snprintf(buf, PATH_MAX, "%s/unittests/testdata", src);
 }
 
 static void scanft_test(void **state)

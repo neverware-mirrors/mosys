@@ -85,14 +85,13 @@ build_test_intf(uint64_t file_backed_range_size,
 
 	assert_int_equal(0, intf.op->io->setup(&intf));
 
-	char cwd[PATH_MAX];
-	char *ret = getcwd(cwd, PATH_MAX);
-	assert_non_null(ret);
+	char *src = getenv("SRC");
+	assert_non_null(src);
 
 	// Note that the leading / needs to be removed for the file_backed_range
 	// file_name; thus, cwd[1] is used.
 	snprintf(file_backed_range_path_buf, PATH_MAX,
-		 "%s/testdata/io_unittest%s", &cwd[1],
+		 "%s/unittests/testdata/io_unittest%s", &src[1],
 		 file_backed_range_file_name);
 
 	struct file_backed_range *first_range = &intf.op->io->ranges[0];
