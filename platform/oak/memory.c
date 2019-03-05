@@ -38,7 +38,7 @@
 #include "oak.h"
 
 #define OAK_DIMM_COUNT 2
-// TODO: kukui dimm count, memory_config
+#define KUKUI_DIMM_COUNT 1
 
 enum memory_config {
 	HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G,
@@ -125,6 +125,11 @@ static int oak_dimm_count(struct platform_intf *intf)
 
 }
 
+static int kukui_dimm_count(struct platform_intf *intf)
+{
+	return KUKUI_DIMM_COUNT;
+}
+
 static int oak_get_mem_info(struct platform_intf *intf,
 			const struct nonspd_mem_info **info)
 {
@@ -184,6 +189,6 @@ struct memory_cb oak_memory_cb = {
 };
 
 struct memory_cb kukui_memory_cb = {
-	.dimm_count		= oak_dimm_count,
+	.dimm_count		= kukui_dimm_count,
 	.nonspd_mem_info	= &kukui_get_mem_info,
 };
