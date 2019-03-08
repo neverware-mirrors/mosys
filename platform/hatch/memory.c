@@ -29,55 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/callbacks.h"
-#include "mosys/globals.h"
-#include "mosys/log.h"
-#include "mosys/platform.h"
-
-#include "drivers/gpio.h"
-#include "drivers/intel/series6.h"
-
-#include "lib/file.h"
-#include "lib/flashrom.h"
-#include "lib/spd.h"
-#include "lib/smbios.h"
-
+#include "lib/nonspd.h"
 #include "hatch.h"
 
-#define HATCH_DIMM_COUNT	2
-
-static int hatch_spd_read(struct platform_intf *intf,
-		 int dimm, int reg, int spd_len, uint8_t *spd_buf)
-{
-	static uint8_t *fw_buf;
-	static int fw_size = 0;
-
-	/* dimm cnt is 0 based */
-	if (dimm >= intf->cb->memory->dimm_count(intf)) {
-		lprintf(LOG_DEBUG, "%s: Invalid DIMM specified\n", __func__);
-		return -1;
-	}
-
-	if (fw_size < 0)
-		return -1;	/* previous attempt failed */
-
-	if (!fw_size) {
-		fw_size = flashrom_read_host_firmware_region(intf, &fw_buf);
-		if (fw_size < 0)
-			return -1;
-		add_destroy_callback(free, fw_buf);
-	}
-
-	return spd_read_from_cbfs(intf, dimm, reg,
-				spd_len, spd_buf, fw_size, fw_buf);
-}
-
-static struct memory_spd_cb hatch_spd_cb = {
-	.read		= hatch_spd_read,
-};
-
 struct memory_cb hatch_memory_cb = {
-	.dimm_count	= smbios_dimm_count,
-	.dimm_speed	= smbios_dimm_speed,
-	.spd		= &hatch_spd_cb,
+	.dimm_count		= smbios_dimm_count,
+	.dimm_speed		= smbios_dimm_speed,
+	.nonspd_mem_info	= &spd_set_nonspd_info,
 };
