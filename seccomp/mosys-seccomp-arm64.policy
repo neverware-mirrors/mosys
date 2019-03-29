@@ -58,3 +58,4 @@ getcwd: 1
 getdents64: 1
 prctl: 1
 statfs: 1
+fstatfs: 1
