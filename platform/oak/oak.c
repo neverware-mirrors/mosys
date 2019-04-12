@@ -64,6 +64,7 @@ struct probe_id {
 	{ "Rowan", "google,rowan", { .brand = NULL }, 0 },
 }, kukui_probe_id_list[] = {
 	{ "Kukui", "google,kukui", { .brand = "ZZCR" }, 0 },
+	{ "Krane", "google,krane", { .brand = "ZZCR" }, 0 },
 };
 
 #define OAK_CMD_PD_NUM	0
@@ -107,11 +108,11 @@ static int oak_probe(struct platform_intf *intf)
 static int kukui_probe(struct platform_intf *intf)
 {
 #ifdef CONFIG_CROS_CONFIG
-	static const char* platform_arr[] = {"kukui", "flapjack"};
+	static const char* platform_arr[] = {"flapjack", "krane", "kukui"};
 	static struct sku_info sku_info;
 
-	int ret = cros_config_read_sku_info_fdt(intf, platform_arr, 2,
-						&sku_info);
+	int ret = cros_config_read_sku_info_fdt(intf, platform_arr,
+					ARRAY_SIZE(platform_arr), &sku_info);
 	/* If there was no error, indicate that we found a match */
 	if (!ret) {
 		intf->sku_info = &sku_info;
