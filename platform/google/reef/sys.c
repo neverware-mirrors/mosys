@@ -44,7 +44,25 @@ static char *reef_get_name(struct platform_intf *intf)
 static char *reef_get_model(struct platform_intf *intf)
 {
 	/* TODO(sjg@chromium.org): Consider obtaining this from ACPI data */
-	return strlower(mosys_strdup(intf->name));
+        char *model = strlower(mosys_strdup(intf->name));
+
+	if (strcmp(model, "reef") == 0) {
+		char *sku_str = smbios_sysinfo_get_sku(intf);
+		int sku_id = atoi(sku_str ? sku_str : "-1");
+		free(sku_str);
+
+		switch (sku_id) {
+		case 0:
+			free(model);
+			model = mosys_strdup("basking");
+			break;
+		case 8:
+			free(model);
+			model = mosys_strdup("electro");
+			break;
+		}
+	}
+	return model;
 }
 
 struct sys_cb reef_sys_cb = {
