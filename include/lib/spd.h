@@ -112,9 +112,9 @@ enum ddr_freq {
 	DDR_800,
 	DDR_933,
 	DDR_1067,
+	DDR_1200,
 	DDR_1333,
 	DDR_1355,
-	DDR_1400,
 	DDR_1600,
 
 	DDR_FREQ_MAX
