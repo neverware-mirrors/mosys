@@ -59,7 +59,7 @@ struct platform_cmd *hatch_sub[] = {
 	NULL
 };
 
-static const char *platform_names = "Hatch,Hatch_whl";
+static const char *platform_names = "Hatch,Hatch_whl,Kohaku";
 
 int hatch_probe(struct platform_intf *intf)
 {

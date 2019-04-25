@@ -47,7 +47,14 @@
 
 static int host_firmware_size(struct platform_intf *intf)
 {
-	return HATCH_HOST_FIRMWARE_ROM_SIZE;
+	const char *smbios_name;
+
+	smbios_name = smbios_sysinfo_get_name(intf);
+
+	if (!strcmp(smbios_name, "Hatch") || !strcmp(smbios_name, "Hatch_whl"))
+		return HATCH_HOST_FIRMWARE_ROM_SIZE_32MB;
+
+	return HATCH_HOST_FIRMWARE_ROM_SIZE_16MB;
 }
 
 static int host_firmware_read(struct platform_intf *intf,
