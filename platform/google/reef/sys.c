@@ -29,6 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <ctype.h>
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
@@ -48,7 +49,15 @@ static char *reef_get_model(struct platform_intf *intf)
 
 	if (strcmp(model, "reef") == 0) {
 		char *sku_str = smbios_sysinfo_get_sku(intf);
-		int sku_id = atoi(sku_str ? sku_str : "-1");
+		char *sku_var = sku_str;
+		int sku_id;
+		/* The sku_str should be in 'skuN' format. */
+		while (sku_var && isascii(*sku_var) && !isdigit(*sku_var))
+			sku_var++;
+		if (sku_var && !*sku_var)
+			sku_var = NULL;
+
+		sku_id = atoi(sku_var ? sku_var : "-1");
 		free(sku_str);
 
 		switch (sku_id) {
