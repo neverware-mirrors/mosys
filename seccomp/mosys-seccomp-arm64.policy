@@ -20,6 +20,7 @@ lseek: 1
 flock: 1
 pipe2: 1
 clone: 1
+getgroups: 1
 getpid: 1
 fcntl: 1
 wait4: 1
