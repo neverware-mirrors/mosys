@@ -896,6 +896,8 @@ enum spd_dram_type map_smbios_mem_type_to_spd(struct smbios_table *table)
 		return SPD_DRAM_TYPE_DDR3;
 	case SMBIOS_MEMORY_TYPE_DDR4:
 		return SPD_DRAM_TYPE_DDR4;
+	case SMBIOS_MEMORY_TYPE_LPDDR3:
+		return SPD_DRAM_TYPE_LPDDR3;
 	case SMBIOS_MEMORY_TYPE_LPDDR4:
 		return SPD_DRAM_TYPE_LPDDR4;
 	default:

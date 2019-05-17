@@ -83,6 +83,7 @@ int nonspd_print_field(struct kv_pair *kv,
 		case SPD_DRAM_TYPE_DDR4:
 			kv_pair_add(kv, "dram", "DDR4");
 			break;
+		case SPD_DRAM_TYPE_JEDEC_LPDDR3:
 		case SPD_DRAM_TYPE_LPDDR3:
 			kv_pair_add(kv, "dram", "LPDDR3");
 			break;
@@ -102,6 +103,7 @@ int nonspd_print_field(struct kv_pair *kv,
 		switch (info->dram_type) {
 		case SPD_DRAM_TYPE_DDR3:
 		case SPD_DRAM_TYPE_LPDDR3:
+		case SPD_DRAM_TYPE_JEDEC_LPDDR3:
 			kv_pair_add(kv, "module",
 			            val2str(info->module_type.ddr3_type,
 					    ddr3_module_type_lut));
@@ -246,6 +248,7 @@ int nonspd_print_field(struct kv_pair *kv,
 				string_builder_strcat(speeds, "DDR4-");
 				break;
 			case SPD_DRAM_TYPE_LPDDR3:
+			case SPD_DRAM_TYPE_JEDEC_LPDDR3:
 				string_builder_strcat(speeds, "LPDDR3-");
 				break;
 			case SPD_DRAM_TYPE_LPDDR4:
