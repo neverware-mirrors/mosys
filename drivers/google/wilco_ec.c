@@ -28,12 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "lib/file.h"
+#include "mosys/alloc.h"
 #include "mosys/callbacks.h"
+#include "mosys/log.h"
 #include "mosys/platform.h"
+
+#include <errno.h>
+#include <unistd.h>
 
 #define WILCO_EC_NAME "wilco"
 #define WILCO_EC_VENDOR "google"
-#define WILCO_EC_VERSION "0.0.0"
+#define WILCO_EC_SYSFS_VERSION                                                 \
+	"/sys/bus/platform/devices/GOOG000C:00/version"
 
 static const char *wilco_ec_name(struct platform_intf *intf, struct ec_cb *ec)
 {
@@ -46,9 +53,40 @@ static const char *wilco_ec_vendor(struct platform_intf *intf, struct ec_cb *ec)
 }
 
 static const char *wilco_ec_fw_version(struct platform_intf *intf,
-		struct ec_cb *ec)
+				       struct ec_cb *ec)
 {
-	return WILCO_EC_VERSION;
+	const size_t max_size = 64;
+	int fd, len;
+	char *buffer = mosys_zalloc(max_size);
+
+	add_destroy_callback(free, (void *)buffer);
+
+	fd = file_open(WILCO_EC_SYSFS_VERSION, FILE_READ);
+	if (fd < 0) {
+		strncpy(buffer, "ERROR", max_size);
+		return buffer;
+	}
+
+	len = read(fd, buffer, max_size);
+	if (len <= 0) {
+		lprintf(LOG_ERR, "Unable to read %s: %s.\n",
+			WILCO_EC_SYSFS_VERSION, strerror(errno));
+		strncpy(buffer, "ERROR", max_size);
+		goto close_file;
+	}
+
+	if (buffer[len - 1] != '\n') {
+		lprintf(LOG_ERR, "Value was truncated: '%.*s'\n", len, buffer);
+		strncpy(buffer, "ERROR TRUNCATED", max_size);
+		goto close_file;
+	}
+
+	/* Replace the newline with a null-terminator */
+	buffer[len - 1] = '\0';
+
+close_file:
+	close(fd);
+	return buffer;
 }
 
 struct ec_cb wilco_ec_cb = {
