@@ -53,6 +53,9 @@ provided as inputs to the build process from other ebuilds in the Chrome OS
 build system:
   lib/cros_config/cros_config_data.c
 
+You can use -Dcros_config_data_src to override the config file that will be used
+by the build system.
+
 If you just want to compile something quickly, you can do:
   cp lib/cros_config/dummy_cros_config_data.c lib/cros_config/cros_config_data.c
 

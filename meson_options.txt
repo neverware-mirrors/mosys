@@ -11,3 +11,9 @@ option(
   value: 'false',
   description: 'If set to true, cros_config will be used',
 )
+
+option(
+  'cros_config_data_src',
+  type: 'string',
+  description: 'cros_config_data source file',
+)
