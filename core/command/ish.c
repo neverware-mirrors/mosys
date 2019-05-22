@@ -1,5 +1,5 @@
 /*
- * Copyright 2012, Google Inc.
+ * Copyright 2019, Google LLC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,39 +27,65 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
-#ifndef MOSYS_COMMAND_LIST_H__
-#define MOSYS_COMMAND_LIST_H__
+#include <stdio.h>
+#include <errno.h>
 
-struct platform_cmd;
+#include "mosys/kv_pair.h"
+#include "mosys/log.h"
+#include "mosys/platform.h"
 
-extern struct platform_cmd cmd_platform;
-extern struct platform_cmd cmd_i2c;
-extern struct platform_cmd cmd_gpio;
-extern struct platform_cmd cmd_hid;
-extern struct platform_cmd cmd_smbios;
-extern struct platform_cmd cmd_memory;
-extern struct platform_cmd cmd_cpu;
-extern struct platform_cmd cmd_sensor;
-extern struct platform_cmd cmd_eventlog;
-extern struct platform_cmd cmd_bootnum;
-extern struct platform_cmd cmd_flash;
-extern struct platform_cmd cmd_nvram;
-extern struct platform_cmd cmd_mce;
-extern struct platform_cmd cmd_ht;
-extern struct platform_cmd cmd_edac;
-extern struct platform_cmd cmd_eeprom;
-extern struct platform_cmd cmd_vpd;
-extern struct platform_cmd cmd_ec;
-extern struct platform_cmd cmd_sh;
-extern struct platform_cmd cmd_pd;
-extern struct platform_cmd cmd_fp;
-extern struct platform_cmd cmd_ish;
-extern struct platform_cmd cmd_battery;
-extern struct platform_cmd cmd_storage;
-extern struct platform_cmd cmd_psu;
-//extern struct platform_cmd cmd_fru;
+static int ish_info(struct platform_intf *intf, struct platform_cmd *cmd,
+		   int argc, char **argv)
+{
+	struct kv_pair *kv;
+	int rc;
 
-#endif /* MOSYS_COMMAND_LIST_H__ */
+	if (!intf->cb->ish) {
+		errno = ENOSYS;
+		return -1;
+	}
+
+	kv = kv_pair_new();
+	if (!kv) {
+		errno = ENOMEM;
+		return -1;
+	}
+
+	if (!intf->cb->ish->vendor || !intf->cb->ish->name ||
+	    !intf->cb->ish->fw_version) {
+		errno = ENOSYS;
+		rc = -1;
+		goto ish_info_done;
+	}
+
+	kv_pair_add(kv, "vendor",
+			intf->cb->ish->vendor(intf, intf->cb->ish));
+	kv_pair_add(kv, "name", intf->cb->ish->name(intf, intf->cb->ish));
+	kv_pair_add(kv, "fw_version",
+			intf->cb->ish->fw_version(intf, intf->cb->ish));
+
+	rc = kv_pair_print(kv);
+
+ish_info_done:
+	kv_pair_free(kv);
+	return rc;
+}
+
+struct platform_cmd ish_cmds[] = {
+	{
+		.name	= "info",
+		.desc	= "Print basic EC information",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = ish_info}
+	},
+	{ NULL }
+};
+
+struct platform_cmd cmd_ish = {
+	.name	= "ish",
+	.desc	= "ISH information",
+	.type	= ARG_TYPE_SUB,
+	.arg	= { .sub = ish_cmds }
+};
