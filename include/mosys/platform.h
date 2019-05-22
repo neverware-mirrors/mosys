@@ -447,6 +447,7 @@ struct platform_cb {
 	struct ec_cb *pd;		/* pd callbacks */
 	struct ec_cb *sh;		/* sh callbacks */
 	struct ec_cb *fp;		/* fp callbacks */
+	struct ec_cb *ish;		/* ish callbacks */
 	struct legacy_ec_cb *legacy_ec;	/* legacy ec callbacks */
 	struct hid_cb *hid;		/* hid callbacks */
 	struct battery_cb *battery;	/* battery callbacks */
