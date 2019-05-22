@@ -84,6 +84,20 @@ static const char *cros_ec_fw_version(struct platform_intf *intf,
 	return version;
 }
 
+__attribute__((unused)) static const char *
+cros_ec_build_info_cb(struct platform_intf *intf, struct ec_cb *ec)
+{
+	static const char *build_info = NULL;
+
+	if (build_info)
+		return build_info;
+
+	build_info = cros_ec_build_info(intf, ec);
+	if (build_info)
+		add_destroy_callback(free, (void *)build_info);
+	return build_info;
+}
+
 struct ec_cb cros_ec_cb = {
 	.vendor		= cros_ec_vendor,
 	.name		= cros_ec_name,

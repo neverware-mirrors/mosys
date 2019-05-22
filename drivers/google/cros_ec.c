@@ -117,6 +117,27 @@ const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec)
 	return ret;
 }
 
+const char *cros_ec_build_info(struct platform_intf *intf, struct ec_cb *ec)
+{
+	const int max_size = 128;
+	char *ret = mosys_zalloc(max_size);
+	struct cros_ec_priv *priv;
+
+	MOSYS_CHECK(ec && ec->priv);
+	priv = ec->priv;
+
+	MOSYS_CHECK(priv->cmd);
+	if (priv->cmd(intf, ec, EC_CMD_GET_BUILD_INFO, 0, ret, max_size - 1,
+		      NULL, 0)) {
+		free(ret);
+		return NULL;
+	}
+
+	lprintf(LOG_DEBUG, "Build Info: %s\n", ret);
+
+	return ret;
+}
+
 int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec)
 {
 	struct cros_ec_priv *priv;
