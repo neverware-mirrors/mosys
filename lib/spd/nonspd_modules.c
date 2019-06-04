@@ -731,6 +731,22 @@ const struct nonspd_mem_info micron_lpddr4x_mt53e1g32d4nq_046wte = {
 		  'Q', '-', '4', '6', 'W', 'T', ':', 'E'},
 };
 
+const struct nonspd_mem_info micron_lpddr4x_mt29vzzzad8dqksl = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4X,
+
+	.module_size_mbits	= 32768,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq		= { DDR_800, DDR_1200, DDR_1600 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'M', 'T', '2', '9', 'V', 'Z', 'Z', 'Z', 'A', 'D', '8', 'D',
+		  'Q', 'K', 'S', 'L'},
+};
+
 const struct nonspd_mem_info samsung_lpddr4_k3uh5h50mm_agcj = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
 
@@ -795,6 +811,22 @@ static const struct nonspd_mem_info samsung_lpddr4_k4f8e304hb_mgcj = {
 		  'M', 'G', 'C', 'J' },
 };
 
+const struct nonspd_mem_info samsung_lpddr4x_kmdp6001da_b425 = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4X,
+
+	.module_size_mbits	= 32768,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933, DDR_1067, DDR_1200},
+
+	.module_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0xce, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'K', 'M', 'D', 'P', '6', '0', '0', '1', 'D', 'A', '-',
+		  'B', '4', '2', '5' },
+};
+
 static const struct nonspd_mem_info samsung_lpddr4_k4f6e304hb_mgch = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
 
@@ -841,6 +873,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&micron_lpddr4_mt53b256m32d1np,
 	&micron_lpddr4_mt53b512m32d2np,
 	&micron_lpddr4_mt53e512m32d2np,
+	&micron_lpddr4x_mt29vzzzad8dqksl,
 	&micron_lpddr4x_mt53e1g32d4nq_046wte,
 	&micron_mt41k256m16ha,
 	&micron_mt52l256m32d1pf,
@@ -865,6 +898,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&samsung_lpddr4_k4f6e304hb_mgcj,
 	&samsung_lpddr4_k4f6e3s4hm_mgcj,
 	&samsung_lpddr4_k4f8e304hb_mgcj,
+	&samsung_lpddr4x_kmdp6001da_b425,
 };
 
 static int transfer_speed_from_smbios_to_nonspd_mem_info(

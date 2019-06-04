@@ -47,11 +47,13 @@ enum memory_config {
 	HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G,
 	MICRON_DDR3_MT52L256M32D1PF_107WTB_1G,
 	MICRON_DDR3_MT52L512M32D2PF_107WTB_2G,
+	MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G,
 	MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G,
 	SAMSUNG_DDR3_K4E6E304EB_EGCF_2G,
 	SAMSUNG_DDR3_K4E6E304EE_EGCE_2G,
 	SAMSUNG_DDR3_K4E8E304EE_EGCE_1G,
 	SAMSUNG_DDR3_K4E8E324EB_EGCF_1G,
+	SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G,
 	MEM_UNKNOWN,
 };
 
@@ -105,6 +107,10 @@ static int kukui_get_memory_config(struct platform_intf *intf)
 		return HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G;
 	case 2:
 		return MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G;
+	case 3:
+		return SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G;
+	case 5:
+		return MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G;
 	default:
 		lprintf(LOG_ERR, "Not implemented\n");
 	}
@@ -176,6 +182,12 @@ static int kukui_get_mem_info(struct platform_intf *intf,
 		break;
 	case MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G:
 		*info = &micron_lpddr4x_mt53e1g32d4nq_046wte;
+		break;
+	case SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G:
+		*info = &samsung_lpddr4x_kmdp6001da_b425;
+		break;
+	case MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G:
+		*info = &micron_lpddr4x_mt29vzzzad8dqksl;
 		break;
 	default:
 		return -1;

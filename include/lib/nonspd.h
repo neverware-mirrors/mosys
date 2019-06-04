@@ -124,6 +124,7 @@ extern const struct nonspd_mem_info micron_mt52l512m32d2pf;
 extern const struct nonspd_mem_info micron_lpddr3_mt52l256m32d1pf_107wtb;
 extern const struct nonspd_mem_info micron_lpddr3_mt52l256m64d2pp_107wtb;
 extern const struct nonspd_mem_info micron_lpddr3_mt52l512m32d2pf_107wtb;
+extern const struct nonspd_mem_info micron_lpddr4x_mt29vzzzad8dqksl;
 extern const struct nonspd_mem_info micron_lpddr4x_mt53e1g32d4nq_046wte;
 extern const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16dp_di;
 extern const struct nonspd_mem_info nanya_ddr3l_nt5cc256m16er_ek;
@@ -141,6 +142,7 @@ extern const struct nonspd_mem_info samsung_lpddr3_k4e8e304ed_egcc;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e304ee_egce;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e324eb_egcf;
 extern const struct nonspd_mem_info samsung_lpddr4_k3uh5h50mm_agcj;
+extern const struct nonspd_mem_info samsung_lpddr4x_kmdp6001da_b425;
 
 int spd_set_nonspd_info(struct platform_intf *intf,
                         const struct nonspd_mem_info **info);
