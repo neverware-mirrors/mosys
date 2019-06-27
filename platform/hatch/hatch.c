@@ -60,7 +60,8 @@ struct platform_cmd *hatch_sub[] = {
 };
 
 static const char *platform_names[] = {
-	"Google_Hatch", "Google_Kohaku", "Google_Helios", "Google_Kindred",
+	"Google_Akemi", "Google_Hatch", "Google_Kohaku",
+	"Google_Helios", "Google_Kindred",
 	NULL
 };
 
