@@ -53,7 +53,6 @@ extern struct platform_intf platform_gru;
 extern struct platform_intf platform_hatch;
 extern struct platform_intf platform_kahlee;
 extern struct platform_intf platform_kukui;
-extern struct platform_intf platform_link;
 extern struct platform_intf platform_mistral;
 extern struct platform_intf platform_nami;
 extern struct platform_intf platform_nyan;
@@ -80,7 +79,6 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_cyan,
 	&platform_dragonegg,
 	&platform_glados,
-	&platform_link,
 	&platform_rambi,
 	&platform_reef,
 	&platform_samus,
