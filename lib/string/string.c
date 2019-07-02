@@ -374,13 +374,13 @@ const char *strlfind(const char *str, const char *arr[], int cs)
 		lprintf(LOG_SPEW, "%s: \"%s\" ?= \"%s\": ",
 		                  __func__, str, arr[i]);
 		if (cs) {
-			if (!strncmp(str, arr[i], strlen(arr[i]))) {
+			if (!strcmp(str, arr[i])) {
 				ret = arr[i];
 				lprintf(LOG_SPEW, "Yes.\n");
 				break;
 			}
 		} else {
-			if (!strncasecmp(str, arr[i], strlen(arr[i]))) {
+			if (!strcasecmp(str, arr[i])) {
 				ret = arr[i];
 				lprintf(LOG_SPEW, "Yes.\n");
 				break;
