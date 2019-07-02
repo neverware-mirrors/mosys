@@ -65,7 +65,6 @@ extern struct platform_intf platform_samus;
 extern struct platform_intf platform_sarien;
 extern struct platform_intf platform_skate;
 extern struct platform_intf platform_slippy;
-extern struct platform_intf platform_smaug;
 extern struct platform_intf platform_spring;
 extern struct platform_intf platform_storm;
 extern struct platform_intf platform_strago;
@@ -107,7 +106,6 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_peach,
 	&platform_pinky,
 	&platform_skate,
-	&platform_smaug,
 	&platform_spring,
 	&platform_storm,
 #ifdef CONFIG_CROS_CONFIG
