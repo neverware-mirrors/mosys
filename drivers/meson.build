@@ -3,7 +3,6 @@ libmosys_src += files(
   'superio.c',
 )
 
-subdir('ene')
 subdir('google')
 subdir('intel')
 subdir('ite')
