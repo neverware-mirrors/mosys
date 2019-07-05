@@ -142,7 +142,10 @@ extern const struct nonspd_mem_info samsung_lpddr3_k4e8e304ed_egcc;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e304ee_egce;
 extern const struct nonspd_mem_info samsung_lpddr3_k4e8e324eb_egcf;
 extern const struct nonspd_mem_info samsung_lpddr4_k3uh5h50mm_agcj;
+extern const struct nonspd_mem_info samsung_lpddr4x_kmdh6001da_b422;
 extern const struct nonspd_mem_info samsung_lpddr4x_kmdp6001da_b425;
+extern const struct nonspd_mem_info samsung_lpddr4x_kmdv6001da_b620;
+extern const struct nonspd_mem_info samsung_lpddr4x_k4ube3d4am_mgcj;
 extern const struct nonspd_mem_info sandisk_lpddr4x_sdada4cr_128g;
 
 int spd_set_nonspd_info(struct platform_intf *intf,
