@@ -54,6 +54,7 @@ enum memory_config {
 	SAMSUNG_DDR3_K4E8E304EE_EGCE_1G,
 	SAMSUNG_DDR3_K4E8E324EB_EGCF_1G,
 	SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G,
+	SANDISK_LPDDR4X_SDADA4CR_128G_4GB,
 	MEM_UNKNOWN,
 };
 
@@ -111,6 +112,8 @@ static int kukui_get_memory_config(struct platform_intf *intf)
 		return SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G;
 	case 5:
 		return MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G;
+	case 7:
+		return SANDISK_LPDDR4X_SDADA4CR_128G_4GB;
 	default:
 		lprintf(LOG_ERR, "Not implemented\n");
 	}
@@ -188,6 +191,9 @@ static int kukui_get_mem_info(struct platform_intf *intf,
 		break;
 	case MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G:
 		*info = &micron_lpddr4x_mt29vzzzad8dqksl;
+		break;
+	case SANDISK_LPDDR4X_SDADA4CR_128G_4GB:
+		*info = &sandisk_lpddr4x_sdada4cr_128g;
 		break;
 	default:
 		return -1;

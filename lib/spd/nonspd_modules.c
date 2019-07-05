@@ -843,6 +843,23 @@ static const struct nonspd_mem_info samsung_lpddr4_k4f6e304hb_mgch = {
 		  'M', 'G', 'C', 'H' },
 };
 
+const struct nonspd_mem_info sandisk_lpddr4x_sdada4cr_128g = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4X,
+
+	.module_size_mbits	= 32768,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq 		= { DDR_667, DDR_800, DDR_933, DDR_1067, DDR_1200},
+
+	.module_mfg_id		= { .msb = 0x45, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x45, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'S', 'D', 'A', 'D', 'A', '4', 'C', 'R', '-', '1', '2',
+		  '8', 'G' },
+};
+
+
 // This one is reserved for storing mem info from SMBIOS if no explicit entry
 // was added above.
 static struct nonspd_mem_info part_extracted_from_smbios = {
@@ -899,6 +916,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&samsung_lpddr4_k4f6e3s4hm_mgcj,
 	&samsung_lpddr4_k4f8e304hb_mgcj,
 	&samsung_lpddr4x_kmdp6001da_b425,
+	&sandisk_lpddr4x_sdada4cr_128g,
 };
 
 static int transfer_speed_from_smbios_to_nonspd_mem_info(
