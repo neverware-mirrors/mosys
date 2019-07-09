@@ -60,7 +60,6 @@ extern struct platform_intf platform_rambi;
 extern struct platform_intf platform_reef;
 extern struct platform_intf platform_samus;
 extern struct platform_intf platform_sarien;
-extern struct platform_intf platform_skate;
 extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_storm;
 extern struct platform_intf platform_strago;
@@ -96,7 +95,6 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_nyan,
 	&platform_oak,
 	&platform_pinky,
-	&platform_skate,
 	&platform_storm,
 #ifdef CONFIG_CROS_CONFIG
 	&platform_cheza,
