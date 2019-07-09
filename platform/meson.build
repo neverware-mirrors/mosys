@@ -24,7 +24,6 @@ subdir('oak')
 if use_cros_config
   subdir('octopus')
 endif
-subdir('peach')
 subdir('pinky')
 subdir('poppy')
 subdir('rambi')

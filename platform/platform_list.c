@@ -56,7 +56,6 @@ extern struct platform_intf platform_nami;
 extern struct platform_intf platform_nyan;
 extern struct platform_intf platform_oak;
 extern struct platform_intf platform_octopus;
-extern struct platform_intf platform_peach;
 extern struct platform_intf platform_pinky;
 extern struct platform_intf platform_poppy;
 extern struct platform_intf platform_rambi;
@@ -100,7 +99,6 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_mistral,
 	&platform_nyan,
 	&platform_oak,
-	&platform_peach,
 	&platform_pinky,
 	&platform_skate,
 	&platform_storm,
