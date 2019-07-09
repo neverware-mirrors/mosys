@@ -43,7 +43,6 @@ extern struct platform_intf platform_cheza;
 extern struct platform_intf platform_coral;
 extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_cyclone;
-extern struct platform_intf platform_daisy;
 extern struct platform_intf platform_dragonegg;
 extern struct platform_intf platform_fizz;
 extern struct platform_intf platform_flapjack;
@@ -97,7 +96,6 @@ struct platform_intf *platform_intf_list[] = {
 
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
 	&platform_cyclone,
-	&platform_daisy,
 	&platform_gru,
 	&platform_mistral,
 	&platform_nyan,
