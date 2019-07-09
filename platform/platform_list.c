@@ -43,7 +43,6 @@ extern struct platform_intf platform_cheza;
 extern struct platform_intf platform_coral;
 extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_cyclone;
-extern struct platform_intf platform_dragonegg;
 extern struct platform_intf platform_fizz;
 extern struct platform_intf platform_flapjack;
 extern struct platform_intf platform_glados;
@@ -73,7 +72,6 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_beltino,
 	&platform_coral,
 	&platform_cyan,
-	&platform_dragonegg,
 	&platform_glados,
 	&platform_rambi,
 	&platform_reef,
