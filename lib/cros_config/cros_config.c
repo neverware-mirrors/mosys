@@ -94,6 +94,13 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 			intf, compat_platform_names, -1, sku_info);
 }
 
+#ifdef CONFIG_PLATFORM_ARCH_ARMEL
+static bool match_fdt(const char *name, void *arg)
+{
+	return probe_fdt_compatible(&name, 1, 1) == 0;
+}
+#endif
+
 int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
 					  const char *compat_platform_names[],
 					  const int default_sku_id,
@@ -138,7 +145,7 @@ int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
 			// Platform is compatible, now read the sku info to see
 			// if we can find a device match.
 			return cros_config_read_sku_info_struct(
-			    intf, sku_id, sku_info);
+			    intf, sku_id, sku_info, match_fdt, NULL);
 		}
 	}
 	return -1;
@@ -146,6 +153,26 @@ int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
 	lprintf(LOG_ERR, "Only ARM platforms should call %s\n", __func__);
 	return -1;
 #endif
+}
+
+static bool match_firmware(const char *expected, void *arg)
+{
+	const char *fw_name = (const char *)arg;
+
+	/* Firmware name starts with `Google_`, but currently the data in
+	 * cros_config may come without `Google_`, or in FDT compatible string
+	 * format `google,`.
+	 * TODO(hungte) Remove the conversion when we have migrated all
+	 * model.yaml records to firmware name.
+	 */
+	const char *google = "google";
+	const int len = strlen(google);
+	if (strncasecmp(fw_name, google, len) == 0 && fw_name[len])
+		fw_name += len + 1;
+	if (strncasecmp(expected, google, len) == 0 && expected[len])
+		expected += len + 1;
+
+	return !*expected || !strcasecmp(expected, fw_name);
 }
 
 static int cros_config_read_sku_info_raw(
@@ -173,7 +200,9 @@ static int cros_config_read_sku_info_raw(
 		}
 	}
 
-	return cros_config_read_sku_info_struct(intf, sku_id, sku_info);
+	return cros_config_read_sku_info_struct(
+			intf, sku_id, sku_info, match_firmware,
+			(void *)firmware_name);
 }
 
 int cros_config_read_sku_info(struct platform_intf *intf,

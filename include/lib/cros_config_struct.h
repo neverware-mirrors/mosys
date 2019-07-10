@@ -32,6 +32,8 @@
 #ifndef _CROS_CONFIG_STRUCT_H_
 #define _CROS_CONFIG_STRUCT_H_
 
+#include <stdbool.h>
+
 #include "lib/sku.h"
 #include "mosys/platform.h"
 
@@ -70,11 +72,17 @@ struct config_map {
  * @intf: Platform information, used to access SMBIOS name and SKU ID
  * @sku_id: SKU ID read from the platform.
  * @sku_info: Returns SKU information on success
+ * @match_device: A callback function to check if selected configuration matches
+ *         current device. Returns true if the device is matched.
+ * @match_arg: Additional context for match_device to use.
  * @return: 0 if OK, other value on error
  */
-int cros_config_read_sku_info_struct(struct platform_intf *intf, int sku_id,
-				     struct sku_info *sku_info);
-
+int cros_config_read_sku_info_struct(struct platform_intf *intf,
+				     int sku_id,
+				     struct sku_info *sku_info,
+				     bool (*match_device)(const char *name,
+							  void *arg),
+				     void *match_arg);
 /**
  * cros_config_get_config_map() - Returns a handle to the config map.
  *

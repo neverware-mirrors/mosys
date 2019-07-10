@@ -21,7 +21,10 @@ static const char *str_or_null(const char *in_str)
 
 int cros_config_read_sku_info_struct(struct platform_intf *intf,
 				     int sku_id,
-				     struct sku_info *sku_info)
+				     struct sku_info *sku_info,
+				     bool (*match_device)(const char *name,
+							  void *arg),
+				     void *match_arg)
 {
 	const char *whitelabel_tag = sku_get_whitelabel_from_vpd();
 	const char *customization_id = sku_get_vpd_customization(intf);
@@ -37,7 +40,7 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 		"customization_id='%s'\n", sku_id,
 		str_or_null(whitelabel_tag), str_or_null(customization_id));
 	for (int i = 0; i < config_map_size; i++) {
-		bool device_match = false;
+		bool device_matched = false;
 		const struct config_map *config = &configs[i];
 
 		lprintf(LOG_DEBUG,"   item %d: sku_id=%d, "
@@ -48,21 +51,15 @@ int cros_config_read_sku_info_struct(struct platform_intf *intf,
 		lprintf(LOG_DEBUG,"firmware_name_match='%s'\n",
 			config->firmware_name_match);
 
-#ifdef CONFIG_PLATFORM_ARCH_X86
-		device_match = !*config->firmware_name_match ||
-			!strcmp(smbios_sysinfo_get_name(intf), config->firmware_name_match);
-#else
-		device_match =
-		    probe_fdt_compatible(&config->firmware_name_match, 1, 1) == 0;
-#endif
-
+		device_matched = match_device(config->firmware_name_match,
+					      match_arg);
 		bool sku_match =
 		    (-1 == config->sku_id) || (sku_id == config->sku_id);
 		bool whitelabel_match =
 			!strcmp(whitelabel_tag, config->whitelabel_tag);
 		bool customization_match =
 			!strcmp(customization_id, config->customization_id);
-		if (device_match && sku_match && customization_match &&
+		if (device_matched && sku_match && customization_match &&
 		    whitelabel_match) {
 			intf->name = config->platform_name;
 			memcpy(sku_info, &config->info, sizeof(*sku_info));
