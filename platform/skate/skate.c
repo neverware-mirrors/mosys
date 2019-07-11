@@ -42,6 +42,7 @@
 #include "drivers/samsung/exynos5250/gpio.h"
 
 #include "lib/elog.h"
+#include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -67,40 +68,16 @@ struct platform_cmd *skate_sub[] = {
 	NULL
 };
 
-/* TODO: replace this with proper FDT parsing */
-#define FDT_MODEL_NODE	"/proc/device-tree/model"
-static char *model_from_fdt(void)
-{
-	int fd;
-	static char model[32];
-	int len;
-
-	fd = file_open(FDT_MODEL_NODE, FILE_READ);
-	if (fd < 0) {
-		lperror(LOG_DEBUG, "Unable to open %s", FDT_MODEL_NODE);
-		return NULL;
-	}
-
-	memset(model, 0, sizeof(model));
-	len = read(fd, &model, sizeof(model));
-	if (len < 0) {
-		lprintf(LOG_DEBUG, "%s: Could not read FDT\n", __func__);
-		return NULL;
-	}
-
-	return model;
-}
-
 int skate_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 	const char **id;
-	char *model = NULL;
+	const char *model = NULL;
 
 	if (probed)
 		return status;
 
-	model = model_from_fdt();
+	model = fdt_model();
 
 	for (id = skate_id_list; id && *id; id++) {
 		if (probe_cpuinfo(intf, "Hardware", *id)) {

@@ -104,14 +104,6 @@ extern const char *extract_cpuinfo(const char *key);
 extern const char *extract_block_device_model_name(const char *device);
 
 /*
- * fdt_model - Get platform model from FDT
- *
- * returns pointer to model string to indiciate success
- * returns NULL to indicate failure
- */
-extern char *fdt_model(void);
-
-/*
  * probe_fdt_compatible - Probe platform using device tree "compatible" node
  *
  * @id_list:		Known platform IDs to compare with

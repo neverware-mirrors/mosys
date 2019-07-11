@@ -56,6 +56,7 @@ extern struct nvram_cb cros_spi_flash_nvram_cb;
 #define FDT_RAM_CODE_PATH	"firmware/coreboot/ram-code"
 #define FDT_BOARD_ID_PATH	"firmware/coreboot/board-id"
 #define FDT_SKU_ID_PATH		"firmware/coreboot/sku-id"
+#define FDT_MODEL_NODE		"model"
 
 
 /* returns number of bytes read or -1 to indicate error */
@@ -214,4 +215,17 @@ int fdt_set_nvram_cb(struct platform_intf *intf)
 	}
 
 	return 0;
+}
+
+/* TODO(hungte) Replace fdt_model by probe_frid. */
+const char *fdt_model(void)
+{
+	static char model[33];
+	int len;
+
+	len = fdt_read_node(FDT_MODEL_NODE, model, sizeof(model) - 1);
+	if (len < 0)
+		return NULL;
+
+	return model;
 }

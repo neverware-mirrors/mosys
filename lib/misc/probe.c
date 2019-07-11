@@ -261,30 +261,7 @@ const char *extract_block_device_model_name(const char *device)
 	return (const char *)model_name;
 }
 
-#define FDT_MODEL_NODE	"/proc/device-tree/model"
-char *fdt_model(void)
-{
-	int fd;
-	static char model[32];
-	int len;
-
-	fd = file_open(FDT_MODEL_NODE, FILE_READ);
-	if (fd < 0) {
-		lperror(LOG_DEBUG, "Unable to open %s", FDT_MODEL_NODE);
-		return NULL;
-	}
-
-	memset(model, 0, sizeof(model));
-	len = read(fd, &model, sizeof(model));
-	if (len < 0) {
-		lprintf(LOG_DEBUG, "%s: Could not read FDT\n", __func__);
-		return NULL;
-	}
-
-	return model;
-}
-
-#define FDT_COMPATIBLE	"/proc/device-tree/compatible"
+#define FDT_COMPATIBLE "/proc/device-tree/compatible"
 int probe_fdt_compatible(const char * const id_list[], int num_ids,
 			 int allow_partial)
 {

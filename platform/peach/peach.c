@@ -41,6 +41,7 @@
 #include "drivers/google/cros_ec.h"
 #include "drivers/samsung/exynos5420/gpio.h"
 
+#include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -82,7 +83,7 @@ struct platform_cmd *peach_sub[] = {
 
 int peach_probe(struct platform_intf *intf)
 {
-	char *model = NULL;
+	const char *model = NULL;
 	int found = 0;
 	struct probe_id *id;
 
