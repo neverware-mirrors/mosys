@@ -36,10 +36,12 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "lib/chromeos.h"
 #include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/string_builder.h"
 
+#include "mosys/alloc.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
 
@@ -49,6 +51,7 @@ extern struct nvram_cb cros_spi_flash_nvram_cb;
 
 #define FDT_ROOT		"/proc/device-tree/"
 #define FDT_VBNV_STORAGE_PATH	"firmware/chromeos/nonvolatile-context-storage"
+#define FDT_FRID_PATH		"firmware/chromeos/readonly-firmware-version"
 /* FIXME: assume coreboot for now */
 #define FDT_RAM_CODE_PATH	"firmware/coreboot/ram-code"
 #define FDT_BOARD_ID_PATH	"firmware/coreboot/board-id"
@@ -146,6 +149,23 @@ int fdt_get_sku_id(void)
 
 	lprintf(LOG_DEBUG, "%s: sku_id: %u\n", __func__, sku_id);
 	return sku_id;
+}
+
+int fdt_get_frid(char **buf)
+{
+	int len = CHROMEOS_FRID_MAXLEN;
+	char *frid = mosys_malloc(len);
+
+	len = fdt_read_node(FDT_FRID_PATH, frid, len - 1);
+	if (len < 0) {
+		lprintf(LOG_ERR, "%s: failed to read frid from %s\n",
+			__func__, FDT_FRID_PATH);
+		free(frid);
+	} else {
+		frid[len] = '\0';
+		*buf = frid;
+	}
+	return len;
 }
 
 static enum vbnv_storage_media fdt_get_vbnv_storage(void)

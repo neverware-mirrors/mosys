@@ -45,6 +45,7 @@
 #include "mosys/platform.h"
 
 #include "lib/acpi.h"
+#include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/probe.h"
 #include "lib/smbios.h"
@@ -53,6 +54,16 @@
 #ifndef LINE_MAX
 #define LINE_MAX	512
 #endif
+
+
+static int plat_get_frid(char **buf)
+{
+#ifdef CONFIG_PLATFORM_ARCH_X86
+	return acpi_get_frid(buf);
+#else
+	return fdt_get_frid(buf);
+#endif
+}
 
 int probe_frid(const char *frids[])
 {
@@ -63,7 +74,7 @@ int probe_frid(const char *frids[])
 	if (!id) {
 		char *raw_frid = NULL, *tmp;
 
-		if (acpi_get_frid(&raw_frid) < 0)
+		if (plat_get_frid(&raw_frid) < 0)
 			goto probe_frid_done;
 
 		/* FRID begins with platform name, followed by a dot, followed
