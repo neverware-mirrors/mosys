@@ -63,7 +63,10 @@ struct platform_cmd *sarien_sub[] = {
 	NULL
 };
 
-static const char *platform_names = "Sarien,Arcada";
+static const char *platform_names[] = {
+	"Sarien", "Arcada",
+	NULL
+};
 
 int sarien_probe(struct platform_intf *intf)
 {

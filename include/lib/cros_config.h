@@ -41,13 +41,12 @@ struct sku_info;
  * Read information about the current model.
  *
  * @intf: Platform information, used to access SMBIOS name and SKU ID
- * @find_platform_names: Comma-separated list of platform names that are
- *    permitted
+ * @find_platform_names: Array of permitted platform names, end with NULL
  * @sku_info: Returns SKU information on success
  * @return: 0 if OK, other value on error
  */
 int cros_config_read_sku_info(struct platform_intf *intf,
-			      const char *find_platform_names,
+			      const char *find_platform_names[],
 			      struct sku_info *sku_info);
 
 /**
@@ -60,15 +59,12 @@ int cros_config_read_sku_info(struct platform_intf *intf,
  * @compat_platform_names: Array of platform names that are permitted,
  *    use the platform id not including the leading 'google,'. Platform
  *    id 'google,gru' should pass in only 'gru'. Platform ids are currently
- *    limited to 256 chars.
- * @compat_platform_names_size: Number of elements in the
- *    compat_platform_names array
+ *    limited to 256 chars, and the array must end with NULL.
  * @sku_info: Returns SKU information on success
  * @return: 0 if OK, other value on error
  */
 int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 			          const char *compat_platform_names[],
-				  int compat_platform_names_size,
 			      	  struct sku_info *sku_info);
 /**
  * cros_config_read_default_sku_info_fdt() - read SKU information for current
@@ -81,9 +77,7 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
  * @compat_platform_names: Array of platform names that are permitted,
  *    use the platform id not including the leading 'google,'. Platform
  *    id 'google,gru' should pass in only 'gru'. Platform ids are currently
- *    limited to 256 chars.
- * @compat_platform_names_size: Number of elements in the
- *    compat_platform_names array
+ *    limited to 256 chars, and the array must end with NULL.
  * @default_sku_id: The fallback sku id if fdt_get_sku_id() returns
  *    invalid (<0) sku id. Pass negative value here if we don't want to
  *    fall back.
@@ -92,7 +86,6 @@ int cros_config_read_sku_info_fdt(struct platform_intf *intf,
  */
 int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
 					  const char *compat_platform_names[],
-					  int compat_platform_names_size,
 					  const int default_sku_id,
 					  struct sku_info *sku_info);
 
@@ -103,14 +96,13 @@ int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
  * Read information about the current model.
  *
  * @intf: Platform information, used to access SMBIOS name and SKU ID
- * @find_platform_names: Comma-separated list of platform names that are
- *    permitted
+ * @find_platform_names: Array of permitted platform names, end with NULL
  * @forced_sku_number: forced sku number
  * @sku_info: Returns SKU information on success
  * @return: 0 if OK, other value on error
  */
 int cros_config_read_forced_sku_info(struct platform_intf *intf,
-			             const char *find_platform_names,
+			             const char *find_platform_names[],
 			             const int forced_sku_number,
 			             struct sku_info *sku_info);
 
@@ -118,11 +110,10 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
  * cros_config_smbios_platform_name_match() - shallow match on sbmios name
  *
  * @intf: Platform information, used to access SMBIOS name and SKU ID
- * @find_platform_names: Comma-separated list of platform names that are
- *    permitted
+ * @find_platform_names: Array of permitted platform names, end with NULL
  * @return: 0 if OK, other value on error
  */
 int cros_config_smbios_platform_name_match(struct platform_intf *intf,
-					const char *find_platform_names);
+					   const char *find_platform_names[]);
 
 #endif

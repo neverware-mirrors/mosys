@@ -108,10 +108,13 @@ int glados_probe(struct platform_intf *intf)
 	static struct sku_info sku_info;
 	int ret = 0;
 
-	if (!cros_config_smbios_platform_name_match(intf, "Soraka,Rammus")) {
+	const char *platform1[] = {
+		"Soraka", "Rammus",
+		NULL
+	};
+	if (!cros_config_smbios_platform_name_match(intf, platform1)) {
 		/** Soraka,Rammus will always work correctly, no hacks needed */
-		ret = cros_config_read_sku_info(intf, "Soraka,Rammus",
-					        &sku_info);
+		ret = cros_config_read_sku_info(intf, platform1, &sku_info);
 		if (!ret) {
 			intf->sku_info = &sku_info;
 			return 1;
@@ -119,9 +122,13 @@ int glados_probe(struct platform_intf *intf)
 		return 0;
 	}
 
-	if (!cros_config_smbios_platform_name_match(intf, "Nautilus")) {
+	const char *platform2[] = {
+		"Nautilus",
+		NULL
+	};
+	if (!cros_config_smbios_platform_name_match(intf, platform2)) {
 		/** Nautilus uni-build will work correctly, no hacks needed. */
-		ret = cros_config_read_sku_info(intf, "Nautilus", &sku_info);
+		ret = cros_config_read_sku_info(intf, platform2, &sku_info);
 		if (!ret) {
 			intf->sku_info = &sku_info;
 			return 1;
@@ -132,7 +139,7 @@ int glados_probe(struct platform_intf *intf)
 		lprintf(LOG_DEBUG,
 			"%s: read_sku_info failed for Nautilus, force sku=0\n",
 			__func__);
-		ret = cros_config_read_forced_sku_info(intf, "Nautilus", 0,
+		ret = cros_config_read_forced_sku_info(intf, platform2, 0,
 						       &sku_info);
 		if (!ret) {
 			intf->sku_info = &sku_info;

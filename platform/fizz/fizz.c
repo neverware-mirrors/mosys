@@ -66,12 +66,17 @@ struct platform_cmd *fizz_sub[] = {
 	NULL
 };
 
+static const char *platform_names[] = {
+	"Fizz", "Karma",
+	NULL
+};
+
 int fizz_probe(struct platform_intf *intf)
 {
 	static struct sku_info sku_info;
 	int ret;
 
-	ret = cros_config_read_sku_info(intf, "Fizz,Karma", &sku_info);
+	ret = cros_config_read_sku_info(intf, platform_names, &sku_info);
 
 	/* If there was no error, indicate that we found a match */
 	if (!ret) {

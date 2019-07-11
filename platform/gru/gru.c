@@ -87,10 +87,10 @@ struct platform_cmd *gru_sub[] = {
 static int gru_probe(struct platform_intf *intf)
 {
 #ifdef CONFIG_CROS_CONFIG
-	static const char* platform_arr[] = {"gru"};
+	static const char* platform_arr[] = {"gru", NULL};
 	static struct sku_info sku_info;
 
-	int ret = cros_config_read_default_sku_info_fdt(intf, platform_arr, 1,
+	int ret = cros_config_read_default_sku_info_fdt(intf, platform_arr,
 						        SCARLET_DEFAULT_SKU_ID,
 						        &sku_info);
 	/* If there was no error, indicate that we found a match */

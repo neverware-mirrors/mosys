@@ -50,41 +50,16 @@
 #include "lib/string.h"
 
 
-#ifdef CONFIG_PLATFORM_ARCH_X86
-/**
- * string_in_list() - Check if a name is in a comma-separated list
- *
- * @name: Name to search for
- * @list: List of names to search in, separated by a comma
- * @return true if found, false if not found
- */
-static bool string_in_list(const char *name, const char *list)
-{
-	const char *p, *end;
-
-	for (p = list; *p; p = end + (*end == ',')) {
-		end = strchrnul(p, ',');
-		if (!strncmp(name, p, end - p))
-			return true;
-	}
-
-	return false;
-}
-#endif // CONFIG_PLATFORM_ARCH_X86
-
 int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 				  const char *compat_platform_names[],
-				  int compat_platform_names_size,
 				  struct sku_info *sku_info)
 {
-	return cros_config_read_default_sku_info_fdt(intf,
-		compat_platform_names, compat_platform_names_size,
-		-1, sku_info);
+	return cros_config_read_default_sku_info_fdt(
+			intf, compat_platform_names, -1, sku_info);
 }
 
 int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
 					  const char *compat_platform_names[],
-					  int compat_platform_names_size,
 					  const int default_sku_id,
 					  struct sku_info *sku_info)
 {
@@ -107,7 +82,7 @@ int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
 	// probe_fdt_compatible() returns an index of the matching name
 	// found in the find_platform_names list. Success is an index
 	// that is greater than or equal zero.
-	for (int i = 0; i < compat_platform_names_size; ++i) {
+	for (int i = 0; compat_platform_names[i]; ++i) {
 		char platform_name[MAX_NAME_LEN + 1];
 		platform_name[MAX_NAME_LEN] = '\0';
 		int ret = snprintf(platform_name, MAX_NAME_LEN, "google,%s",
@@ -138,7 +113,7 @@ int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
 }
 
 int cros_config_read_sku_info(struct platform_intf *intf,
-			      const char *find_platform_names,
+			      const char *find_platform_names[],
 			      struct sku_info *sku_info)
 {
 #ifdef CONFIG_PLATFORM_ARCH_X86
@@ -152,11 +127,8 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 	if (sku_id == -1)
 		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
 
-	if (smbios_name && !string_in_list(smbios_name, find_platform_names)) {
-		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
-			__func__, smbios_name, find_platform_names);
+	if (smbios_name && !strlfind(smbios_name, find_platform_names, 1))
 		return -ENOENT;
-	}
 	return cros_config_read_sku_info_struct(intf, sku_id, sku_info);
 #else // CONFIG_PLATFORM_ARCH_X86
 	lprintf(LOG_ERR, "Only X86 platforms should call %s\n", __func__);
@@ -166,7 +138,7 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 
 // TODO(gmeinke): combine read forced sku with existing read function.
 int cros_config_read_forced_sku_info(struct platform_intf *intf,
-				     const char *find_platform_names,
+				     const char *find_platform_names[],
 				     const int forced_sku_number,
 				     struct sku_info *sku_info)
 {
@@ -177,11 +149,8 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 	if (!smbios_name)
 		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
 
-	if (smbios_name && !string_in_list(smbios_name, find_platform_names)) {
-		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
-			__func__, smbios_name, find_platform_names);
+	if (smbios_name && !strlfind(smbios_name, find_platform_names, 1))
 		return -ENOENT;
-	}
 	return cros_config_read_sku_info_struct(intf, forced_sku_number,
 						  sku_info);
 #else // CONFIG_PLATFORM_ARCH_X86
@@ -191,7 +160,7 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 }
 
 int cros_config_smbios_platform_name_match(struct platform_intf *intf,
-					   const char *find_platform_names)
+					   const char *find_platform_names[])
 {
 #ifdef CONFIG_PLATFORM_ARCH_X86
 	const char *smbios_name;
@@ -202,11 +171,8 @@ int cros_config_smbios_platform_name_match(struct platform_intf *intf,
 		return -ENOENT;
 	}
 
-	if (!string_in_list(smbios_name, find_platform_names)) {
-		lprintf(LOG_DEBUG, "%s: Could not locate name '%s' in '%s'\n",
-			__func__, smbios_name, find_platform_names);
+	if (!strlfind(smbios_name, find_platform_names, 1))
 		return -ENOENT;
-	}
 
 	return 0;
 #else // CONFIG_PLATFORM_ARCH_X86
