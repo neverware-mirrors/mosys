@@ -60,14 +60,14 @@ struct platform_cmd *hatch_sub[] = {
 };
 
 static const char *platform_names[] = {
-	"Hatch", "Kohaku", "Helios", "Kindred",
+	"Google_Hatch", "Google_Kohaku", "Google_Helios", "Google_Kindred",
 	NULL
 };
 
 int hatch_probe(struct platform_intf *intf)
 {
 	/* Perform a shallow probe based solely on smbios name. */
-	if (!cros_config_smbios_platform_name_match(intf, platform_names))
+	if (!cros_config_firmware_name_match(intf, platform_names))
 		return 1;
 	return 0;
 }

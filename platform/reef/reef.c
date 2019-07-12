@@ -121,7 +121,7 @@ int reef_probe(struct platform_intf *intf)
 	int ret;
 
 	const char *platform_names[] = {
-		"Reef", "Pyro", "Sand", "Snappy",
+		"Google_Reef", "Google_Pyro", "Google_Sand", "Google_Snappy",
 		NULL
 	};
 
@@ -176,7 +176,7 @@ int coral_probe(struct platform_intf *intf)
 	static struct sku_info sku_info;
 	int ret;
 	const char *platform_names[] = {
-		"Coral",
+		"Google_Coral",
 		NULL
 	};
 

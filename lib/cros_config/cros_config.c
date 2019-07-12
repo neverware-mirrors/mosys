@@ -38,9 +38,11 @@
 #include <string.h>
 
 #include "mosys/alloc.h"
+#include "mosys/callbacks.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
+#include "lib/acpi.h"
 #include "lib/cros_config.h"
 #include "lib/cros_config_struct.h"
 #include "lib/fdt.h"
@@ -49,6 +51,40 @@
 #include "lib/smbios.h"
 #include "lib/string.h"
 
+static int get_sku_id(struct platform_intf *intf)
+{
+#ifdef CONFIG_PLATFORM_ARCH_X86
+	return smbios_sysinfo_get_sku_number(intf);
+#else
+	return fdt_get_sku_id();
+#endif
+}
+
+static const char *get_firmware_name(struct platform_intf *intf)
+{
+	static char *fw_name;
+	int len;
+
+	if (fw_name)
+		return fw_name;
+
+#ifdef CONFIG_PLATFORM_ARCH_X86
+	len = acpi_get_frid(&fw_name);
+#else
+	len = fdt_get_frid(&fw_name);
+#endif
+	if (len < 0) {
+		free(fw_name);
+		fw_name = NULL;
+	} else {
+		/* Discard the version and time stamp. */
+		char *dot = strchr(fw_name, '.');
+		if (dot)
+			*dot = '\0';
+		add_destroy_callback(free, fw_name);
+	}
+	return fw_name;
+}
 
 int cros_config_read_sku_info_fdt(struct platform_intf *intf,
 				  const char *compat_platform_names[],
@@ -112,70 +148,64 @@ int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
 #endif
 }
 
+static int cros_config_read_sku_info_raw(
+		struct platform_intf *intf, const char *find_platform_names[],
+		struct sku_info *sku_info, int default_sku_id, int force_sku)
+{
+	const char *firmware_name;
+	int sku_id;
+
+	firmware_name = get_firmware_name(intf);
+	if (!firmware_name) {
+		lprintf(LOG_DEBUG, "%s: Unknown firmware name\n", __func__);
+		return -1;
+	}
+	if (!strlfind(firmware_name, find_platform_names, 1))
+		return -ENOENT;
+
+	if (force_sku) {
+		sku_id = default_sku_id;
+	} else {
+		sku_id = get_sku_id(intf);
+		if (sku_id == -1) {
+			lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
+			sku_id = default_sku_id;
+		}
+	}
+
+	return cros_config_read_sku_info_struct(intf, sku_id, sku_info);
+}
+
 int cros_config_read_sku_info(struct platform_intf *intf,
 			      const char *find_platform_names[],
 			      struct sku_info *sku_info)
 {
-#ifdef CONFIG_PLATFORM_ARCH_X86
-	const char *smbios_name;
-	int sku_id;
-
-	smbios_name = smbios_sysinfo_get_name(intf);
-	if (!smbios_name)
-		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
-	sku_id = smbios_sysinfo_get_sku_number(intf);
-	if (sku_id == -1)
-		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
-
-	if (smbios_name && !strlfind(smbios_name, find_platform_names, 1))
-		return -ENOENT;
-	return cros_config_read_sku_info_struct(intf, sku_id, sku_info);
-#else // CONFIG_PLATFORM_ARCH_X86
-	lprintf(LOG_ERR, "Only X86 platforms should call %s\n", __func__);
-	return -1;
-#endif
+	return cros_config_read_sku_info_raw(
+			intf, find_platform_names, sku_info, -1, 0);
 }
 
-// TODO(gmeinke): combine read forced sku with existing read function.
 int cros_config_read_forced_sku_info(struct platform_intf *intf,
 				     const char *find_platform_names[],
-				     const int forced_sku_number,
+				     const int forced_sku_id,
 				     struct sku_info *sku_info)
 {
-#ifdef CONFIG_PLATFORM_ARCH_X86
-	const char *smbios_name;
-
-	smbios_name = smbios_sysinfo_get_name(intf);
-	if (!smbios_name)
-		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
-
-	if (smbios_name && !strlfind(smbios_name, find_platform_names, 1))
-		return -ENOENT;
-	return cros_config_read_sku_info_struct(intf, forced_sku_number,
-						  sku_info);
-#else // CONFIG_PLATFORM_ARCH_X86
-	lprintf(LOG_ERR, "Only X86 platforms should call %s\n", __func__);
-	return -1;
-#endif
+	return cros_config_read_sku_info_raw(
+			intf, find_platform_names, sku_info, forced_sku_id, 1);
 }
 
-int cros_config_smbios_platform_name_match(struct platform_intf *intf,
-					   const char *find_platform_names[])
+int cros_config_firmware_name_match(struct platform_intf *intf,
+				    const char *find_firmware_names[])
 {
-#ifdef CONFIG_PLATFORM_ARCH_X86
-	const char *smbios_name;
+	const char *firmware_name;
 
-	smbios_name = smbios_sysinfo_get_name(intf);
-	if (!smbios_name) {
-		lprintf(LOG_DEBUG, "%s: Unknown SMBIOS name\n", __func__);
+	firmware_name = get_firmware_name(intf);
+	if (!firmware_name) {
+		lprintf(LOG_DEBUG, "%s: Unknown firmware name\n", __func__);
 		return -ENOENT;
 	}
 
-	if (!strlfind(smbios_name, find_platform_names, 1))
+	if (!strlfind(firmware_name, find_firmware_names, 1))
 		return -ENOENT;
 
 	return 0;
-#else // CONFIG_PLATFORM_ARCH_X86
-	return -ENOENT;
-#endif
 }

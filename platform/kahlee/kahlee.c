@@ -62,7 +62,7 @@ struct platform_cmd *kahlee_sub[] = {
 };
 
 static const char *platform_names[] = {
-	"Kahlee", "Grunt",
+	"Google_Kahlee", "Google_Grunt",
 	NULL
 };
 

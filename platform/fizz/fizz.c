@@ -67,7 +67,7 @@ struct platform_cmd *fizz_sub[] = {
 };
 
 static const char *platform_names[] = {
-	"Fizz", "Karma",
+	"Google_Fizz", "Google_Karma",
 	NULL
 };
 

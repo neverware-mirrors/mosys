@@ -61,15 +61,16 @@ struct platform_cmd *octopus_sub[] = {
 };
 
 static const char *platform_names[] = {
-	"Ampton", "Bip", "Bloog", "Bobba", "Casta", "Fleex", "Garg", "Meep",
-	"Phaser", "Yorp",
+	"Google_Ampton", "Google_Bip", "Google_Bloog", "Google_Bobba",
+	"Google_Casta", "Google_Fleex", "Google_Garg", "Google_Meep",
+	"Google_Phaser", "Google_Yorp",
 	NULL
 };
 
 int octopus_probe(struct platform_intf *intf)
 {
-	/* Perform a shallow probe based solely on smbios name. */
-	if (!cros_config_smbios_platform_name_match(intf, platform_names))
+	/* Perform a shallow probe based solely on firmware name. */
+	if (!cros_config_firmware_name_match(intf, platform_names))
 		return 1;
 
 	return 0;

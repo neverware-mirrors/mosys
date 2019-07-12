@@ -97,23 +97,23 @@ int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
  *
  * @intf: Platform information, used to access SMBIOS name and SKU ID
  * @find_platform_names: Array of permitted platform names, end with NULL
- * @forced_sku_number: forced sku number
+ * @forced_sku_id: forced sku ID number
  * @sku_info: Returns SKU information on success
  * @return: 0 if OK, other value on error
  */
 int cros_config_read_forced_sku_info(struct platform_intf *intf,
 			             const char *find_platform_names[],
-			             const int forced_sku_number,
+			             const int forced_sku_id,
 			             struct sku_info *sku_info);
 
 /**
- * cros_config_smbios_platform_name_match() - shallow match on sbmios name
+ * cros_config_firmware_name_match() - shallow match on firmware name
  *
  * @intf: Platform information, used to access SMBIOS name and SKU ID
- * @find_platform_names: Array of permitted platform names, end with NULL
+ * @find_firmware_names: Array of permitted firmware names, end with NULL
  * @return: 0 if OK, other value on error
  */
-int cros_config_smbios_platform_name_match(struct platform_intf *intf,
-					   const char *find_platform_names[]);
+int cros_config_firmware_name_match(struct platform_intf *intf,
+				    const char *find_firmware_names[]);
 
 #endif

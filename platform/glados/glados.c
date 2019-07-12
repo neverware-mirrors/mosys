@@ -109,10 +109,10 @@ int glados_probe(struct platform_intf *intf)
 	int ret = 0;
 
 	const char *platform1[] = {
-		"Soraka", "Rammus",
+		"Google_Soraka", "Google_Rammus",
 		NULL
 	};
-	if (!cros_config_smbios_platform_name_match(intf, platform1)) {
+	if (!cros_config_firmware_name_match(intf, platform1)) {
 		/** Soraka,Rammus will always work correctly, no hacks needed */
 		ret = cros_config_read_sku_info(intf, platform1, &sku_info);
 		if (!ret) {
@@ -123,10 +123,10 @@ int glados_probe(struct platform_intf *intf)
 	}
 
 	const char *platform2[] = {
-		"Nautilus",
+		"Google_Nautilus",
 		NULL
 	};
-	if (!cros_config_smbios_platform_name_match(intf, platform2)) {
+	if (!cros_config_firmware_name_match(intf, platform2)) {
 		/** Nautilus uni-build will work correctly, no hacks needed. */
 		ret = cros_config_read_sku_info(intf, platform2, &sku_info);
 		if (!ret) {

@@ -64,7 +64,7 @@ struct platform_cmd *nami_sub[] = {
 };
 
 static const char *platform_names[] = {
-	"Nami",
+	"Google_Nami",
 	NULL
 };
 

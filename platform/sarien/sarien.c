@@ -64,7 +64,7 @@ struct platform_cmd *sarien_sub[] = {
 };
 
 static const char *platform_names[] = {
-	"Sarien", "Arcada",
+	"Google_Sarien", "Google_Arcada",
 	NULL
 };
 
