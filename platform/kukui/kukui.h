@@ -1,5 +1,5 @@
 /*
- * Copyright 2013, Google Inc.
+ * Copyright 2019, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,34 +29,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/alloc.h"
+#ifndef PLATFORM_OAK_H
+#define PLATFORM_OAK_H
+
+#include <inttypes.h>
 #include "mosys/platform.h"
 
-#include "drivers/google/cros_ec.h"
+#define KUKUI_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
 
-#include "lib/probe.h"
-#include "lib/fdt.h"
+/* platform callbacks */
+extern struct eeprom_cb kukui_eeprom_cb;
+extern struct memory_cb kukui_memory_cb;
+extern struct nvram_cb cros_ec_nvram_cb;
+extern struct nvram_cb cros_spi_flash_nvram_cb;
+extern struct sys_cb kukui_sys_cb;
 
-static char *oak_get_vendor(struct platform_intf *intf)
-{
-	char *ret = NULL;
-
-	ret = mosys_strdup("Google");
-
-	return ret;
-}
-
-static char *oak_get_name(struct platform_intf *intf)
-{
-	char *ret = NULL;
-
-	ret = mosys_strdup(intf->name);
-
-	return ret;
-}
-
-struct sys_cb oak_sys_cb = {
-	.vendor			= &oak_get_vendor,
-	.name			= &oak_get_name,
-	.version		= &cros_ec_board_version_str,
-};
+#endif /* PLATFORM_OAK_H */

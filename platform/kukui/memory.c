@@ -1,5 +1,5 @@
 /*
- * Copyright 2014, Google Inc.
+ * Copyright 2019, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,20 +35,16 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include "oak.h"
+#include "kukui.h"
 
-#define OAK_DIMM_COUNT 2
+#define DIMM_COUNT 1
 
-enum oak_memory_config {
-	HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G,
-	HYNIX_DDR3_H9CCNNNBJTALAR_NUD_2G,
-	HYNIX_DDR3_H9CCNNNBLTBLAR_NUD_2G,
-	MICRON_DDR3_MT52L256M32D1PF_107WTB_1G,
-	MICRON_DDR3_MT52L512M32D2PF_107WTB_2G,
-	SAMSUNG_DDR3_K4E6E304EB_EGCF_2G,
-	SAMSUNG_DDR3_K4E6E304EE_EGCE_2G,
-	SAMSUNG_DDR3_K4E8E304EE_EGCE_1G,
-	SAMSUNG_DDR3_K4E8E324EB_EGCF_1G,
+enum memory_config {
+	HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G,
+	MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G,
+	MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G,
+	SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G,
+	SANDISK_LPDDR4X_SDADA4CR_128G_4GB,
 	MEM_UNKNOWN,
 };
 
@@ -62,27 +58,18 @@ static int get_memory_config(struct platform_intf *intf)
 	}
 
 	switch (ram_code) {
-	case 0:
-		return HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G;
 	case 1:
-		return SAMSUNG_DDR3_K4E8E304EE_EGCE_1G;
+		return HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G;
 	case 2:
-		return SAMSUNG_DDR3_K4E6E304EE_EGCE_2G;
+		return MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G;
 	case 3:
-		return HYNIX_DDR3_H9CCNNNBLTBLAR_NUD_2G;
-	case 4:
-		return SAMSUNG_DDR3_K4E6E304EB_EGCF_2G;
+		return SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G;
 	case 5:
-		return SAMSUNG_DDR3_K4E8E324EB_EGCF_1G;
-	case 6:
-		return MICRON_DDR3_MT52L512M32D2PF_107WTB_2G;
+		return MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G;
 	case 7:
-		return HYNIX_DDR3_H9CCNNNBJTALAR_NUD_2G;
-	case 8:
-		return MICRON_DDR3_MT52L256M32D1PF_107WTB_1G;
-
+		return SANDISK_LPDDR4X_SDADA4CR_128G_4GB;
 	default:
-		lprintf(LOG_ERR, "Unable to determine memory configuration\n");
+		lprintf(LOG_ERR, "Not implemented\n");
 	}
 
 	return MEM_UNKNOWN;
@@ -97,40 +84,27 @@ static int get_memory_config(struct platform_intf *intf)
  */
 static int dimm_count(struct platform_intf *intf)
 {
-	return OAK_DIMM_COUNT;
-
+	return DIMM_COUNT;
 }
 
 static int get_mem_info(struct platform_intf *intf,
 			const struct nonspd_mem_info **info)
 {
 	switch (get_memory_config(intf)) {
-	case HYNIX_DDR3_H9CCNNN8GTMLAR_NUD_1G:
-		*info = &hynix_lpddr3_h9ccnnn8gtmlar_nud;
+	case HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G:
+		*info = &hynix_lpddr4x_h9hcnnncpmalhr_nee;
 		break;
-	case HYNIX_DDR3_H9CCNNNBJTALAR_NUD_2G:
-		*info = &hynix_lpddr3_h9ccnnnbjtalar_nud;
+	case MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G:
+		*info = &micron_lpddr4x_mt53e1g32d4nq_046wte;
 		break;
-	case HYNIX_DDR3_H9CCNNNBLTBLAR_NUD_2G:
-		*info = &hynix_lpddr3_h9ccnnnbltblar_nud;
+	case SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G:
+		*info = &samsung_lpddr4x_kmdp6001da_b425;
 		break;
-	case MICRON_DDR3_MT52L256M32D1PF_107WTB_1G:
-		*info = &micron_lpddr3_mt52l256m32d1pf_107wtb;
+	case MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G:
+		*info = &micron_lpddr4x_mt29vzzzad8dqksl;
 		break;
-	case MICRON_DDR3_MT52L512M32D2PF_107WTB_2G:
-		*info = &micron_lpddr3_mt52l512m32d2pf_107wtb;
-		break;
-	case SAMSUNG_DDR3_K4E6E304EB_EGCF_2G:
-		*info = &samsung_lpddr3_k4e6e304eb_egcf;
-		break;
-	case SAMSUNG_DDR3_K4E6E304EE_EGCE_2G:
-		*info = &samsung_lpddr3_k4e6e304ee_egce;
-		break;
-	case SAMSUNG_DDR3_K4E8E304EE_EGCE_1G:
-		*info = &samsung_lpddr3_k4e8e304ee_egce;
-		break;
-	case SAMSUNG_DDR3_K4E8E324EB_EGCF_1G:
-		*info = &samsung_lpddr3_k4e8e324eb_egcf;
+	case SANDISK_LPDDR4X_SDADA4CR_128G_4GB:
+		*info = &sandisk_lpddr4x_sdada4cr_128g;
 		break;
 	default:
 		return -1;
@@ -138,7 +112,7 @@ static int get_mem_info(struct platform_intf *intf,
 	return 0;
 }
 
-struct memory_cb oak_memory_cb = {
+struct memory_cb kukui_memory_cb = {
 	.dimm_count		= dimm_count,
-	.nonspd_mem_info	= &get_mem_info,
+	.nonspd_mem_info	= get_mem_info,
 };

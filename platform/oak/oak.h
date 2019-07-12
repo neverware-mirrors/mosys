@@ -36,18 +36,14 @@
 #include "mosys/platform.h"
 
 #define OAK_HOST_FIRMWARE_ROM_SIZE		(4096 * 1024)
-#define KUKUI_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
 
 /* platform callbacks */
 extern struct eeprom_cb oak_eeprom_cb;
-extern struct eeprom_cb kukui_eeprom_cb;
 extern struct memory_cb oak_memory_cb;
-extern struct memory_cb kukui_memory_cb;
 extern struct nvram_cb cros_ec_nvram_cb;
 extern struct nvram_cb cros_spi_flash_nvram_cb;
 extern struct oak_psu_cb oak_psu_cb;
 extern struct sys_cb oak_sys_cb;
-extern struct sys_cb kukui_sys_cb;
 
 /* functions called by setup routines */
 extern int oak_vpd_setup(struct platform_intf *intf);

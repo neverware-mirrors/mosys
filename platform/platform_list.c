@@ -96,9 +96,7 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
 	&platform_cyclone,
 	&platform_daisy,
-	&platform_flapjack,
 	&platform_gru,
-	&platform_kukui,
 	&platform_mistral,
 	&platform_nyan,
 	&platform_oak,
@@ -108,6 +106,7 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_storm,
 #ifdef CONFIG_CROS_CONFIG
 	&platform_cheza,
+	&platform_kukui,
 #endif // CONFIG_CROS_CONFIG
 #endif // CONFIG_PLATFORM_ARCH_ARMEL
 	NULL

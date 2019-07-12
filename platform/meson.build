@@ -15,6 +15,9 @@ subdir('glados')
 subdir('gru')
 subdir('hatch')
 subdir('kahlee')
+if use_cros_config
+  subdir('kukui')
+endif
 subdir('mistral')
 subdir('nami')
 subdir('nyan')

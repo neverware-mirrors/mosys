@@ -1,5 +1,5 @@
 /*
- * Copyright 2013, Google Inc.
+ * Copyright 2019, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,8 +36,9 @@
 
 #include "lib/probe.h"
 #include "lib/fdt.h"
+#include "lib/sku.h"
 
-static char *oak_get_vendor(struct platform_intf *intf)
+static char *kukui_get_vendor(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
@@ -46,7 +47,7 @@ static char *oak_get_vendor(struct platform_intf *intf)
 	return ret;
 }
 
-static char *oak_get_name(struct platform_intf *intf)
+static char *kukui_get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
 
@@ -55,8 +56,15 @@ static char *oak_get_name(struct platform_intf *intf)
 	return ret;
 }
 
-struct sys_cb oak_sys_cb = {
-	.vendor			= &oak_get_vendor,
-	.name			= &oak_get_name,
-	.version		= &cros_ec_board_version_str,
+static int kukui_get_sku_id(struct platform_intf *intf)
+{
+	return fdt_get_sku_id();
+}
+
+struct sys_cb kukui_sys_cb = {
+	.vendor			= kukui_get_vendor,
+	.name			= kukui_get_name,
+	.version		= cros_ec_board_version_str,
+	.sku_number		= kukui_get_sku_id,
+	.signature_id		= sku_get_signature_id,
 };

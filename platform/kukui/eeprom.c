@@ -1,5 +1,5 @@
 /*
- * Copyright 2014, Google Inc.
+ * Copyright 2019, Google Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,11 +44,12 @@
 #include "lib/eeprom.h"
 #include "lib/flashrom.h"
 
-#include "oak.h"
+#include "kukui.h"
 
+// TODO: probe firmware size from flashrom
 static int host_firmware_size(struct platform_intf *intf)
 {
-	return OAK_HOST_FIRMWARE_ROM_SIZE;
+	return KUKUI_HOST_FIRMWARE_ROM_SIZE;
 }
 
 static int host_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
@@ -145,6 +146,6 @@ static struct eeprom eeproms[] = {
 	{ 0 },
 };
 
-struct eeprom_cb oak_eeprom_cb = {
+struct eeprom_cb kukui_eeprom_cb = {
 	.eeprom_list	= eeproms,
 };
