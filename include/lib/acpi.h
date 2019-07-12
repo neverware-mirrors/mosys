@@ -32,11 +32,6 @@
 #ifndef MOSYS_LIB_ACPI_H__
 #define MOSYS_LIB_ACPI_H__
 
-/* Chrome OS ACPI stuff */
-#define CHROMEOS_ACPI_PATH	"/sys/devices/platform/chromeos_acpi/"
-#define CHROMEOS_HWID_MAXLEN	256
-#define CHROMEOS_FRID_MAXLEN	256
-
 /* Registers from ACPI 4.0 spec */
 #define ACPI_EC_SC	0x66		/* ACPI command/status port */
 #define ACPI_EC_DATA	0x62		/* ACPI data port */
