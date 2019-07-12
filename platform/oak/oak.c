@@ -108,13 +108,14 @@ static int oak_probe(struct platform_intf *intf)
 static int kukui_probe(struct platform_intf *intf)
 {
 #ifdef CONFIG_CROS_CONFIG
-	static const char* platform_arr[] = {
-		"krane", "kukui", "flapjack",
-		NULL,
+	/* Put base board at last entry, and one NULL after that. */
+	static const char* firmware_names[] = {
+		"Google_Krane", "Google_Flapjack",
+		"Google_Kukui", NULL,
 	};
 	static struct sku_info sku_info;
 
-	int ret = cros_config_read_sku_info_fdt(intf, platform_arr, &sku_info);
+	int ret = cros_config_read_sku_info(intf, firmware_names, &sku_info);
 	/* If there was no error, indicate that we found a match */
 	if (!ret) {
 		intf->sku_info = &sku_info;
