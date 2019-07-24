@@ -66,6 +66,8 @@ static int kukui_probe(struct platform_intf *intf)
 {
 	static const char* firmware_names[] = {
 		"Google_Flapjack",
+		"Google_Jacuzzi",
+		"Google_Kodama",
 		"Google_Krane",
 		"Google_Kukui",
 		NULL,
