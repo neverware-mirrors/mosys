@@ -65,8 +65,7 @@ static void scanft_test(void **state)
 	// │   ├── dir2_symlink -> ../dir2
 	// │   ├── needle0
 	// │   └── subdir
-	// │       ├── needle1
-	// │       └── self_symlink -> ../subdir
+	// │       └── needle1
 	// └── dir2
 	//     └── needle2
 	//
@@ -101,15 +100,6 @@ static void scanft_test(void **state)
 	assert_non_null(scanft(&list, root, /*filename=*/"needle2",
 			       /*str=*/NULL,
 			       /*maxdepth=*/-1, /*symdepth=*/1));
-	list_cleanup(&list);
-
-	/*
-	 * The fourth needle doesn't exist so scanft() should return NULL. A
-	 * self-referencing directory symlink has been added to the hierarchy to
-	 * test symlink depth handling.
-	 */
-	assert_null(scanft(&list, root, /*filename=*/"needle3", /*str=*/NULL,
-			   /*maxdepth=*/-1, /*symdepth=*/100));
 	list_cleanup(&list);
 }
 
