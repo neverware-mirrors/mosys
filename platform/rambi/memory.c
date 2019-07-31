@@ -427,13 +427,16 @@ static int rambi_spd_read_cbfs(struct platform_intf *intf,
 
 	if (first_run) {
 		bootblock = mosys_malloc(size);	/* FIXME: overkill */
-		add_destroy_callback(free, bootblock);
-		first_run = 0;
 
 		/* read SPD from CBFS entry located within bootblock region */
 		if (flashrom_read(bootblock, size,
-				  INTERNAL_BUS_SPI, "BOOT_STUB") < 0)
+				  INTERNAL_BUS_SPI, "BOOT_STUB") < 0) {
+			free(bootblock);
 			return -1;
+		}
+
+		add_destroy_callback(free, bootblock);
+		first_run = 0;
 	}
 
 	if ((file = cbfs_find("spd.bin", bootblock, size)) == NULL)
