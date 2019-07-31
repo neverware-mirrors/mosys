@@ -176,6 +176,5 @@ void *cbfs_find_file(const char *name, int type, const uint8_t *buf, size_t size
 
 /* returns 0 on success, -1 on failure */
 int cbfs_decompress(int algo, void *src, void *dst, int len);
-struct cbfs_header *get_cbfs_header(const uint8_t *buf, size_t size);
 #endif
 

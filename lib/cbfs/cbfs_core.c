@@ -45,7 +45,8 @@
 #include "lib/cbfs_core.h"
 #include "lib/math.h"
 
-struct cbfs_header *get_cbfs_header(const uint8_t *buf, size_t size)
+/* returns a pointer to the header on success, 0xffffffff on failure */
+static struct cbfs_header *get_cbfs_header(const uint8_t *buf, size_t size)
 {
 	struct cbfs_header *header = NULL;
 	uint32_t *header_ptr = NULL;
@@ -58,6 +59,19 @@ struct cbfs_header *get_cbfs_header(const uint8_t *buf, size_t size)
 	 */
 	header_ptr = (uint32_t *)((buf + size) - 4);
 	header = (struct cbfs_header *)((*header_ptr - (0xffffffff - size + 1)) + buf);
+
+	/*
+	 * Avoid touching the great beyond in case *header_ptr isn't so
+	 * valid.
+	 */
+	if (((uint8_t *)header < buf) ||
+	    ((uint8_t *)(header + 1) > (buf + size))) {
+
+		lprintf(LOG_DEBUG, "CBFS header pointer %x is invalid.\n",
+				   *header_ptr);
+
+		return (void *)0xffffffff;
+	}
 
 	/* find header */
 	if (CBFS_HEADER_MAGIC != ntohl(header->magic)) {
