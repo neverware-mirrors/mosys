@@ -443,8 +443,11 @@ int cros_ish_setup_dev(struct platform_intf *intf)
 		lprintf(LOG_DEBUG, "CrOS ISH found via kernel driver\n");
 	else if (ret == 0)
 		lprintf(LOG_DEBUG, "CrOS ISH not found via kernel driver\n");
-	else
-		lprintf(LOG_ERR, "Error probing CrOS ISH via kernel driver\n");
+	else {
+		/* Allow PD probe to fail if not present on a board */
+		lprintf(LOG_DEBUG, "Error probing CrOS ISH via kernel driver\n");
+		intf->cb->ish = NULL;
+	}
 
 	return ret;
 }
