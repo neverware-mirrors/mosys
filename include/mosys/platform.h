@@ -420,14 +420,6 @@ struct psu_cb {
 	enum psu_types (*type)(struct platform_intf *intf);
 };
 
-/* storage device callbacks */
-struct storage_cb {
-	const char *(*get_model_name)(struct platform_intf *intf);
-	enum storage_phy_speed (*get_phy_speed)(struct platform_intf *intf);
-	int (*set_phy_speed)(struct platform_intf *intf,
-			     enum storage_phy_speed phy_speed);
-};
-
 /* platform-specific callbacks */
 struct platform_cb {
 	struct sensor_cb *sensor;	/* sensor callbacks */
@@ -451,7 +443,6 @@ struct platform_cb {
 	struct legacy_ec_cb *legacy_ec;	/* legacy ec callbacks */
 	struct hid_cb *hid;		/* hid callbacks */
 	struct battery_cb *battery;	/* battery callbacks */
-	struct storage_cb *storage;	/* storage callbacks */
 	struct psu_cb *psu;		/* power supply callbacks */
 };
 
