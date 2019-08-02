@@ -223,12 +223,6 @@ struct eventlog_cb {
 	int (*write)(struct platform_intf *intf, uint8_t *data, size_t length);
 };
 
-/* boot number callbacks */
-struct bootnum_cb {
-	uint32_t(*read)(struct platform_intf *intf);
-	int (*reset)(struct platform_intf *intf);
-};
-
 /* NVRAM callbacks */
 struct nvram_cb {
 	int (*list)(struct platform_intf *intf);
@@ -413,7 +407,6 @@ struct platform_cb {
 	struct sensor_cb *sensor;	/* sensor callbacks */
 	struct memory_cb *memory;	/* memory callbacks */
 	struct eventlog_cb *eventlog;	/* eventlog callbacks */
-	struct bootnum_cb *bootnum;	/* boot number callbacks */
 	struct smbios_cb *smbios;	/* smbios related callbacks */
 	struct sys_cb *sys;		/* system callbacks */
 	struct flash_cb *flash;		/* flash related callbacks */
