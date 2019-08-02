@@ -46,52 +46,6 @@
 
 #include "lib/math.h"
 
-static void ctz_test(void **state)
-{
-	unsigned long long int u;
-	uint8_t u8;
-	uint16_t u16;
-	uint32_t u32;
-	uint64_t u64;
-
-	/* Test -1, 0, 1 as unsigned long long ints and some numbers of
-	 * common sizes */
-	u = -1;
-	assert_int_equal(0, ctz(u));
-	u = 0; /* The corner case for the "cast to float" algorithm */
-	assert_int_equal(0, ctz(u));
-	u = 1;
-	assert_int_equal(0, ctz(u));
-
-	u8 = 0xF0;
-	u16 = 0xFF00;
-	u32 = 0xFFFF0000;
-	u64 = 0xFFFFFFFF00000000ULL;
-	assert_int_equal(4, ctz(u8));
-	assert_int_equal(8, ctz(u16));
-	assert_int_equal(16, ctz(u32));
-	assert_int_equal(32, ctz(u64));
-}
-
-static void logbase2_test(void **state)
-{
-	int i;
-
-	/* Corner case, returns 0 */
-	assert_int_equal(logbase2(0), 0);
-
-	/* Test results for perfect powers of 2, positive and negative */
-	for (i = 0; i < sizeof(i) * CHAR_BIT; i++) {
-		assert_int_equal(i, logbase2(1 << i));
-		assert_int_equal(i, logbase2(-(1 << i)));
-	}
-
-	/* Test non-power-of-2 numbers */
-	for (i = 2; i < sizeof(i) * CHAR_BIT; i++) {
-		assert_int_equal(i, logbase2((1 << i) + 1));
-	}
-}
-
 static void rolling8_csum_test(void **state)
 {
 	size_t len = 256;
@@ -150,8 +104,6 @@ static void macro_unittest(void **state)
 int main(void)
 {
 	const struct CMUnitTest tests[] = {
-	    cmocka_unit_test(ctz_test),
-	    cmocka_unit_test(logbase2_test),
 	    cmocka_unit_test(rolling8_csum_test),
 	    cmocka_unit_test(macro_unittest),
 	};

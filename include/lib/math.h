@@ -40,40 +40,12 @@
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 /*
- * Count the number of low-order 0 bits.
- */
-extern int ctz(unsigned long long int u);
-
-/*
- * Get the integral log2 of a number.
- *
- * If n is not a perfect power of 2, this function will return return the
- * log2 of the largest power of 2 less than n.
- *
- * If n is negative, this functions will return the log of abs(n).
- */
-extern int logbase2(int n);
-
-/*
  * rolling8_csum  -  Bytewise rolling summation "checksum" of a buffer
  *
  * @buf:	buffer to sum
  * @len:	length of buffer
  */
 extern uint8_t rolling8_csum(uint8_t *buf, size_t len);
-
-/*
-  * zero8_csum - Calculates 8-bit zero-sum checksum
-  *
-  * @buf:	input buffer
-  * @len:	length of buffer
-  * 
-  * The summation of the bytes in the array and the csum will equal zero
-  * for 8-bit data size.
-  *
-  * returns checksum to indicate success
-  */
-extern uint8_t zero8_csum(uint8_t *buf, size_t len);
 
 #ifndef __mask
 # define __mask(high, low) ((1ULL << (high)) + \
