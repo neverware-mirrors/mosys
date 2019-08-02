@@ -234,12 +234,7 @@ struct nvram_cb {
 };
 
 /* EEPROM and EEPROM-related callbacks */
-struct eeprom_enet_cb {
-	int (*read)(struct platform_intf *intf, int argc, char **argv);
-	int (*write)(struct platform_intf *intf, int argc, char **argv);
-};
 struct eeprom_cb {
-	struct eeprom_enet_cb *enet;
 	struct eeprom *eeprom_list;
 };
 

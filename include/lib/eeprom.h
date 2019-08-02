@@ -42,14 +42,12 @@ enum eeprom_type {
 	EEPROM_RAW,		/* arbitrary contents */
 	EEPROM_SPD,		/* follows a JEDEC SPD spec */
 	EEPROM_FRU,		/* follows FRU spec */
-	EEPROM_ENET,		/* ethernet */
 	EEPROM_FW,		/* firmware */
 };
 
 #define EEPROM_TYPE_RAW			1 << EEPROM_RAW
 #define EEPROM_TYPE_SPD			1 << EEPROM_SPD
 #define EEPROM_TYPE_FRU			1 << EEPROM_FRU
-#define EEPROM_TYPE_ENET		1 << EEPROM_ENET
 #define EEPROM_TYPE_FW			1 << EEPROM_FW
 
 enum eeprom_flag_types {

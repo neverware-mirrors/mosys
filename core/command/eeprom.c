@@ -53,19 +53,6 @@
 #include "lib/string.h"
 #include "lib/string_builder.h"
 
-static int eeprom_enet_info_cmd(struct platform_intf *intf,
-                                struct platform_cmd *cmd, int argc, char **argv)
-{
-	if (!intf->cb->eeprom ||
-	    !intf->cb->eeprom->enet ||
-	    !intf->cb->eeprom->enet->read) {
-		errno = ENOSYS;
-		return -1;
-	}
-	
-	return intf->cb->eeprom->enet->read(intf, argc, argv);
-}
-
 static int eeprom_list_cmd(struct platform_intf *intf,
                            struct platform_cmd *cmd, int argc, char **argv)
 {
@@ -611,17 +598,6 @@ eeprom_write_done:
 	return rc;
 }
 
-struct platform_cmd eeprom_enet_cmds[] = {
-	{
-		.name	= "info",
-		.desc	= "Print information from ethernet controller EEPROM(s)",
-		.usage	= "mosys eeprom enet read [ethN]",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = eeprom_enet_info_cmd }
-	},
-	{ NULL }
-};
-
 struct platform_cmd eeprom_cmds[] = {
 	{
 		.name	= "list",
@@ -657,12 +633,6 @@ struct platform_cmd eeprom_cmds[] = {
 		.usage	= "mosys eeprom write <device> <file>",
 		.type	= ARG_TYPE_SETTER,
 		.arg	= { .func = eeprom_write_cmd }
-	},
-	{
-		.name	= "enet",
-		.desc	= "Ethernet Commands",
-		.type	= ARG_TYPE_SUB,
-		.arg	= { .sub = eeprom_enet_cmds }
 	},
 	{ NULL }
 };
