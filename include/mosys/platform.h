@@ -336,19 +336,6 @@ struct gpio_cb {
 	int (*set)(struct platform_intf *intf, const char *name, int state);
 };
 
-/* fru callbacks */
-struct fru_cb {
-	int (*info)(struct platform_intf *intf, struct eeprom *eeprom);
-	int (*verify)(struct platform_intf *intf, struct eeprom *eeprom);
-	int (*create)(struct platform_intf *intf, struct eeprom *eeprom,
-	              char *mfg, char *prod, char *serial, char *part,
-	              char *timestamp);
-	int (*read)(struct platform_intf *intf,
-	            struct eeprom *eeprom, const char *fname);
-	int (*write)(struct platform_intf *intf,
-	             struct eeprom *eeprom, const char *fname);
-};
-
 struct ec_cb {
 	const char *(*vendor)(struct platform_intf *intf, struct ec_cb *ec);
 	const char *(*name)(struct platform_intf *intf, struct ec_cb *ec);
@@ -413,7 +400,6 @@ struct platform_cb {
 	struct nvram_cb *nvram;		/* nvram related callbacks */
 	struct gpio_cb *gpio;		/* gpio callbacks */
 	struct eeprom_cb *eeprom;	/* eeprom callbacks */
-	struct fru_cb *fru;		/* fru callbacks */
 	struct pci_cb *pci;		/* pci callbacks */
 	struct vpd_cb *vpd;		/* vpd callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
