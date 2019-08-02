@@ -47,7 +47,6 @@
 #include "mosys/output.h"
 #include "mosys/kv_pair.h"
 
-#include "lib/crypto.h"
 #include "lib/eeprom.h"
 #include "lib/file.h"
 #include "lib/string.h"
@@ -295,123 +294,6 @@ eeprom_map_cmd_exit:
 	return rc;
 }
 
-static int eeprom_csum_cmd(struct platform_intf *intf,
-                           struct platform_cmd *cmd, int argc, char **argv)
-{
-	struct eeprom *eeprom;
-	struct crypto_algo *crypto = &sha1_algo;
-	uint8_t *digest = NULL;
-	char *name;
-	int fd = 0, digest_len = 0;
-	int rc = 0;
-
-	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	if (argc > 1) {
-		errno = EINVAL;
-		return -1;
-	}
-	name = argv[0];
-
-	if ((fd = file_open(name, FILE_READ)) >= 0) {
-		struct stat s;
-		uint8_t *blob;
-		char *digest_str;
-		struct kv_pair *kv;
-
-		if (fstat(fd, &s) < 0) {
-			lprintf(LOG_ERR, "cannot stat \"%s\"\n", name);
-			rc = -1;
-			goto eeprom_csum_cmd_exit;
-		}
-
-		blob = mmap(NULL, s.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-		if (blob == MAP_FAILED) {
-			lprintf(LOG_ERR, "unable to mmap \"%s\"\n", name);
-			rc = -1;
-			close(fd);
-			goto eeprom_csum_cmd_exit;
-		}
-
-		if ((digest_len = fmap_get_csum(blob, s.st_size, &digest)) < 0){
-			lprintf(LOG_DEBUG, "fmap_get_csum failed, checksumming "
-			                   "entire image\n");
-
-			crypto->init(crypto->ctx);
-			crypto->update(crypto->ctx, blob, s.st_size);
-			crypto->final(crypto->ctx);
-			digest = (uint8_t *)crypto->get_digest(crypto);
-			digest_len = crypto->digest_len;
-		}
-
-		digest_str = buf2str(digest, digest_len);
-
-		kv = kv_pair_new();
-		kv_pair_fmt(kv, "name", name);
-		kv_pair_fmt(kv, "checksum", digest_str);
-		kv_pair_print(kv);
-
-		kv_pair_free(kv);
-		free(digest_str);
-		munmap(blob, s.st_size);
-	}
-
-	for (eeprom = intf->cb->eeprom->eeprom_list;
-	     eeprom && eeprom->name;
-	     eeprom++) {
-		uint8_t *image = NULL;
-		int len;
-		char *digest_str;
-		struct kv_pair *kv;
-
-		if (name && strcmp(eeprom->name, name))
-			continue;
-
-		if (!eeprom->device || !eeprom->device->size ||
-		    !eeprom->device->read)
-			continue;
-
-		if ((len = eeprom->device->size(intf)) < 0) {
-			lprintf(LOG_DEBUG, "failed to obtain size of %s\n",
-			                   eeprom->name);
-			continue;
-		}
-		image = mosys_malloc(len);
-		if (eeprom->device->read(intf, eeprom, 0, len, image) < 0) {
-			lprintf(LOG_DEBUG, "failed to read %s\n", eeprom->name);
-			continue;
-		}
-
-		if ((digest_len = fmap_get_csum(image, len, &digest)) < 0) {
-			lprintf(LOG_DEBUG, "fmap_get_csum failed, checksumming "
-			                   "entire image\n");
-			                   
-			crypto->init(crypto->ctx);
-			crypto->update(crypto->ctx, image, len);
-			crypto->final(crypto->ctx);
-			digest = (uint8_t *)crypto->get_digest(crypto);
-			digest_len = crypto->digest_len;
-		}
-
-		digest_str = buf2str(digest, digest_len);
-
-		kv = kv_pair_new();
-		kv_pair_fmt(kv, "name", eeprom->name);
-		kv_pair_fmt(kv, "checksum", digest_str);
-		kv_pair_print(kv);
-
-		kv_pair_free(kv);
-		free(digest_str);
-		free(image);
-	}
-
-eeprom_csum_cmd_exit:
-	return rc;
-}
-
 static int eeprom_dump_cmd(struct platform_intf *intf,
                            struct platform_cmd *cmd, int argc, char **argv)
 {
@@ -612,13 +494,6 @@ struct platform_cmd eeprom_cmds[] = {
 		.usage	= "mosys eeprom map <eeprom/filename>",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = eeprom_map_cmd }
-	},
-	{
-		.name	= "csum",
-		.desc	= "Print sha1 checksum",
-		.usage	= "mosys eeprom csum <eeprom/filename>",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = eeprom_csum_cmd }
 	},
 	{
 		.name	= "dump",

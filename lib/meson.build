@@ -1,7 +1,6 @@
 subdir('acpi')
 subdir('cbfs')
 subdir('cros_config')
-subdir('crypto')
 subdir('dynamic_array')
 subdir('eeprom')
 subdir('eventlog')
