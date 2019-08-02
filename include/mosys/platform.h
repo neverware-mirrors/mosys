@@ -362,13 +362,6 @@ struct hid_cb {
 	struct hid_tp_cb *tp;
 };
 
-/* pci callbacks */
-struct pci_function_info;
-struct pci_cb {
-	const struct pci_entity_info * (*lookup)(struct platform_intf * intf,
-	                                         int bus, int dev, int func);
-};
-
 /* battery related callbacks */
 struct battery_cb {
 	const char *(*get_fud)(struct platform_intf *intf);
@@ -400,7 +393,6 @@ struct platform_cb {
 	struct nvram_cb *nvram;		/* nvram related callbacks */
 	struct gpio_cb *gpio;		/* gpio callbacks */
 	struct eeprom_cb *eeprom;	/* eeprom callbacks */
-	struct pci_cb *pci;		/* pci callbacks */
 	struct vpd_cb *vpd;		/* vpd callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
 	struct ec_cb *pd;		/* pd callbacks */
