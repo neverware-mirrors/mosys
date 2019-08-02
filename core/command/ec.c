@@ -42,41 +42,26 @@ static int ec_info(struct platform_intf *intf,
 	struct kv_pair *kv;
 	int rc;
 
-	if (!intf->cb->legacy_ec && !intf->cb->ec) {
+	if (!intf->cb->ec) {
 		errno = ENOSYS;
 		return -1;
 	}
 
 	kv = kv_pair_new();
 
-	if (intf->cb->legacy_ec) {
-		if (!intf->cb->legacy_ec->vendor ||
-		    !intf->cb->legacy_ec->name ||
-		    !intf->cb->legacy_ec->fw_version) {
-			errno = ENOSYS;
-			rc = -1;
-			goto ec_info_done;
-		}
-
-		kv_pair_add(kv, "vendor", intf->cb->legacy_ec->vendor(intf));
-		kv_pair_add(kv, "name", intf->cb->legacy_ec->name(intf));
-		kv_pair_add(kv, "fw_version",
-				intf->cb->legacy_ec->fw_version(intf));
-	} else {
-		if (!intf->cb->ec->vendor ||
-		    !intf->cb->ec->name ||
-		    !intf->cb->ec->fw_version) {
-			errno = ENOSYS;
-			rc = -1;
-			goto ec_info_done;
-		}
-
-		kv_pair_add(kv, "vendor",
-				intf->cb->ec->vendor(intf, intf->cb->ec));
-		kv_pair_add(kv, "name", intf->cb->ec->name(intf, intf->cb->ec));
-		kv_pair_add(kv, "fw_version",
-				intf->cb->ec->fw_version(intf, intf->cb->ec));
+	if (!intf->cb->ec->vendor ||
+		!intf->cb->ec->name ||
+		!intf->cb->ec->fw_version) {
+		errno = ENOSYS;
+		rc = -1;
+		goto ec_info_done;
 	}
+
+	kv_pair_add(kv, "vendor",
+			intf->cb->ec->vendor(intf, intf->cb->ec));
+	kv_pair_add(kv, "name", intf->cb->ec->name(intf, intf->cb->ec));
+	kv_pair_add(kv, "fw_version",
+			intf->cb->ec->fw_version(intf, intf->cb->ec));
 
 	rc = kv_pair_print(kv);
 
