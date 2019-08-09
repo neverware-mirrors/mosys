@@ -116,24 +116,19 @@ struct platform_cmd *reef_sub[] = {
 
 int reef_probe(struct platform_intf *intf)
 {
-#ifdef CONFIG_CROS_CONFIG
-	static struct sku_info sku_info;
-	int ret;
 
+#ifdef CONFIG_CROS_CONFIG
+	/**
+	 * 'reef' interface is shared by multiple overlays (with different
+	 * platform-name value in cros_config model.yaml 'platform-name')
+	 * so we have to pass explicit platform (overlay) names.
+	 */
 	const char *platform_names[] = {
-		"Google_Reef", "Google_Pyro", "Google_Sand", "Google_Snappy",
+		"Reef", "Pyro", "Sand", "Snappy",
 		NULL
 	};
 
-	ret = cros_config_read_sku_info(intf, platform_names, &sku_info);
-
-	/* If there was no error, indicate that we found a match */
-	if (!ret) {
-		intf->sku_info = &sku_info;
-		return 1;
-	}
-
-	return ret;
+	return cros_config_probe(intf, platform_names);
 #else
 	static int status, probed;
 	const struct probe_ids *pid;
@@ -173,22 +168,8 @@ reef_probe_exit:
 int coral_probe(struct platform_intf *intf)
 {
 #ifdef CONFIG_CROS_CONFIG
-	static struct sku_info sku_info;
-	int ret;
-	const char *platform_names[] = {
-		"Google_Coral",
-		NULL
-	};
-
-	ret = cros_config_read_sku_info(intf, platform_names, &sku_info);
-
-	/* If there was no error, indicate that we found a match */
-	if (!ret) {
-		intf->sku_info = &sku_info;
-		return 1;
-	}
-
-	return ret;
+	/* cros_config model.yaml 'platform-name' should match intf.name. */
+	return cros_config_probe(intf, NULL);
 #else
 	return -1;
 #endif

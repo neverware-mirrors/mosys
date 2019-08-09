@@ -61,25 +61,10 @@ struct platform_cmd *kahlee_sub[] = {
 	NULL
 };
 
-static const char *platform_names[] = {
-	"Google_Kahlee", "Google_Grunt",
-	NULL
-};
-
 int kahlee_probe(struct platform_intf *intf)
 {
-        static struct sku_info sku_info;
-        int ret;
-
-        ret = cros_config_read_sku_info(intf, platform_names, &sku_info);
-
-        /* If there was no error, indicate that we found a match */
-        if (!ret) {
-                intf->sku_info = &sku_info;
-                return 1;
-        }
-
-        return ret;
+	/* cros_config model.yaml 'platform-name' should match intf.name. */
+	return cros_config_probe(intf, NULL);
 }
 
 /* late setup routine; not critical to core functionality */
@@ -116,7 +101,7 @@ struct platform_cb kahlee_cb = {
 
 struct platform_intf platform_kahlee = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Kahlee",
+	.name		= "Grunt",
 	.sub		= kahlee_sub,
 	.cb			= &kahlee_cb,
 	.probe		= &kahlee_probe,

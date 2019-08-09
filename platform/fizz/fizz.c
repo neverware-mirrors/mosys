@@ -66,25 +66,18 @@ struct platform_cmd *fizz_sub[] = {
 	NULL
 };
 
-static const char *platform_names[] = {
-	"Google_Fizz", "Google_Karma",
-	NULL
-};
-
 int fizz_probe(struct platform_intf *intf)
 {
-	static struct sku_info sku_info;
-	int ret;
-
-	ret = cros_config_read_sku_info(intf, platform_names, &sku_info);
-
-	/* If there was no error, indicate that we found a match */
-	if (!ret) {
-		intf->sku_info = &sku_info;
-		return 1;
-	}
-
-	return ret;
+	/**
+	 * 'fizz' interface is shared by multiple overlays (with different
+	 * platform-name value in cros_config model.yaml 'platform-name')
+	 * so we have to pass explicit platform (overlay) names.
+	 */
+	static const char *platform_names[] = {
+		"Fizz", "Kalista",
+		NULL
+	};
+	return cros_config_probe(intf, platform_names);
 }
 
 /* late setup routine; not critical to core functionality */

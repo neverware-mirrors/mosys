@@ -63,26 +63,10 @@ struct platform_cmd *nami_sub[] = {
 	NULL
 };
 
-static const char *platform_names[] = {
-	"Google_Nami",
-	NULL
-};
-
 int nami_probe(struct platform_intf *intf)
 {
-	static struct sku_info sku_info;
-	int ret;
-
-
-	ret = cros_config_read_sku_info(intf, platform_names, &sku_info);
-
-	/* If there was no error, indicate that we found a match */
-	if (!ret) {
-		intf->sku_info = &sku_info;
-		return 1;
-	}
-
-	return ret;
+	/* cros_config model.yaml 'platform-name' should match intf.name. */
+	return cros_config_probe(intf, NULL);
 }
 
 /* late setup routine; not critical to core functionality */

@@ -63,24 +63,10 @@ struct platform_cmd *sarien_sub[] = {
 	NULL
 };
 
-static const char *platform_names[] = {
-	"Google_Sarien", "Google_Arcada",
-	NULL
-};
-
 int sarien_probe(struct platform_intf *intf)
 {
-	static struct sku_info sku_info;
-	int ret;
-
-	ret = cros_config_read_sku_info(intf, platform_names, &sku_info);
-
-	if(!ret) {
-		intf->sku_info = &sku_info;
-		return 1;
-	}
-
-	return ret;
+	/* cros_config model.yaml 'platform-name' should match intf.name. */
+	return cros_config_probe(intf, NULL);
 }
 
 /* late setup routine; not critical to core functionality */

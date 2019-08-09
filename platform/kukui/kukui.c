@@ -64,21 +64,18 @@ struct platform_cmd *kukui_sub[] = {
 
 static int kukui_probe(struct platform_intf *intf)
 {
-	static const char* firmware_names[] = {
-		"Google_Flapjack",
-		"Google_Jacuzzi",
-		"Google_Kodama",
-		"Google_Krane",
-		"Google_Kukui",
+	/**
+	 * 'kukui' interface is shared by multiple overlays (with different
+	 * platform-name value in cros_config model.yaml 'platform-name')
+	 * so we have to pass explicit platform (overlay) names.
+	 */
+	static const char* platform_names[] = {
+		"Flapjack",
+		"Jacuzzi",
+		"Kukui",
 		NULL,
 	};
-	static struct sku_info sku_info;
-
-	if (!cros_config_read_sku_info(intf, firmware_names, &sku_info)) {
-		intf->sku_info = &sku_info;
-		return 1;
-	}
-	return 0;
+	return cros_config_probe(intf, platform_names);
 }
 
 static int kukui_setup_post(struct platform_intf *intf)

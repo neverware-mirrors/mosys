@@ -59,29 +59,15 @@ struct platform_cmd *hatch_sub[] = {
 	NULL
 };
 
-static const char *platform_names[] = {
-	"Google_Akemi", "Google_Hatch", "Google_Kohaku",
-	"Google_Helios", "Google_Kindred",
-	NULL
-};
-
 int hatch_probe(struct platform_intf *intf)
 {
-	/* Perform a shallow probe based solely on smbios name. */
-	if (!cros_config_firmware_name_match(intf, platform_names))
-		return 1;
-	return 0;
+	/* cros_config model.yaml 'platform-name' should match intf.name. */
+	return cros_config_probe(intf, NULL);
 }
 
 /* late setup routine; not critical to core functionality */
 static int hatch_setup_post(struct platform_intf *intf)
 {
-	static struct sku_info sku_info;
-
-	/* If there was no error fill in the sku info. */
-	if (!cros_config_read_sku_info(intf, platform_names, &sku_info))
-		intf->sku_info = &sku_info;
-
 	if (cros_ec_setup(intf) < 0)
 		return -1;
 
