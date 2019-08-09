@@ -187,7 +187,8 @@ static int cros_config_read_sku_info_raw(
 		lprintf(LOG_DEBUG, "%s: Unknown firmware name\n", __func__);
 		return -1;
 	}
-	if (!strlfind(firmware_name, find_platform_names, 1))
+	if (find_platform_names &&
+	    !strlfind(firmware_name, find_platform_names, 1))
 		return -ENOENT;
 
 	if (force_sku) {
@@ -220,6 +221,52 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 {
 	return cros_config_read_sku_info_raw(
 			intf, find_platform_names, sku_info, forced_sku_id, 1);
+}
+
+int cros_config_probe(struct platform_intf *intf,
+		      const char *platform_names[])
+{
+	/* intf->name should match first config name. */
+	int config_map_size = 0;
+	const struct config_map *configs =
+			cros_config_get_config_map(&config_map_size);
+
+	if (!config_map_size)
+		return 0;
+
+	if (platform_names) {
+		/**
+		 * If multiple platforms are supported by same interface,
+		 * we have to scan whole config map.
+		 */
+		int i, found = 0;
+		for (i = 0; !found && i < config_map_size; i++) {
+			if (strlfind(configs[i].platform_name,
+				     platform_names, 1))
+				found = 1;
+		}
+		if (!found)
+			return 0;
+	} else {
+		/* The interface supports single platform. */
+		if (strcasecmp(intf->name, configs->platform_name))
+			return 0;
+	}
+
+	struct sku_info *sku_info = mosys_malloc(sizeof(*sku_info));
+	assert(sku_info);
+
+	int r = cros_config_read_sku_info(intf, NULL, sku_info);
+	/**
+	 * cros_config_read_sku_info returns 0 on success while probe functions
+	 * should return 1 when found, 0 not found, and <0 for error.
+	 */
+	if (r == 0) {
+		intf->sku_info = sku_info;
+		return 1;
+	}
+	free(sku_info);
+	return r < 0 ? r : 0;
 }
 
 int cros_config_firmware_name_match(struct platform_intf *intf,

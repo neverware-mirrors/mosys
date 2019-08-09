@@ -116,4 +116,13 @@ int cros_config_read_forced_sku_info(struct platform_intf *intf,
 int cros_config_firmware_name_match(struct platform_intf *intf,
 				    const char *find_firmware_names[]);
 
+/**
+ * cros_config_probe() - default mosys probe callback function for cros_config.
+ *
+ * @intf: Platform information, used to access platform name and SKU ID
+ * @platform_names: Array of supported platform names that ends with NULL;
+ *    can be NULL for interfaces with single platform name.
+ * @return: 0 if OK, other value on error
+ */
+int cros_config_probe(struct platform_intf *intf, const char *platform_names[]);
 #endif
