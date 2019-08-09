@@ -29,25 +29,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/alloc.h"
+#include "mosys/callbacks.h"
+#include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/cros_ec.h"
+#include "drivers/gpio.h"
 
-#include "lib/sku.h"
+#include "lib/flashrom.h"
+#include "lib/spd.h"
 #include "lib/smbios.h"
-#include "lib/string.h"
 
-static char *glados_get_name(struct platform_intf *intf)
+#include "poppy.h"
+
+static int poppy_spd_read(struct platform_intf *intf,
+		 int dimm, int reg, int spd_len, uint8_t *spd_buf)
 {
-	return mosys_strdup(intf->name);
+	static uint8_t *fw_buf;
+	static int fw_size = 0;
+
+	/* dimm cnt is 0 based */
+	if (dimm >= intf->cb->memory->dimm_count(intf)) {
+		lprintf(LOG_DEBUG, "%s: Invalid DIMM specified\n", __func__);
+		return -1;
+	}
+
+	if (fw_size < 0)
+		return -1;	/* previous attempt failed */
+
+	if (!fw_size) {
+		fw_size = flashrom_read_host_firmware_region(intf, &fw_buf);
+		if (fw_size < 0)
+			return -1;
+		add_destroy_callback(free, fw_buf);
+	}
+
+	return spd_read_from_cbfs(intf, dimm, reg,
+				spd_len, spd_buf, fw_size, fw_buf);
 }
 
-struct sys_cb glados_sys_cb = {
-	.version		= &cros_ec_board_version_str,
-	.vendor			= &smbios_sysinfo_get_vendor,
-	.name			= &glados_get_name,
-	.family			= &smbios_sysinfo_get_family,
-	.firmware_vendor	= &smbios_bios_get_vendor,
-	.sku_number		= &smbios_sysinfo_get_sku_number,
+static struct memory_spd_cb poppy_spd_cb = {
+	.read		= poppy_spd_read,
+};
+
+struct memory_cb poppy_memory_cb = {
+	.dimm_count	= smbios_dimm_count,
+	.dimm_speed	= smbios_dimm_speed,
+	.spd		= &poppy_spd_cb,
 };

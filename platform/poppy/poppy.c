@@ -40,48 +40,15 @@
 
 #include "drivers/google/cros_ec.h"
 
+#include "lib/cros_config.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
 
-#include "glados.h"
+#include "poppy.h"
 
-struct probe_ids {
-	const char *names[2];
-	/**
-	 * Devices with SKU-based mapping should define sku_table,
-	 * otherwise use single_sku.
-	 */
-	struct sku_mapping *sku_table;
-	const struct sku_info single_sku;
-};
-
-/* sku_info: brand, model, chassis, customization */
-static const struct probe_ids probe_id_list[] = {
-	{ { "Asuka", }, .single_sku = { .brand = "DEAH", }, },
-	{ { "Atlas", }, .single_sku = { .brand = "XWJE", }, },
-	{ { "Caroline", }, .single_sku = { .brand = "SMAK", }, },
-	{ { "Cave", }, .single_sku = { .brand = "ASUL", }, },
-	{ { "Chell", }, .single_sku = { .brand = "HPZR", }, },
-	{ { "Glados", } },
-	{ { "Kunimitsu", }, },
-	/**
-	 * TODO(hungte) There may be variants for LARS so we can't provide a
-	 * single brand here for now. Need to revise for what to do. */
-	{ { "Lars", }, .single_sku = { .brand = NULL, }, },
-        /* TODO(b/73852456) Allocate a brand code */
-	{ { "Sentry", }, .single_sku = { .brand = "LEAJ", }, },
-	{ { "Skylake", }, },
-
-	/* Following platforms are KBL without unibuild/cros_config. */
-	{ { "Eve", }, .single_sku = { .brand = "ZZAF", }, },
-	{ { "Meowth", }, .single_sku = { .brand = NULL, }, },
-	{ { "Nocturne", }, .single_sku = { .brand = "NBQS", }, },
-	{ { NULL }, },
-};
-
-struct platform_cmd *glados_sub[] = {
+struct platform_cmd *poppy_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_fp,
@@ -94,43 +61,55 @@ struct platform_cmd *glados_sub[] = {
 	NULL
 };
 
-int glados_probe(struct platform_intf *intf)
+int poppy_probe(struct platform_intf *intf)
 {
-	static int status, probed;
-	const struct probe_ids *pid;
+	static struct sku_info sku_info;
+	int ret = 0;
 
-	if (probed)
-		return status;
-
-	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* FRID */
-		if (probe_frid((const char **)pid->names)) {
-			status = 1;
-			goto glados_probe_exit;
+	const char *platform1[] = {
+		"Google_Soraka", "Google_Rammus",
+		NULL
+	};
+	if (!cros_config_firmware_name_match(intf, platform1)) {
+		/** Soraka,Rammus will always work correctly, no hacks needed */
+		ret = cros_config_read_sku_info(intf, platform1, &sku_info);
+		if (!ret) {
+			intf->sku_info = &sku_info;
+			return 1;
 		}
+		return 0;
+	}
 
-		/* SMBIOS */
-		if (probe_smbios(intf, (const char **)pid->names)) {
-			status = 1;
-			goto glados_probe_exit;
+	const char *platform2[] = {
+		"Google_Nautilus",
+		NULL
+	};
+	if (!cros_config_firmware_name_match(intf, platform2)) {
+		/** Nautilus uni-build will work correctly, no hacks needed. */
+		ret = cros_config_read_sku_info(intf, platform2, &sku_info);
+		if (!ret) {
+			intf->sku_info = &sku_info;
+			return 1;
+		}
+		/** If we get here we know we are a Nautilus unibuild w/o
+		 * upgraded bios, need to force the read of sku info with
+		 * sku_id zero. */
+		lprintf(LOG_DEBUG,
+			"%s: read_sku_info failed for Nautilus, force sku=0\n",
+			__func__);
+		ret = cros_config_read_forced_sku_info(intf, platform2, 0,
+						       &sku_info);
+		if (!ret) {
+			intf->sku_info = &sku_info;
+			return 1;
 		}
 	}
-	return 0;
 
-glados_probe_exit:
-	probed = 1;
-	/* Update canonical platform name */
-	intf->name = pid->names[0];
-	if (pid->sku_table) {
-		intf->sku_info = sku_find_info(intf, pid->sku_table);
-	} else {
-		intf->sku_info = &pid->single_sku;
-	}
-	return status;
+	return ret;
 }
 
 /* late setup routine; not critical to core functionality */
-static int glados_setup_post(struct platform_intf *intf)
+static int poppy_setup_post(struct platform_intf *intf)
 {
 	if (cros_ec_setup(intf) < 0)
 		return -1;
@@ -144,12 +123,12 @@ static int glados_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-static int glados_destroy(struct platform_intf *intf)
+static int poppy_destroy(struct platform_intf *intf)
 {
 	return 0;
 }
 
-struct eventlog_cb glados_eventlog_cb = {
+struct eventlog_cb poppy_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -158,24 +137,24 @@ struct eventlog_cb glados_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb glados_cb = {
+struct platform_cb poppy_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
 	.fp		= &cros_fp_cb,
-	.eeprom		= &glados_eeprom_cb,
-	.memory		= &glados_memory_cb,
-	.nvram		= &glados_nvram_cb,
+	.eeprom		= &poppy_eeprom_cb,
+	.memory		= &poppy_memory_cb,
+	.nvram		= &poppy_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sys 		= &glados_sys_cb,
-	.eventlog	= &glados_eventlog_cb,
+	.sys 		= &poppy_sys_cb,
+	.eventlog	= &poppy_eventlog_cb,
 };
 
-struct platform_intf platform_glados = {
+struct platform_intf platform_poppy = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Glados",
-	.sub		= glados_sub,
-	.cb		= &glados_cb,
-	.probe		= &glados_probe,
-	.setup_post	= &glados_setup_post,
-	.destroy	= &glados_destroy,
+	.name		= "Poppy",
+	.sub		= poppy_sub,
+	.cb		= &poppy_cb,
+	.probe		= &poppy_probe,
+	.setup_post	= &poppy_setup_post,
+	.destroy	= &poppy_destroy,
 };

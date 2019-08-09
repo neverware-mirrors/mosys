@@ -59,6 +59,7 @@ extern struct platform_intf platform_oak;
 extern struct platform_intf platform_octopus;
 extern struct platform_intf platform_peach;
 extern struct platform_intf platform_pinky;
+extern struct platform_intf platform_poppy;
 extern struct platform_intf platform_rambi;
 extern struct platform_intf platform_reef;
 extern struct platform_intf platform_samus;
@@ -86,6 +87,7 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_kahlee,
 	&platform_hatch,
 	&platform_nami,
+	&platform_poppy,
 	&platform_octopus,
 	&platform_sarien,
 #endif // CONFIG_PLATFORM_ARCH_X86

@@ -29,25 +29,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/alloc.h"
+#ifndef EXPERIMENTAL_POPPY_H__
+#define EXPERIMENTAL_POPPY_H__
+
+#include <inttypes.h>
 #include "mosys/platform.h"
 
-#include "drivers/google/cros_ec.h"
+#define POPPY_HOST_FIRMWARE_ROM_SIZE		(16384 * 1024)
 
-#include "lib/sku.h"
-#include "lib/smbios.h"
-#include "lib/string.h"
+/* platform callbacks */
+extern struct eeprom_cb poppy_eeprom_cb;	/* eeprom.c */
+extern struct gpio_cb poppy_gpio_cb;		/* gpio.c */
+extern struct memory_cb poppy_memory_cb;	/* memory.c */
+extern struct nvram_cb poppy_nvram_cb;		/* nvram.c */
+extern struct sys_cb poppy_sys_cb;		/* sys.c */
 
-static char *glados_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
+/* functions called by setup routines */
+extern int poppy_vpd_setup(struct platform_intf *intf);
 
-struct sys_cb glados_sys_cb = {
-	.version		= &cros_ec_board_version_str,
-	.vendor			= &smbios_sysinfo_get_vendor,
-	.name			= &glados_get_name,
-	.family			= &smbios_sysinfo_get_family,
-	.firmware_vendor	= &smbios_bios_get_vendor,
-	.sku_number		= &smbios_sysinfo_get_sku_number,
-};
+#endif /* EXPERIMENTAL_POPPY_H_ */
