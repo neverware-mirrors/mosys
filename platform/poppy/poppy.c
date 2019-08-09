@@ -63,49 +63,15 @@ struct platform_cmd *poppy_sub[] = {
 
 int poppy_probe(struct platform_intf *intf)
 {
-	static struct sku_info sku_info;
-	int ret = 0;
-
-	const char *platform1[] = {
-		"Google_Soraka", "Google_Rammus",
+	const char *platform_names[] = {
+		"Soraka", "Rammus", "Nautilus",
 		NULL
 	};
-	if (!cros_config_firmware_name_match(intf, platform1)) {
-		/** Soraka,Rammus will always work correctly, no hacks needed */
-		ret = cros_config_read_sku_info(intf, platform1, &sku_info);
-		if (!ret) {
-			intf->sku_info = &sku_info;
-			return 1;
-		}
-		return 0;
-	}
 
-	const char *platform2[] = {
-		"Google_Nautilus",
-		NULL
-	};
-	if (!cros_config_firmware_name_match(intf, platform2)) {
-		/** Nautilus uni-build will work correctly, no hacks needed. */
-		ret = cros_config_read_sku_info(intf, platform2, &sku_info);
-		if (!ret) {
-			intf->sku_info = &sku_info;
-			return 1;
-		}
-		/** If we get here we know we are a Nautilus unibuild w/o
-		 * upgraded bios, need to force the read of sku info with
-		 * sku_id zero. */
-		lprintf(LOG_DEBUG,
-			"%s: read_sku_info failed for Nautilus, force sku=0\n",
-			__func__);
-		ret = cros_config_read_forced_sku_info(intf, platform2, 0,
-						       &sku_info);
-		if (!ret) {
-			intf->sku_info = &sku_info;
-			return 1;
-		}
-	}
-
-	return ret;
+	/* At least for Nautilus, some old firmware may fail to report SKU ID so
+	 * a default value is needed.
+	 */
+	return cros_config_probe_default_sku(intf, platform_names, 0);
 }
 
 /* late setup routine; not critical to core functionality */

@@ -90,31 +90,21 @@ int cros_config_read_default_sku_info_fdt(struct platform_intf *intf,
 					  struct sku_info *sku_info);
 
 /**
- * cros_config_read_forced_sku_info() - read SKU information for current model
- * forcing the sku to a passed in value.
+ * cros_config_read_default_sku_info() - read SKU information for current model
+ * and fallback to default sku when the system cannot report sku id.
  *
  * Read information about the current model.
  *
  * @intf: Platform information, used to access SMBIOS name and SKU ID
  * @find_platform_names: Array of permitted platform names, end with NULL
- * @forced_sku_id: forced sku ID number
  * @sku_info: Returns SKU information on success
+ * @default_sku_id: default sku ID number
  * @return: 0 if OK, other value on error
  */
-int cros_config_read_forced_sku_info(struct platform_intf *intf,
-			             const char *find_platform_names[],
-			             const int forced_sku_id,
-			             struct sku_info *sku_info);
-
-/**
- * cros_config_firmware_name_match() - shallow match on firmware name
- *
- * @intf: Platform information, used to access SMBIOS name and SKU ID
- * @find_firmware_names: Array of permitted firmware names, end with NULL
- * @return: 0 if OK, other value on error
- */
-int cros_config_firmware_name_match(struct platform_intf *intf,
-				    const char *find_firmware_names[]);
+int cros_config_read_default_sku_info(struct platform_intf *intf,
+				      const char *find_platform_names[],
+				      struct sku_info *sku_info,
+				      const int default_sku_id);
 
 /**
  * cros_config_probe() - default mosys probe callback function for cros_config.
@@ -125,4 +115,18 @@ int cros_config_firmware_name_match(struct platform_intf *intf,
  * @return: 0 if OK, other value on error
  */
 int cros_config_probe(struct platform_intf *intf, const char *platform_names[]);
+
+/**
+ * cros_config_probe_default_sku() - same as cros_config_probe with default SKU
+ * ID provided for systems that cannot report that.
+ *
+ * @intf: Platform information, used to access platform name and SKU ID
+ * @platform_names: Array of supported platform names that ends with NULL;
+ *    can be NULL for interfaces with single platform name.
+ * @default_sku_id: default sku ID number
+ * @return: 0 if OK, other value on error
+ */
+int cros_config_probe_default_sku(struct platform_intf *intf,
+				  const char *platform_names[],
+				  const int default_sku_id);
 #endif

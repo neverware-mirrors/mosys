@@ -175,9 +175,9 @@ static bool match_firmware(const char *expected, void *arg)
 	return !*expected || !strcasecmp(expected, fw_name);
 }
 
-static int cros_config_read_sku_info_raw(
+int cros_config_read_default_sku_info(
 		struct platform_intf *intf, const char *find_platform_names[],
-		struct sku_info *sku_info, int default_sku_id, int force_sku)
+		struct sku_info *sku_info, int default_sku_id)
 {
 	const char *firmware_name;
 	int sku_id;
@@ -191,14 +191,12 @@ static int cros_config_read_sku_info_raw(
 	    !strlfind(firmware_name, find_platform_names, 1))
 		return -ENOENT;
 
-	if (force_sku) {
+	sku_id = get_sku_id(intf);
+	if (sku_id == -1) {
+		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
+		if (default_sku_id == -1)
+			return -1;
 		sku_id = default_sku_id;
-	} else {
-		sku_id = get_sku_id(intf);
-		if (sku_id == -1) {
-			lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
-			sku_id = default_sku_id;
-		}
 	}
 
 	return cros_config_read_sku_info_struct(
@@ -210,21 +208,13 @@ int cros_config_read_sku_info(struct platform_intf *intf,
 			      const char *find_platform_names[],
 			      struct sku_info *sku_info)
 {
-	return cros_config_read_sku_info_raw(
-			intf, find_platform_names, sku_info, -1, 0);
+	return cros_config_read_default_sku_info(
+			intf, find_platform_names, sku_info, -1);
 }
 
-int cros_config_read_forced_sku_info(struct platform_intf *intf,
-				     const char *find_platform_names[],
-				     const int forced_sku_id,
-				     struct sku_info *sku_info)
-{
-	return cros_config_read_sku_info_raw(
-			intf, find_platform_names, sku_info, forced_sku_id, 1);
-}
-
-int cros_config_probe(struct platform_intf *intf,
-		      const char *platform_names[])
+int cros_config_probe_default_sku(struct platform_intf *intf,
+				  const char *platform_names[],
+				  const int default_sku_id)
 {
 	/* intf->name should match first config name. */
 	int config_map_size = 0;
@@ -256,7 +246,8 @@ int cros_config_probe(struct platform_intf *intf,
 	struct sku_info *sku_info = mosys_malloc(sizeof(*sku_info));
 	assert(sku_info);
 
-	int r = cros_config_read_sku_info(intf, NULL, sku_info);
+	int r = cros_config_read_default_sku_info(
+			intf, NULL, sku_info, default_sku_id);
 	/**
 	 * cros_config_read_sku_info returns 0 on success while probe functions
 	 * should return 1 when found, 0 not found, and <0 for error.
@@ -269,19 +260,7 @@ int cros_config_probe(struct platform_intf *intf,
 	return r < 0 ? r : 0;
 }
 
-int cros_config_firmware_name_match(struct platform_intf *intf,
-				    const char *find_firmware_names[])
+int cros_config_probe(struct platform_intf *intf, const char *platform_names[])
 {
-	const char *firmware_name;
-
-	firmware_name = get_firmware_name(intf);
-	if (!firmware_name) {
-		lprintf(LOG_DEBUG, "%s: Unknown firmware name\n", __func__);
-		return -ENOENT;
-	}
-
-	if (!strlfind(firmware_name, find_firmware_names, 1))
-		return -ENOENT;
-
-	return 0;
+	return cros_config_probe_default_sku(intf, platform_names, -1);
 }
