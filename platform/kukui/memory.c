@@ -39,51 +39,6 @@
 
 #define DIMM_COUNT 1
 
-enum memory_config {
-	HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G,
-	MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G,
-	MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G,
-	SAMSUNG_LPDDR4X_KMDH6001DA_B422_4G,
-	SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G,
-	SAMSUNG_LPDDR4X_KMDV6001DA_B620_4G,
-	SAMSUNG_LPDDR4X_K4UBE3D4AM_MGCJ_4G,
-	SANDISK_LPDDR4X_SDADA4CR_128G_4G,
-	MEM_UNKNOWN,
-};
-
-static int get_memory_config(struct platform_intf *intf)
-{
-	uint32_t ram_code;
-
-	if (fdt_get_ram_code(&ram_code) < 0) {
-		lprintf(LOG_ERR, "Unable to obtain RAM code.\n");
-		return -1;
-	}
-
-	switch (ram_code) {
-	case 0:
-		return SAMSUNG_LPDDR4X_K4UBE3D4AM_MGCJ_4G;
-	case 1:
-		return HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G;
-	case 2:
-		return MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G;
-	case 3:
-		return SAMSUNG_LPDDR4X_KMDH6001DA_B422_4G;
-	case 4:
-		return SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G;
-	case 5:
-		return MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G;
-	case 6:
-		return SAMSUNG_LPDDR4X_KMDV6001DA_B620_4G;
-	case 7:
-		return SANDISK_LPDDR4X_SDADA4CR_128G_4G;
-	default:
-		lprintf(LOG_ERR, "Not implemented\n");
-	}
-
-	return MEM_UNKNOWN;
-}
-
 /*
  * dimm_count  -  return total number of dimm slots
  *
@@ -96,37 +51,31 @@ static int dimm_count(struct platform_intf *intf)
 	return DIMM_COUNT;
 }
 
+static const struct nonspd_mem_info *kukui_dram[] = {
+	[0] = &samsung_lpddr4x_k4ube3d4am_mgcj,
+	[1] = &hynix_lpddr4x_h9hcnnncpmalhr_nee,
+	[2] = &micron_lpddr4x_mt53e1g32d4nq_046wte,
+	[3] = &samsung_lpddr4x_kmdh6001da_b422,
+	[4] = &samsung_lpddr4x_kmdp6001da_b425,
+	[5] = &micron_lpddr4x_mt29vzzzad8dqksl,
+	[6] = &samsung_lpddr4x_kmdv6001da_b620,
+	[7] = &sandisk_lpddr4x_sdada4cr_128g,
+};
+
 static int get_mem_info(struct platform_intf *intf,
 			const struct nonspd_mem_info **info)
 {
-	switch (get_memory_config(intf)) {
-	case SAMSUNG_LPDDR4X_K4UBE3D4AM_MGCJ_4G:
-		*info = &samsung_lpddr4x_k4ube3d4am_mgcj;
-		break;
-	case HYNIX_LPDDR4X_H9HCNNNCPMALHR_NEE_4G:
-		*info = &hynix_lpddr4x_h9hcnnncpmalhr_nee;
-		break;
-	case MICRON_LPDDR4X_MT53E1G32D4NQ_046WTE_4G:
-		*info = &micron_lpddr4x_mt53e1g32d4nq_046wte;
-		break;
-	case SAMSUNG_LPDDR4X_KMDH6001DA_B422_4G:
-		*info = &samsung_lpddr4x_kmdh6001da_b422;
-		break;
-	case SAMSUNG_LPDDR4X_KMDP6001DA_B425_4G:
-		*info = &samsung_lpddr4x_kmdp6001da_b425;
-		break;
-	case MICRON_LPDDR4X_MT29VZZZAD8DQKSL_4G:
-		*info = &micron_lpddr4x_mt29vzzzad8dqksl;
-		break;
-	case SAMSUNG_LPDDR4X_KMDV6001DA_B620_4G:
-		*info = &samsung_lpddr4x_kmdv6001da_b620;
-		break;
-	case SANDISK_LPDDR4X_SDADA4CR_128G_4G:
-		*info = &sandisk_lpddr4x_sdada4cr_128g;
-		break;
-	default:
+	uint32_t ram_code;
+
+	if (fdt_get_ram_code(&ram_code) < 0) {
+		lprintf(LOG_ERR, "Unable to obtain RAM code.\n");
 		return -1;
 	}
+	if (ram_code >= ARRAY_SIZE(kukui_dram) || !kukui_dram[ram_code]) {
+		lprintf(LOG_ERR, "Invalid RAM code: %d.\n", ram_code);
+		return -1;
+	}
+	*info = kukui_dram[ram_code];
 	return 0;
 }
 
