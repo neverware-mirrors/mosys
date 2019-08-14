@@ -34,7 +34,6 @@ add_global_arguments('-include', 'config.h', language: 'c')
 add_global_arguments('-std=gnu99', language : 'c')
 
 cc = meson.get_compiler('c')
-add_global_arguments('-Wno-address-of-packed-member', language: 'c')
 add_global_arguments('-Wall', language : 'c')
 add_global_arguments('-Werror', language : 'c')
 add_global_arguments('-Wstrict-prototypes', language : 'c')
