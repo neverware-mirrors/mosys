@@ -67,6 +67,7 @@ static struct sku_info
 static struct sku_mapping scarlet_sku_table[] = {
 	{ 0, &sku_dumo },
 	{ 2, &sku_druwl },
+	{ 3, &sku_druwl },
 	{ SKU_NUMBER_ANY, &sku_scarlet },
 };
 
