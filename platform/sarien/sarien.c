@@ -66,7 +66,11 @@ struct platform_cmd *sarien_sub[] = {
 int sarien_probe(struct platform_intf *intf)
 {
 	/* cros_config model.yaml 'platform-name' should match intf.name. */
-	return cros_config_probe(intf, NULL);
+	static const char *platform_names[] = {
+		"Sarien", "Drallion",
+		NULL
+	};
+	return cros_config_probe(intf, platform_names);
 }
 
 /* late setup routine; not critical to core functionality */
