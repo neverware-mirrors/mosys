@@ -13,4 +13,8 @@ libmosys_src += files(
   'file_lock.c',
 )
 
+unittest_src += files(
+  'platform_unittest.c',
+)
+
 subdir('command')

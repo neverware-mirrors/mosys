@@ -52,39 +52,37 @@
 #endif
 
 /*
- * mosys_platform_setup  -  identify platform, setup interfaces and commands
- *
- * @p_opt:	Optional platform name given to bypass auto-detection
- * 
- * returns pointer to identified platform interface
- * returns NULL if platform not identified or other error
+ * Internal function used by mosys_platform_setup to search for a
+ * supported platform by name
  */
-struct platform_intf *mosys_platform_setup(const char *p_opt)
+static struct platform_intf *
+find_platform_by_name(struct platform_intf *platform_list[],
+		      const char *platform_name)
 {
 	struct platform_intf **_intf, *intf;
-	struct platform_intf *ret = NULL;
-	int intf_found = 0;
 
-	/* attempt to probe platform name and match it to an interface */
-	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
+	for (_intf = platform_list; _intf && *_intf; _intf++) {
+		intf = *_intf;
+		if (!strcasecmp(intf->name, platform_name))
+			return intf;
+		continue;
+	}
+
+	return NULL;
+}
+
+/*
+ * Internal function used by mosys_platform_setup to probe each
+ * platform until one matches
+ */
+static struct platform_intf *
+probe_platform(struct platform_intf *platform_list[])
+{
+	struct platform_intf **_intf, *intf;
+
+	for (_intf = platform_list; _intf && *_intf; _intf++) {
 		intf = *_intf;
 
-		lprintf(LOG_DEBUG, "Checking platform %s\n", intf->name);
-
-		/* use common operations by default */
-		intf->op = &platform_common_op;
-
-		/* platform name specified by user */
-		if (p_opt) {
-			if (strlfind(p_opt, &intf->id_list[0], 0)) {
-				intf_found = 1;
-				break;
-			} else {
-				continue;
-			}
-		}
-
-		/* auto-detect */
 		if (intf->probe) {
 			int rc = intf->probe(intf);
 
@@ -94,26 +92,59 @@ struct platform_intf *mosys_platform_setup(const char *p_opt)
 				continue;
 			} else if (rc > 0) {
 				lprintf(LOG_DEBUG, "Platform %s found (via "
-				"probing)\n", intf->name);
-				intf_found = 1;
-				break;
+					"probing)\n", intf->name);
+				return intf;
 			}
 		}
 	}
 
-	if (!intf_found)
-		goto mosys_platform_setup_exit;
+	return NULL;
+}
+
+/*
+ * mosys_platform_setup  -  identify platform, setup interfaces and commands
+ *
+ * @platform_list: A NULL terminated list of struct platform_intf
+ *     pointers to search by name or probe.
+ * @platform_name: Optional platform name given to bypass
+ *     auto-detection
+ *
+ * returns pointer to identified platform interface
+ * returns NULL if platform not identified or other error
+ */
+struct platform_intf *
+mosys_platform_setup(struct platform_intf *platform_list[],
+		     const char *platform_name)
+{
+	struct platform_intf **_intf, *intf;
+
+	/* setup defaults for each platform */
+	for (_intf = platform_list; _intf && *_intf; _intf++) {
+		intf = *_intf;
+		if (!intf->name)
+			intf->name = "";
+		if (!intf->op)
+			intf->op = &platform_common_op;
+	}
+
+	if (platform_name)
+		intf = find_platform_by_name(platform_list, platform_name);
+	else
+		intf = probe_platform(platform_list);
+
+	if (!intf)
+		return NULL;
 
 	/* call platform-specific setup if found */
 	if (intf->setup && intf->setup(intf) < 0)
-		goto mosys_platform_setup_exit;
+		return NULL;
 
 	/* prepare interface operations */
 	if (intf_op_setup(intf) < 0) {
 		if (intf->destroy)
 			intf->destroy(intf);
 		intf_op_destroy(intf);
-		goto mosys_platform_setup_exit;
+		return NULL;
 	}
 
 	/* call platform-specific post-setup if found */
@@ -121,13 +152,10 @@ struct platform_intf *mosys_platform_setup(const char *p_opt)
 	    intf->setup_post(intf) < 0) {
 		if (intf->destroy)
 			intf->destroy(intf);
-		goto mosys_platform_setup_exit;
+		return NULL;
 	}
 
-	ret = intf;
-
-mosys_platform_setup_exit:
-	return ret;
+	return intf;
 }
 
 /*
@@ -258,28 +286,24 @@ void print_tree(struct platform_intf *intf)
  * returns 0 to indicate success
  * returns <0 to indicate failure
  */
-int print_platforms() {
+int print_platforms(struct platform_intf *platform_list[]) {
 	struct platform_intf **_intf, *intf;
-	const char **id;
+	struct kv_pair *kv;
 	int rc;
 
 	/* go through all supported interfaces */
-	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
+	for (_intf = platform_list; _intf && *_intf; _intf++) {
 		intf = *_intf;
 
 		if (intf->type == PLATFORM_DEFAULT)
 			continue;
 
-		for (id = intf->id_list; id && *id; id++) {
-			struct kv_pair *kv;
-
-			kv = kv_pair_new();
-			kv_pair_add(kv, "id", *id);
-			rc = kv_pair_print(kv);
-			kv_pair_free(kv);
-			if (rc)
-				return rc;
-		}
+		kv = kv_pair_new();
+		kv_pair_add(kv, "id", intf->name);
+		rc = kv_pair_print(kv);
+		kv_pair_free(kv);
+		if (rc)
+			return rc;
 	}
 
 	return rc;

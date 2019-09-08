@@ -130,7 +130,7 @@ impl<'a> Mosys<'a> {
         if matches.opt_present("S") {
             // Safe because all resources in print_platforms are under C control
             unsafe {
-                return match print_platforms() {
+                return match print_platforms(platform_intf_list.as_mut_ptr()) {
                     0 => Ok(()),
                     _ => Err(MosysError::NonzeroPlatformListRet),
                 };
@@ -153,11 +153,16 @@ impl<'a> Mosys<'a> {
 
                 // Safe because mosys_platform_setup only examines the string pointer during init
                 // and the pointer lives for the duration of the program.
-                unsafe { mosys_platform_setup(self.platform_override.as_ptr()) }
+                unsafe {
+                    mosys_platform_setup(
+                        platform_intf_list.as_mut_ptr(),
+                        self.platform_override.as_ptr(),
+                    )
+                }
             }
             None => {
                 // Safe because mosys_platform_setup uses null to skip override
-                unsafe { mosys_platform_setup(null()) }
+                unsafe { mosys_platform_setup(platform_intf_list.as_mut_ptr(), null()) }
             }
         };
 

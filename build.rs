@@ -46,6 +46,7 @@ fn main() {
         .whitelist_function(".*platform.*")
         .whitelist_function("print_.*")
         .whitelist_function("mosys_.*")
+        .whitelist_var("platform_intf_list")
         .generate()
         .expect("Unable to generate bindings");
     bindings
