@@ -37,35 +37,14 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
-#include "drivers/gpio.h"
 #include "drivers/google/cros_ec.h"
-#include "drivers/nvidia/tegra124/gpio.h"
 
 #include "lib/file.h"
+#include "lib/generic_callbacks.h"
 #include "lib/math.h"
 #include "lib/probe.h"
 
 #include "nyan.h"
-
-const char *nyan_id_list[] = {
-	"google,nyan",
-	NULL,
-};
-
-const char *nyan_big_id_list[] = {
-	"google,nyan-big",
-	NULL,
-};
-
-const char *nyan_blaze_id_list[] = {
-	"google,nyan-blaze-rev5",
-	"google,nyan-blaze-rev4",
-	"google,nyan-blaze-rev3",
-	"google,nyan-blaze-rev2",
-	"google,nyan-blaze-rev1",
-	"google,nyan-blaze-rev0",
-	NULL,
-};
 
 const char *nyan_kitty_id_list[] = {
 	"google,nyan-kitty-rev5",
@@ -92,71 +71,16 @@ int nyan_probe(struct platform_intf *intf)
 {
 	int index;
 
-	/* nyan-big is listed before google,nyan, so search for it first */
-	index = probe_fdt_compatible(&nyan_big_id_list[0],
-					ARRAY_SIZE(nyan_big_id_list), 0);
-	if (index >= 0) {
-		gpio_t gpio[] = {GPIO(Q3), GPIO(T1), GPIO(X1), GPIO(X4)};
-		int value;
-		char *str =strdup("google,nyan-big-rev%d");
-
-		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
-				"node.\n", nyan_big_id_list[index]);
-		intf->name = "Big";
-
-		gpio_get_in_tristate_values(intf, gpio, ARRAY_SIZE(gpio));
-
-		value = gpio_get_in_tristate_values(intf, gpio, ARRAY_SIZE(gpio));
-		sprintf(str, "google,nyan-big-rev%d", value);
-
-		return 1;
-	}
-
-	/* nyan-blaze is listed before google,nyan, so search for it first */
-	index = probe_fdt_compatible(&nyan_blaze_id_list[0],
-					ARRAY_SIZE(nyan_blaze_id_list), 0);
-	if (index >= 0) {
-		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
-				"node.\n", nyan_blaze_id_list[index]);
-		intf->name = "Blaze";
-		return 1;
-	}
-
-	/* nyan-kitty is listed before google,nyan, so search for it first */
 	index = probe_fdt_compatible(&nyan_kitty_id_list[0],
-					ARRAY_SIZE(nyan_kitty_id_list), 0);
+				     ARRAY_SIZE(nyan_kitty_id_list), 0);
 	if (index >= 0) {
-		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
-				"node.\n", nyan_kitty_id_list[index]);
-		intf->name = "Kitty";
-		return 1;
-	}
-
-	index = probe_fdt_compatible(&nyan_id_list[0],
-					ARRAY_SIZE(nyan_id_list), 0);
-	if (index >= 0) {
-		lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT compatible "
-				"node.\n", nyan_id_list[index]);
+		lprintf(LOG_DEBUG,
+			"Found platform \"%s\" via FDT compatible node.\n",
+			nyan_kitty_id_list[index]);
 		return 1;
 	}
 
 	return 0;
-}
-
-enum nyan_type get_nyan_type(struct platform_intf *intf)
-{
-	enum nyan_type ret = NYAN_UNKNOWN;
-
-	if (!strncmp(intf->name, "Big", strlen(intf->name)))
-		ret = NYAN_BIG;
-	else if (!strncmp(intf->name, "Blaze", strlen(intf->name)))
-		ret = NYAN_BLAZE;
-	else if (!strncmp(intf->name, "Kitty", strlen(intf->name)))
-		ret = NYAN_KITTY;
-	else if (!strncmp(intf->name, "Nyan", strlen(intf->name)))
-		ret = NYAN;
-
-	return ret;
 }
 
 static int nyan_setup_post(struct platform_intf *intf)
@@ -181,14 +105,14 @@ struct platform_cb nyan_cb = {
 	.eeprom 	= &nyan_eeprom_cb,
 	.memory		= &nyan_memory_cb,
 	.nvram		= &cros_ec_nvram_cb,
-	.psu		= &nyan_psu_cb,
+	.psu		= &generic_psu_ac_only_cb,
 	.sys 		= &nyan_sys_cb,
 	.eventlog	= &nyan_eventlog_cb,
 };
 
 struct platform_intf platform_nyan = {
 	.type		= PLATFORM_ARMV7,
-	.name		= "Nyan",
+	.name		= "Kitty",
 	.sub		= nyan_sub,
 	.cb		= &nyan_cb,
 	.probe		= &nyan_probe,

@@ -34,16 +34,6 @@
 
 #include "mosys/platform.h"
 
-enum nyan_type {
-	NYAN,
-	NYAN_BIG,
-	NYAN_BLAZE,
-	NYAN_KITTY,
-	NYAN_UNKNOWN,
-};
-
-extern enum nyan_type get_nyan_type(struct platform_intf *intf);
-
 /* platform callbacks */
 extern struct eeprom_cb nyan_eeprom_cb;	        /* eeprom.c */
 extern struct sys_cb nyan_sys_cb;		/* sys.c */

@@ -3,5 +3,4 @@ libmosys_src += files(
   'memory.c',
   'sys.c',
   'nyan.c',
-  'psu.c',
 )

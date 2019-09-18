@@ -38,25 +38,12 @@
 
 static char *nyan_get_name(struct platform_intf *intf)
 {
-	char *ret = NULL;
-
-	ret = mosys_strdup(intf->name);
-
-	return ret;
+	return mosys_strdup(intf->name);
 }
 
 static char *nyan_get_vendor(struct platform_intf *intf)
 {
-	char *ret = NULL;
-
-	if (!strncmp(intf->name, "Big", strlen(intf->name)))
-		ret = mosys_strdup("Google");
-	else if (!strncmp(intf->name, "Blaze", strlen(intf->name)))
-		ret = mosys_strdup("Google");
-	else if (!strncmp(intf->name, "Kitty", strlen(intf->name)))
-		ret = mosys_strdup("Google");
-
-	return ret;
+	return mosys_strdup("Google");
 }
 
 struct sys_cb nyan_sys_cb = {
