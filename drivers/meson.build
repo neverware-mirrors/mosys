@@ -5,4 +5,3 @@ libmosys_src += files(
 subdir('google')
 subdir('intel')
 subdir('ite')
-subdir('nvidia')
