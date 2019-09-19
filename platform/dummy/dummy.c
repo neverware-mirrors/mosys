@@ -41,8 +41,6 @@
 
 #include "dummy.h"
 
-const char *dummy_id_list[] = {"Dummy", NULL};
-
 struct platform_cmd *dummy_sub[] = {
 	// No commands
 	NULL};
@@ -72,7 +70,6 @@ struct platform_cb dummy_cb = {
 struct platform_intf platform_dummy = {
 	.type = PLATFORM_X86_64,
 	.name = "Dummy",
-	.id_list = dummy_id_list,
 	.sub = dummy_sub,
 	.cb = &dummy_cb,
 	.probe = &dummy_probe,

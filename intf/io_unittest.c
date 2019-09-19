@@ -66,10 +66,6 @@ static struct platform_intf
 build_test_intf(uint64_t file_backed_range_size,
 		const char *file_backed_range_file_name)
 {
-	const char *test_ids[] = {
-	    "TEST",
-	    NULL,
-	};
 	struct platform_op test_ops = {
 	    .io = &io_intf,
 	};
@@ -78,7 +74,6 @@ build_test_intf(uint64_t file_backed_range_size,
 	struct platform_intf intf = {
 	    .type = PLATFORM_DEFAULT,
 	    .name = "UNITTEST",
-	    .id_list = test_ids,
 	    .op = &test_ops,
 	    .cb = &test_cbs,
 	};

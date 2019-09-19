@@ -197,7 +197,6 @@ struct platform_cb nyan_cb = {
 struct platform_intf platform_nyan = {
 	.type		= PLATFORM_ARMV7,
 	.name		= "Nyan",
-	.id_list	= nyan_id_list,
 	.sub		= nyan_sub,
 	.cb		= &nyan_cb,
 	.probe		= &nyan_probe,
