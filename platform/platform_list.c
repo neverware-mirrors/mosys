@@ -42,6 +42,7 @@ extern struct platform_intf platform_beltino;
 extern struct platform_intf platform_cheza;
 extern struct platform_intf platform_coral;
 extern struct platform_intf platform_cyan;
+extern struct platform_intf platform_cyclone;
 extern struct platform_intf platform_fizz;
 extern struct platform_intf platform_flapjack;
 extern struct platform_intf platform_glados;
@@ -90,6 +91,7 @@ struct platform_intf *platform_intf_list[] = {
 #endif // CONFIG_PLATFORM_ARCH_X86
 
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
+	&platform_cyclone,
 	&platform_gru,
 	&platform_mistral,
 	&platform_nyan,
