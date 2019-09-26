@@ -86,11 +86,6 @@ int storm_probe(struct platform_intf *intf)
 	return index >= 0 ? 1 : 0;
 }
 
-static int storm_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb storm_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -118,5 +113,4 @@ struct platform_intf platform_storm = {
 	.sub		= storm_sub,
 	.cb		= &storm_cb,
 	.probe		= &storm_probe,
-	.destroy	= &storm_destroy,
 };

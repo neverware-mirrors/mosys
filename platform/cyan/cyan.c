@@ -106,11 +106,6 @@ static int cyan_setup_post(struct platform_intf *intf)
 	return cros_ec_setup(intf);
 }
 
-static int cyan_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb cyan_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -138,5 +133,4 @@ struct platform_intf platform_cyan = {
 	.cb		= &cyan_cb,
 	.probe		= &cyan_probe,
 	.setup_post	= &cyan_setup_post,
-	.destroy	= &cyan_destroy,
 };

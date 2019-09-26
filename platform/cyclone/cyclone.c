@@ -76,11 +76,6 @@ int cyclone_probe(struct platform_intf *intf)
 	return index >= 0 ? 1 : 0;
 }
 
-static int cyclone_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb cyclone_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -107,5 +102,4 @@ struct platform_intf platform_cyclone = {
 	.sub		= cyclone_sub,
 	.cb		= &cyclone_cb,
 	.probe		= &cyclone_probe,
-	.destroy	= &cyclone_destroy,
 };

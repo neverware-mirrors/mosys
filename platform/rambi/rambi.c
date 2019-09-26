@@ -163,11 +163,6 @@ static int rambi_setup_post(struct platform_intf *intf)
 	return rc;
 }
 
-static int rambi_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb rambi_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -196,5 +191,4 @@ struct platform_intf platform_rambi = {
 	.cb		= &rambi_cb,
 	.probe		= &rambi_probe,
 	.setup_post	= &rambi_setup_post,
-	.destroy	= &rambi_destroy,
 };

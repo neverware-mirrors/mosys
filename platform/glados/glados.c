@@ -144,11 +144,6 @@ static int glados_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-static int glados_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb glados_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -177,5 +172,4 @@ struct platform_intf platform_glados = {
 	.cb		= &glados_cb,
 	.probe		= &glados_probe,
 	.setup_post	= &glados_setup_post,
-	.destroy	= &glados_destroy,
 };

@@ -139,11 +139,6 @@ static int strago_setup_post(struct platform_intf *intf)
 	return cros_ec_setup(intf);
 }
 
-static int strago_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb strago_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -171,5 +166,4 @@ struct platform_intf platform_strago = {
 	.cb		= &strago_cb,
 	.probe		= &strago_probe,
 	.setup_post	= &strago_setup_post,
-	.destroy	= &strago_destroy,
 };

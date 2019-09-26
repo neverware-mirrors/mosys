@@ -75,11 +75,6 @@ static int octopus_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-static int octopus_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb octopus_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -106,5 +101,4 @@ struct platform_intf platform_octopus = {
 	.cb		= &octopus_cb,
 	.probe		= &octopus_probe,
 	.setup_post	= &octopus_setup_post,
-	.destroy	= &octopus_destroy,
 };

@@ -78,11 +78,6 @@ static int nami_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-static int nami_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb nami_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -111,6 +106,5 @@ struct platform_intf platform_nami = {
 	.cb		= &nami_cb,
 	.probe		= &nami_probe,
 	.setup_post	= &nami_setup_post,
-	.destroy	= &nami_destroy,
 };
 #endif /* CONFIG_CROS_CONFIG */

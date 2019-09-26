@@ -89,11 +89,6 @@ static int fizz_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-static int fizz_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb fizz_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -122,6 +117,5 @@ struct platform_intf platform_fizz = {
 	.cb		= &fizz_cb,
 	.probe		= &fizz_probe,
 	.setup_post	= &fizz_setup_post,
-	.destroy	= &fizz_destroy,
 };
 #endif /* CONFIG_CROS_CONFIG */

@@ -75,11 +75,6 @@ static int kahlee_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-static int kahlee_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb kahlee_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -106,6 +101,5 @@ struct platform_intf platform_kahlee = {
 	.cb			= &kahlee_cb,
 	.probe		= &kahlee_probe,
 	.setup_post	= &kahlee_setup_post,
-	.destroy	= &kahlee_destroy,
 };
 #endif /* CONFIG_CROS_CONFIG */

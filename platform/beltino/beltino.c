@@ -128,11 +128,6 @@ beltino_probe_exit:
 	return status;
 }
 
-static int beltino_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb beltino_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -160,5 +155,4 @@ struct platform_intf platform_beltino = {
 	.sub		= beltino_sub,
 	.cb		= &beltino_cb,
 	.probe		= &beltino_probe,
-	.destroy	= &beltino_destroy,
 };

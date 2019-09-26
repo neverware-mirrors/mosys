@@ -123,11 +123,6 @@ static int slippy_setup_post(struct platform_intf *intf)
 	return rc;
 }
 
-static int slippy_destroy(struct platform_intf *intf)
-{
-	return 0;
-}
-
 struct eventlog_cb slippy_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -155,5 +150,4 @@ struct platform_intf platform_slippy = {
 	.cb		= &slippy_cb,
 	.probe		= &slippy_probe,
 	.setup_post	= &slippy_setup_post,
-	.destroy	= &slippy_destroy,
 };
