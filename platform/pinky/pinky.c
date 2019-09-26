@@ -140,13 +140,6 @@ static int pinky_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-static int pinky_destroy(struct platform_intf *intf)
-{
-	if (intf->cb->ec && intf->cb->ec->destroy)
-		intf->cb->ec->destroy(intf, intf->cb->ec);
-	return 0;
-}
-
 struct eventlog_cb pinky_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -176,5 +169,4 @@ struct platform_intf platform_pinky = {
 	.cb		= &pinky_cb,
 	.probe		= &pinky_probe,
 	.setup_post	= &pinky_setup_post,
-	.destroy	= &pinky_destroy,
 };

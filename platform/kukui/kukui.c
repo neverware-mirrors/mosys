@@ -89,13 +89,6 @@ static int kukui_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-static int kukui_destroy(struct platform_intf *intf)
-{
-	if (intf->cb->ec && intf->cb->ec->destroy)
-		intf->cb->ec->destroy(intf, intf->cb->ec);
-	return 0;
-}
-
 struct eventlog_cb kukui_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -124,5 +117,4 @@ struct platform_intf platform_kukui = {
 	.cb		= &kukui_cb,
 	.probe		= &kukui_probe,
 	.setup_post	= &kukui_setup_post,
-	.destroy	= &kukui_destroy,
 };

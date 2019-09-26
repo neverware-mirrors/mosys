@@ -141,17 +141,14 @@ mosys_platform_setup(struct platform_intf *platform_list[],
 
 	/* prepare interface operations */
 	if (intf_op_setup(intf) < 0) {
-		if (intf->destroy)
-			intf->destroy(intf);
-		intf_op_destroy(intf);
+		mosys_platform_destroy(intf);
 		return NULL;
 	}
 
 	/* call platform-specific post-setup if found */
 	if (intf->setup_post &&
 	    intf->setup_post(intf) < 0) {
-		if (intf->destroy)
-			intf->destroy(intf);
+		mosys_platform_destroy(intf);
 		return NULL;
 	}
 
@@ -175,8 +172,22 @@ void mosys_platform_destroy(struct platform_intf *intf)
 			intf->destroy(intf);
 
 		/* cleanup interface operations */
-		intf_op_destroy(intf);
+		if (intf->op)
+			intf_op_destroy(intf);
 
+		/* call destroy defined for any callbacks */
+		if (intf->cb) {
+			if (intf->cb->ec && intf->cb->ec->destroy)
+				intf->cb->ec->destroy(intf, intf->cb->ec);
+			if (intf->cb->pd && intf->cb->pd->destroy)
+				intf->cb->pd->destroy(intf, intf->cb->pd);
+			if (intf->cb->sh && intf->cb->sh->destroy)
+				intf->cb->sh->destroy(intf, intf->cb->sh);
+			if (intf->cb->fp && intf->cb->fp->destroy)
+				intf->cb->fp->destroy(intf, intf->cb->fp);
+			if (intf->cb->ish && intf->cb->ish->destroy)
+				intf->cb->ish->destroy(intf, intf->cb->ish);
+		}
 	}
 }
 

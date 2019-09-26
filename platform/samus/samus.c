@@ -113,15 +113,6 @@ static int samus_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-static int samus_destroy(struct platform_intf *intf)
-{
-	if (intf->cb->ec->destroy)
-		intf->cb->ec->destroy(intf, intf->cb->ec);
-	if (intf->cb->pd->destroy)
-		intf->cb->pd->destroy(intf, intf->cb->pd);
-	return 0;
-}
-
 struct eventlog_cb samus_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -150,5 +141,4 @@ struct platform_intf platform_samus = {
 	.cb		= &samus_cb,
 	.probe		= &samus_probe,
 	.setup_post	= &samus_setup_post,
-	.destroy	= &samus_destroy,
 };

@@ -165,13 +165,6 @@ static int nyan_setup_post(struct platform_intf *intf)
 	return cros_ec_setup(intf);
 }
 
-static int nyan_destroy(struct platform_intf *intf)
-{
-	if (intf->cb->ec->destroy)
-		intf->cb->ec->destroy(intf, intf->cb->ec);
-	return 0;
-}
-
 struct eventlog_cb nyan_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -201,5 +194,4 @@ struct platform_intf platform_nyan = {
 	.cb		= &nyan_cb,
 	.probe		= &nyan_probe,
 	.setup_post	= &nyan_setup_post,
-	.destroy	= &nyan_destroy,
 };
