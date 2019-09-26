@@ -34,7 +34,6 @@
 #ifndef MOSYS_DRIVERS_EC_GOOGLE_H__
 #define MOSYS_DRIVERS_EC_GOOGLE_H__
 
-#include "intf/i2c.h"
 #include "intf/io.h"
 #include "cros_ec_commands.h"
 
@@ -77,7 +76,6 @@ struct cros_ec_priv {
 	 * Unused interfaces must be set/initialized to NULL.
 	 */
 	struct cros_ec_dev *devfs;
-	struct i2c_addr *i2c;
 	struct io_port *io;
 
 	int device_index;
@@ -117,7 +115,6 @@ int cros_ec_vbnvcontext_write(struct platform_intf *intf,
 int cros_ec_get_firmware_rom_size(struct platform_intf *intf);
 
 int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec);
-int cros_ec_probe_i2c(struct platform_intf *intf);
 int cros_ec_probe_lpc(struct platform_intf *intf);
 
 /* PD commands */

@@ -30,6 +30,7 @@
  * cros_ec_dev.c: Chrome EC interface via /dev
  */
 
+#include <errno.h>
 #include <fcntl.h>
 #include <inttypes.h>
 #include <linux/limits.h>
