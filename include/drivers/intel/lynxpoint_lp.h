@@ -43,37 +43,6 @@ struct gpio_reg;
  */
 #define LYNXPOINT_LP_SMBUS_ADAPTER "SMBus I801 adapter"
 
-/*
- * lynxpoint_lp_get_bbs - get bios boot straps (bbs) value
- *
- * @intf:	platform interface
- *
- * returns BBS value to indicate success
- * returns <0 to indicate failure
- */
-enum ich_lpss_bbs lynxpoint_lp_get_bbs(struct platform_intf *intf);
-
-/*
- * lynxpoint_lp_set_bbs - set bios boot straps (bbs) value
- *
- * @intf:	platform interface
- * @bbs:	bbs value
- *
- * returns 0 to indicate success
- * returns <0 to indicate failure
- */
-int lynxpoint_lp_set_bbs(struct platform_intf *intf, enum ich_lpss_bbs bbs);
-
-/*
- * lynxpoint_lp_read_gpio  - read GPIO status
- *
- * @intf:	platform interface
- * @gpio:	gpio map
- *
- * returns GPIO state as 0 or 1
- * returns <0 on read failure
- */
-
 int lynxpoint_lp_read_gpio(struct platform_intf *intf, struct gpio_map *gpio);
 
 /*
@@ -98,19 +67,6 @@ int lynxpoint_lp_set_gpio(struct platform_intf *intf, struct gpio_map *gpio,
  * returns <0 if failure
  */
 int lynxpoint_lp_gpio_list(struct platform_intf *intf);
-
-/*
- * lynxpoint_lp_global_reset - force global reset
- *
- * @intf:	platform interface
- *
- * Obviously this function should force the platform to die before
- * returning, but we have a return code anyway...
- *
- * returns 0 if successful
- * returns <0 if failure
- */
-int lynxpoint_lp_global_reset(struct platform_intf *intf);
 
 /*
  * lynxpoint_lp_list_gpio_attributes - list GPIO's attributes
