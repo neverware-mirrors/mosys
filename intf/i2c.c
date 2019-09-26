@@ -153,64 +153,6 @@ static void i2c_close_dev(struct platform_intf *intf)
 	free((char *)intf->op->i2c->dev_root);
 }
 
-static int i2c_transfer(struct platform_intf *intf, int bus, int address,
-			const void *outdata, int outsize,
-			void *indata, int insize)
-{
-	int ret = -1;
-	struct i2c_rdwr_ioctl_data data;
-	struct i2c_msg *msg = NULL;
-	int handle, fd;
-
-	/* open connection to i2c slave */
-	handle = i2c_open_dev(intf, bus, address);
-	if (handle < 0)
-		return -1;
-	fd = i2c_handles[handle].fd;
-
-	data.nmsgs = 0;
-
-	if (outsize) {
-		msg = mosys_realloc(msg, sizeof(*msg) * (data.nmsgs + 1));
-		msg[data.nmsgs].addr = address;
-		msg[data.nmsgs].flags = 0;
-		msg[data.nmsgs].len = outsize;
-		msg[data.nmsgs].buf = (uint8_t *)outdata;
-		data.nmsgs++;
-	}
-
-	if (insize) {
-		msg = mosys_realloc(msg, sizeof(*msg) * (data.nmsgs + 1));
-		msg[data.nmsgs].addr = address;
-		msg[data.nmsgs].flags = I2C_M_RD;
-		msg[data.nmsgs].len = insize;
-		msg[data.nmsgs].buf = indata;
-		data.nmsgs++;
-	}
-
-	data.msgs = msg;
-	/* send command to EC and read answer */
-#if defined (__linux__)
-	/* ioctl returns negative errno, else the number of messages executed */
-	ret = ioctl(fd, I2C_RDWR, &data);
-#else
-	ret = -ENOSYS;
-#endif
-
-	if (ret < 0) {
-		lperror(LOG_ERR, "i2c transfer failed");
-		ret = -1;
-	} else if (ret != data.nmsgs) {
-		lprintf(LOG_ERR, "ioctl executed wrong number of messages\n");
-		ret = -1;
-	} else {
-		ret = 0;
-	}
-
-	free(msg);
-	return ret;
-}
-
 static int smbus_read_reg(struct platform_intf *intf, int bus,
 			  int address, int reg, int length, void *data)
 {
@@ -563,98 +505,6 @@ static int i2c_find_driver(struct platform_intf *intf, const char *module)
 	return ret;
 }
 
-static int i2c_match_bus_name(struct platform_intf *intf,
-                              int bus, const char *name)
-{
-	char *path;
-	char bus_name[64];
-	int fd;
-	int len = strlen(name);
-	int ret = 0;
-
-	path = format_string("%s/sys/class/i2c-dev/i2c-%d/name",
-	                     mosys_get_root_prefix(), bus);
-
-	fd = open(path, O_RDONLY);
-	free(path);
-	if (fd < 0)
-		return 0;
-	len = __min(len, 64);
-	memset(bus_name, 0, len);
-	if (read(fd, bus_name, len) == len) {
-		if (strncmp(bus_name, name, len) == 0)
-			ret = 1;
-	}
-
-	close(fd);
-	return ret;
-}
-
-/*
- * i2c_find_dir - Find a /sys directory or directories for a device's
- * description as printed in the /sys/bus/i2c/devices/<bus-addr>/name file.
- * All matching descriptions are inserted into a linked list.
- */
-static struct ll_node *i2c_find_sysfs_dir(struct platform_intf *intf,
-					  const char *name)
-{
-	char *path;
-	char s[32];
-	FILE *fp;
-	DIR *dp;
-	struct dirent *d;
-	struct ll_node *head = NULL;
-	int bus, addr;
-	int len = strlen(name);
-	const char *next;
-
-	if (!(dp = opendir(intf->op->i2c->sys_root))) {
-		lprintf(LOG_ERR, "Failed to open %s\n",
-		        intf->op->i2c->sys_root);
-		return NULL;
-	}
-
-	while ((d = readdir(dp))) {
-		/* Scan for entries in the form of 0-0000 and filter out
-		 * irrelevent entries like '.' and ".." */
-		if (!(sscanf(d->d_name, "%u-%x", &bus, &addr)))
-			continue;
-
-		/* Is this the type of device we want? */
-		path = format_string("%s/%u-%04x/name",
-		                     intf->op->i2c->sys_root, bus, addr);
-		fp = fopen(path, "r");
-		if (fp) {
-			next = fgets(s, sizeof(s), fp);
-			fclose(fp);
-			if (!next) {
-				lprintf(LOG_NOTICE, "Error reading name: %s\n",
-					path);
-			} else if (!strncmp(s, name, len)) { /* Found one! */
-				struct i2c_data *n;
-
-				n = mosys_malloc(sizeof(struct i2c_data));
-
-				/* Fill out the data structure */
-				n->addr.bus = bus;
-				n->addr.addr = addr;
-				n->dir = format_string("%s/%u-%04x",
-				                       intf->op->i2c->sys_root,
-				                       bus, addr);
-
-				head = list_insert_before(head, (void *)n);
-			}
-		} else {
-			lprintf(LOG_NOTICE,                   // COV_NF_LINE
-			        "Failed to open %s\n", path);
-		}
-		free(path);
-	}
-
-	closedir(dp);
-	return head;
-}
-
 static int i2c_setup_dev(struct platform_intf *intf)
 {
 	intf->op->i2c->sys_root
@@ -668,7 +518,6 @@ static int i2c_setup_dev(struct platform_intf *intf)
 struct i2c_intf i2c_dev_intf = {
 	.setup  		= i2c_setup_dev,
 	.destroy		= i2c_close_dev,
-	.i2c_transfer		= i2c_transfer,
 	.smbus_read_reg		= smbus_read_reg,
 	.smbus_write_reg	= smbus_write_reg,
 	.smbus_read16		= smbus_read16_dev,
@@ -676,6 +525,4 @@ struct i2c_intf i2c_dev_intf = {
 	.smbus_read_raw		= smbus_read_raw,
 	.smbus_write_raw	= smbus_write_raw,
 	.find_driver		= i2c_find_driver,
-	.find_sysfs_dir		= i2c_find_sysfs_dir,
-	.match_bus		= i2c_match_bus_name,
 };

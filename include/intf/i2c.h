@@ -39,8 +39,6 @@
 #include <inttypes.h>
 #include <errno.h>
 
-#include "mosys/list.h"
-
 #define I2C_HANDLE_MAX		64
 
 struct platform_intf;
@@ -64,25 +62,6 @@ struct i2c_intf {
 	 * @intf:       platform interface
 	 */
 	void (*destroy)(struct platform_intf *intf);
-
-
-	/*
-	 * i2c_transfer - Single or combined transfer using I2C_RDWR ioctl
-	 *
-	 * @intf:	platform interface
-	 * @bus:        I2C bus/adapter
-	 * @address:    I2C slave address
-	 * @outdata:	buffer containing output data
-	 * @outsize:	number of bytes to send
-	 * @indata:	buffer to store input data
-	 * @insize:	number of bytes expected to be received
-	 *
-	 * returns 0 to indicate success
-	 * returns <0 to indicate failure
-	 */
-	 int (*i2c_transfer)(struct platform_intf *intf, int bus, int address,
-			     const void *outdata, int outsize,
-			     void *indata, int insize);
 
 	/*
 	 * smbus_read_reg - Read from a register addressable SMBus device
@@ -192,31 +171,6 @@ struct i2c_intf {
 	 */
 	int (*find_driver)(struct platform_intf *intf,
 			   const char *name);
-
-	/*
-	 * find_sysfs_dir  -  Find sysfs directory for device
-	 *
-	 * @intf:	platform interface
-	 * @name:	i2c driver name
-	 *
-	 * returns the head of a linked list of matching devices
-	 * returns NULL if no device found or error
-	 */
-	struct ll_node *(*find_sysfs_dir)(struct platform_intf *intf,
-					  const char *name);
-
-	/*
-	 * i2c_match_bus_name  -  Look for bus name
-	 *
-	 * @intf:	platform interface
-	 * @name:	bus name
-	 * @bus:	bus number
-	 *
-	 * returns 1 if bus name does match
-	 * returns 0 if bus name does not match
-	 */
-	int (*match_bus)(struct platform_intf *intf,
-			 int bus, const char *name);
 };
 
 /* I2C operations for Linux /dev interface */
@@ -225,12 +179,6 @@ extern struct i2c_intf i2c_dev_intf;
 struct i2c_addr {
 	int bus;
 	int addr;
-};
-
-/* Data for storing /sys i2c information */
-struct i2c_data {
-	struct i2c_addr addr;
-	char *dir;
 };
 
 #if defined(__linux__)
