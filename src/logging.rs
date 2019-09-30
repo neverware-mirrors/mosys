@@ -214,7 +214,7 @@ impl Error for LogError {
         }
     }
 
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<&dyn Error> {
         match *self {
             LogError::NullTerm(ref err) => Some(err),
             _ => None,

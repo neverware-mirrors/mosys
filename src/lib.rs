@@ -285,7 +285,7 @@ impl<'a> Mosys<'a> {
 
                 // Format commands to C array of C char*
                 // CStrings will corrupt if this is done in one step
-                let mut str_args: Vec<_> = commands
+                let str_args: Vec<_> = commands
                     .iter()
                     .map(|arg| CString::new(arg.as_str()).unwrap())
                     .collect();
@@ -462,7 +462,7 @@ impl Error for MosysError {
         }
     }
 
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<&dyn Error> {
         match *self {
             MosysError::Flag(ref err) => Some(err),
             MosysError::Io(ref err) => Some(err),
@@ -728,7 +728,7 @@ mod tests {
             mosys_globals_init();
             mosys_set_kv_pair_style(kv_pair_style_KV_STYLE_PAIR);
             let ret = mosys_get_kv_pair_style();
-            assert_eq!(ret, kv_pair_style_KV_STYLE_PAIR);;
+            assert_eq!(ret, kv_pair_style_KV_STYLE_PAIR);
         }
     }
 
