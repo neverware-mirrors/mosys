@@ -437,10 +437,16 @@ struct elog_event_extended_event {
 #define VBNV_RECOVERY_RW_NO_KERNEL    0x5B
 /* BCB-related error in RW firmware */
 #define VBNV_RECOVERY_RW_BCB_ERROR    0x5C
+/* Kernel secure data initialization error */
+#define VBNV_RECOVERY_SECDATA_KERNEL_INIT 0x5E
 /* Fastboot mode requested in firmware */
 #define VBNV_RECOVERY_FW_FASTBOOT     0x5E
 /* Recovery hash space lock error in RO firmware */
 #define VBNV_RECOVERY_RO_TPM_REC_HASH_L_ERROR    0x5F
+/* Failed to disable the TPM (prior to running untrusted code) */
+#define VBNV_RECOVERY_TPM_DISABLE_FAILED 0x60
+/* Alt FW failed hash verification */
+#define VBNV_RECOVERY_ALTFW_HASH_FAILED 0x61
 /* Unspecified/unknown error in rewritable firmware */
 #define VBNV_RECOVERY_RW_UNSPECIFIED  0x7F
 /* DM-verity error */
