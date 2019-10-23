@@ -65,12 +65,8 @@ struct platform_cmd *sarien_sub[] = {
 
 int sarien_probe(struct platform_intf *intf)
 {
-	/* cros_config model.yaml 'platform-name' should match intf.name. */
-	static const char *platform_names[] = {
-		"Sarien", "Drallion",
-		NULL
-	};
-	return cros_config_probe(intf, platform_names);
+	/* support single platform from configs->platform_name */
+	return cros_config_probe(intf, NULL);
 }
 
 /* late setup routine; not critical to core functionality */
@@ -106,6 +102,26 @@ struct platform_intf platform_sarien = {
 	.name		= "Sarien",
 	.sub		= sarien_sub,
 	.cb		= &sarien_cb,
+	.probe		= &sarien_probe,
+	.setup_post	= &sarien_setup_post,
+};
+
+struct platform_cb drallion_cb = {
+	.ec		= &wilco_ec_cb,
+	.ish		= &cros_ish_cb,
+	.eeprom		= &sarien_eeprom_cb,
+	.memory		= &drallion_memory_cb,
+	.nvram		= &sarien_nvram_cb,
+	.smbios		= &smbios_sysinfo_cb,
+	.sys 		= &sarien_sys_cb,
+	.eventlog	= &sarien_eventlog_cb,
+};
+
+struct platform_intf platform_drallion = {
+	.type		= PLATFORM_X86_64,
+	.name		= "Drallion",
+	.sub		= sarien_sub,
+	.cb		= &drallion_cb,
 	.probe		= &sarien_probe,
 	.setup_post	= &sarien_setup_post,
 };

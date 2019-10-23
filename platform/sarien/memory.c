@@ -29,7 +29,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -38,7 +37,6 @@
 #include "drivers/intel/series6.h"
 
 #include "lib/file.h"
-#include "lib/flashrom.h"
 #include "lib/spd.h"
 #include "lib/smbios.h"
 
@@ -54,7 +52,7 @@ static int sarien_dimm_count(struct platform_intf *intf)
 }
 
 static int sarien_spd_read(struct platform_intf *intf,
-		 int dimm, int reg, int spd_len, uint8_t *spd_buf)
+		           int dimm, int reg, int spd_len, uint8_t *spd_buf)
 {
 	int bus;
 	int address;
@@ -66,7 +64,6 @@ static int sarien_spd_read(struct platform_intf *intf,
 	/* First ensure SPD is pointing at page 0 */
 	intf->op->i2c->smbus_write_reg(intf, bus, SARIEN_SPD_PAGE_0_ADDR,
 				       0, sizeof(page_sel), &page_sel);
-
 	return spd_read_i2c(intf, bus, address, reg, spd_len, spd_buf);
 }
 
@@ -81,7 +78,7 @@ static int sarien_spd_read(struct platform_intf *intf,
  * returns <0 to indicate error
  */
 static int dimm_sarien_dimm_map(struct platform_intf *intf,
-			      enum dimm_map_type type, int dimm)
+			        enum dimm_map_type type, int dimm)
 {
 	int ret = -1;
 	static struct dimm_map {
@@ -158,4 +155,10 @@ struct memory_cb sarien_memory_cb = {
 	.dimm_speed	= smbios_dimm_speed,
 	.dimm_map	= dimm_sarien_dimm_map,
 	.spd		= &sarien_spd_cb,
+};
+
+struct memory_cb drallion_memory_cb = {
+	.dimm_count	= sarien_dimm_count,
+	.dimm_speed	= smbios_dimm_speed,
+	.spd		= &memory_spd_cbfs,
 };

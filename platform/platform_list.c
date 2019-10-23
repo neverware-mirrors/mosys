@@ -43,6 +43,7 @@ extern struct platform_intf platform_cheza;
 extern struct platform_intf platform_coral;
 extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_cyclone;
+extern struct platform_intf platform_drallion;
 extern struct platform_intf platform_fizz;
 extern struct platform_intf platform_flapjack;
 extern struct platform_intf platform_glados;
@@ -85,6 +86,7 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_poppy,
 	&platform_octopus,
 	&platform_sarien,
+	&platform_drallion,
 #endif // CONFIG_PLATFORM_ARCH_X86
 /* experimental platforms */
 	&platform_dummy,

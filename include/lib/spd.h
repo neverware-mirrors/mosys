@@ -334,7 +334,23 @@ extern int spd_print_field_ddr4(struct platform_intf *intf, struct kv_pair *kv,
  * returns <0 to indicate error
  */
 extern int spd_read_from_cbfs(struct platform_intf *intf,
-			int module, int reg, int spd_len, uint8_t *spd,
-			size_t fw_size, uint8_t *fw);
+			      int module, int reg, int spd_len, uint8_t *spd,
+			      size_t fw_size, uint8_t *fw);
 
+/*
+ * spd_read_cbfs_flashrom  -  retrieve SPD info from flashrom
+ *
+ * @intf:	platform interface
+ * @dimm:	dimm number
+ * @reg:	SPD register offset
+ * @spd_len:	length of SPD data
+ * @spd_buf:	raw SPD data buffer
+ *
+ * returns 0 to indicate success
+ * returns <0 to indicate error
+ */
+extern int spd_read_cbfs_flashrom(struct platform_intf *intf, int dimm,
+			    	  int reg, int spd_len, uint8_t *spd_buf);
+
+extern struct memory_spd_cb memory_spd_cbfs;
 #endif /* LIB_SPD_H__ */

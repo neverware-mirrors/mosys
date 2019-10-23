@@ -43,18 +43,24 @@
 #include <errno.h>
 
 #include "mosys/alloc.h"
+#include "mosys/callbacks.h"
 #include "mosys/list.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "intf/i2c.h"
 #include "lib/cbfs_core.h"
+#include "lib/flashrom.h"
 #include "lib/math.h"
 #include "lib/smbios.h"
 #include "lib/smbios_tables.h"
 #include "lib/spd.h"
 
 static spd_raw_override spd_raw_access_override;
+
+struct memory_spd_cb memory_spd_cbfs = {
+	.read		= spd_read_cbfs_flashrom,
+};
 
 const char *ddr_freq_prettyprint[] = {
 	[DDR_FREQ_UNKNOWN] = "Unknown",
@@ -338,8 +344,8 @@ static int _spd_read_from_cbfs(const char *spd_cbfs_filename,
 }
 
 int spd_read_from_cbfs(struct platform_intf *intf,
-			int module, int reg, int num_bytes_to_read,
-			uint8_t *spd, size_t fw_size, uint8_t *fw)
+		       int module, int reg, int num_bytes_to_read,
+		       uint8_t *spd, size_t fw_size, uint8_t *fw)
 {
 	const char *spd_cbfs_files[] = {
 		"spd.bin",
@@ -357,4 +363,30 @@ int spd_read_from_cbfs(struct platform_intf *intf,
 			return bytes_to_read;
 	}
 	return -1;
+}
+
+int spd_read_cbfs_flashrom(struct platform_intf *intf, int dimm,
+			   int reg, int spd_len, uint8_t *spd_buf)
+{
+	/* TODO(crbug.com/1018847): Fix memory leak of fw_buf */
+	static uint8_t *fw_buf;
+	static int fw_size;
+
+	/* dimm count is 0 based */
+	if (dimm >= intf->cb->memory->dimm_count(intf)) {
+		lprintf(LOG_DEBUG, "Invalid DIMM specified\n");
+		return -1;
+	}
+	/* previous attempt failed */
+	if (fw_size < 0)
+		return -1;
+
+	if (!fw_size) {
+		fw_size = flashrom_read_host_firmware_region(intf, &fw_buf);
+		if (fw_size < 0)
+			return -1;
+	}
+
+	return spd_read_from_cbfs(intf, dimm, reg,
+				  spd_len, spd_buf, fw_size, fw_buf);
 }

@@ -39,6 +39,7 @@
 
 /* platform callbacks */
 extern struct eeprom_cb sarien_eeprom_cb;	/* eeprom.c */
+extern struct memory_cb drallion_memory_cb;	/* memory.c */
 extern struct memory_cb sarien_memory_cb;	/* memory.c */
 extern struct nvram_cb sarien_nvram_cb;		/* nvram.c */
 extern struct sys_cb sarien_sys_cb;		/* sys.c */
