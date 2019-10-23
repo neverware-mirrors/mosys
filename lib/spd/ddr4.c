@@ -240,6 +240,7 @@ int spd_print_field_ddr4(struct platform_intf *intf, struct kv_pair *kv,
 			{ 667,  "DDR4-1333" },
 			{ 800,  "DDR4-1600" },
 			{ 1200, "DDR4-2400" },
+			{ 1333, "DDR4-2667" },
 			{ 0 }
 		};
 		int tck_mtb = byte[DDR4_SPD_REG_TCK_MIN];
