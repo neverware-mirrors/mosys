@@ -264,13 +264,6 @@ struct smbios_cb {
 	char *(*system_serial)(struct platform_intf *intf);
 };
 
-/* vpd callbacks */
-struct vpd_cb {
-	char *(*system_serial)(struct platform_intf *intf);
-	char *(*system_sku)(struct platform_intf *intf);
-	char *(*google_hwqualid)(struct platform_intf *intf);
-};
-
 /* system information callbacks */
 struct sys_cb {
 	/* methods useful for probing */
@@ -388,7 +381,6 @@ struct platform_cb {
 	struct nvram_cb *nvram;		/* nvram related callbacks */
 	struct gpio_cb *gpio;		/* gpio callbacks */
 	struct eeprom_cb *eeprom;	/* eeprom callbacks */
-	struct vpd_cb *vpd;		/* vpd callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
 	struct ec_cb *pd;		/* pd callbacks */
 	struct ec_cb *sh;		/* sh callbacks */
