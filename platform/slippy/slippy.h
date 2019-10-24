@@ -45,7 +45,6 @@ extern struct nvram_cb slippy_nvram_cb;		/* nvram.c */
 extern struct sys_cb slippy_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */
-extern int slippy_vpd_setup(struct platform_intf *intf);
 extern int slippy_ec_setup(struct platform_intf *intf);
 
 #endif /* PLATFORM_SLIPPY_H_ */

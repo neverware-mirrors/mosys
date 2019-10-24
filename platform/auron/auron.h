@@ -45,7 +45,4 @@ extern struct memory_cb dimm_memory_cb;		/* memory.c */
 extern struct nvram_cb auron_nvram_cb;		/* nvram.c */
 extern struct sys_cb auron_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int auron_vpd_setup(struct platform_intf *intf);
-
 #endif /* PLATFORM_AURON_H_ */

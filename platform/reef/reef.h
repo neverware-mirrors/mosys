@@ -45,7 +45,4 @@ extern struct nvram_cb reef_nvram_cb;		/* nvram.c */
 extern struct sys_cb reef_sys_cb;		/* sys.c */
 extern struct sys_cb coral_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int reef_ec_setup(struct platform_intf *intf);
-
 #endif /* PLATFORM_REEF_H_ */

@@ -46,7 +46,6 @@ extern struct psu_cb rambi_psu_cb;
 extern struct sys_cb rambi_sys_cb;		/* sys.c */
 
 /* functions called by setup routines */
-extern int rambi_vpd_setup(struct platform_intf *intf);
 extern int rambi_ec_setup(struct platform_intf *intf);
 
 #endif /* PLATFORM_RAMBI_H_ */

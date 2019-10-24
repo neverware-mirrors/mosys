@@ -43,7 +43,4 @@ extern struct memory_cb sarien_memory_cb;	/* memory.c */
 extern struct nvram_cb sarien_nvram_cb;		/* nvram.c */
 extern struct sys_cb sarien_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int sarien_ec_setup(struct platform_intf *intf);
-
 #endif /* PLATFORM_SARIEN_H_ */

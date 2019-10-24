@@ -44,7 +44,4 @@ extern struct memory_cb strago_memory_cb;	/* memory.c */
 extern struct nvram_cb strago_nvram_cb;		/* nvram.c */
 extern struct sys_cb strago_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int strago_vpd_setup(struct platform_intf *intf);
-
 #endif /* EXPERIMENTAL_STRAGO_H_ */

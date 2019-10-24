@@ -44,7 +44,4 @@ extern struct memory_cb octopus_memory_cb;	/* memory.c */
 extern struct nvram_cb octopus_nvram_cb;		/* nvram.c */
 extern struct sys_cb octopus_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int octopus_ec_setup(struct platform_intf *intf);
-
 #endif /* PLATFORM_OCTOPUS_H_ */

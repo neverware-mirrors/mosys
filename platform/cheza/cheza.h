@@ -45,8 +45,4 @@ extern struct nvram_cb cros_spi_flash_nvram_cb;
 extern struct psu_cb cheza_psu_cb;
 extern struct sys_cb cheza_sys_cb;
 
-/* functions called by setup routines */
-extern int cheza_ec_setup(struct platform_intf *intf);
-extern int cheza_vpd_setup(struct platform_intf *intf);
-
 #endif /* GOOGLE_CHEZA_H */

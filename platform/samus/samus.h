@@ -44,7 +44,4 @@ extern struct memory_cb samus_memory_cb;	/* memory.c */
 extern struct nvram_cb samus_nvram_cb;		/* nvram.c */
 extern struct sys_cb samus_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int samus_vpd_setup(struct platform_intf *intf);
-
 #endif /* PLATFORM_SAMUS_H_ */

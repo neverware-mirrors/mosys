@@ -46,8 +46,4 @@ extern struct nvram_cb cros_spi_flash_nvram_cb;
 extern struct psu_cb gru_psu_cb;
 extern struct sys_cb gru_sys_cb;
 
-/* functions called by setup routines */
-extern int gru_ec_setup(struct platform_intf *intf);
-extern int gru_vpd_setup(struct platform_intf *intf);
-
 #endif /* GOOGLE_GRU_H */

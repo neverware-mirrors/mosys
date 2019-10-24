@@ -44,7 +44,4 @@ extern struct memory_cb cyan_memory_cb;	/* memory.c */
 extern struct nvram_cb cyan_nvram_cb;		/* nvram.c */
 extern struct sys_cb cyan_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int cyan_vpd_setup(struct platform_intf *intf);
-
 #endif /* PLATFORM_CYAN_H__ */

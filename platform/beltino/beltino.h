@@ -47,7 +47,4 @@ extern struct psu_cb beltino_psu_cb;		/* psu.c */
 extern struct sensor_cb beltino_sensor_cb;	/* sensors.c */
 extern struct sys_cb beltino_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int beltino_vpd_setup(struct platform_intf *intf);
-
 #endif /* PLATFORM_BELTINO_H_ */

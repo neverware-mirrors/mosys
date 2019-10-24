@@ -44,7 +44,4 @@ extern struct memory_cb hatch_memory_cb;	/* memory.c */
 extern struct nvram_cb hatch_nvram_cb;		/* nvram.c */
 extern struct sys_cb hatch_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int hatch_ec_setup(struct platform_intf *intf);
-
 #endif /* PLATFORM_HATCH_H_ */

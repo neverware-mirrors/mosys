@@ -43,7 +43,4 @@ extern struct memory_cb kahlee_memory_cb;	/* memory.c */
 extern struct nvram_cb kahlee_nvram_cb;		/* nvram.c */
 extern struct sys_cb kahlee_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int kahlee_ec_setup(struct platform_intf *intf);
-
 #endif /* PLATFORM_KAHLEE_H_ */

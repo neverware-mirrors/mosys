@@ -43,7 +43,4 @@ extern struct memory_cb cyclone_memory_cb;	/* memory.c */
 extern struct nvram_cb cros_spi_flash_nvram_cb;	/* lib/vnbv/vbnv_flash.c */
 extern struct sys_cb cyclone_sys_cb;		/* sys.c */
 
-/* functions called by setup routines */
-extern int cyclone_vpd_setup(struct platform_intf *intf);
-
 #endif /* GOOGLE_CYCLONE_H */
