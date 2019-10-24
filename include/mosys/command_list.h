@@ -51,7 +51,6 @@ extern struct platform_cmd cmd_mce;
 extern struct platform_cmd cmd_ht;
 extern struct platform_cmd cmd_edac;
 extern struct platform_cmd cmd_eeprom;
-extern struct platform_cmd cmd_vpd;
 extern struct platform_cmd cmd_ec;
 extern struct platform_cmd cmd_sh;
 extern struct platform_cmd cmd_pd;

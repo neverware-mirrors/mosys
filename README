@@ -98,7 +98,7 @@ available.
 
 Typically, top-level commands will reflect classes of hardware components
 such as "cpu" or "sensor", available busses such as "pci" or "i2c", or a
-type of information such as "smbios" or "vpd".
+type of information such as "smbios".
 
 Mosys returns EXIT_SUCCESS upon successful completion of a command, or
 EXIT_FAILURE if a command is not supported on a given platform. These values
