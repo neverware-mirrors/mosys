@@ -205,24 +205,6 @@ extern int spd_print_raw(struct kv_pair *kv, int len, uint8_t *data);
 extern int spd_read_i2c(struct platform_intf *intf, int bus,
                         int addr, int reg, int length, void *data);
 
-#if 0
-/*
- * spd_write_i2c  -  Write to SPD configuration space
- *
- * @intf:	platform interface
- * @bus:	i2c bus
- * @address:	i2c address
- * @reg:	register offset
- * @length:	number of bytes to write
- * @data:       data buffer
- *
- * returns number of bytes written
- * returns <0 to indicate error
- */
-extern int spd_write_i2c(struct platform_intf *intf, int bus,
-                         int addr, int reg, int length, const void *data);
-#endif
-
 /* spd_raw_access - read/write access method to SPDs
  *
  * @intf:  platform interface
@@ -289,24 +271,6 @@ extern const char *spd_readbyte(struct spd_reg *reg,
 extern const char *spd_table_lookup(struct spd_reg *reg,
                                     const uint8_t * eeprom, uint8_t byte);
 
-#if 0
-/*
- * spd_print_field_ddr1  -  add common DDR SPD fields into key=value pair
- *
- * @intf:       platform interface
- * @kv:         key=value pair
- * @data:       raw spd data
- * @type:       type of field to retrieve
- *
- * returns 1 to indicate data added to key=value pair
- * returns 0 to indicate no data added
- * returns <0 to indicate error
- *
- */
-extern int spd_print_field_ddr1(struct platform_intf *intf, struct kv_pair *kv,
-                                const void *data, enum spd_field_type type);
-#endif
-
 /*
  * spd_print_field_ddr2  -  add common DDR SPD fields into key=value pair
  *
@@ -322,25 +286,6 @@ extern int spd_print_field_ddr1(struct platform_intf *intf, struct kv_pair *kv,
  */
 extern int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
                                 const void *data, enum spd_field_type type);
-
-#if 0
-/*
- * spd_print_field_fbdimm  -  add common FDDIMM SPD fields into key=value pair
- *
- * @intf:       platform interface
- * @kv:         key=value pair
- * @data:       raw spd data
- * @type:       type of field to retrieve
- *
- * returns 1 to indicate data added to key=value pair
- * returns 0 to indicate no data added
- * returns <0 to indicate error
- *
- */
-extern int spd_print_field_fbdimm(struct platform_intf *intf,
-                                  struct kv_pair *kv, const void *data,
-                                  enum spd_field_type type);
-#endif
 
 /*
  * spd_print_field_ddr3  -  add common DDR SPD fields into key=value pair

@@ -244,13 +244,5 @@ struct sensor_array *get_platform_sensors(struct platform_intf *intf)
 		intf->cb->sensor->add_sensors(intf, platform_sensors);
 	}
 
-#if 0	/* FIXME: for future reference... */
-	/* Add plugin device sensors. */
-	add_plugin_device_sensors(intf, sensors);
-
-	/* Add dynamic ata sensors. */
-	add_ata_sensors(intf, sensors);
-#endif
-
 	return platform_sensors;
 }

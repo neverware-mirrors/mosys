@@ -163,30 +163,6 @@ int spd_read_i2c(struct platform_intf *intf, int bus,
 	return -1;
 }
 
-#if 0
-int spd_write_i2c(struct platform_intf *intf,
-                  int dimm, int reg, int length, const void *data)
-{
-	int bus, address;
-
-	if (!intf->cb->memory->dimm_map)
-		return -1;
-
-	/* convert logical dimm map */
-	bus = intf->cb->memory->dimm_map(intf, DIMM_TO_BUS, dimm);
-	if (bus < 0)
-		return -1;
-
-	address = intf->cb->memory->dimm_map(intf, DIMM_TO_ADDRESS, dimm);
-	if (address < 0)
-		return -1;
-
-	//FIXME: we cast data to remove the const - can we do better?
-	return intf->cb->memory->spd->write(intf, bus, address, reg,
-	                                    length, (void *)data);
-}
-#endif
-
 int override_spd_raw_access(spd_raw_override override)
 {
 	spd_raw_access_override = override;
