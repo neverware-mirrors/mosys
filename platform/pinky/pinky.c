@@ -154,7 +154,6 @@ struct eventlog_cb pinky_eventlog_cb = {
 struct platform_cb pinky_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &pinky_eeprom_cb,
-//	.gpio		= &pinky_gpio_cb,
 	.memory		= &pinky_memory_cb,
 	.psu 		= &pinky_psu_cb,
 	.sys 		= &pinky_sys_cb,

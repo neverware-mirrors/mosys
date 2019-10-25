@@ -312,18 +312,6 @@ struct flash_cb {
 	int (*size)(struct platform_intf *intf);
 };
 
-/* gpio callbacks */
-struct gpio_cb {
-	/* read level for a specific GPIO */
-	int (*read)(struct platform_intf *intf, struct gpio_map *gpio);
-	/* get mapping for a specific GPIO */
-	struct gpio_map *(*map)(struct platform_intf *intf, const char *name);
-	/* list all GPIOs for the platform */
-	int (*list)(struct platform_intf *intf);
-	/* set a specific GPIO state to 0 or 1 */
-	int (*set)(struct platform_intf *intf, const char *name, int state);
-};
-
 struct ec_cb {
 	const char *(*vendor)(struct platform_intf *intf, struct ec_cb *ec);
 	const char *(*name)(struct platform_intf *intf, struct ec_cb *ec);
@@ -358,7 +346,6 @@ struct platform_cb {
 	struct sys_cb *sys;		/* system callbacks */
 	struct flash_cb *flash;		/* flash related callbacks */
 	struct nvram_cb *nvram;		/* nvram related callbacks */
-	struct gpio_cb *gpio;		/* gpio callbacks */
 	struct eeprom_cb *eeprom;	/* eeprom callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
 	struct ec_cb *pd;		/* pd callbacks */

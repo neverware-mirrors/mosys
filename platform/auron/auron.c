@@ -155,7 +155,6 @@ struct platform_cb auron_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
 	.eeprom		= &auron_eeprom_cb,
-	.gpio		= &auron_gpio_cb,
 	.memory		= &auron_memory_cb,
 	.nvram		= &auron_nvram_cb,
 	.psu		= &generic_psu_battery_cb,

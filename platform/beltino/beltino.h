@@ -40,7 +40,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb beltino_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb beltino_gpio_cb;		/* gpio.c */
 extern struct memory_cb beltino_memory_cb;	/* memory.c */
 extern struct nvram_cb beltino_nvram_cb;	/* nvram.c */
 extern struct psu_cb beltino_psu_cb;		/* psu.c */

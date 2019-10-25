@@ -39,7 +39,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb octopus_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb octopus_gpio_cb;		/* gpio.c */
 extern struct memory_cb octopus_memory_cb;	/* memory.c */
 extern struct nvram_cb octopus_nvram_cb;		/* nvram.c */
 extern struct sys_cb octopus_sys_cb;		/* sys.c */

@@ -4,5 +4,4 @@ libmosys_src += files(
   'memory.c',
   'samus.c',
   'sys.c',
-  'gpio.c',
 )

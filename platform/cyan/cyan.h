@@ -39,7 +39,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb cyan_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb cyan_gpio_cb;		/* gpio.c */
 extern struct memory_cb cyan_memory_cb;	/* memory.c */
 extern struct nvram_cb cyan_nvram_cb;		/* nvram.c */
 extern struct sys_cb cyan_sys_cb;		/* sys.c */

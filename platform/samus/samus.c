@@ -125,7 +125,6 @@ struct platform_cb samus_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
 	.eeprom		= &samus_eeprom_cb,
-	.gpio		= &samus_gpio_cb,
 	.memory		= &samus_memory_cb,
 	.nvram		= &samus_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,

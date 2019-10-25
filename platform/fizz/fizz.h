@@ -39,7 +39,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb fizz_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb fizz_gpio_cb;		/* gpio.c */
 extern struct memory_cb fizz_memory_cb;	/* memory.c */
 extern struct nvram_cb fizz_nvram_cb;		/* nvram.c */
 extern struct sys_cb fizz_sys_cb;		/* sys.c */

@@ -150,7 +150,6 @@ struct eventlog_cb strago_eventlog_cb = {
 struct platform_cb strago_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &strago_eeprom_cb,
-	.gpio		= &strago_gpio_cb,
 	.memory		= &strago_memory_cb,
 	.nvram		= &strago_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,

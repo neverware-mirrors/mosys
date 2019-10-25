@@ -39,7 +39,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb glados_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb glados_gpio_cb;		/* gpio.c */
 extern struct memory_cb glados_memory_cb;	/* memory.c */
 extern struct nvram_cb glados_nvram_cb;		/* nvram.c */
 extern struct sys_cb glados_sys_cb;		/* sys.c */

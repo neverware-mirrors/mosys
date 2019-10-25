@@ -117,7 +117,6 @@ struct eventlog_cb cyan_eventlog_cb = {
 struct platform_cb cyan_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &cyan_eeprom_cb,
-	.gpio		= &cyan_gpio_cb,
 	.memory		= &cyan_memory_cb,
 	.nvram		= &cyan_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,

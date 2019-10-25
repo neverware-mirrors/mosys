@@ -138,7 +138,6 @@ struct eventlog_cb beltino_eventlog_cb = {
 
 struct platform_cb beltino_cb = {
 	.eeprom		= &beltino_eeprom_cb,
-	.gpio		= &beltino_gpio_cb,
 	.memory		= &beltino_memory_cb,
 	.nvram		= &beltino_nvram_cb,
 	.psu		= &generic_psu_ac_only_cb,

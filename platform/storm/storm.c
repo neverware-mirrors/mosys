@@ -99,7 +99,6 @@ struct eventlog_cb storm_eventlog_cb = {
 
 struct platform_cb storm_cb = {
 	.eeprom 	= &storm_eeprom_cb,
-//	.gpio		= &storm_gpio_cb,
 	.memory		= &storm_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys 		= &storm_sys_cb,
