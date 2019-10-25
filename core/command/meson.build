@@ -5,7 +5,6 @@ libmosys_src += files(
   'nvram.c',
   'memory.c',
   'fp.c',
-  'hid.c',
   'pd.c',
   'memory_spd.c',
   'gpio.c',
