@@ -383,7 +383,6 @@ struct platform_cb {
 	struct eeprom_cb *eeprom;	/* eeprom callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
 	struct ec_cb *pd;		/* pd callbacks */
-	struct ec_cb *sh;		/* sh callbacks */
 	struct ec_cb *fp;		/* fp callbacks */
 	struct ec_cb *ish;		/* ish callbacks */
 	struct hid_cb *hid;		/* hid callbacks */
