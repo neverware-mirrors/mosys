@@ -55,7 +55,6 @@ extern struct platform_cmd cmd_ec;
 extern struct platform_cmd cmd_pd;
 extern struct platform_cmd cmd_fp;
 extern struct platform_cmd cmd_ish;
-extern struct platform_cmd cmd_battery;
 extern struct platform_cmd cmd_psu;
 //extern struct platform_cmd cmd_fru;
 
