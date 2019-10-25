@@ -38,68 +38,7 @@
 #include "drivers/intel/ich_generic.h"
 #include "drivers/intel/lpss_generic.h"
 
-#include "lib/math.h"
-#include "mosys/kv_pair.h"
-
 int lynxpoint_lp_read_gpio(struct platform_intf *intf, struct gpio_map *gpio)
 {
 	return lpss_read_gpio(intf, ICH_8_LPSS, gpio);
-}
-
-int lynxpoint_lp_set_gpio(struct platform_intf *intf, struct gpio_map *gpio,
-			  int state)
-{
-	return lpss_set_gpio(intf, ICH_8_LPSS, gpio, state);
-}
-
-/*
- * lynxpoint_lp_gpio_list  -  list all GPIOs and their states
- *
- * @intf:	platform interface
- *
- * returns 0 if successful
- * returns <0 if failure
- */
-int lynxpoint_lp_gpio_list(struct platform_intf *intf)
-{
-	int gpio_ids[94];
-	int i;
-
-	for (i = 0; i < ARRAY_SIZE(gpio_ids); i++)
-		gpio_ids[i] = i;
-
-	return lpss_gpio_list(intf, ICH_8_LPSS, gpio_ids,
-			      ARRAY_SIZE(gpio_ids));
-}
-
-/*
- * lynxpoint_lp_list_gpio_attributes - list GPIO's attributes
- *
- * @gpio:	 gpio map
- * @reg: 	 GPIO's attributes
- *
- * returns 0 if successful
- * returns <0 if failure
- */
-int lynxpoint_lp_list_gpio_attributes(struct gpio_map *gpio,
-				      struct gpio_reg *reg)
-{
-	return lpss_list_gpio_attributes(gpio, reg);
-}
-
-/*
- * lynxpoint_lp_read_gpio_attributes - list GPIO's attributes
- *
- * @intf:	platform interface
- * @gpio:	gpio map
- * @reg: 	GPIO's attributes
- *
- * returns 0 if successful
- * returns <0 if failure
- */
-int lynxpoint_lp_read_gpio_attributes(struct platform_intf *intf,
-				      struct gpio_map *gpio,
-				      struct gpio_reg *reg)
-{
-	return lpss_read_gpio_attributes(intf, ICH_8_LPSS, gpio, reg);
 }
