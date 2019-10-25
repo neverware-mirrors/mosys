@@ -88,7 +88,6 @@ extern struct ec_cb cros_fp_cb;
 extern struct ec_cb cros_ish_cb;
 
 /* EC commands */
-int cros_ec_hello(struct platform_intf *intf, struct ec_cb *ec);
 const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec);
 const char *cros_ec_build_info(struct platform_intf *intf, struct ec_cb *ec);
 int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,

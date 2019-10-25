@@ -49,34 +49,6 @@
 #define ANX74XX_VENDOR_ID	0xAAAA
 #define PS8751_VENDOR_ID	0x1DA0
 
-int cros_ec_hello(struct platform_intf *intf, struct ec_cb *ec)
-{
-	struct ec_params_hello p;
-	struct ec_response_hello r;
-	int rv;
-	struct cros_ec_priv *priv;
-
-	MOSYS_CHECK(ec && ec->priv);
-	priv = ec->priv;
-
-	p.in_data = 0xa0b0c0d0;
-
-	MOSYS_CHECK(priv->cmd);
-	rv = priv->cmd(intf, ec, EC_CMD_HELLO, 0, &p,
-		       sizeof(p), &r, sizeof(r));
-	if (rv)
-		return rv;
-
-	if (r.out_data != 0xa1b2c3d4) {
-		lprintf(LOG_ERR, "Expected response 0x%08x, got 0x%08x\n",
-			0xa1b2c3d4, r.out_data);
-		rv = -1;
-	}
-
-	lprintf(LOG_DEBUG, "%s: EC says hello!\n", __func__);
-	return rv;
-}
-
 const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec)
 {
 	static const char *const fw_copies[] = { "unknown", "RO", "RW" };
