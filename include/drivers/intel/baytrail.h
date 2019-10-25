@@ -92,18 +92,4 @@ struct baytrail_gpio_bank {
  */
 int baytrail_read_gpio(struct platform_intf *intf, struct gpio_map *gpio);
 
-
-/*
- * baytrail_set_gpio 	- set GPIO status
- * @intf:	platform interface
- * @gpio	gpio map
- * @status:	0/1
- *
- * returns 0 if successful
- * returns <0 on read failure
- */
-int baytrail_set_gpio(struct platform_intf *intf, struct gpio_map *gpio,
-		      int state);
-
-
 #endif /* MOSYS_DRIVERS_INTEL_BAYTRAIL_H__ */
