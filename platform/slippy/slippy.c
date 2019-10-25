@@ -73,7 +73,6 @@ static const struct probe_ids probe_id_list[] = {
 struct platform_cmd *slippy_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
-	&cmd_gpio,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,

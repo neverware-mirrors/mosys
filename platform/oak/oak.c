@@ -71,7 +71,6 @@ struct platform_cmd *oak_sub[] = {
 
 	&cmd_ec,
 	&cmd_eeprom,
-//	&cmd_gpio,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,

@@ -58,7 +58,6 @@ static const char *id_list[] = {
 
 struct platform_cmd *storm_sub[] = {
 	&cmd_eeprom,
-//	&cmd_gpio,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,

@@ -94,7 +94,6 @@ struct platform_cmd *pinky_sub[] = {
 	[PINKY_CMD_EC_NUM] = &cmd_ec,
 
 	&cmd_eeprom,
-//	&cmd_gpio,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
