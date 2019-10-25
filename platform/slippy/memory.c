@@ -41,6 +41,7 @@
 #include "mosys/platform.h"
 
 #include "drivers/gpio.h"
+#include "drivers/intel/lynxpoint_lp.h"
 
 #include "lib/cbfs_core.h"
 #include "lib/file.h"
@@ -68,15 +69,15 @@ static int slippy_get_spd_index(struct platform_intf *intf)
 	struct gpio_map ram_id1 = {  9, GPIO_IN, 0, 0, 9 };
 	struct gpio_map ram_id2 = { 47, GPIO_IN, 0, 1, 15 };
 
-	if ((val = intf->cb->gpio->read(intf, &ram_id0)) < 0)
+	if ((val = lynxpoint_lp_read_gpio(intf, &ram_id0)) < 0)
 		return -1;
 	spd_index |= val;
 
-	if ((val = intf->cb->gpio->read(intf, &ram_id1)) < 0)
+	if ((val = lynxpoint_lp_read_gpio(intf, &ram_id1)) < 0)
 		return -1;
 	spd_index |= val << 1;
 
-	if ((val = intf->cb->gpio->read(intf, &ram_id2)) < 0)
+	if ((val = lynxpoint_lp_read_gpio(intf, &ram_id2)) < 0)
 		return -1;
 	spd_index |= val << 2;
 

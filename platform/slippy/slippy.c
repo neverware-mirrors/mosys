@@ -134,7 +134,6 @@ struct eventlog_cb slippy_eventlog_cb = {
 struct platform_cb slippy_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &slippy_eeprom_cb,
-	.gpio		= &slippy_gpio_cb,
 	.memory		= &slippy_memory_cb,
 	.nvram		= &slippy_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,

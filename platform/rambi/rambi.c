@@ -174,7 +174,6 @@ struct eventlog_cb rambi_eventlog_cb = {
 struct platform_cb rambi_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &rambi_eeprom_cb,
-	.gpio		= &rambi_gpio_cb,
 	.memory		= &rambi_memory_cb,
 	.nvram		= &rambi_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,

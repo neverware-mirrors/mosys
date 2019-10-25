@@ -91,7 +91,7 @@ static int rambi_get_spd_index(struct platform_intf *intf)
 				     { 40, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT } };
 
 	for (i = 0; i < gpio_count; i++) {
-		if ((val = intf->cb->gpio->read(intf, &ram_id[i])) < 0)
+		if ((val = baytrail_read_gpio(intf, &ram_id[i])) < 0)
 			return -1;
 		spd_index |= val << i;
 	}

@@ -39,7 +39,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb slippy_eeprom_cb;	/* eeprom.c */
-extern struct gpio_cb slippy_gpio_cb;		/* gpio.c */
 extern struct memory_cb slippy_memory_cb;	/* memory.c */
 extern struct nvram_cb slippy_nvram_cb;		/* nvram.c */
 extern struct sys_cb slippy_sys_cb;		/* sys.c */
