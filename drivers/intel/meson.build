@@ -4,5 +4,4 @@ libmosys_src += files(
 )
 
 subdir('baytrail')
-subdir('braswell')
 subdir('lynxpoint_lp')
