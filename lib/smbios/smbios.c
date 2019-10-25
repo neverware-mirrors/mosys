@@ -34,12 +34,9 @@
 #include <inttypes.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/klog.h>
 #include <fcntl.h>
 #include <ctype.h>
-
-#if defined (__linux__)
-#include <sys/klog.h>
-#endif
 
 #include "mosys/alloc.h"
 #include "mosys/callbacks.h"
