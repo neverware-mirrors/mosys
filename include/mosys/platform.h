@@ -337,19 +337,6 @@ struct ec_cb {
 	void *priv;	/* private data for EC */
 };
 
-/* hid touchpad callbacks */
-struct hid_tp_cb {
-	const char *(*vendor)(struct platform_intf *intf);
-	const char *(*name)(struct platform_intf *intf);
-	const char *(*fw_version)(struct platform_intf *intf);
-	const char *(*hw_version)(struct platform_intf *intf);
-};
-
-/* hid callbacks */
-struct hid_cb {
-	struct hid_tp_cb *tp;
-};
-
 enum psu_types {
 	PSU_TYPE_UNKNOWN,
 	PSU_TYPE_BATTERY,	/* AC + rechargeable battery */
@@ -377,7 +364,6 @@ struct platform_cb {
 	struct ec_cb *pd;		/* pd callbacks */
 	struct ec_cb *fp;		/* fp callbacks */
 	struct ec_cb *ish;		/* ish callbacks */
-	struct hid_cb *hid;		/* hid callbacks */
 	struct psu_cb *psu;		/* power supply callbacks */
 };
 
