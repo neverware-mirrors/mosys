@@ -25,6 +25,7 @@ if use_cros_config
 endif
 subdir('pinky')
 subdir('poppy')
+subdir('puff')
 subdir('rambi')
 subdir('reef')
 subdir('samus')
