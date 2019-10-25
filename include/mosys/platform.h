@@ -350,14 +350,6 @@ struct hid_cb {
 	struct hid_tp_cb *tp;
 };
 
-/* battery related callbacks */
-struct battery_cb {
-	const char *(*get_fud)(struct platform_intf *intf);
-	int (*set_fud)(struct platform_intf *intf,
-			int day, int month, int year);
-	int (*update)(struct platform_intf *intf);
-};
-
 enum psu_types {
 	PSU_TYPE_UNKNOWN,
 	PSU_TYPE_BATTERY,	/* AC + rechargeable battery */
@@ -386,7 +378,6 @@ struct platform_cb {
 	struct ec_cb *fp;		/* fp callbacks */
 	struct ec_cb *ish;		/* ish callbacks */
 	struct hid_cb *hid;		/* hid callbacks */
-	struct battery_cb *battery;	/* battery callbacks */
 	struct psu_cb *psu;		/* power supply callbacks */
 };
 
