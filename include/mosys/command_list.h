@@ -39,21 +39,14 @@ extern struct platform_cmd cmd_platform;
 extern struct platform_cmd cmd_gpio;
 extern struct platform_cmd cmd_smbios;
 extern struct platform_cmd cmd_memory;
-extern struct platform_cmd cmd_cpu;
 extern struct platform_cmd cmd_sensor;
 extern struct platform_cmd cmd_eventlog;
-extern struct platform_cmd cmd_bootnum;
-extern struct platform_cmd cmd_flash;
 extern struct platform_cmd cmd_nvram;
-extern struct platform_cmd cmd_mce;
-extern struct platform_cmd cmd_ht;
-extern struct platform_cmd cmd_edac;
 extern struct platform_cmd cmd_eeprom;
 extern struct platform_cmd cmd_ec;
 extern struct platform_cmd cmd_pd;
 extern struct platform_cmd cmd_fp;
 extern struct platform_cmd cmd_ish;
 extern struct platform_cmd cmd_psu;
-//extern struct platform_cmd cmd_fru;
 
 #endif /* MOSYS_COMMAND_LIST_H__ */
