@@ -1,5 +1,4 @@
 libmosys_src += files(
-  'i2c.c',
   'eeprom.c',
   'eventlog.c',
   'nvram.c',
