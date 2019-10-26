@@ -32,17 +32,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "mosys/alloc.h"
-#include "mosys/command_list.h"
-#include "mosys/platform.h"
-#include "mosys/intf_list.h"
-#include "mosys/log.h"
-
-#include "drivers/google/cros_ec.h"
-
+#include "lib/elog.h"
+#include "lib/memory.h"
 #include "lib/probe.h"
 #include "lib/smbios.h"
-#include "lib/elog.h"
+
+#include "mosys/alloc.h"
+#include "mosys/command_list.h"
+#include "mosys/intf_list.h"
+#include "mosys/log.h"
+#include "mosys/platform.h"
+
+#include "drivers/google/cros_ec.h"
 
 #include "strago.h"
 
@@ -150,7 +151,7 @@ struct eventlog_cb strago_eventlog_cb = {
 struct platform_cb strago_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &strago_eeprom_cb,
-	.memory		= &strago_memory_cb,
+	.memory		= &cbfs_memory_cb,
 	.nvram		= &strago_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &strago_sys_cb,

@@ -1,0 +1,11 @@
+/* Copyright 2019 The Chromium OS Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ */
+
+#ifndef MOSYS_LIB_MEMORY_H__
+#define MOSYS_LIB_MEMORY_H__
+
+extern struct memory_cb cbfs_memory_cb;
+
+#endif /* MOSYS_LIB_MEMORY_H__ */

@@ -32,6 +32,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "lib/elog.h"
+#include "lib/generic_callbacks.h"
+#include "lib/memory.h"
+#include "lib/probe.h"
+#include "lib/smbios.h"
+
 #include "mosys/alloc.h"
 #include "mosys/command_list.h"
 #include "mosys/platform.h"
@@ -39,11 +45,6 @@
 #include "mosys/log.h"
 
 #include "drivers/google/cros_ec.h"
-
-#include "lib/generic_callbacks.h"
-#include "lib/probe.h"
-#include "lib/smbios.h"
-#include "lib/elog.h"
 
 #include "auron.h"
 
@@ -155,7 +156,7 @@ struct platform_cb auron_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
 	.eeprom		= &auron_eeprom_cb,
-	.memory		= &auron_memory_cb,
+	.memory		= &cbfs_memory_cb,
 	.nvram		= &auron_nvram_cb,
 	.psu		= &generic_psu_battery_cb,
 	.smbios		= &smbios_sysinfo_cb,

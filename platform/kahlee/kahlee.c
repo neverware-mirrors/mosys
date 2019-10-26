@@ -34,18 +34,19 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "lib/cros_config.h"
+#include "lib/elog.h"
+#include "lib/memory.h"
+#include "lib/sku.h"
+#include "lib/smbios.h"
+
 #include "mosys/alloc.h"
 #include "mosys/command_list.h"
-#include "mosys/platform.h"
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
+#include "mosys/platform.h"
 
 #include "drivers/google/cros_ec.h"
-
-#include "lib/cros_config.h"
-#include "lib/smbios.h"
-#include "lib/elog.h"
-#include "lib/sku.h"
 
 #include "kahlee.h"
 
@@ -87,7 +88,7 @@ struct eventlog_cb kahlee_eventlog_cb = {
 struct platform_cb kahlee_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &kahlee_eeprom_cb,
-	.memory		= &kahlee_memory_cb,
+	.memory		= &cbfs_memory_cb,
 	.nvram		= &kahlee_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &kahlee_sys_cb,
@@ -98,7 +99,7 @@ struct platform_intf platform_kahlee = {
 	.type		= PLATFORM_X86_64,
 	.name		= "Grunt",
 	.sub		= kahlee_sub,
-	.cb			= &kahlee_cb,
+	.cb		= &kahlee_cb,
 	.probe		= &kahlee_probe,
 	.setup_post	= &kahlee_setup_post,
 };

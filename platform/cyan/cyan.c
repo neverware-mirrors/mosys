@@ -32,6 +32,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "lib/elog.h"
+#include "lib/memory.h"
+#include "lib/probe.h"
+#include "lib/smbios.h"
+
 #include "mosys/alloc.h"
 #include "mosys/command_list.h"
 #include "mosys/platform.h"
@@ -39,10 +44,6 @@
 #include "mosys/log.h"
 
 #include "drivers/google/cros_ec.h"
-
-#include "lib/probe.h"
-#include "lib/smbios.h"
-#include "lib/elog.h"
 
 #include "cyan.h"
 
@@ -117,7 +118,7 @@ struct eventlog_cb cyan_eventlog_cb = {
 struct platform_cb cyan_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &cyan_eeprom_cb,
-	.memory		= &cyan_memory_cb,
+	.memory		= &cbfs_memory_cb,
 	.nvram		= &cyan_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &cyan_sys_cb,

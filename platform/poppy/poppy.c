@@ -32,19 +32,20 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "mosys/alloc.h"
-#include "mosys/command_list.h"
-#include "mosys/platform.h"
-#include "mosys/intf_list.h"
-#include "mosys/log.h"
-
-#include "drivers/google/cros_ec.h"
-
 #include "lib/cros_config.h"
+#include "lib/elog.h"
+#include "lib/memory.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
-#include "lib/elog.h"
+
+#include "mosys/alloc.h"
+#include "mosys/command_list.h"
+#include "mosys/intf_list.h"
+#include "mosys/log.h"
+#include "mosys/platform.h"
+
+#include "drivers/google/cros_ec.h"
 
 #include "poppy.h"
 
@@ -103,7 +104,7 @@ struct platform_cb poppy_cb = {
 	.pd		= &cros_pd_cb,
 	.fp		= &cros_fp_cb,
 	.eeprom		= &poppy_eeprom_cb,
-	.memory		= &poppy_memory_cb,
+	.memory		= &cbfs_memory_cb,
 	.nvram		= &poppy_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &poppy_sys_cb,

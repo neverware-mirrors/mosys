@@ -32,17 +32,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "mosys/alloc.h"
-#include "mosys/command_list.h"
-#include "mosys/platform.h"
-#include "mosys/intf_list.h"
-#include "mosys/log.h"
-
-#include "drivers/google/cros_ec.h"
-
+#include "lib/elog.h"
+#include "lib/memory.h"
 #include "lib/probe.h"
 #include "lib/smbios.h"
-#include "lib/elog.h"
+
+#include "mosys/alloc.h"
+#include "mosys/command_list.h"
+#include "mosys/intf_list.h"
+#include "mosys/log.h"
+#include "mosys/platform.h"
+
+#include "drivers/google/cros_ec.h"
 
 #include "samus.h"
 
@@ -125,7 +126,7 @@ struct platform_cb samus_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
 	.eeprom		= &samus_eeprom_cb,
-	.memory		= &samus_memory_cb,
+	.memory		= &cbfs_memory_cb,
 	.nvram		= &samus_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys		= &samus_sys_cb,
