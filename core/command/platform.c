@@ -247,67 +247,67 @@ static int platform_id_cmd(struct platform_intf *intf,
 struct platform_cmd platform_cmds[] = {
 	{
 		.name	= "id",
-		.desc	= "Display Platform Identification Information",
+		.desc	= "Run all platform commands (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_id_cmd }
 	},
-        {
-                .name   = "vendor",
-                .desc   = "Display Platform Vendor",
-                .type   = ARG_TYPE_GETTER,
-                .arg    = { .func = platform_vendor_cmd }
-        },
+	{
+		.name	= "vendor",
+		.desc	= "Display Platform Vendor (deprecated)",
+		.type	= ARG_TYPE_GETTER,
+		.arg	= { .func = platform_vendor_cmd }
+	},
 	{
 		.name	= "name",
-		.desc	= "Display Platform Product Name",
+		.desc	= "Display Platform Product Name (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_name_cmd }
 	},
 	{
 		.name	= "model",
-		.desc	= "Display Model",
+		.desc	= "Display Model (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_model_cmd }
 	},
 	{
 		.name	= "chassis",
-		.desc	= "Display Chassis ID",
+		.desc	= "Display Chassis ID (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_chassis_cmd }
 	},
 	{
 		.name	= "sku",
-		.desc	= "Display SKU Number",
+		.desc	= "Display SKU Number (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_sku_cmd }
 	},
 	{
 		.name	= "brand",
-		.desc	= "Display Brand Code",
+		.desc	= "Display Brand Code (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_brand_cmd }
 	},
 	{
 		.name	= "customization",
-		.desc	= "Display Customization ID",
+		.desc	= "Display Customization ID (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_customization_cmd }
 	},
 	{
 		.name   = "signature",
-		.desc   = "Display Signature ID",
+		.desc   = "Display Signature ID (deprecated)",
 		.type   = ARG_TYPE_GETTER,
 		.arg    = { .func = platform_signature_cmd }
 	},
 	{
 		.name	= "version",
-		.desc	= "Display Platform Version",
+		.desc	= "Display Platform Version (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_version_cmd }
 	},
 	{
 		.name	= "family",
-		.desc	= "Display Platform Family",
+		.desc	= "Display Platform Family (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_family_cmd }
 	},
@@ -316,7 +316,7 @@ struct platform_cmd platform_cmds[] = {
 
 struct platform_cmd cmd_platform = {
 	.name	= "platform",
-	.desc	= "Platform Information",
+	.desc	= "Platform Information (deprecated)",
 	.type	= ARG_TYPE_SUB,
 	.arg	= { .sub = platform_cmds }
 };
