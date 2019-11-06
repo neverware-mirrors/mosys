@@ -41,8 +41,6 @@
 struct kv_pair;
 struct nonspd_mem_info;
 
-#define MOSYS_DATA_ROOT		"/var/log/mosysdata"
-
 /* defined platform types */
 enum platform_type {
 	PLATFORM_DEFAULT,
@@ -136,20 +134,6 @@ enum dimm_map_type {
 	DIMM_TO_NODE,			/* NUMA node */
 };
 
-/* dimm error types */
-enum dimm_error_type {
-	DIMM_ERROR_SBE = 1,		/* single-bit error */
-	DIMM_ERROR_MBE = 2,		/* multi-bit error */
-};
-
-/* dimm error threshold types */
-enum dimm_threshold_type {
-	DIMM_THRESHOLD_EVENTLOG = 1,	/* eventlog */
-	DIMM_THRESHOLD_COUNT = 2,	/* counter */
-};
-
-#define DIMM_ALL_MASK	0xffff
-
 /* memory related callbacks */
 struct smbios_table;
 struct memory_component;
@@ -175,12 +159,6 @@ struct memory_cb {
 	int (*dimm_speed)(struct platform_intf *intf,
 	                  int dimm, struct kv_pair *kv);
 	int (*dimm_present)(struct platform_intf *intf, int dimm);
-	uint32_t (*error_count)(struct platform_intf *intf,
-	                        enum dimm_error_type type, int dimm);
-	int (*error_clear)(struct platform_intf *intf,
-	                   enum dimm_error_type type, int dimm);
-	int (*error_threshold)(struct platform_intf *intf,
-	                       enum dimm_threshold_type type, uint32_t value);
 	/* Translate an address to its components. Fill in the array of
 	 * components of size num_components with components that make up the
 	 * physical_address. num_components should be updated to reflect the
@@ -235,21 +213,6 @@ struct nvram_cb {
 /* EEPROM and EEPROM-related callbacks */
 struct eeprom_cb {
 	struct eeprom *eeprom_list;
-};
-
-enum led_state {
-	LED_STATE_OFF,
-	LED_STATE_ON,
-	LED_STATE_STANDBY,
-	LED_STATE_SLOW,
-	LED_STATE_FAST,
-};
-
-enum storage_phy_speed {
-	PHY_SPEED_UNKNOWN,
-	PHY_SPEED_SATA1,
-	PHY_SPEED_SATA2,
-	PHY_SPEED_SATA3,
 };
 
 /* smbios callbacks */
