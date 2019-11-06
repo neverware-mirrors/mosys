@@ -253,16 +253,6 @@ struct sys_cb {
 	/* firmware info */
 	char *(*firmware_vendor)(struct platform_intf *intf);
 	char *(*firmware_version)(struct platform_intf *intf);
-
-	/* Boot-time initialization. This may include things the BIOS / kernel
-	   did not initialize.  */
-	int (*init_platform)(struct platform_intf *intf);
-
-	/* read and write platform-specific settings */
-	int (*print_settings)(struct platform_intf *intf);
-
-	/* custom reset function */
-	int (*reset)(struct platform_intf *intf);
 };
 
 /* flash callbacks */

@@ -29,11 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
-#include <errno.h>
 
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
@@ -229,19 +229,6 @@ static int print_platforminfo(const char *key, const char *value)
 	return rc;
 }
 
-static int platform_reset_cmd(struct platform_intf *intf,
-                              struct platform_cmd *cmd,
-                              int argc, char **argv)
-{
-	if (!intf->cb || !intf->cb->sys || !intf->cb->sys->reset) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	/* return in case reset function fails somehow */
-	return intf->cb->sys->reset(intf);
-}
-
 static int platform_id_cmd(struct platform_intf *intf,
                            struct platform_cmd *in_cmd, int argc, char **argv)
 {
@@ -323,12 +310,6 @@ struct platform_cmd platform_cmds[] = {
 		.desc	= "Display Platform Family",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_family_cmd }
-	},
-	{
-		.name	= "reset",
-		.desc	= "(Hard-)Reset Platform",
-		.type	= ARG_TYPE_SETTER,
-		.arg	= { .func = platform_reset_cmd }
 	},
 	{NULL}
 };
