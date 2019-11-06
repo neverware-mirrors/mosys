@@ -85,10 +85,10 @@ static int rambi_get_spd_index(struct platform_intf *intf)
 	int gpio_count = rambi_ramid_gpio_count(intf);
 	int val;
 	int i;
-	struct gpio_map ram_id[] = { { 37, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT },
-				     { 38, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT },
-				     { 39, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT },
-				     { 40, GPIO_IN, 0, BAYTRAIL_GPSSUS_PORT } };
+	struct gpio_map ram_id[] = {{37, BAYTRAIL_GPSSUS_PORT},
+				    {38, BAYTRAIL_GPSSUS_PORT},
+				    {39, BAYTRAIL_GPSSUS_PORT},
+				    {40, BAYTRAIL_GPSSUS_PORT}};
 
 	for (i = 0; i < gpio_count; i++) {
 		if ((val = baytrail_read_gpio(intf, &ram_id[i])) < 0)

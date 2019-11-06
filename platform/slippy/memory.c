@@ -65,9 +65,9 @@ static int slippy_get_spd_index(struct platform_intf *intf)
 {
 	int spd_index = 0;
 	int val;
-	struct gpio_map ram_id0 = { 13, GPIO_IN, 0, 0, 13 };
-	struct gpio_map ram_id1 = {  9, GPIO_IN, 0, 0, 9 };
-	struct gpio_map ram_id2 = { 47, GPIO_IN, 0, 1, 15 };
+	struct gpio_map ram_id0 = {13, 0, 13};
+	struct gpio_map ram_id1 = {9, 0, 9};
+	struct gpio_map ram_id2 = {47, 1, 15};
 
 	if ((val = lynxpoint_lp_read_gpio(intf, &ram_id0)) < 0)
 		return -1;

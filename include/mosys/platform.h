@@ -39,7 +39,6 @@
 #include "mosys/mosys.h"
 
 struct kv_pair;
-struct gpio_map;
 struct nonspd_mem_info;
 
 #define MOSYS_DATA_ROOT		"/var/log/mosysdata"

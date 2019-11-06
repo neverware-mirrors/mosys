@@ -32,54 +32,10 @@
 #ifndef MOSYS_DRIVERS_GPIO_H__
 #define MOSYS_DRIVERS_GPIO_H__
 
-enum gpio_types {
-	GPIO_IN,
-	GPIO_OUT,
-	GPIO_ALT,		/* catch-all for alternate functions */
-};
-
-/*
- * Many-value logic (3 states). This can be used for inputs whereby presence
- * of external pull-up or pull-down resistors can be added to overcome internal
- * pull-ups/pull-downs and force a single value.
- *
- * Thus, external pull resistors can force a 0 or 1 and if the value changes
- * along with internal pull-up/down enable then the input is floating.
- *
- *     Vpd | Vpu | MVL
- *    -----------------
- *      0  |  0  | 0
- *    -----------------
- *      0  |  1  | Z    <-- floating input will follow internal pull up/down
- *    -----------------
- *      1  |  1  | 1
- */
-enum mvl3 {
-	LOGIC_Z,		/* high impedance / tri-stated / floating */
-	LOGIC_0,
-	LOGIC_1,
-};
-
 struct gpio_map {
 	int id;			/* gpio number */
-	enum gpio_types type;	/* input/output */
-	int dev;		/* device identifier */
 	int port;		/* port in device */
 	int pin;		/* pin in port in device */
-	int neg;		/* pin is negated */
-	const char *devname;	/* device name */
-	const char *name;	/* gpio name */
 };
-
-/*
- * kv_pair_print_gpio  -  print gpio info and state
- *
- * @gpio:	gpio data
- * @state:	gpio state
- *
- * returns 0 to indicate success
- * returns <0 to indicate failure
- */
-extern int kv_pair_print_gpio(struct gpio_map *gpio, int state);
 
 #endif /* MOSYS_DRIVERS_GPIO_H__ */

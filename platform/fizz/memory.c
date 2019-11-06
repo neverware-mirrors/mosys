@@ -34,7 +34,6 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include "drivers/gpio.h"
 #include "drivers/intel/series6.h"
 
 #include "lib/file.h"

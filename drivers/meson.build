@@ -1,5 +1,4 @@
 libmosys_src += files(
-  'gpio.c',
   'superio.c',
 )
 
