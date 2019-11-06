@@ -110,11 +110,12 @@ Use "mosys -t" to display the command tree for the host platform.
 Debugging
 ---------
 Mosys uses a minijail to restrict behavior. This can sometimes restrict desired
-behavior, especially system calls not whitelisted by the seccom filter.
+behavior, especially system calls not whitelisted by the seccomp filter.
 If a subcommand is returning with an error that should be passing, this might
 be why. In order to debug this, run seccomp_debug.sh with the failing command.
 This will print out the system calls that caused the run to fail.
 
-Ex. 'mosys platform id' failing on DUT
-On the DUT, copy over seccomp_debug.sh and run:
-  ./seccomp_debug.sh mosys platform id
+For example, to debug `mosys ec info`, copy over `seccomp_debug.sh` to
+the DUT and run:
+
+    ./seccomp_debug.sh mosys ec info

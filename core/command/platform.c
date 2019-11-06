@@ -229,28 +229,7 @@ static int print_platforminfo(const char *key, const char *value)
 	return rc;
 }
 
-static int platform_id_cmd(struct platform_intf *intf,
-                           struct platform_cmd *in_cmd, int argc, char **argv)
-{
-	struct platform_cmd *cmd;
-
-        /* Run every command we can find, avoiding recursion */
-        for (cmd = platform_cmds; cmd->name; cmd++) {
-		if (cmd->arg.func && cmd->arg.func != platform_id_cmd &&
-		    cmd->type == ARG_TYPE_GETTER)
-			cmd->arg.func(intf, cmd, argc, argv);
-        }
-
-	return 0;
-}
-
 struct platform_cmd platform_cmds[] = {
-	{
-		.name	= "id",
-		.desc	= "Run all platform commands (deprecated)",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = platform_id_cmd }
-	},
 	{
 		.name	= "vendor",
 		.desc	= "Display Platform Vendor (deprecated)",
