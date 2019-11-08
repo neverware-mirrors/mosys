@@ -39,7 +39,6 @@
 
 #define CROS_EC_DEV_NAME		"/dev/cros_ec"
 #define CROS_PD_DEV_NAME		"/dev/cros_pd"
-#define CROS_SH_DEV_NAME		"/dev/cros_sh"
 #define CROS_FP_DEV_NAME		"/dev/cros_fp"
 #define CROS_ISH_DEV_NAME		"/dev/cros_ish"
 
@@ -83,7 +82,6 @@ struct cros_ec_priv {
 
 extern struct ec_cb cros_ec_cb;
 extern struct ec_cb cros_pd_cb;
-extern struct ec_cb cros_sh_cb;
 extern struct ec_cb cros_fp_cb;
 extern struct ec_cb cros_ish_cb;
 

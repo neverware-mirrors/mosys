@@ -111,12 +111,6 @@ struct ec_cb cros_pd_cb = {
 	.fw_version	= cros_ec_fw_version,
 };
 
-struct ec_cb cros_sh_cb = {
-	.vendor		= cros_ec_vendor,
-	.name		= cros_ec_name,
-	.fw_version	= cros_ec_fw_version,
-};
-
 struct ec_cb cros_fp_cb = {
 	.vendor		= cros_ec_vendor,
 	.name		= cros_ec_name,
