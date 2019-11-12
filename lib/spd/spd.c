@@ -293,9 +293,10 @@ static ssize_t find_spd_by_part_number(struct platform_intf *intf, int dimm,
 		spd_part_num = ptr + info->spd_part_off;
 		spd_part_num_len = info->spd_part_len;
 
-		// Strip off trailing whitespace from SPD part number.
+		// Strip off trailing whitespace and '\0' from SPD part number.
 		while (spd_part_num_len > 0 &&
-		       spd_part_num[spd_part_num_len - 1] == ' ')
+		       (spd_part_num[spd_part_num_len - 1] == ' ' ||
+			spd_part_num[spd_part_num_len - 1] == '\0'))
 			spd_part_num_len--;
 
 		if (spd_part_num_len != smbios_part_num_len)
