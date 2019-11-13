@@ -446,24 +446,3 @@ int cros_ec_probe_lpc(struct platform_intf *intf)
 
 	return ret;
 }
-
-/* returns 1 if EC detected, 0 if not, <0 to indicate failure */
-int cros_pd_probe_lpc(struct platform_intf *intf)
-{
-	int ret = -1;
-	static struct cros_ec_priv cros_pd_priv_lpc = {
-		.cmd            = &cros_ec_command_lpc,
-		.io		= &cros_ec_io_port,
-		.device_index   = 1,
-	};
-
-	lprintf(LOG_DEBUG, "%s: probing for CrOS PD on LPC...\n", __func__);
-
-	intf->cb->pd->priv = &cros_pd_priv_lpc;
-	ret = cros_ec_detect(intf, intf->cb->pd);
-	if (ret == 1) {
-		lprintf(LOG_DEBUG, "CrOS PD detected on LPC bus\n");
-	}
-
-	return ret;
-}

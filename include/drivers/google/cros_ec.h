@@ -112,15 +112,6 @@ int cros_ec_get_firmware_rom_size(struct platform_intf *intf);
 int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec);
 int cros_ec_probe_lpc(struct platform_intf *intf);
 
-/* PD commands */
-int cros_pd_probe_lpc(struct platform_intf *intf);
-int cros_pd_hello(struct platform_intf *intf);
-const char *cros_pd_version(struct platform_intf *intf);
-int cros_pd_chip_info(struct platform_intf *intf,
-		         struct ec_response_get_chip_info *info);
-int cros_pd_flash_info(struct platform_intf *intf,
-		         struct ec_response_flash_info *info);
-
 int cros_ec_setup(struct platform_intf *intf);
 int cros_pd_setup(struct platform_intf *intf);
 int cros_fp_setup(struct platform_intf *intf);
