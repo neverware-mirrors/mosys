@@ -33,8 +33,6 @@
 
 #include <arpa/inet.h>	/* ntohl() */
 
-#include "mosys/alloc.h"
-#include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
@@ -150,8 +148,7 @@ static int slippy_spd_read_cbfs(struct platform_intf *intf,
 				int dimm, int reg, int len, uint8_t *buf)
 {
 	static int first_run = 1;
-	static uint8_t *bootblock = NULL;
-	size_t size = SLIPPY_HOST_FIRMWARE_ROM_SIZE;
+	static uint8_t bootblock[SLIPPY_HOST_FIRMWARE_ROM_SIZE];
 	struct cbfs_file *file;
 	int spd_index = 0;
 	uint32_t spd_offset;
@@ -162,17 +159,16 @@ static int slippy_spd_read_cbfs(struct platform_intf *intf,
 	}
 
 	if (first_run) {
-		bootblock = mosys_malloc(size);	/* FIXME: overkill */
-		add_destroy_callback(free, bootblock);
-		first_run = 0;
-
 		/* read SPD from CBFS entry located within bootblock region */
-		if (flashrom_read(bootblock, size,
+		if (flashrom_read(bootblock, ARRAY_SIZE(bootblock),
 				  INTERNAL_BUS_SPI, "BOOT_STUB") < 0)
 			return -1;
+
+		first_run = 0;
 	}
 
-	if ((file = cbfs_find("spd.bin", bootblock, size)) == NULL)
+	if ((file = cbfs_find("spd.bin", bootblock, ARRAY_SIZE(bootblock))) ==
+	    NULL)
 		return -1;
 
 	spd_index = slippy_get_spd_index(intf);
