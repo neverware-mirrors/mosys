@@ -45,7 +45,6 @@ extern struct platform_cmd cmd_eeprom;
 extern struct platform_cmd cmd_ec;
 extern struct platform_cmd cmd_pd;
 extern struct platform_cmd cmd_fp;
-extern struct platform_cmd cmd_ish;
 extern struct platform_cmd cmd_psu;
 
 #endif /* MOSYS_COMMAND_LIST_H__ */

@@ -418,37 +418,3 @@ int cros_fp_setup_dev(struct platform_intf *intf)
 
 	return ret;
 }
-
-int cros_ish_setup_dev(struct platform_intf *intf)
-{
-	int ret;
-	static struct cros_ec_dev default_ish_dev = {
-		.name = CROS_ISH_DEV_NAME,
-	};
-	static struct cros_ec_priv default_ish_priv = {
-		.devfs = &default_ish_dev,
-	};
-
-	MOSYS_CHECK(intf->cb && intf->cb->ish);
-	if (!intf->cb->ish->priv) {
-		/*
-		 * Whoever ported the platform was lazy. Assume they want to
-		 * use the default CrOS ISH device.
-		 */
-		intf->cb->ish->priv = &default_ish_priv;
-		lprintf(LOG_DEBUG, "Using default ISH devfs interface.\n");
-	}
-
-	ret = cros_ec_probe_dev(intf, intf->cb->ish);
-	if (ret == 1)
-		lprintf(LOG_DEBUG, "CrOS ISH found via kernel driver\n");
-	else if (ret == 0)
-		lprintf(LOG_DEBUG, "CrOS ISH not found via kernel driver\n");
-	else {
-		/* Allow PD probe to fail if not present on a board */
-		lprintf(LOG_DEBUG, "Error probing CrOS ISH via kernel driver\n");
-		intf->cb->ish = NULL;
-	}
-
-	return ret;
-}

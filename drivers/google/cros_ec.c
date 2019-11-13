@@ -422,15 +422,3 @@ int cros_fp_setup(struct platform_intf *intf)
 
 	return 0;
 }
-
-
-int cros_ish_setup(struct platform_intf *intf)
-{
-	MOSYS_CHECK(intf->cb && intf->cb->ish);
-
-	lprintf(LOG_DEBUG, "%s: Trying devfs interface...\n", __func__);
-	if (cros_ish_setup_dev(intf) == 1)
-		return 1;
-
-	return 0;
-}

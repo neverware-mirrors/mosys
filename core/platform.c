@@ -183,8 +183,6 @@ void mosys_platform_destroy(struct platform_intf *intf)
 				intf->cb->pd->destroy(intf, intf->cb->pd);
 			if (intf->cb->fp && intf->cb->fp->destroy)
 				intf->cb->fp->destroy(intf, intf->cb->fp);
-			if (intf->cb->ish && intf->cb->ish->destroy)
-				intf->cb->ish->destroy(intf, intf->cb->ish);
 		}
 	}
 }

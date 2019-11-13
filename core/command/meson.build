@@ -10,6 +10,5 @@ libmosys_src += files(
   'psu.c',
   'platform.c',
   'ec.c',
-  'ish.c',
   'smbios.c',
 )
