@@ -37,7 +37,6 @@
 #include <unistd.h>
 
 #include "mosys/alloc.h"
-#include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/intf_list.h"
 #include "mosys/kv_pair.h"

@@ -10,7 +10,6 @@
 
 #include "mosys/alloc.h"
 #include "mosys/big_lock.h"
-#include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"

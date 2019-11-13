@@ -39,7 +39,6 @@
 #include <ctype.h>
 
 #include "mosys/alloc.h"
-#include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -332,7 +331,12 @@ static int smbios_itr_setup(struct platform_intf *intf,
 		return 0;
 	}
 
-	/* setup iterator */
+	/*
+	 * Setup iterator
+	 *
+	 * TODO(crbug.com/1018847): Fix leak of smbios_itr and
+	 * smbios_itr->entry
+	 */
 	smbios_itr = mosys_malloc(sizeof(*smbios_itr));
 	memset(smbios_itr, 0, sizeof(*smbios_itr));
 
@@ -367,9 +371,6 @@ static int smbios_itr_setup(struct platform_intf *intf,
 	/* start pointer at table start */
 	smbios_itr->current = smbios_itr->data;
 	smbios_itr->header = (struct smbios_header *)smbios_itr->current;
-
-	/* make sure we get torn down at exit time. */
-	add_destroy_callback(smbios_itr_destroy, intf);
 
 	return 0;
 }

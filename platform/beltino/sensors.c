@@ -31,7 +31,6 @@
 
 #include <inttypes.h>
 
-#include "mosys/callbacks.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 

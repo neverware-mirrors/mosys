@@ -32,7 +32,6 @@
 #include <valstr.h>
 
 #include "mosys/alloc.h"
-#include "mosys/callbacks.h"
 #include "mosys/platform.h"
 
 #include "lib/dynamic_array.h"
@@ -233,11 +232,10 @@ struct sensor_array *get_platform_sensors(struct platform_intf *intf)
 		return platform_sensors;
 	}
 
-	/* Allocate and fill in sensor array. Also, ensure sensor_array is
-	 * free'd when mosys is torn down. */
+	/* Allocate and fill in sensor array. */
 	platform_sensors = new_sensor_array();
-	add_destroy_callback((destroy_callback)free_sensor_array_ptr,
-	                     &platform_sensors);
+
+	/* TODO(crbug.com/1018847): fix memory leak of platform_sensors */
 
 	/* Add the platform specific sensors. */
 	if (intf->cb->sensor && intf->cb->sensor->add_sensors) {
