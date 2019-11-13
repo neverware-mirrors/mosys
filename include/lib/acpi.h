@@ -56,14 +56,15 @@ struct sensor;
 struct sensor_reading;
 
 /*
- * acpi_get_frid - retrieve FRID and store in a newly allocated buffer
+ * acpi_get_frid - retrieve FRID
  *
- * @buf:	buffer to store hardware ID in
+ * @buf:	buffer to store firmware ID
+ * @buf_sz:	the size of the buffer
  *
- * returns length of hardware id to indicate success
+ * returns length of read only firmware id to indicate success
  * returns <0 to indicate error
  */
-extern int acpi_get_frid(char **buf);
+extern ssize_t acpi_get_frid(char *buf, size_t buf_sz);
 
 /*
  * acpi_read_temp - read ACPI thermal_zone temperature

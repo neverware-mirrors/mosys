@@ -28,34 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
-#include <unistd.h>
-
-#include "mosys/alloc.h"
 #include "mosys/log.h"
 
 #include "lib/acpi.h"
 #include "lib/chromeos.h"
 #include "lib/file.h"
 
-int acpi_get_frid(char **buf)
+ssize_t acpi_get_frid(char *buf, size_t buf_sz)
 {
-	char path[] = CHROMEOS_ACPI_PATH"FRID";
-	int fd, len = -1;
-
-	fd = file_open(path, FILE_READ);
-	if (fd < 0)
-		return -1;
-
-	*buf = mosys_malloc(CHROMEOS_FRID_MAXLEN);
-	memset(*buf, 0, CHROMEOS_FRID_MAXLEN);
-	len = read(fd, *buf, CHROMEOS_FRID_MAXLEN);
-	if (len < 0) {
-		lprintf(LOG_DEBUG, "%s: failed to read frid from %s\n",
-		                   __func__, path);
-		free(*buf);
-	}
-
-	close(fd);
-	return len;
+	return read_file(CHROMEOS_ACPI_PATH "FRID", buf, buf_sz, LOG_DEBUG);
 }

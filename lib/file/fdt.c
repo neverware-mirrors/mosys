@@ -34,14 +34,12 @@
 #include <errno.h>
 #include <inttypes.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "lib/chromeos.h"
 #include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/string_builder.h"
 
-#include "mosys/alloc.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
 
@@ -137,20 +135,17 @@ int fdt_get_sku_id(void)
 	return sku_id;
 }
 
-int fdt_get_frid(char **buf)
+ssize_t fdt_get_frid(char *buf, size_t buf_sz)
 {
-	ssize_t len = CHROMEOS_FRID_MAXLEN;
-	char *frid = mosys_malloc(len);
+	ssize_t len;
 
-	len = fdt_read_node(FDT_FRID_PATH, frid, len);
+	len = fdt_read_node(FDT_FRID_PATH, buf, buf_sz);
 	if (len < 0) {
 		lprintf(LOG_ERR, "%s: failed to read frid from %s\n",
 			__func__, FDT_FRID_PATH);
-		free(frid);
 		return -1;
 	}
 
-	*buf = frid;
 	return len + 1;
 }
 

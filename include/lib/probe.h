@@ -34,6 +34,21 @@
 
 struct platform_intf;
 
+/**
+ * get_firmware_name(buf, buf_sz) - get the firmware name
+ *
+ * @buf:        The buffer to write the firmware name into.
+ * @buf_sz:     The size of @buf. This buffer should be allocated with
+ *              enough size to fit the entire FRID, not just the
+ *              firmware name.
+ *
+ * The first part of the FRID, before the period, is the firmware
+ * name. Get the FRID and strip off everything after the first period.
+ *
+ * Return: The length of the firmware name on success, -1 otherwise.
+ */
+ssize_t get_firmware_name(char *buf, size_t buf_sz);
+
 /*
  * probe_frid - attempt to match platform to chromeos firmware revision id
  *

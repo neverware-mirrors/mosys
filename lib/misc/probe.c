@@ -29,69 +29,84 @@
  */
 
 #include <ctype.h>
+#include <stdbool.h>
 #include <string.h>
 #include <limits.h>
 #include <unistd.h>
 
-#include "mosys/alloc.h"
-#include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "lib/acpi.h"
+#include "lib/chromeos.h"
 #include "lib/fdt.h"
 #include "lib/file.h"
+#include "lib/math.h"
 #include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
 
-static int plat_get_frid(char **buf)
+static ssize_t get_frid(char *buf, size_t buf_sz)
 {
 #ifdef CONFIG_PLATFORM_ARCH_X86
-	return acpi_get_frid(buf);
+	return acpi_get_frid(buf, buf_sz);
 #else
-	return fdt_get_frid(buf);
+	return fdt_get_frid(buf, buf_sz);
 #endif
+}
+
+ssize_t get_firmware_name(char *buf, size_t buf_sz)
+{
+	char *firmware_name_end;
+
+	if (get_frid(buf, buf_sz) < 0)
+		return -1;
+
+	/*
+	 * FRID begins with firmware name, followed by a dot,
+	 * followed by revision ID. Example:
+	 *
+	 *     "Google_Samus.6300.102.0"
+	 *
+	 * We want everything before the first dot, so in that
+	 * example, just "Google_Samus".
+	 */
+	firmware_name_end = strchr(buf, '.');
+	if (!firmware_name_end) {
+		lprintf(LOG_DEBUG, "%s: Invalid FRID: \"%s\"\n", __func__, buf);
+		return -1;
+	}
+
+	*firmware_name_end = '\0';
+	return firmware_name_end - buf + 1;
 }
 
 int probe_frid(const char *frids[])
 {
-	int ret = 0;
-	off_t len;
-	static char *id = NULL;
+	static ssize_t firmware_name_ret;
+	static char firmware_name[CHROMEOS_FRID_MAXLEN];
 
-	if (!id) {
-		char *raw_frid = NULL, *tmp;
-
-		if (plat_get_frid(&raw_frid) < 0)
-			goto probe_frid_done;
-
-		/* FRID begins with platform name, followed by a dot, followed
-		 * by revision ID */
-		tmp = strchr(raw_frid, '.');
-		if (!tmp) {
-			lprintf(LOG_DEBUG, "%s: Invalid FRID: \"%s\"\n",
-			                   __func__, raw_frid);
-			free(raw_frid);
-			goto probe_frid_done;
-		}
-
-		len = tmp - raw_frid + 1;
-		id = mosys_malloc(len + 1);
-		snprintf(id, len, "%s", raw_frid);
-		lprintf(LOG_DEBUG, "%s: Platform name: \"%s\"\n", __func__, id);
-		free(raw_frid);
-		add_destroy_callback(free, id);
+	if (!firmware_name_ret) {
+		firmware_name_ret = get_firmware_name(
+			firmware_name, ARRAY_SIZE(firmware_name));
 	}
 
-	if (strlfind(id, frids, 0)) {
-		lprintf(LOG_DEBUG, "%s: matched id \"%s\"\n", __func__, id);
-		ret = 1;
+	/*
+	 * On the second call to probe_frid, we won't re-run the logic
+	 * above. If it failed the first time thru, we still want to
+	 * return a failure.
+	 */
+	if (firmware_name_ret < 0)
+		return firmware_name_ret;
+
+	if (strlfind(firmware_name, frids, 0)) {
+		lprintf(LOG_DEBUG, "%s: matched id \"%s\"\n", __func__,
+			firmware_name);
+		return 1;
 	}
 
-probe_frid_done:
-	return ret;
+	return 0;
 }
 
 int probe_smbios(struct platform_intf *intf, const char *ids[])

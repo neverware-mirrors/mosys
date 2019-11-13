@@ -38,14 +38,15 @@
 #include <string.h>
 
 #include "mosys/alloc.h"
-#include "mosys/callbacks.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "lib/acpi.h"
+#include "lib/chromeos.h"
 #include "lib/cros_config.h"
 #include "lib/cros_config_struct.h"
 #include "lib/fdt.h"
+#include "lib/math.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
@@ -58,32 +59,6 @@ static int get_sku_id(struct platform_intf *intf)
 #else
 	return fdt_get_sku_id();
 #endif
-}
-
-static const char *get_firmware_name(struct platform_intf *intf)
-{
-	static char *fw_name;
-	int len;
-
-	if (fw_name)
-		return fw_name;
-
-#ifdef CONFIG_PLATFORM_ARCH_X86
-	len = acpi_get_frid(&fw_name);
-#else
-	len = fdt_get_frid(&fw_name);
-#endif
-	if (len < 0) {
-		free(fw_name);
-		fw_name = NULL;
-	} else {
-		/* Discard the version and time stamp. */
-		char *dot = strchr(fw_name, '.');
-		if (dot)
-			*dot = '\0';
-		add_destroy_callback(free, fw_name);
-	}
-	return fw_name;
 }
 
 int cros_config_read_sku_info_fdt(struct platform_intf *intf,
@@ -179,14 +154,21 @@ int cros_config_read_default_sku_info(
 		struct platform_intf *intf, const char *find_platform_names[],
 		struct sku_info *sku_info, int default_sku_id)
 {
-	const char *firmware_name;
+	static ssize_t firmware_name_ret;
+	static char firmware_name[CHROMEOS_FRID_MAXLEN];
 	int sku_id;
 
-	firmware_name = get_firmware_name(intf);
-	if (!firmware_name) {
-		lprintf(LOG_DEBUG, "%s: Unknown firmware name\n", __func__);
+	if (!firmware_name_ret) {
+		firmware_name_ret = get_firmware_name(
+			firmware_name, ARRAY_SIZE(firmware_name));
+	}
+
+	if (firmware_name_ret < 0) {
+		lprintf(LOG_DEBUG, "%s: Unable to read firmware name\n",
+			__func__);
 		return -1;
 	}
+
 	if (find_platform_names &&
 	    !strlfind(firmware_name, find_platform_names, 1))
 		return -ENOENT;
