@@ -48,6 +48,7 @@
 #include "mosys/globals.h"
 #include "mosys/list.h"
 #include "mosys/log.h"
+#include "mosys/mosys.h"
 
 #include "lib/file.h"
 
@@ -146,6 +147,61 @@ int file_open(const char *file, int rw)
 	}
 
 	return fd;
+}
+
+ssize_t read_file(const char *path, char *buf, size_t buf_sz,
+		  enum log_levels log_level)
+{
+	FILE *f;
+	size_t bytes_read;
+
+	/* Buffer size of 0 leaves us with no space to NULL-terminate */
+	if (buf_sz == 0) {
+		lprintf(log_level, "%s: cannot be used with zero-size buffer\n",
+			__func__);
+		return -1;
+	}
+
+	f = fopen(path, "rb");
+	if (!f) {
+		lprintf(log_level, "%s: Failed to open \"%s\" for reading\n",
+			__func__, path);
+		return -1;
+	}
+
+	bytes_read = fread(buf, 1, buf_sz - 1, f);
+	if (ferror(f)) {
+		lprintf(log_level, "%s: File \"%s\" in error state\n",
+			__func__, path);
+		goto fail;
+	}
+
+	if (!feof(f)) {
+		/*
+		 * Try to read one more byte from the file to see if
+		 * it puts us at EOF first...
+		 */
+		char one_more_byte[1];
+
+		if (fread(one_more_byte, 1, 1, f) == 0 && feof(f))
+			goto ok;
+
+		lprintf(log_level, "%s: The entire file \"%s\" could not fit in"
+			"a buffer of size %zu\n", __func__, path, buf_sz);
+		goto fail;
+	}
+
+ok:
+	MOSYS_CHECK(bytes_read < buf_sz);
+
+	/* NULL-terminate the buffer */
+	buf[bytes_read] = '\0';
+
+	fclose(f);
+	return bytes_read;
+fail:
+	fclose(f);
+	return -1;
 }
 
 /*

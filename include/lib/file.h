@@ -34,16 +34,37 @@
 #ifndef MOSYS_LIB_FILE_H__
 #define MOSYS_LIB_FILE_H__
 
+#include "mosys/list.h"
+#include "mosys/log.h"
+
 enum file_mode {
 	FILE_READ,
 	FILE_WRITE,
 };
 int file_open(const char *file, int rw);
 
-#include "mosys/list.h"
+/**
+ * read_file(path, buf, buf_sz, log_level) - Helper to read entire
+ * file contents into a NULL-terminated buffer.
+ * @path:       Filename to read.
+ * @buf:        Buffer to write contents into.
+ * @buf_sz:     The size of @buf.
+ * @log_level:  Errors opening or reading the file will cause error
+ *              messages printed at this log level.
+ *
+ * read_file will read the entire contents of a file into a buffer,
+ * and will print errors if the file is not readable, or if the whole
+ * file does not fit into the buffer.
+ *
+ * Return: -1 on error, or the number of bytes read on success, not
+ * including the NULL terminator added at the end.
+ */
+ssize_t read_file(const char *path, char *buf, size_t buf_sz,
+		  enum log_levels log_level);
+
 extern struct ll_node *scanft(struct ll_node **list,
-                              const char *root, const char *name,
-                              const char *str, int maxdepth, int symdepth);
+			      const char *root, const char *name,
+			      const char *str, int maxdepth, int symdepth);
 
 extern void scanft_list_cleanup(struct ll_node **phead);
 

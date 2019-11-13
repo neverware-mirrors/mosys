@@ -41,8 +41,10 @@
 #include <cmocka.h>
 // clang-format on
 
+#include "lib/math.h"
 #include "mosys/globals.h"
 #include "mosys/list.h"
+#include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "lib/file.h"
@@ -55,6 +57,61 @@ static void get_testdata_root(char *buf)
 	assert_non_null(src);
 
 	snprintf(buf, PATH_MAX, "%s/unittests/testdata", src);
+}
+
+static void get_testdata_file(const char *name, char *buf, size_t buf_sz)
+{
+	char *src = getenv("SRC");
+	assert_non_null(src);
+
+	snprintf(buf, buf_sz, "%s/unittests/testdata/%s", src, name);
+}
+
+/* This should be the contents of unittests/testdata/hello */
+#define HELLO_DATA "hello world\n"
+
+static void read_file_success_test(void **state)
+{
+	ssize_t ret;
+	char path[PATH_MAX];
+	char buf[__builtin_strlen(HELLO_DATA) + 1];
+
+	get_testdata_file("hello", path, ARRAY_SIZE(path));
+	ret = read_file(path, buf, ARRAY_SIZE(buf), LOG_DEBUG);
+	assert_int_equal(ret, __builtin_strlen(HELLO_DATA));
+	assert_string_equal(buf, HELLO_DATA);
+}
+
+static void read_file_no_buffer_test(void **state)
+{
+	ssize_t ret;
+	char path[PATH_MAX];
+	/* We want to pass a non-NULL address, so make it at least size 1 */
+	char buf[1];
+
+	get_testdata_file("hello", path, ARRAY_SIZE(path));
+	ret = read_file(path, buf, 0, LOG_DEBUG);
+	assert_int_equal(ret, -1);
+}
+
+static void read_file_small_buffer_test(void **state)
+{
+	ssize_t ret;
+	char path[PATH_MAX];
+	char buf[1];
+
+	get_testdata_file("hello", path, ARRAY_SIZE(path));
+	ret = read_file(path, buf, ARRAY_SIZE(buf), LOG_DEBUG);
+	assert_int_equal(ret, -1);
+}
+
+static void read_file_no_file_test(void **state)
+{
+	ssize_t ret;
+	char buf[1];
+
+	ret = read_file("/does/not/exist", buf, ARRAY_SIZE(buf), LOG_DEBUG);
+	assert_int_equal(ret, -1);
 }
 
 static void scanft_test(void **state)
@@ -111,14 +168,14 @@ static void sysfs_lowest_smbus_test(void **state)
 	get_testdata_root(testdata_root);
 
 	/*
-	 * Find "needle" in haystack of sysfs-style i2c-<bus> directories.
-	 *
-	 * test0/ : no needles, just hay
-	 * test1/ : needle is i2c-0, hay is in i2c-1 and i2c-2
-	 * test2/ : needle is i2c-1, hay is in i2c-0 and i2c-2
-	 * test3/ : needle is i2c-2, hay is in i2c-0 and i2c-1
-	 * test4/ : needles are in i2c-0 and i2c-2, hay is in i2c-1
-	 */
+		 * Find "needle" in haystack of sysfs-style i2c-<bus> directories.
+		 *
+		 * test0/ : no needles, just hay
+		 * test1/ : needle is i2c-0, hay is in i2c-1 and i2c-2
+		 * test2/ : needle is i2c-1, hay is in i2c-0 and i2c-2
+		 * test3/ : needle is i2c-2, hay is in i2c-0 and i2c-1
+		 * test4/ : needles are in i2c-0 and i2c-2, hay is in i2c-1
+		 */
 	snprintf(root, sizeof(root), "%s/%s", testdata_root,
 		 "sysfs_lowest_smbus_test/test0/");
 	assert_int_equal(-1, sysfs_lowest_smbus(root, "needle"));
@@ -144,8 +201,12 @@ static void sysfs_lowest_smbus_test(void **state)
 int main(void)
 {
 	const struct CMUnitTest tests[] = {
-	    cmocka_unit_test(scanft_test),
-	    cmocka_unit_test(sysfs_lowest_smbus_test),
+		cmocka_unit_test(read_file_success_test),
+		cmocka_unit_test(read_file_no_buffer_test),
+		cmocka_unit_test(read_file_small_buffer_test),
+		cmocka_unit_test(read_file_no_file_test),
+		cmocka_unit_test(scanft_test),
+		cmocka_unit_test(sysfs_lowest_smbus_test),
 	};
 
 	return cmocka_run_group_tests(tests, /*group_setup=*/NULL,
