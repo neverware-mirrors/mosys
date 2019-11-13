@@ -412,3 +412,23 @@ char *strupper(char *str)
 
 	return str;
 }
+
+size_t strlcpy(char *dest, const char *src, size_t size) {
+	size_t copied = 0;
+
+	if (size == 0)
+		return 0;
+
+	for (size_t i = 0; i < size - 1; i++) {
+		if (*src == '\0')
+			break;
+
+		*dest = *src;
+		dest++;
+		src++;
+		copied++;
+	}
+
+	*dest = '\0';
+	return copied;
+}

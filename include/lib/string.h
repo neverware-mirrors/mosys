@@ -37,6 +37,7 @@
 #define MOSYS_LIB_STRING_H_
 
 #include <inttypes.h>
+#include <stddef.h>
 
 /* FIXME: Should we #include string_builder.h and valstr.h here? */
 
@@ -164,6 +165,9 @@ char *strlower(char *str);
  * returns pointer to string
  */
 char *strupper(char *str);
+
+/* From BSD-land, see notes in "man 3 strcpy" */
+size_t strlcpy(char *dest, const char *src, size_t size);
 
 /*
  * Find the min-length string.
