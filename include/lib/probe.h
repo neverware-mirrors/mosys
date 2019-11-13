@@ -34,12 +34,6 @@
 
 struct platform_intf;
 
-struct cros_compat_tuple {
-	char *family;
-	char *name;
-	char *revision;
-};
-
 /*
  * probe_frid - attempt to match platform to chromeos firmware revision id
  *
@@ -63,47 +57,6 @@ extern int probe_frid(const char *frids[]);
 extern int probe_smbios(struct platform_intf *intf, const char *ids[]);
 
 /*
- * probe_cpuinfo - probe /proc/cpuinfo for system info
- *
- * @key:	key to search for
- * @value:	value to search for
- *
- * This function assumes the format is colon-delimited with unknown number of
- * spaces between the key, colon, and value. For example
- * key     : value
- *
- * returns 1 to indicate matching key:value pair found
- * returns 0 to indicate no matching key:value pair found (clean exit)
- * returns <0 to indicate error
- */
-extern int probe_cpuinfo(struct platform_intf *intf,
-                         const char *key, const char *value);
-
-/*
- * extract_cpuinfo - extract value from /proc/cpuinfo
- *
- * @key:	key to search for
- *
- * This function assumes the format is colon-delimited with unknown number of
- * spaces between the key, colon, and value. For example
- * key     : value
- *
- * returns allocated string containing value if found
- * returns NULL to indicate value not found or error
- */
-extern const char *extract_cpuinfo(const char *key);
-
-/*
- * extract_block_device_model_name - extract block device name from sysfs
- *
- * @device:	device name to extract (ex. "sda")
- *
- * returns allocated string containing value if found
- * returns NULL to indicate value not found or error
- */
-extern const char *extract_block_device_model_name(const char *device);
-
-/*
  * probe_fdt_compatible - Probe platform using device tree "compatible" node
  *
  * @id_list:		Known platform IDs to compare with
@@ -115,22 +68,5 @@ extern const char *extract_block_device_model_name(const char *device);
  */
 extern int probe_fdt_compatible(const char * const id_list[],
 				int num_ids, int allow_partial);
-
-
-/*
- * cros_fdt_tuple - Split tuple from FDT
- *
- * This function will look at the FDT "compatible" node and attempt to split
- * out the tuple used on ChromeOS platforms, "google,<family>-<name>-<revN>",
- * into constituent parts. The first viable match will be used.
- *
- * Memory which is allocated for the struct and strings is automatically freed
- * using destroy callbacks. The caller does not need to explicitly free() the
- * returned pointer or any members of the struct.
- *
- * returns pointer to cros_compat_tuple if successful
- * returns NULL to indicate failure
- */
-extern struct cros_compat_tuple *cros_fdt_tuple(void);
 
 #endif /* MOSYS_LIB_PROBE_H__ */

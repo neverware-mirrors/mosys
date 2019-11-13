@@ -28,17 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE 1	/* for strcasestr() */
-#endif
-
 #include <ctype.h>
 #include <string.h>
 #include <limits.h>
 #include <unistd.h>
 
 #include "mosys/alloc.h"
-#include "mosys/big_lock.h"
 #include "mosys/callbacks.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
@@ -50,11 +45,6 @@
 #include "lib/probe.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
-
-#ifndef LINE_MAX
-#define LINE_MAX	512
-#endif
-
 
 static int plat_get_frid(char **buf)
 {
@@ -135,132 +125,6 @@ probe_smbios_cmp:
 	return ret;
 }
 
-int probe_cpuinfo(struct platform_intf *intf,
-                  const char *key, const char *value)
-{
-	FILE *cpuinfo;
-	int ret = 0;
-	char path[PATH_MAX];
-	int key_found = 0;
-	char line[LINE_MAX], *ptr;
-
-	sprintf(path, "%s/proc/cpuinfo", mosys_get_root_prefix());
-	cpuinfo = fopen(path, "rb");
-	if (!cpuinfo)
-		return 0;
-
-	while (!feof(cpuinfo)) {
-		if (fgets(line, sizeof(line), cpuinfo) == NULL)
-			break;
-		ptr = line;
-
-		if (!strncmp(ptr, key, strlen(key))) {
-			key_found = 1;
-			break;
-		}
-	}
-
-	if (key_found) {
-		int i;
-		char tmp[LINE_MAX];
-
-		ptr += strlen(key);
-		while (isspace((unsigned char)*ptr) || (*ptr == ':'))
-			ptr++;
-
-		memset(tmp, 0, sizeof(tmp));
-		for (i = 0; !isspace((unsigned char)*ptr); i++) {
-			tmp[i] = *ptr;
-			ptr++;
-		}
-
-		lprintf(LOG_DEBUG, "\"%s\" == \"%s\" ? ", tmp, value);
-		if (strncasecmp(tmp, value, strlen(value))) {
-			lprintf(LOG_DEBUG, "no\n");
-		} else {
-			lprintf(LOG_DEBUG, "yes\n");
-			ret = 1;
-		}
-	}
-
-	fclose(cpuinfo);
-	return ret;
-}
-
-const char *extract_cpuinfo(const char *key)
-{
-	FILE *cpuinfo;
-	char *ret = NULL;
-	char path[PATH_MAX];
-
-	sprintf(path, "%s/proc/cpuinfo", mosys_get_root_prefix());
-	cpuinfo = fopen(path, "rb");
-	if (!cpuinfo)
-		return 0;
-
-	while (!feof(cpuinfo)) {
-		char line[LINE_MAX], *ptr;
-		int i = 0;
-
-		if (fgets(line, sizeof(line), cpuinfo) == NULL)
-			break;
-		ptr = line;
-
-		if (strncmp(ptr, key, strlen(key)))
-			continue;
-
-		ptr += strlen(key);
-		while (isspace((unsigned char)*ptr) || (*ptr == ':'))
-			ptr++;
-
-		ret = mosys_malloc(strlen(ptr) + 1);
-		while (!isspace((unsigned char)*ptr)) {
-			ret[i] = *ptr;
-			ptr++;
-			i++;
-		}
-		ret[i] = '\0';
-	}
-
-	fclose(cpuinfo);
-	return (const char *)ret;
-}
-
-/*
- * extract_block_device_model_name - Gets model name of block storage device.
- *
- * @device:	String containing device name, ex "sda".
- *
- * Returns pointer to allocated model name string on success, NULL on failure.
- */
-const char *extract_block_device_model_name(const char *device)
-{
-	FILE *file;
-	char *model_name = NULL;
-	char path[PATH_MAX];
-	int len;
-
-	sprintf(path, "/sys/class/block/%s/device/model", device);
-	file = fopen(path, "r");
-	if (!file)
-		return NULL;
-
-	model_name = mosys_malloc(PATH_MAX);
-	if (!fgets(model_name, PATH_MAX, file)) {
-		fclose(file);
-		free(model_name);
-		return NULL;
-	}
-	fclose(file);
-
-	/* Remove trailing newline. */
-	len = strlen(model_name);
-	if (len > 0 && model_name[len-1] == '\n')
-		model_name[len-1] = '\0';
-
-	return (const char *)model_name;
-}
-
 #define FDT_COMPATIBLE "/proc/device-tree/compatible"
 int probe_fdt_compatible(const char * const id_list[], int num_ids,
 			 int allow_partial)
@@ -323,93 +187,6 @@ int probe_fdt_compatible(const char * const id_list[], int num_ids,
 	}
 
 probe_fdt_compatible_exit:
-	close(fd);
-	return ret;
-}
-
-struct cros_compat_tuple *cros_fdt_tuple(void)
-{
-	struct cros_compat_tuple *ret = NULL;
-	int fd;
-	char path[PATH_MAX];
-	char compat[64];	/* arbitrarily chosen max size */
-	char family[32];
-	char name[32];
-	char revision[8];
-	char *endptr;		/* end of current compat string */
-	char *p0, *p1;		/* placeholders for detokenizing string */
-
-	snprintf(path, PATH_MAX, "%s/%s",
-			mosys_get_root_prefix(), FDT_COMPATIBLE);
-	fd = file_open(path, FILE_READ);
-	if (fd < 0) {
-		lprintf(LOG_DEBUG, "Cannot open %s\n", path);
-		return NULL;
-	}
-
-	/*
-	 * Device tree "compatible" data consists of a list of comma-separated
-	 * pairs with a NULL after each pair. For example, "foo,bar\0bam,baz\0"
-	 * is foo,bar and bam,baz.
-	 */
-	endptr = &compat[0];
-	while (read(fd, endptr, 1) == 1) {
-		if (*endptr != 0) {
-			endptr++;
-			if (endptr - &compat[0] > sizeof(compat)) {
-				lprintf(LOG_ERR,
-					"FDT compatible identifier too long\n");
-				break;
-			}
-			continue;
-		}
-
-		p0 = &compat[0];
-		if (strncmp(p0, "google,", strlen("google,"))) {
-			endptr = &compat[0];
-			continue;
-		}
-		p0 += strlen("google,");
-
-		/* family */
-		p1 = strchr(p0, '-');
-		if (p1 == NULL) {
-			endptr = &compat[0];
-			continue;
-		}
-		snprintf(family, p1 - p0 + 1, "%s", p0);
-
-		/* name */
-		p0 = p1 + 1;
-		p1 = strchr(p0, '-');
-		if (p1 == NULL) {
-			endptr = &compat[0];
-			continue;
-		}
-		snprintf(name, p1 - p0 + 1, "%s", p0);
-
-		/* revision */
-		p0 = p1 + 1;
-		if (sscanf(p0, "%s", revision) != 1) {
-			endptr = &compat[0];
-			continue;
-		}
-
-		lprintf(LOG_DEBUG, "%s: family: %s, name: %s, revision: %s\n",
-				__func__, family, name, revision);
-
-		ret = mosys_malloc(sizeof(*ret));
-		ret->family = mosys_strdup(family);
-		ret->name = mosys_strdup(name);
-		ret->revision = mosys_strdup(revision);
-		add_destroy_callback(free, (void *)ret->family);
-		add_destroy_callback(free, (void *)ret->name);
-		add_destroy_callback(free, (void *)ret->revision);
-		add_destroy_callback(free, (void *)ret);
-
-		break;
-	}
-
 	close(fd);
 	return ret;
 }
