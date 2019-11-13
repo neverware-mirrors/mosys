@@ -44,16 +44,17 @@
 #include "drivers/google/cros_ec_dev.h"
 
 #include "lib/math.h"
+#include "lib/string.h"
 
 #define BOARD_VERSION_LEN	8	/* a 16-bit value or "Unknown" */
 #define ANX74XX_VENDOR_ID	0xAAAA
 #define PS8751_VENDOR_ID	0x1DA0
 
-const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec)
+ssize_t cros_ec_version(struct platform_intf *intf, struct ec_cb *ec, char *buf,
+			size_t buf_sz)
 {
 	static const char *const fw_copies[] = { "unknown", "RO", "RW" };
 	struct ec_response_get_version r;
-	const char *ret = NULL;
 	struct cros_ec_priv *priv;
 
 	MOSYS_CHECK(ec && ec->priv);
@@ -61,7 +62,7 @@ const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec)
 
 	MOSYS_CHECK(priv->cmd);
 	if (priv->cmd(intf, ec, EC_CMD_GET_VERSION, 0, &r, sizeof(r), NULL, 0))
-		return NULL;
+		return -1;
 
 	/* Ensure versions are null-terminated before we print them */
 	r.version_string_ro[sizeof(r.version_string_ro) - 1] = '\0';
@@ -71,43 +72,35 @@ const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec)
 	lprintf(LOG_DEBUG, "RO version:    %s\n", r.version_string_ro);
 	lprintf(LOG_DEBUG, "RW version:    %s\n", r.version_string_rw);
 	lprintf(LOG_DEBUG, "Firmware copy: %s\n",
-	       (r.current_image < ARRAY_SIZE(fw_copies) ?
-		fw_copies[r.current_image] : "?"));
+		(r.current_image < ARRAY_SIZE(fw_copies) ?
+		 fw_copies[r.current_image] : "?"));
 
 	switch (r.current_image) {
 	case EC_IMAGE_RO:
-		ret = mosys_strdup(r.version_string_ro);
-		break;
+		return strlcpy(buf, r.version_string_ro, buf_sz);
 	case EC_IMAGE_RW:
-		ret = mosys_strdup(r.version_string_rw);
-		break;
-	default:
-		lprintf(LOG_DEBUG, "%s: cannot determine version\n", __func__);
-		break;
+		return strlcpy(buf, r.version_string_rw, buf_sz);
 	}
 
-	return ret;
+	lprintf(LOG_DEBUG, "%s: cannot determine version\n", __func__);
+	return -1;
 }
 
-const char *cros_ec_build_info(struct platform_intf *intf, struct ec_cb *ec)
+ssize_t cros_ec_build_info(struct platform_intf *intf, struct ec_cb *ec,
+			   char *buf, size_t buf_sz)
 {
-	const int max_size = 128;
-	char *ret = mosys_zalloc(max_size);
 	struct cros_ec_priv *priv;
 
 	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
 
 	MOSYS_CHECK(priv->cmd);
-	if (priv->cmd(intf, ec, EC_CMD_GET_BUILD_INFO, 0, ret, max_size - 1,
-		      NULL, 0)) {
-		free(ret);
-		return NULL;
-	}
+	if (priv->cmd(intf, ec, EC_CMD_GET_BUILD_INFO, 0, buf, buf_sz, NULL, 0))
+		return -1;
 
-	lprintf(LOG_DEBUG, "Build Info: %s\n", ret);
+	lprintf(LOG_DEBUG, "Build Info: %.*s\n", (int)buf_sz, buf);
 
-	return ret;
+	return buf_sz;
 }
 
 int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec)

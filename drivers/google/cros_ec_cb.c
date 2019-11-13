@@ -30,75 +30,50 @@
  * cros_ec_cb.c: EC accessor functions / callbacks for use in platform_intf
  */
 
-#include "mosys/alloc.h"
-#include "mosys/callbacks.h"
+#include "lib/string.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "drivers/google/cros_ec.h"
 #include "drivers/google/cros_ec_commands.h"
 
-static const char *cros_ec_name(struct platform_intf *intf, struct ec_cb *ec)
+static ssize_t cros_ec_name(struct platform_intf *intf, struct ec_cb *ec,
+			    char *buf, size_t buf_sz)
 {
-	static const char *name = NULL;
 	struct ec_response_get_chip_info chip_info;
 
-	if (name)
-		return name;
-
 	if (cros_ec_chip_info(intf, ec, &chip_info))
-		return NULL;
+		return -1;
 
-	name = mosys_strdup(chip_info.name);
-	add_destroy_callback(free, (void *)name);
-	return name;
+	return strlcpy(buf, chip_info.name, buf_sz);
 }
 
-static const char *cros_ec_vendor(struct platform_intf *intf, struct ec_cb *ec)
+static ssize_t cros_ec_vendor(struct platform_intf *intf, struct ec_cb *ec,
+			      char *buf, size_t buf_sz)
 {
-	static const char *vendor = NULL;
 	struct ec_response_get_chip_info chip_info;
 
-	if (vendor)
-		return vendor;
-
 	if (cros_ec_chip_info(intf, ec, &chip_info))
-		return NULL;
+		return -1;
 
-	vendor = mosys_strdup(chip_info.vendor);
-	add_destroy_callback(free, (void *)vendor);
-	return vendor;
-}
-
-static const char *cros_ec_fw_version(struct platform_intf *intf,
-		struct ec_cb *ec)
-{
-	static const char *version = NULL;
-
-	if (version)
-		return version;
-
-	version = cros_ec_version(intf, ec);
-	if (version)
-		add_destroy_callback(free, (void *)version);
-	return version;
+	return strlcpy(buf, chip_info.vendor, buf_sz);
 }
 
 struct ec_cb cros_ec_cb = {
 	.vendor		= cros_ec_vendor,
 	.name		= cros_ec_name,
-	.fw_version	= cros_ec_fw_version,
+	.fw_version	= cros_ec_version,
 	.pd_chip_info	= cros_ec_pd_chip_info,
 };
 
 struct ec_cb cros_pd_cb = {
 	.vendor		= cros_ec_vendor,
 	.name		= cros_ec_name,
-	.fw_version	= cros_ec_fw_version,
+	.fw_version	= cros_ec_version,
 };
 
 struct ec_cb cros_fp_cb = {
 	.vendor		= cros_ec_vendor,
 	.name		= cros_ec_name,
-	.fw_version	= cros_ec_fw_version,
+	.fw_version	= cros_ec_version,
 };

@@ -84,10 +84,12 @@ extern struct ec_cb cros_pd_cb;
 extern struct ec_cb cros_fp_cb;
 
 /* EC commands */
-const char *cros_ec_version(struct platform_intf *intf, struct ec_cb *ec);
-const char *cros_ec_build_info(struct platform_intf *intf, struct ec_cb *ec);
+ssize_t cros_ec_version(struct platform_intf *intf, struct ec_cb *ec, char *buf,
+			size_t buf_sz);
+ssize_t cros_ec_build_info(struct platform_intf *intf, struct ec_cb *ec,
+			   char *buf, size_t buf_sz);
 int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,
-		         struct ec_response_get_chip_info *info);
+		      struct ec_response_get_chip_info *info);
 int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
 		         struct ec_response_flash_info *info);
 int cros_ec_detect(struct platform_intf *intf, struct ec_cb *ec);

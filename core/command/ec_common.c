@@ -12,7 +12,7 @@
 
 static int ec_info_common(struct platform_intf *intf, struct ec_cb *ec)
 {
-	const char *vendor, *name, *fw_version;
+	char vendor[32], name[32], fw_version[32];
 	struct kv_pair *kv;
 	int rc;
 
@@ -23,11 +23,12 @@ static int ec_info_common(struct platform_intf *intf, struct ec_cb *ec)
 
 	kv = kv_pair_new();
 
-	if (ec->vendor && (vendor = ec->vendor(intf, ec)))
+	if (ec->vendor && ec->vendor(intf, ec, vendor, ARRAY_SIZE(vendor)) >= 0)
 		kv_pair_add(kv, "vendor", vendor);
-	if (ec->name && (name = ec->name(intf, ec)))
+	if (ec->name && ec->name(intf, ec, name, ARRAY_SIZE(name)) >= 0)
 		kv_pair_add(kv, "name", name);
-	if (ec->fw_version && (fw_version = ec->fw_version(intf, ec)))
+	if (ec->fw_version &&
+	    ec->fw_version(intf, ec, fw_version, ARRAY_SIZE(fw_version)) >= 0)
 		kv_pair_add(kv, "fw_version", fw_version);
 
 	rc = kv_pair_print(kv);

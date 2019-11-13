@@ -28,65 +28,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string.h>
+#include <errno.h>
+
 #include "lib/file.h"
+#include "lib/string.h"
 #include "mosys/alloc.h"
-#include "mosys/callbacks.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
-
-#include <errno.h>
-#include <unistd.h>
 
 #define WILCO_EC_NAME "wilco"
 #define WILCO_EC_VENDOR "google"
 #define WILCO_EC_SYSFS_VERSION                                                 \
 	"/sys/bus/platform/devices/GOOG000C:00/version"
 
-static const char *wilco_ec_name(struct platform_intf *intf, struct ec_cb *ec)
+static ssize_t wilco_ec_name(struct platform_intf *intf, struct ec_cb *ec,
+			     char *buf, size_t buf_sz)
 {
-	return WILCO_EC_NAME;
+	return strlcpy(buf, WILCO_EC_NAME, buf_sz);
 }
 
-static const char *wilco_ec_vendor(struct platform_intf *intf, struct ec_cb *ec)
+static ssize_t wilco_ec_vendor(struct platform_intf *intf, struct ec_cb *ec,
+			       char *buf, size_t buf_sz)
 {
-	return WILCO_EC_VENDOR;
+	return strlcpy(buf, WILCO_EC_VENDOR, buf_sz);
 }
 
-static const char *wilco_ec_fw_version(struct platform_intf *intf,
-				       struct ec_cb *ec)
+static ssize_t wilco_ec_fw_version(struct platform_intf *intf, struct ec_cb *ec,
+				   char *buf, size_t buf_sz)
 {
-	const size_t max_size = 64;
-	int fd, len;
-	char *buffer = mosys_zalloc(max_size);
+	ssize_t bytes_read;
 
-	add_destroy_callback(free, (void *)buffer);
+	bytes_read = read_file(WILCO_EC_SYSFS_VERSION, buf, buf_sz, LOG_ERR);
 
-	fd = file_open(WILCO_EC_SYSFS_VERSION, FILE_READ);
-	if (fd < 0) {
-		strncpy(buffer, "ERROR", max_size);
-		return buffer;
-	}
+	if (bytes_read <= 0)
+		return -1;
 
-	len = read(fd, buffer, max_size);
-	if (len <= 0) {
-		lprintf(LOG_ERR, "Unable to read %s: %s.\n",
-			WILCO_EC_SYSFS_VERSION, strerror(errno));
-		strncpy(buffer, "ERROR", max_size);
-		goto close_file;
-	}
+	if (buf[bytes_read - 1] != '\n')
+		lprintf(LOG_WARNING,
+			"%s: Expected version file to end with newline, but "
+			"it didn't!",
+			__func__);
 
-	if (buffer[len - 1] != '\n') {
-		lprintf(LOG_ERR, "Value was truncated: '%.*s'\n", len, buffer);
-		strncpy(buffer, "ERROR TRUNCATED", max_size);
-		goto close_file;
-	}
-
-	/* Replace the newline with a null-terminator */
-	buffer[len - 1] = '\0';
-
-close_file:
-	close(fd);
-	return buffer;
+	buf[bytes_read - 1] = '\0';
+	return bytes_read - 1;
 }
 
 struct ec_cb wilco_ec_cb = {
