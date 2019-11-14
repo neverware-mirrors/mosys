@@ -60,9 +60,9 @@ extern struct nvram_cb cros_spi_flash_nvram_cb;
 
 
 /* returns number of bytes read or -1 to indicate error */
-static int fdt_read_node(const char *path, char *buf, int len)
+static ssize_t fdt_read_node(const char *path, char *buf, size_t buf_sz)
 {
-	int fd, ret;
+	ssize_t ret;
 	struct string_builder *sb;
 
 	sb = new_string_builder();
@@ -70,23 +70,8 @@ static int fdt_read_node(const char *path, char *buf, int len)
 	string_builder_strcat(sb, FDT_ROOT);
 	string_builder_strcat(sb, path);
 
-	fd = file_open(string_builder_get_string(sb), FILE_READ);
-	if (fd < 0) {
-		ret = fd;
-		lprintf(LOG_ERR, "Unable to open %s.\n",
-				string_builder_get_string(sb));
-		goto out_1;
-	}
+	ret = read_file(string_builder_get_string(sb), buf, buf_sz, LOG_ERR);
 
-	ret = read(fd, buf, len);
-	if (ret < 0) {
-		lprintf(LOG_ERR, "Failed to read devicetree node.\n");
-		goto out_2;
-	}
-
-out_2:
-	close(fd);
-out_1:
 	free_string_builder(sb);
 	return ret;
 }
@@ -154,19 +139,19 @@ int fdt_get_sku_id(void)
 
 int fdt_get_frid(char **buf)
 {
-	int len = CHROMEOS_FRID_MAXLEN;
+	ssize_t len = CHROMEOS_FRID_MAXLEN;
 	char *frid = mosys_malloc(len);
 
-	len = fdt_read_node(FDT_FRID_PATH, frid, len - 1);
+	len = fdt_read_node(FDT_FRID_PATH, frid, len);
 	if (len < 0) {
 		lprintf(LOG_ERR, "%s: failed to read frid from %s\n",
 			__func__, FDT_FRID_PATH);
 		free(frid);
-	} else {
-		frid[len] = '\0';
-		*buf = frid;
+		return -1;
 	}
-	return len;
+
+	*buf = frid;
+	return len + 1;
 }
 
 static enum vbnv_storage_media fdt_get_vbnv_storage(void)
