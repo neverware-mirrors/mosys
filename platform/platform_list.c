@@ -66,6 +66,7 @@ extern struct platform_intf platform_sarien;
 extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_storm;
 extern struct platform_intf platform_strago;
+extern struct platform_intf platform_zork;
 
 struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_PLATFORM_ARCH_X86
@@ -89,6 +90,7 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_octopus,
 	&platform_sarien,
 	&platform_drallion,
+	&platform_zork,
 #endif // CONFIG_PLATFORM_ARCH_X86
 /* experimental platforms */
 	&platform_dummy,
