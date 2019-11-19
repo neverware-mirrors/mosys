@@ -1,14 +1,12 @@
 libmosys_src += files(
+  'ec_common.c',
   'eeprom.c',
   'eventlog.c',
   'nvram.c',
   'memory.c',
-  'fp.c',
-  'pd.c',
   'memory_spd.c',
   'sensor.c',
   'psu.c',
   'platform.c',
-  'ec.c',
   'smbios.c',
 )
