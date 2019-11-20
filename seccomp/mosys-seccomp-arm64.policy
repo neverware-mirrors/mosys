@@ -47,6 +47,7 @@ mmap: arg2 in 0xfffffffb || arg2 in 0xfffffffd
 set_tid_address: 1
 ftruncate: 1
 fadvise64: 1
+gettimeofday: 1
 
 # Implicitly added when Minijail log_seccomp_filter_failures() is used
 socket: 1

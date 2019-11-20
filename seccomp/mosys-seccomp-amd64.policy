@@ -54,6 +54,7 @@ write: 1
 statfs: 1
 fstatfs: 1
 fadvise64: 1
+gettimeofday: 1
 
 # Implicitly added when Minijail log_seccomp_filter_failures() is used
 connect: 1
