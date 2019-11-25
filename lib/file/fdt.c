@@ -38,6 +38,7 @@
 #include "lib/chromeos.h"
 #include "lib/fdt.h"
 #include "lib/file.h"
+#include "lib/math.h"
 #include "lib/string_builder.h"
 
 #include "mosys/globals.h"
@@ -76,12 +77,13 @@ static ssize_t fdt_read_node(const char *path, char *buf, size_t buf_sz)
 
 static int fdt_get_uint32_val(const char *path, uint32_t *val)
 {
-	int len = sizeof(*val);
+	/* Leave room for a null-terminator in the buffer */
+	char buf[sizeof(*val) + 1];
 
-	if (fdt_read_node(path, (char *)val, len) != len)
+	if (fdt_read_node(path, buf, ARRAY_SIZE(buf)) < 0)
 		return -1;
 
-	*val = ntohl(*val);
+	*val = ntohl(*(uint32_t *)buf);
 	return 0;
 }
 

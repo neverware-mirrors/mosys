@@ -85,7 +85,7 @@ ssize_t get_firmware_name(char *buf, size_t buf_sz)
 int probe_frid(const char *frids[])
 {
 	static ssize_t firmware_name_ret;
-	static char firmware_name[CHROMEOS_FRID_MAXLEN];
+	static char firmware_name[CHROMEOS_FRID_MAXLEN + 1];
 
 	if (!firmware_name_ret) {
 		firmware_name_ret = get_firmware_name(

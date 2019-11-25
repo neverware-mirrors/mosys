@@ -155,7 +155,7 @@ int cros_config_read_default_sku_info(
 		struct sku_info *sku_info, int default_sku_id)
 {
 	static ssize_t firmware_name_ret;
-	static char firmware_name[CHROMEOS_FRID_MAXLEN];
+	static char firmware_name[CHROMEOS_FRID_MAXLEN + 1];
 	int sku_id;
 
 	if (!firmware_name_ret) {
