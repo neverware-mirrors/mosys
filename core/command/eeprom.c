@@ -30,7 +30,6 @@
  */
 
 #include <string.h>
-#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -42,86 +41,12 @@
 #include <valstr.h>
 
 #include "mosys/platform.h"
-#include "mosys/alloc.h"
 #include "mosys/log.h"
-#include "mosys/output.h"
 #include "mosys/kv_pair.h"
 
 #include "lib/eeprom.h"
 #include "lib/file.h"
-#include "lib/string.h"
 #include "lib/string_builder.h"
-
-static int eeprom_list_cmd(struct platform_intf *intf,
-                           struct platform_cmd *cmd, int argc, char **argv)
-{
-	struct eeprom *eeprom;
-	const struct valstr flag_lut[] = {
-		/* FIXME: this should go in a lib */
-		{ 1 << EEPROM_RD, "read" },
-		{ 1 << EEPROM_WR, "write" },
-		{ 1 << EEPROM_VERBOSE_ONLY, "verbose" },
-		{ 0, NULL },
-	};
-	int i, rc;
-
-	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	for (eeprom = intf->cb->eeprom->eeprom_list;
-	     eeprom && eeprom->name;
-	     eeprom++) {
-		struct kv_pair *kv = kv_pair_new();
-		unsigned int flags = eeprom->flags;
-		struct string_builder *str;
-
-		kv_pair_add(kv, "name", eeprom->name);
-		/* FIXME: should this go one level deeper? */
-		if (eeprom->device) {
-			int size;
-
-			if ((size = eeprom->device->size(intf)) < 0)
-				return -1;
-
-			kv_pair_fmt(kv, "size", "%d", size);
-			kv_pair_add(kv, "units", "bytes");
-		}
-
-		if (!flags) {
-			kv_pair_add(kv, "flags", "");
-
-			rc = kv_pair_print(kv);
-			kv_pair_free(kv);
-
-			if (rc)
-				break;
-			continue;
-		}
-
-		str = new_string_builder();
-		for (i = 0; i < sizeof(eeprom->flags) * CHAR_BIT; i++) {
-			if (eeprom->flags & (1 << i)) {
-				const char *tmp = val2str(1 << i, flag_lut);
-
-				string_builder_strncat(str, tmp, strlen(tmp));
-				flags &= ~(1 << i);
-				if (flags)
-					string_builder_add_char(str, ',');
-			}
-		}
-		kv_pair_add(kv, "flags", string_builder_get_string(str));
-
-		rc = kv_pair_print(kv);
-		kv_pair_free(kv);
-		free_string_builder(str);
-		if (rc)
-			break;
-	}
-
-	return rc;
-}
 
 /* helper function for printing fmap area information */
 static int print_fmap_areas(const char *name, struct fmap *fmap)
@@ -294,227 +219,22 @@ eeprom_map_cmd_exit:
 	return rc;
 }
 
-static int eeprom_dump_cmd(struct platform_intf *intf,
-                           struct platform_cmd *cmd, int argc, char **argv)
-{
-	struct eeprom *eeprom;
-	int rc = 0, fd = -1;
-	struct stat st;
-	uint8_t *buf = NULL;
-	const char *devname, *filename;
-	int eeprom_size;
-
-	if ((argc < 1) || (argc > 2)) {
-		platform_cmd_usage(cmd);
-		errno = EINVAL;
-		return -1;
-	}
-	devname = argv[0];
-	if (argc == 2)
-		filename = argv[1];
-	else
-		filename = NULL;
-
-	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	/* find the eeprom to do work on */
-	for (eeprom = intf->cb->eeprom->eeprom_list;
-	     eeprom && eeprom->name;
-	     eeprom++) {
-		if (!strcmp(eeprom->name, devname))
-			break;
-	}
-	if (!eeprom->name) {
-		lprintf(LOG_ERR, "eeprom %s not found\n", devname);
-		errno = EINVAL;
-		return -1;
-	}
-	if (!eeprom->device->read) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	if (filename != NULL) {
-		unsigned int filemode = S_IRUSR | S_IWUSR | S_IRGRP;
-
-		/* Do not overwrite an existing file */
-		if (lstat(filename, &st) == 0) {
-			int errsv = errno;
-
-			lprintf(LOG_ERR, "File %s already exists\n", filename);
-			errno = errsv;
-			return -1;
-		}
-		if ((fd = open(filename, O_CREAT | O_WRONLY, filemode)) < 0) {
-			int errsv = errno;
-
-			lperror(LOG_ERR, "Could not open file %s", filename);
-			errno = errsv;
-			return -1;
-		}
-	}
-
-	/* do the actual work - read from eeprom, print to screen or
-	 * write to file */
-	if ((eeprom_size = eeprom->device->size(intf)) < 0)
-		return -1;
-
-	buf = mosys_malloc(eeprom_size);
-	if (eeprom->device->read(intf, eeprom, 0, eeprom_size, buf) < 0) {
-		lprintf(LOG_ERR, "Unable to read %d bytes from %s\n",
-				  eeprom_size, eeprom->name);
-		rc = -1;
-		goto eeprom_dump_done;
-	}
-
-	if (filename != NULL) {
-		int count;
-
-		count = write(fd, buf, eeprom_size);
-		if (count != eeprom_size) {
-			lprintf(LOG_ERR, "Unable to write %d bytes to %s\n",
-					 eeprom_size, filename);
-			rc = -1;
-		}
-	} else {
-		print_buffer(buf, eeprom_size);
-	}
-
-eeprom_dump_done:
-	close(fd);
-	free(buf);
-	return rc;
-}
-
-static int eeprom_write_cmd(struct platform_intf *intf,
-                            struct platform_cmd *cmd, int argc, char **argv)
-{
-	struct eeprom *eeprom;
-	int rc = 0, fd, errsv = 0;
-	struct stat st;
-	uint8_t *buf = NULL;
-	const char *devname, *filename;
-	int eeprom_size;
-
-	if (argc != 2) {
-		platform_cmd_usage(cmd);
-		errno = EINVAL;
-		return -1;
-	}
-	devname = argv[0];
-	filename = argv[1];
-
-	if (!intf->cb->eeprom || !intf->cb->eeprom->eeprom_list) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	/* find the eeprom to do work on */
-	for (eeprom = intf->cb->eeprom->eeprom_list;
-	     eeprom && eeprom->name;
-	     eeprom++) {
-		if (!strcmp(eeprom->name, devname))
-			break;
-	}
-	if (!eeprom->name) {
-		lprintf(LOG_ERR, "eeprom %s not found\n", devname);
-		return -1;
-	}
-	if (!eeprom->device->write) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	/* size sanity checks */
-	if ((eeprom_size = eeprom->device->size(intf)) < 0)
-		return -1;
-
-	if (lstat(filename, &st) < 0) {
-		int errsv = errno;
-
-		lperror(LOG_ERR, "lstat failure on file %s", filename);
-		errno = errsv;
-		return -1;
-	}
-	if (st.st_size > eeprom_size) {
-		lprintf(LOG_ERR, "cannot write %jx bytes to %s eeprom "
-				 "(%u bytes)\n", (intmax_t)st.st_size,
-				  eeprom->name, eeprom_size);
-		errno = EFBIG;
-		return -1;
-	}
-
-	if ((fd = open(filename, O_RDONLY)) < 0) {
-		int errsv = errno;
-
-		lperror(LOG_ERR, "Could not open file %s", filename);
-		errno = errsv;
-		return -1;
-	}
-
-	/* do the actual work - read from file, write to eeprom */
-	buf = mosys_malloc(st.st_size);
-	if (read(fd, buf, st.st_size) != st.st_size) {
-		errsv = errno;
-		lperror(LOG_ERR, "Could not read file %s", filename);
-		rc = -1;
-		goto eeprom_write_done;
-	}
-
-	if (eeprom->device->write(intf, eeprom, 0,
-				  st.st_size, buf) != st.st_size) {
-		lprintf(LOG_ERR, "Unable to write %jx bytes to %s\n",
-				  (intmax_t)st.st_size, eeprom->name);
-		rc = -1;
-	} else {
-		mosys_printf("Wrote image to %s\n", eeprom->name);
-	}
-
-eeprom_write_done:
-	close(fd);
-	free(buf);
-	errno = errsv;
-	return rc;
-}
+#define EEPROM_DEPRECATED " (deprecated, use flashrom or dump_fmap instead)"
 
 struct platform_cmd eeprom_cmds[] = {
 	{
-		.name	= "list",
-		.desc	= "List EEPROMs present in system and some basic info",
-		.usage	= "mosys eeprom list",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = eeprom_list_cmd }
-	},
-	{
 		.name	= "map",
-		.desc	= "Print EEPROM maps if present",
+		.desc	= "Print EEPROM maps if present" EEPROM_DEPRECATED,
 		.usage	= "mosys eeprom map <eeprom/filename>",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = eeprom_map_cmd }
-	},
-	{
-		.name	= "dump",
-		.desc	= "Dump entire contents of EEPROM to file",
-		.usage	= "mosys eeprom dump <device> <file>",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = eeprom_dump_cmd }
-	},
-	{
-		.name	= "write",
-		.desc	= "Write contents of file to EEPROM",
-		.usage	= "mosys eeprom write <device> <file>",
-		.type	= ARG_TYPE_SETTER,
-		.arg	= { .func = eeprom_write_cmd }
 	},
 	{ NULL }
 };
 
 struct platform_cmd cmd_eeprom = {
 	.name	= "eeprom",
-	.desc	= "EEPROM Information",
+	.desc	= "EEPROM Information" EEPROM_DEPRECATED,
 	.type	= ARG_TYPE_SUB,
 	.arg	= { .sub = eeprom_cmds }
 };
