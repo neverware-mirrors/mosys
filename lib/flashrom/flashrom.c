@@ -528,7 +528,7 @@ int flashrom_get_rom_size(struct platform_intf *intf,
 	if ((i += append_programmer_arg(target, i, args)) < 0)
 		goto flashrom_get_rom_size_exit_1;
 
-	args[i++] = strdup("--get-size");
+	args[i++] = strdup("--flash-size");
 	args[i++] = NULL;
 
 	memset(stdout_buf, 0, sizeof(stdout_buf));
