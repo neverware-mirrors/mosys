@@ -65,7 +65,6 @@ struct platform_cmd *cyan_sub[] = {
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,
-	&cmd_smbios,
 	&cmd_eventlog,
 	NULL
 };

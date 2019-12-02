@@ -57,7 +57,6 @@ struct platform_cmd *poppy_sub[] = {
 	&cmd_nvram,
 	&cmd_pd,
 	&cmd_platform,
-	&cmd_smbios,
 	&cmd_eventlog,
 	NULL
 };

@@ -61,7 +61,6 @@ struct platform_cmd *fizz_sub[] = {
 	&cmd_pd,
 	&cmd_platform,
 	&cmd_psu,
-	&cmd_smbios,
 	&cmd_eventlog,
 	NULL
 };

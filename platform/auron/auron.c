@@ -99,7 +99,6 @@ struct platform_cmd *auron_sub[] = {
 	&cmd_nvram,
 	&cmd_platform,
 	&cmd_psu,
-	&cmd_smbios,
 	&cmd_eventlog,
 	NULL
 };

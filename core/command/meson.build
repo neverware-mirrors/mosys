@@ -8,5 +8,4 @@ libmosys_src += files(
   'sensor.c',
   'psu.c',
   'platform.c',
-  'smbios.c',
 )

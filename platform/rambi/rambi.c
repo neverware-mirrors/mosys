@@ -116,7 +116,6 @@ struct platform_cmd *rambi_sub[] = {
 	&cmd_nvram,
 	&cmd_platform,
 	&cmd_psu,
-	&cmd_smbios,
 	&cmd_eventlog,
 	NULL
 };
