@@ -47,12 +47,8 @@
 
 #ifdef CONFIG_CROS_CONFIG
 
-#define CHEZA_CMD_EC_NUM	0
 static struct platform_cmd *cheza_sub[] = {
-	/* Keep this as the first entry. intf->sub will be set to point to
-         * the next entry if it turns out that we don't have an EC. */
-	[CHEZA_CMD_EC_NUM] = &cmd_ec,
-
+	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,

@@ -69,12 +69,8 @@ struct gru_probe_id {
 	[RAINIER]	= { "Rainier", "google,rainier-rev" },
 };
 
-#define GRU_CMD_EC_NUM	0
 struct platform_cmd *gru_sub[] = {
-	/* Keep this as the first entry. intf->sub will be set to point to
-         * the next entry if it turns out that we don't have an EC. */
-	[GRU_CMD_EC_NUM] = &cmd_ec,
-
+	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
