@@ -69,16 +69,6 @@ extern int fdt_get_sku_id(void);
  */
 extern ssize_t fdt_get_frid(char *buf, size_t buf_sz);
 
-/*
- * fdt_model - Get platform model from FDT
- *
- * The returned data is stored in a static buffer.
- *
- * returns pointer to model string to indicate success
- * returns NULL to indicate failure
- */
-extern const char *fdt_model(void);
-
 enum vbnv_storage_media {
 	VBNV_STORAGE_UNKNOWN	= -1,
 	VBNV_STORAGE_CROS_EC,	/* ChromeOS EC */
