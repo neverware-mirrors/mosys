@@ -57,8 +57,6 @@
 
 #define MAX_ARRAY_SIZE 256
 
-static int in_android = 0;
-
 enum pipe_direction {
 	PIPE_IN,
 	PIPE_OUT,
@@ -287,31 +285,6 @@ static int append_programmer_arg(const enum programmer_target target,
 	return ret;
 }
 
-/* returns pointer to string containing flashrom path if successful,
-   returns NULL otherwise */
-static const char *flashrom_path(void)
-{
-	static char path[PATH_MAX] = "flashrom";
-	int fd;
-	struct stat s;
-	char android_path[] = "/system/bin/flashrom";
-
-	/* In Android, flashrom utility located in /system/bin
-	   check if file exists.  Using fstat because for some
-	   reason, stat() was seg faulting in Android */
-	fd = open(android_path, O_RDONLY);
-	if (fstat(fd, &s) == 0) {
-		in_android = 1;
-		strcpy(path, android_path);
-		close(fd);
-		return path;
-	}
-	close(fd);
-
-	/* We're not in Android, trust system PATH. */
-	return path;
-}
-
 /* TODO: add arbitrary range support */
 int flashrom_read(uint8_t *buf, size_t size,
                   enum programmer_target target, const char *region)
@@ -321,22 +294,14 @@ int flashrom_read(uint8_t *buf, size_t size,
 	char full_filename[PATH_MAX];
 	char *args[MAX_ARRAY_SIZE];
 	struct stat s;
-	const char *path;
 	int i = 0;
 
-	if ((path = flashrom_path()) == NULL)
-		goto flashrom_read_exit_0;
-	args[i++] = strdup(path);
+	args[i++] = strdup("flashrom");
 
 	if ((i += append_programmer_arg(target, i, args)) < 0)
 		goto flashrom_read_exit_0;
 
-	if (in_android == 1) {
-		/* In Android, /data is writable */
-		strcpy(full_filename, "/data/");
-	} else {
-		strcpy(full_filename, "/tmp/");
-	}
+	strcpy(full_filename, "/tmp/");
 	strcat(full_filename, filename);
 	if (mkstemp(full_filename) == -1) {
 		lperror(LOG_DEBUG,
@@ -352,7 +317,7 @@ int flashrom_read(uint8_t *buf, size_t size,
 	args[i++] = strdup(full_filename);
 	args[i++] = NULL;
 
-	if (do_cmd(path, args, NULL, 0) < 0)
+	if (do_cmd("flashrom", args, NULL, 0) < 0)
 		goto flashrom_read_exit_1;
 
 	fd = open(full_filename, O_RDONLY);
@@ -386,7 +351,6 @@ int flashrom_read_by_name(uint8_t **buf,
 {
 	int fd, rc = -1;
 	struct stat s;
-	const char *path;
 	char filename[] = "flashrom_XXXXXX";
 	char full_filename[PATH_MAX];
 	char *args[MAX_ARRAY_SIZE];
@@ -396,19 +360,12 @@ int flashrom_read_by_name(uint8_t **buf,
 	if (!region)
 		goto flashrom_read_exit_0;
 
-	if ((path = flashrom_path()) == NULL)
-		goto flashrom_read_exit_0;
-	args[i++] = strdup(path);
+	args[i++] = strdup("flashrom");
 
 	if ((i += append_programmer_arg(target, i, args)) < 0)
 		goto flashrom_read_exit_1;
 
-	if (in_android == 1) {
-		/* In Android, no tmp, but /data is writable */
-		strcpy(full_filename, "/data/");
-	} else {
-		strcpy(full_filename, "/tmp/");
-	}
+	strcpy(full_filename, "/tmp/");
 	strcat(full_filename, filename);
 	if (mkstemp(full_filename) == -1) {
 		lperror(LOG_DEBUG,
@@ -424,7 +381,7 @@ int flashrom_read_by_name(uint8_t **buf,
 	args[i++] = strdup("-r");
 	args[i++] = NULL;
 
-	if (do_cmd(path, args, NULL, 0) < 0) {
+	if (do_cmd("flashrom", args, NULL, 0) < 0) {
 		lprintf(LOG_DEBUG, "Unable to read region \"%s\"\n", region);
 		goto flashrom_read_exit_2;
 	}
@@ -456,7 +413,6 @@ int flashrom_write_by_name(size_t size, uint8_t *buf,
                   enum programmer_target target, const char *region)
 {
 	int fd, written, rc = -1;
-	const char *path;
 	char filename[] = "flashrom_XXXXXX";
 	char full_filename[PATH_MAX];
 	char region_file[MAX_ARRAY_SIZE];
@@ -466,19 +422,12 @@ int flashrom_write_by_name(size_t size, uint8_t *buf,
 	if (!region)
 		goto flashrom_write_exit_0;
 
-	if ((path = flashrom_path()) == NULL)
-		goto flashrom_write_exit_0;
-	args[i++] = strdup(path);
+	args[i++] = strdup("flashrom");
 
 	if ((i += append_programmer_arg(target, i, args)) < 0)
 		goto flashrom_write_exit_0;
 
-	if (in_android == 1) {
-		/* In Android, no tmp, but /data is writable */
-		strcpy(full_filename, "/data/");
-	} else {
-		strcpy(full_filename, "/tmp/");
-	}
+	strcpy(full_filename, "/tmp/");
 	strcat(full_filename, filename);
 	if (mkstemp(full_filename) == -1) {
 		lperror(LOG_DEBUG,
@@ -513,7 +462,7 @@ int flashrom_write_by_name(size_t size, uint8_t *buf,
 	args[i++] = strdup("--fast-verify");
 	args[i++] = NULL;
 
-	if (do_cmd(path, args, NULL, 0) < 0) {
+	if (do_cmd("flashrom", args, NULL, 0) < 0) {
 		lprintf(LOG_DEBUG, "Unable to write region \"%s\"\n", region);
 		goto flashrom_write_exit_1;
 	}
@@ -563,7 +512,6 @@ int flashrom_get_rom_size(struct platform_intf *intf,
 			enum programmer_target target)
 {
 	int ret = -1;
-	const char *path;
 	char *args[MAX_ARRAY_SIZE];
 	int i = 0;
 	int stdout_pipefd[2];
@@ -575,9 +523,7 @@ int flashrom_get_rom_size(struct platform_intf *intf,
 		{ PIPE_NONE, fileno(stderr) },
 	};
 
-	if ((path = flashrom_path()) == NULL)
-		goto flashrom_get_rom_size_exit_0;
-	args[i++] = strdup(path);
+	args[i++] = strdup("flashrom");
 
 	if ((i += append_programmer_arg(target, i, args)) < 0)
 		goto flashrom_get_rom_size_exit_1;
@@ -586,7 +532,7 @@ int flashrom_get_rom_size(struct platform_intf *intf,
 	args[i++] = NULL;
 
 	memset(stdout_buf, 0, sizeof(stdout_buf));
-	if (do_cmd(path, args, pipes, ARRAY_SIZE(pipes)) < 0) {
+	if (do_cmd("flashrom", args, pipes, ARRAY_SIZE(pipes)) < 0) {
 		lprintf(LOG_DEBUG, "Unable to get ROM size\n");
 		goto flashrom_get_rom_size_exit_1;
 	}
@@ -601,6 +547,5 @@ int flashrom_get_rom_size(struct platform_intf *intf,
 flashrom_get_rom_size_exit_1:
 	for (i = i - 1 ; i > 0; i--)
 		free(args[i]);
-flashrom_get_rom_size_exit_0:
 	return ret;
 }

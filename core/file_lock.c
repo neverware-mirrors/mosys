@@ -55,7 +55,6 @@
 #include <sys/stat.h>
 
 #include "intf/pci.h"
-#include "lib/android.h"
 #include "mosys/globals.h"
 #include "mosys/ipc_lock.h"
 #include "mosys/locks.h"
@@ -95,43 +94,28 @@ static int file_lock_open_or_create(struct ipc_lock *lock)
 {
 	char path[PATH_MAX];
 
-	if (in_android()) {
-		char *tmpdir;
+	const char fallback[] = "/tmp";
 
-		tmpdir = android_tmpdir_path();
-		if (!tmpdir)
-			return -1;
+	if (snprintf(path, sizeof(path), "%s/%s", mosys_get_root_prefix(),
+		     SYSTEM_LOCKFILE_DIR) < 0)
+		return -1;
 
-		if (snprintf(path, sizeof(path), "%s/%s",
-				tmpdir, lock->filename) < 0) {
-			return -1;
-		}
-	} else {
-		const char fallback[] = "/tmp";
+	if (test_dir(path)) {
+		lprintf(LOG_ERR, "Trying fallback directory: %s\n", fallback);
 
 		if (snprintf(path, sizeof(path), "%s/%s",
-				mosys_get_root_prefix(),
-				SYSTEM_LOCKFILE_DIR) < 0)
+			     mosys_get_root_prefix(), fallback) < 0)
 			return -1;
-
-		if (test_dir(path)) {
-			lprintf(LOG_ERR,
-				"Trying fallback directory: %s\n", fallback);
-
-			if (snprintf(path, sizeof(path), "%s/%s",
-					mosys_get_root_prefix(), fallback) < 0)
-				return -1;
-			if (test_dir(path))
-				return -1;
-		}
-
-		if (strlen(path) + strlen(lock->filename) + 2 > PATH_MAX) {
-			lprintf(LOG_ERR, "Lockfile path too long.\n");
+		if (test_dir(path))
 			return -1;
-		}
-		strcat(path, "/");
-		strcat(path, lock->filename);
 	}
+
+	if (strlen(path) + strlen(lock->filename) + 2 > PATH_MAX) {
+		lprintf(LOG_ERR, "Lockfile path too long.\n");
+		return -1;
+	}
+	strcat(path, "/");
+	strcat(path, lock->filename);
 
 	lock->fd = open(path, O_RDWR | O_CREAT, 0600);
 	int errsv = errno;
