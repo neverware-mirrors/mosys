@@ -256,15 +256,6 @@ struct sys_cb {
 	char *(*firmware_version)(struct platform_intf *intf);
 };
 
-/* flash callbacks */
-struct flash_cb {
-	int (*dump)(struct platform_intf *intf, const char *file);
-	int (*verify)(struct platform_intf *intf, const char *file);
-	int (*print_map)(struct platform_intf *intf, const char *file);
-	int (*print_checksum)(struct platform_intf *intf, const char *file);
-	int (*size)(struct platform_intf *intf);
-};
-
 struct ec_cb {
 	ssize_t (*vendor)(struct platform_intf *intf, struct ec_cb *ec,
 			  char *buf, size_t buf_sz);
@@ -300,7 +291,6 @@ struct platform_cb {
 	struct eventlog_cb *eventlog;	/* eventlog callbacks */
 	struct smbios_cb *smbios;	/* smbios related callbacks */
 	struct sys_cb *sys;		/* system callbacks */
-	struct flash_cb *flash;		/* flash related callbacks */
 	struct nvram_cb *nvram;		/* nvram related callbacks */
 	struct eeprom_cb *eeprom;	/* eeprom callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
