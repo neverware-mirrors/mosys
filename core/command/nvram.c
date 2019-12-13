@@ -29,47 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <inttypes.h>
 #include <errno.h>
 
-#include "mosys/log.h"
 #include "mosys/platform.h"
-
-static int nvram_clear_cmd(struct platform_intf *intf,
-                           struct platform_cmd *cmd, int argc, char **argv)
-{
-	if (!intf->cb->nvram || !intf->cb->nvram->clear) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	return intf->cb->nvram->clear(intf);
-}
-
-static int nvram_list_cmd(struct platform_intf *intf,
-                          struct platform_cmd *cmd, int argc, char **argv)
-{
-	if (!intf->cb->nvram || !intf->cb->nvram->list) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	return intf->cb->nvram->list(intf);
-}
-
-static int nvram_dump_cmd(struct platform_intf *intf,
-                          struct platform_cmd *cmd, int argc, char **argv)
-{
-	if (!intf->cb->nvram || !intf->cb->nvram->dump) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	return intf->cb->nvram->dump(intf);
-}
 
 static int nvram_vboot_read(struct platform_intf *intf,
                             struct platform_cmd *cmd, int argc, char **argv)
@@ -102,13 +64,13 @@ static int nvram_vboot_write(struct platform_intf *intf,
 struct platform_cmd nvram_vboot_cmds[] = {
 	{
 		.name	= "read",
-		.desc	= "Read VbNvContext from NVRAM",
+		.desc	= "Read VbNvContext from NVRAM (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = nvram_vboot_read }
 	},
 	{
 		.name	= "write",
-		.desc	= "Write VbNvContext from NVRAM",
+		.desc	= "Write VbNvContext from NVRAM (deprecated)",
 		.type	= ARG_TYPE_SETTER,
 		.arg	= { .func = nvram_vboot_write }
 	},
@@ -117,26 +79,8 @@ struct platform_cmd nvram_vboot_cmds[] = {
 
 struct platform_cmd nvram_cmds[] = {
 	{
-		.name	= "clear",
-		.desc	= "Clear Configuration",
-		.type	= ARG_TYPE_SETTER,
-		.arg	= { .func = nvram_clear_cmd }
-	},
-	{
-		.name	= "dump",
-		.desc	= "Dump NVRAM",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = nvram_dump_cmd }
-	},
-	{
-		.name	= "list",
-		.desc	= "List NVRAM Variables",
-		.type	= ARG_TYPE_SETTER,
-		.arg	= { .func = nvram_list_cmd }
-	},
-	{
 		.name	= "vboot",
-		.desc	= "Access VbNvContext on NVRAM",
+		.desc	= "For internal use by crossystem only",
 		.type	= ARG_TYPE_SUB,
 		.arg	= { .sub = nvram_vboot_cmds }
 	},
@@ -145,7 +89,7 @@ struct platform_cmd nvram_cmds[] = {
 
 struct platform_cmd cmd_nvram = {
 	.name	= "nvram",
-	.desc	= "NVRAM information",
+	.desc	= "NVRAM information (deprecated)",
 	.type	= ARG_TYPE_SUB,
 	.arg	= { .sub = nvram_cmds }
 };
