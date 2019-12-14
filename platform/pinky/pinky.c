@@ -34,6 +34,7 @@
 
 #include "pinky.h"
 #include "drivers/google/cros_ec.h"
+#include "lib/eeprom.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"

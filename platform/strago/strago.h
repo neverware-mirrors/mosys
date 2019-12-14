@@ -40,7 +40,6 @@
 /* platform callbacks */
 extern struct eeprom_cb strago_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb strago_memory_cb;	/* memory.c */
-extern struct nvram_cb strago_nvram_cb;		/* nvram.c */
 extern struct sys_cb strago_sys_cb;		/* sys.c */
 
 #endif /* EXPERIMENTAL_STRAGO_H_ */

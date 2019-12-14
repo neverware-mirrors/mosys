@@ -175,7 +175,7 @@ vbnv_fetch_from_flash_exit:
 	return ret;
 }
 
-int vbnv_flash_vboot_read(struct platform_intf *intf)
+static int vbnv_flash_vboot_read(struct platform_intf *intf)
 {
 	struct kv_pair *kv;
 	uint8_t block[VBNV_BLOCK_SIZE];
@@ -250,7 +250,8 @@ vbnv_write_to_flash_exit:
 	return ret;
 }
 
-int vbnv_flash_vboot_write(struct platform_intf *intf, const char *hexstring)
+static int vbnv_flash_vboot_write(struct platform_intf *intf,
+				  const char *hexstring)
 {
 	uint8_t block[VBNV_BLOCK_SIZE];
 	char hexdigit[3];

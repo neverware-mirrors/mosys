@@ -36,6 +36,8 @@
 
 #include <inttypes.h>
 
+#include "mosys/platform.h"
+
 enum io_access_width {
 	IO_ACCESS_8	= 1,
 	IO_ACCESS_16	= 2,

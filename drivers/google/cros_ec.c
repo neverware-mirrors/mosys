@@ -281,8 +281,8 @@ int cros_ec_detect(struct platform_intf *intf, struct ec_cb *ec)
 	return ret;
 }
 
-int cros_ec_vbnvcontext_read(struct platform_intf *intf, struct ec_cb *ec,
-			     uint8_t *block)
+static int cros_ec_vbnvcontext_read(struct platform_intf *intf,
+				    struct ec_cb *ec, uint8_t *block)
 {
 	struct ec_params_vbnvcontext request;
 	struct cros_ec_priv *priv;
@@ -306,8 +306,8 @@ int cros_ec_vbnvcontext_read(struct platform_intf *intf, struct ec_cb *ec,
 	return 0;
 }
 
-int cros_ec_vbnvcontext_write(struct platform_intf *intf, struct ec_cb *ec,
-			      const uint8_t *block)
+static int cros_ec_vbnvcontext_write(struct platform_intf *intf,
+				     struct ec_cb *ec, const uint8_t *block)
 {
 	struct ec_params_vbnvcontext request;
 	struct cros_ec_priv *priv;
@@ -332,7 +332,7 @@ int cros_ec_vbnvcontext_write(struct platform_intf *intf, struct ec_cb *ec,
 	return 0;
 }
 
-int cros_ec_vboot_read(struct platform_intf *intf)
+static int cros_ec_vboot_read(struct platform_intf *intf)
 {
 	struct kv_pair *kv;
 	uint8_t block[EC_VBNV_BLOCK_SIZE];
@@ -353,7 +353,8 @@ int cros_ec_vboot_read(struct platform_intf *intf)
 	return rc;
 }
 
-int cros_ec_vboot_write(struct platform_intf *intf, const char *hexstring)
+static int cros_ec_vboot_write(struct platform_intf *intf,
+			       const char *hexstring)
 {
 	uint8_t block[EC_VBNV_BLOCK_SIZE];
 	char hexdigit[3];

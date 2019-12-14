@@ -35,6 +35,7 @@
 #include "gru.h"
 #include "drivers/google/cros_ec.h"
 #include "lib/cros_config.h"
+#include "lib/eeprom.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"

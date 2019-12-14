@@ -40,7 +40,6 @@
 /* platform callbacks */
 extern struct eeprom_cb rambi_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb rambi_memory_cb;	/* memory.c */
-extern struct nvram_cb rambi_nvram_cb;		/* nvram.c */
 extern struct psu_cb rambi_psu_cb;
 extern struct sys_cb rambi_sys_cb;		/* sys.c */
 

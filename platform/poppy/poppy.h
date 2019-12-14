@@ -40,7 +40,6 @@
 /* platform callbacks */
 extern struct eeprom_cb poppy_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb poppy_memory_cb;	/* memory.c */
-extern struct nvram_cb poppy_nvram_cb;		/* nvram.c */
 extern struct sys_cb poppy_sys_cb;		/* sys.c */
 
 #endif /* EXPERIMENTAL_POPPY_H_ */

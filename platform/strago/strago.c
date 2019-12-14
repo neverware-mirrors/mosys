@@ -96,7 +96,6 @@ struct platform_cmd *strago_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_eventlog,
 	NULL
@@ -151,7 +150,6 @@ struct platform_cb strago_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &strago_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
-	.nvram		= &strago_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &strago_sys_cb,
 	.eventlog	= &strago_eventlog_cb,

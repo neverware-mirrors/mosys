@@ -35,7 +35,9 @@
 #include <inttypes.h>
 #include <string.h>
 
+#include "drivers/google/cros_ec.h"
 #include "lib/chromeos.h"
+#include "lib/eeprom.h"
 #include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/math.h"
@@ -43,10 +45,7 @@
 
 #include "mosys/globals.h"
 #include "mosys/log.h"
-
-/* for fdt_set_nvram_cb() */
-extern struct nvram_cb cros_ec_nvram_cb;
-extern struct nvram_cb cros_spi_flash_nvram_cb;
+#include "mosys/platform.h"
 
 #define FDT_ROOT		"/proc/device-tree/"
 #define FDT_VBNV_STORAGE_PATH	"firmware/chromeos/nonvolatile-context-storage"

@@ -40,8 +40,6 @@
 /* platform callbacks */
 extern struct eeprom_cb oak_eeprom_cb;
 extern struct memory_cb oak_memory_cb;
-extern struct nvram_cb cros_ec_nvram_cb;
-extern struct nvram_cb cros_spi_flash_nvram_cb;
 extern struct oak_psu_cb oak_psu_cb;
 extern struct sys_cb oak_sys_cb;
 

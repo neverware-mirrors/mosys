@@ -63,7 +63,6 @@ struct platform_cmd *cyan_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_eventlog,
 	NULL
@@ -118,7 +117,6 @@ struct platform_cb cyan_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &cyan_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
-	.nvram		= &cyan_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &cyan_sys_cb,
 	.eventlog	= &cyan_eventlog_cb,

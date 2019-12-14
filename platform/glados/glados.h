@@ -40,7 +40,6 @@
 /* platform callbacks */
 extern struct eeprom_cb glados_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb glados_memory_cb;	/* memory.c */
-extern struct nvram_cb glados_nvram_cb;		/* nvram.c */
 extern struct sys_cb glados_sys_cb;		/* sys.c */
 
 #endif /* EXPERIMENTAL_GLADOS_H_ */

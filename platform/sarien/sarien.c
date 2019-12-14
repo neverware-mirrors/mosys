@@ -43,6 +43,7 @@
 #include "drivers/google/wilco_ec.h"
 
 #include "lib/cros_config.h"
+#include "lib/eeprom.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
 #include "lib/sku.h"
@@ -78,7 +79,7 @@ struct platform_cb sarien_cb = {
 	.ec		= &wilco_ec_cb,
 	.eeprom		= &sarien_eeprom_cb,
 	.memory		= &sarien_memory_cb,
-	.nvram		= &sarien_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &sarien_sys_cb,
 	.eventlog	= &sarien_eventlog_cb,
@@ -96,7 +97,7 @@ struct platform_cb drallion_cb = {
 	.ec		= &wilco_ec_cb,
 	.eeprom		= &sarien_eeprom_cb,
 	.memory		= &drallion_memory_cb,
-	.nvram		= &sarien_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &sarien_sys_cb,
 	.eventlog	= &sarien_eventlog_cb,

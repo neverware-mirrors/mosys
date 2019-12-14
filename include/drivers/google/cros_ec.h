@@ -41,7 +41,7 @@
 #define CROS_PD_DEV_NAME		"/dev/cros_pd"
 #define CROS_FP_DEV_NAME		"/dev/cros_fp"
 
-struct eeprom;
+struct nvram_cb;
 struct platform_intf;
 
 struct cros_ec_dev {
@@ -105,10 +105,6 @@ int cros_ec_pd_chip_info(struct platform_intf *intf, struct ec_cb *ec,
  */
 char *cros_ec_board_version_str(struct platform_intf *intf);
 
-int cros_ec_vbnvcontext_read(struct platform_intf *intf,
-		struct ec_cb *ec, uint8_t *block);
-int cros_ec_vbnvcontext_write(struct platform_intf *intf,
-		struct ec_cb *ec, const uint8_t *block);
 int cros_ec_get_firmware_rom_size(struct platform_intf *intf);
 
 int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec);
@@ -117,5 +113,11 @@ int cros_ec_probe_lpc(struct platform_intf *intf);
 int cros_ec_setup(struct platform_intf *intf);
 int cros_pd_setup(struct platform_intf *intf);
 int cros_fp_setup(struct platform_intf *intf);
+
+/**
+ * cros_ec_nvram_cb - A generic nvram_cb to read and write
+ * vboot parameters using the EC. For use on ARM only.
+ */
+extern struct nvram_cb cros_ec_nvram_cb;
 
 #endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */

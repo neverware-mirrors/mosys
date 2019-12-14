@@ -42,6 +42,7 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
+#include "lib/eeprom.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
@@ -87,7 +88,7 @@ struct platform_cb octopus_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &octopus_eeprom_cb,
 	.memory		= &octopus_memory_cb,
-	.nvram		= &octopus_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &octopus_sys_cb,
 	.eventlog	= &octopus_eventlog_cb,

@@ -38,6 +38,7 @@
 #include "mosys/log.h"
 
 #include "lib/file.h"
+#include "lib/eeprom.h"
 #include "lib/math.h"
 #include "lib/probe.h"
 

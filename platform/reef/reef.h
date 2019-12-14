@@ -40,7 +40,6 @@
 /* platform callbacks */
 extern struct eeprom_cb reef_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb reef_memory_cb;	/* memory.c */
-extern struct nvram_cb reef_nvram_cb;		/* nvram.c */
 extern struct sys_cb reef_sys_cb;		/* sys.c */
 extern struct sys_cb coral_sys_cb;		/* sys.c */
 

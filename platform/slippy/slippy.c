@@ -74,7 +74,6 @@ struct platform_cmd *slippy_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_eventlog,
 	NULL
@@ -134,7 +133,6 @@ struct platform_cb slippy_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &slippy_eeprom_cb,
 	.memory		= &slippy_memory_cb,
-	.nvram		= &slippy_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &slippy_sys_cb,
 	.eventlog	= &slippy_eventlog_cb,

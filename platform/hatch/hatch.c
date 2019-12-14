@@ -41,6 +41,7 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
+#include "lib/eeprom.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
 #include "lib/sku.h"
@@ -86,7 +87,7 @@ struct platform_cb hatch_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &hatch_eeprom_cb,
 	.memory		= &hatch_memory_cb,
-	.nvram		= &hatch_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &hatch_sys_cb,
 	.eventlog	= &hatch_eventlog_cb,

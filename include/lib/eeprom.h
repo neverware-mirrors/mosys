@@ -36,6 +36,7 @@
 #include "intf/mmio.h"
 #include "intf/pci.h"
 
+struct nvram_cb;
 struct fmap;
 
 enum eeprom_type {
@@ -212,30 +213,10 @@ extern int eeprom_mmio_read(struct platform_intf *intf, struct eeprom *eeprom,
 extern struct fmap *eeprom_get_fmap(struct platform_intf *intf,
                                     struct eeprom *eeprom);
 
-/*
- * vbnv_flash_vboot_read - Read VBNV context data
- *
- * @intf:	platform interface
- *
- * This function will attempt to find the VBNV region in flash
- * and print it as a hex string.
- *
- * returns -1 on failure, 0 on success
+/**
+ * cros_spi_flash_nvram_cb - A generic nvram_cb to read and write
+ * vboot parameters using flashrom.
  */
-extern int vbnv_flash_vboot_read(struct platform_intf *intf);
-
-/*
- * vbnv_flash_vboot_write - Write VBNV context data
- *
- * @intf:	platform interface
- * @hexstring:	hex string to write to VBNV region
- *
- * This function will attempt to find the VBNV region in flash
- * and write the provided hex string.
- *
- * returns -1 on failure, 0 on success
- */
-extern int vbnv_flash_vboot_write(struct platform_intf *intf,
-				  const char *hexstring);
+extern struct nvram_cb cros_spi_flash_nvram_cb;
 
 #endif /* MOSYS_LIB_EEPROM_H__ */

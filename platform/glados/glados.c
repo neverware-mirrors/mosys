@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/memory.h"
 #include "lib/probe.h"
@@ -159,7 +160,7 @@ struct platform_cb glados_cb = {
 	.fp		= &cros_fp_cb,
 	.eeprom		= &glados_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
-	.nvram		= &glados_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &glados_sys_cb,
 	.eventlog	= &glados_eventlog_cb,

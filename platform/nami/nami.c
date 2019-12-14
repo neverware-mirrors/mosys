@@ -36,6 +36,7 @@
 #include <unistd.h>
 
 #include "lib/cros_config.h"
+#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/memory.h"
 #include "lib/probe.h"
@@ -93,7 +94,7 @@ struct platform_cb nami_cb = {
 	.fp		= &cros_fp_cb,
 	.eeprom		= &nami_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
-	.nvram		= &nami_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &nami_sys_cb,
 	.eventlog	= &nami_eventlog_cb,

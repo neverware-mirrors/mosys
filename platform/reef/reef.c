@@ -42,6 +42,7 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
+#include "lib/eeprom.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
@@ -195,7 +196,7 @@ struct platform_cb reef_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &reef_eeprom_cb,
 	.memory		= &reef_memory_cb,
-	.nvram		= &reef_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &reef_sys_cb,
 	.eventlog	= &reef_eventlog_cb,
@@ -205,7 +206,7 @@ struct platform_cb coral_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &reef_eeprom_cb,
 	.memory		= &reef_memory_cb,
-	.nvram		= &reef_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &coral_sys_cb,
 	.eventlog	= &reef_eventlog_cb,

@@ -44,6 +44,7 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
+#include "lib/eeprom.h"
 #include "lib/generic_callbacks.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
@@ -102,7 +103,7 @@ struct platform_cb fizz_cb = {
 	.fp		= &cros_fp_cb,
 	.eeprom		= &fizz_eeprom_cb,
 	.memory		= &fizz_memory_cb,
-	.nvram		= &fizz_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.psu		= &generic_psu_ac_only_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &fizz_sys_cb,

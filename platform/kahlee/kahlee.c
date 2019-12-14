@@ -35,6 +35,7 @@
 #include <unistd.h>
 
 #include "lib/cros_config.h"
+#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/memory.h"
 #include "lib/sku.h"
@@ -88,7 +89,7 @@ struct platform_cb kahlee_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &kahlee_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
-	.nvram		= &kahlee_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &kahlee_sys_cb,
 	.eventlog	= &kahlee_eventlog_cb,

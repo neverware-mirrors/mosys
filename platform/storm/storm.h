@@ -41,7 +41,6 @@
 /* platform callbacks */
 extern struct eeprom_cb storm_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb storm_memory_cb;	/* memory.c */
-extern struct nvram_cb cros_spi_flash_nvram_cb;	/* lib/vnbv/vbnv_flash.c */
 extern struct sys_cb storm_sys_cb;		/* sys.c */
 
 #endif /* GOOGLE_STORM_H */

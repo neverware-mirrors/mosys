@@ -88,7 +88,6 @@ static const struct probe_ids probe_id_list[] = {
 struct platform_cmd *beltino_sub[] = {
 	&cmd_eeprom,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_psu,
 	&cmd_sensor,
@@ -138,7 +137,6 @@ struct eventlog_cb beltino_eventlog_cb = {
 struct platform_cb beltino_cb = {
 	.eeprom		= &beltino_eeprom_cb,
 	.memory		= &beltino_memory_cb,
-	.nvram		= &beltino_nvram_cb,
 	.psu		= &generic_psu_ac_only_cb,
 	.sensor		= &beltino_sensor_cb,
 	.smbios		= &smbios_sysinfo_cb,

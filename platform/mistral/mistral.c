@@ -37,6 +37,7 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
+#include "lib/eeprom.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"

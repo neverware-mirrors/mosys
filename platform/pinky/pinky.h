@@ -40,8 +40,6 @@
 /* platform callbacks */
 extern struct eeprom_cb pinky_eeprom_cb;
 extern struct memory_cb pinky_memory_cb;
-extern struct nvram_cb cros_ec_nvram_cb;
-extern struct nvram_cb cros_spi_flash_nvram_cb;
 extern struct psu_cb pinky_psu_cb;
 extern struct sys_cb pinky_sys_cb;
 

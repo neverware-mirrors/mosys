@@ -40,7 +40,6 @@
 /* platform callbacks */
 extern struct eeprom_cb nami_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb nami_memory_cb;	/* memory.c */
-extern struct nvram_cb nami_nvram_cb;		/* nvram.c */
 extern struct sys_cb nami_sys_cb;		/* sys.c */
 
 #endif /* NAMI_H_ */

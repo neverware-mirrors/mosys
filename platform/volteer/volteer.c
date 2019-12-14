@@ -10,6 +10,7 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
+#include "lib/eeprom.h"
 #include "lib/elog.h"
 
 #include "volteer.h"
@@ -53,7 +54,7 @@ struct platform_cb volteer_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &volteer_eeprom_cb,
 	.memory		= &volteer_memory_cb,
-	.nvram		= &volteer_nvram_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys 		= &volteer_sys_cb,
 	.eventlog	= &volteer_eventlog_cb,
 };

@@ -40,7 +40,6 @@
 /* platform callbacks */
 extern struct eeprom_cb kahlee_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb kahlee_memory_cb;	/* memory.c */
-extern struct nvram_cb kahlee_nvram_cb;		/* nvram.c */
 extern struct sys_cb kahlee_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_KAHLEE_H_ */
