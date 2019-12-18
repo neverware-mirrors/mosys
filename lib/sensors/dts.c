@@ -73,8 +73,7 @@ static int sysfs_read_coretemp(struct platform_intf *intf,
 		lperror(LOG_DEBUG, "Cannot read sensor %d temp", sensor_num);
 		goto coretemp_read_exit_2;
 	}
-
-	if (isspace(input[len - 1]) || input[len - 1] == EOF)
+	if (isspace(input[len - 1]))
 		input[len - 1] = '\0';
 
 	/* value is presented in millidegrees Celsius */
