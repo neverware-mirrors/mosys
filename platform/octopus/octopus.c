@@ -61,7 +61,7 @@ struct platform_cmd *octopus_sub[] = {
 };
 
 static const char *platform_names = "Ampton,Bip,Bloog,Bobba,Casta,Dood,Fleex,"
-				    "Garg,Lick,Meep,Phaser,Yorp";
+				    "Foob,Garg,Lick,Meep,Phaser,Yorp";
 
 int octopus_probe(struct platform_intf *intf)
 {
