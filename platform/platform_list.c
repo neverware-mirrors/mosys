@@ -67,6 +67,7 @@ extern struct platform_intf platform_sarien;
 extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_storm;
 extern struct platform_intf platform_strago;
+extern struct platform_intf platform_trogdor;
 extern struct platform_intf platform_volteer;
 extern struct platform_intf platform_zork;
 
@@ -111,6 +112,7 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_CROS_CONFIG
 	&platform_cheza,
 	&platform_kukui,
+	&platform_trogdor,
 #endif // CONFIG_CROS_CONFIG
 #endif // CONFIG_PLATFORM_ARCH_ARMEL
 	NULL
