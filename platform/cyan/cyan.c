@@ -68,7 +68,7 @@ struct platform_cmd *cyan_sub[] = {
 	NULL
 };
 
-int cyan_probe(struct platform_intf *intf)
+static int cyan_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 	const struct probe_ids *pid;
@@ -78,20 +78,16 @@ int cyan_probe(struct platform_intf *intf)
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
 		/* FRID */
-		if (probe_frid((const char **)pid->frids)) {
-			status = 1;
-			goto cyan_probe_exit;
-		}
+		if ((status = probe_frid(pid->frids)))
+			goto exit;
 
 		/* SMBIOS */
-		if (probe_smbios(intf, (const char **)pid->names)) {
-			status = 1;
-			goto cyan_probe_exit;
-		}
+		if ((status = probe_smbios(intf, pid->names)))
+			goto exit;
 	}
 	return 0;
 
-cyan_probe_exit:
+exit:
 	probed = 1;
 	/* Update canonical platform name */
 	intf->name = pid->names[0];

@@ -138,20 +138,16 @@ int reef_probe(struct platform_intf *intf)
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
 		/* FRID */
-		if (probe_frid((const char **)pid->names)) {
-			status = 1;
-			goto reef_probe_exit;
-		}
+		if ((status = probe_frid(pid->names)))
+			goto exit;
 
 		/* SMBIOS */
-		if (probe_smbios(intf, (const char **)pid->names)) {
-			status = 1;
-			goto reef_probe_exit;
-		}
+		if ((status = probe_smbios(intf, pid->names)))
+			goto exit;
 	}
 	return 0;
 
-reef_probe_exit:
+exit:
 	probed = 1;
 
 	/* Update canonical platform name */

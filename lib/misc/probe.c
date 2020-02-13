@@ -82,7 +82,7 @@ ssize_t get_firmware_name(char *buf, size_t buf_sz)
 	return firmware_name_end - buf + 1;
 }
 
-int probe_frid(const char *frids[])
+int probe_frid(const char *const frids[])
 {
 	static ssize_t firmware_name_ret;
 	static char firmware_name[CHROMEOS_FRID_MAXLEN + 1];
@@ -109,7 +109,7 @@ int probe_frid(const char *frids[])
 	return 0;
 }
 
-int probe_smbios(struct platform_intf *intf, const char *ids[])
+int probe_smbios(struct platform_intf *intf, const char *const ids[])
 {
 	static char *id = NULL;
 	int ret = 0;

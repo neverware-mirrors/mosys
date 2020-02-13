@@ -69,7 +69,7 @@ struct platform_cmd *samus_sub[] = {
 	NULL
 };
 
-int samus_probe(struct platform_intf *intf)
+static int samus_probe(struct platform_intf *intf)
 {
 	static int status = 0, probed = 0;
 	const struct probe_ids *pid;
@@ -78,25 +78,12 @@ int samus_probe(struct platform_intf *intf)
 		return status;
 
 	for (pid = probe_id_list; pid && pid->names[0]; pid++) {
-		/* FRID */
-		if (probe_frid((const char **)pid->frids)) {
-			status = 1;
-			goto samus_probe_exit;
-		}
-
-		/* SMBIOS */
-		if (probe_smbios(intf, (const char **)pid->names)) {
-			status = 1;
-			goto samus_probe_exit;
+		if ((status = probe_frid(pid->frids))) {
+			probed = 1;
+			return status;
 		}
 	}
 	return 0;
-
-samus_probe_exit:
-	probed = 1;
-	/* Update canonical platform name */
-	intf->name = pid->names[0];
-	return status;
 }
 
 /* late setup routine; not critical to core functionality */

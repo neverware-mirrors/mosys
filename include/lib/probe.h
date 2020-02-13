@@ -58,7 +58,7 @@ ssize_t get_firmware_name(char *buf, size_t buf_sz);
  * returns 0 to indicate no match
  * returns <0 to indicate error
  */
-extern int probe_frid(const char *frids[]);
+extern int probe_frid(const char *const frids[]);
 
 /*
  * probe_smbios - probe smbios for system info
@@ -69,7 +69,7 @@ extern int probe_frid(const char *frids[]);
  * returns 0 to indicate no match
  * returns <0 to indicate error
  */
-extern int probe_smbios(struct platform_intf *intf, const char *ids[]);
+extern int probe_smbios(struct platform_intf *intf, const char *const ids[]);
 
 /*
  * probe_fdt_compatible - Probe platform using device tree "compatible" node

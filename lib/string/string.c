@@ -355,7 +355,7 @@ char *buf2nicid(uint8_t *inbuf, enum nic_id_type type)
 	return outbuf;
 }
 
-const char *strlfind(const char *str, const char *arr[], int cs)
+const char *strlfind(const char *str, const char *const arr[], int cs)
 {
 	int i;
 	const char *ret = NULL;

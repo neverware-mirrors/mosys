@@ -148,7 +148,8 @@ extern char *buf2nicid(uint8_t *inbuf, enum nic_id_type type);
  * returns pointer to array entry if string is found
  * returns NULL otherwise
  */
-const char *strlfind(const char *str, const char *arr[], int case_sensitive);
+const char *strlfind(const char *str, const char *const arr[],
+		     int case_sensitive);
 
 /*
  * strlower - convert a string to lower case
