@@ -117,6 +117,7 @@ enum ddr_freq {
 	DDR_1333,
 	DDR_1355,
 	DDR_1600,
+	DDR_2133,
 
 	DDR_FREQ_MAX
 };
