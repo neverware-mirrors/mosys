@@ -48,7 +48,6 @@ enum {
 	PLATFORM_ID_VENDOR,
 	PLATFORM_ID_NAME,
 	PLATFORM_ID_VERSION,
-	PLATFORM_ID_FAMILY,
 	PLATFORM_ID_MODEL,
 	PLATFORM_ID_CHASSIS,
 	PLATFORM_ID_BRAND,
@@ -83,10 +82,6 @@ static int platform_generic_identifier_cmd(struct platform_intf *intf,
 
 		case PLATFORM_ID_VERSION:
 			getter = intf->cb->sys->version;
-			break;
-
-		case PLATFORM_ID_FAMILY:
-			getter = intf->cb->sys->family;
 			break;
 
 		case PLATFORM_ID_MODEL:
@@ -150,13 +145,6 @@ static int platform_version_cmd(struct platform_intf *intf,
 			      int argc, char **argv)
 {
 	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_VERSION);
-}
-
-static int platform_family_cmd(struct platform_intf *intf,
-			       struct platform_cmd *cmd,
-			       int argc, char **argv)
-{
-	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_FAMILY);
 }
 
 static int platform_model_cmd(struct platform_intf *intf,
@@ -283,12 +271,6 @@ struct platform_cmd platform_cmds[] = {
 		.desc	= "Display Platform Version (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_version_cmd }
-	},
-	{
-		.name	= "family",
-		.desc	= "Display Platform Family (deprecated)",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = platform_family_cmd }
 	},
 	{NULL}
 };
