@@ -42,7 +42,6 @@ static char *auron_get_name(struct platform_intf *intf)
 struct sys_cb auron_sys_cb = {
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &auron_get_name,
-	.family			= &smbios_sysinfo_get_family,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.version		= &smbios_sysinfo_get_version,
 };

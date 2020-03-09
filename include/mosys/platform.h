@@ -219,7 +219,6 @@ struct smbios_cb {
 	char *(*system_vendor)(struct platform_intf *intf);
 	char *(*system_name)(struct platform_intf *intf);
 	char *(*system_version)(struct platform_intf *intf);
-	char *(*system_family)(struct platform_intf *intf);
 	char *(*system_sku)(struct platform_intf *intf);
 	char *(*system_serial)(struct platform_intf *intf);
 };
@@ -230,7 +229,6 @@ struct sys_cb {
 	char *(*vendor)(struct platform_intf *intf);
 	char *(*name)(struct platform_intf *intf);
 	char *(*version)(struct platform_intf *intf);
-	char *(*family)(struct platform_intf *intf);
 	char *(*variant)(struct platform_intf *intf);
 
 	/*

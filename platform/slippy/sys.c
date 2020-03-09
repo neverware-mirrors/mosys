@@ -43,6 +43,5 @@ static char *slippy_get_name(struct platform_intf *intf)
 struct sys_cb slippy_sys_cb = {
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &slippy_get_name,
-	.family			= &smbios_sysinfo_get_family,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 };

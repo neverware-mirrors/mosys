@@ -73,6 +73,5 @@ struct sys_cb rambi_sys_cb = {
 	.version		= &rambi_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &rambi_get_name,
-	.family			= &smbios_sysinfo_get_family,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 };

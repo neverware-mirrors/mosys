@@ -200,26 +200,6 @@ char *smbios_sysinfo_get_version(struct platform_intf *intf)
 }
 
 /*
- * smbios_sysinfo_get_family  -  return platform family
- *
- * @intf:       platform interface
- *
- * returns pointer to allocated platform version string
- * returns NULL if not found
- */
-char *smbios_sysinfo_get_family(struct platform_intf *intf)
-{
-	struct smbios_table table;
-
-	if (smbios_find_table(intf, SMBIOS_TYPE_SYSTEM, 0, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0)
-		return NULL;
-
-	return mosys_strdup(table.string[table.data.system.family]);
-}
-
-/*
  * smbios_sysinfo_get_sku  -  return platform SKU
  *
  * @intf:       platform interface
@@ -266,7 +246,6 @@ struct smbios_cb smbios_sysinfo_cb = {
 	.system_vendor		= smbios_sysinfo_get_vendor,
 	.system_name		= smbios_sysinfo_get_name,
 	.system_version		= smbios_sysinfo_get_version,
-	.system_family		= smbios_sysinfo_get_family,
 	.system_sku		= smbios_sysinfo_get_sku,
 };
 

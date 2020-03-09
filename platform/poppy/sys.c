@@ -47,7 +47,6 @@ struct sys_cb poppy_sys_cb = {
 	.version		= &cros_ec_board_version_str,
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.name			= &poppy_get_name,
-	.family			= &smbios_sysinfo_get_family,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
 	.signature_id           = sku_get_signature_id,
