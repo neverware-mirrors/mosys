@@ -21,7 +21,6 @@ Configuration & Building
 Dependencies:
   libfmap
   libuuid
-  libfdt (typically from the dtc package in your distribution)
 
 Mosys is a two-stage compile: the first stage is for all of the C components and
 uses the Meson build system and the second stage is Rust Cargo for all of the
