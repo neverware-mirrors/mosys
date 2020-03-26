@@ -238,7 +238,6 @@ struct sys_cb {
 	char *(*chassis)(struct platform_intf *intf);
 	char *(*brand)(struct platform_intf *intf);
 	char *(*customization)(struct platform_intf *intf);
-	char *(*signature_id)(struct platform_intf *intf);
 	int (*sku_number)(struct platform_intf *intf);
 
 	/* Obtain the model name of this device. With unified builds a board

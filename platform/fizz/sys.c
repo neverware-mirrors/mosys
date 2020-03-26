@@ -36,7 +36,6 @@
 
 #include "drivers/google/cros_ec.h"
 
-#include "lib/sku.h"
 #include "lib/smbios.h"
 
 static char *fizz_get_name(struct platform_intf *intf)
@@ -50,6 +49,5 @@ struct sys_cb fizz_sys_cb = {
 	.name			= &fizz_get_name,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
-	.signature_id           = sku_get_signature_id,
 };
 #endif /* CONFIG_CROS_CONFIG */

@@ -26,7 +26,7 @@ enum {
  * `customization` is the legacy support for customization_id in upper case,
  *         for example 'GOOGLE-SAMUS', also used as network config key.
  * 'signature_id' is the signature ID used for zero-touch whitelabels in
- *         unified builds. See sku_get_signature_id() below.
+ *         unified builds. Pending removal.
  * `data` is a general pointer for platform implementations to use, for example
  *         adding peripheral status like number of cameras or form factor.
  */
@@ -109,28 +109,6 @@ extern char *sku_get_customization(struct platform_intf *intf);
  * found or error
  */
 extern char *sku_get_whitelabel_from_vpd(void);
-
-/**
- * sku_get_signature_id - get the signature ID
- *
- * Query the signature ID used by this model. This is normally the same
- * as the model, but for whitelabel, it is model-whitelabel_tag.
- * This is used to name the vblock_A/B_<signature> and rootkey.<signature>
- * files in the firmware updater.
- *
- * This is only supported with unified builds. Before that, we have
- * tended to use the customization_id in VPD to fill this role, but
- * there is no point in mosys inserting itself into that flow. Also in
- * that case we normally use the key ID (which is in capitals).
- *
- * This is only intended for use within the firmware updater. If at
- * some point we use cros_config in the firmware updater then this can
- * be dropped.
- *
- * returns allocated string containing value if found
- * returns NULL to indicate value not found or error
- */
-extern char *sku_get_signature_id(struct platform_intf *intf);
 
 /**
  * sku_get_model - get model name

@@ -36,7 +36,6 @@
 
 #include "lib/probe.h"
 #include "lib/fdt.h"
-#include "lib/sku.h"
 
 static char *kukui_get_vendor(struct platform_intf *intf)
 {
@@ -66,5 +65,4 @@ struct sys_cb kukui_sys_cb = {
 	.name			= kukui_get_name,
 	.version		= cros_ec_board_version_str,
 	.sku_number		= kukui_get_sku_id,
-	.signature_id		= sku_get_signature_id,
 };

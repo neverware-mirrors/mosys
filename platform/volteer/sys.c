@@ -7,7 +7,6 @@
 #include "mosys/platform.h"
 
 #include "lib/acpi.h"
-#include "lib/sku.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
 
@@ -22,5 +21,4 @@ struct sys_cb volteer_sys_cb = {
 	.name			= &volteer_get_name,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
-	.signature_id           = sku_get_signature_id,
 };

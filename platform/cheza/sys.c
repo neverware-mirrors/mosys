@@ -69,8 +69,4 @@ struct sys_cb cheza_sys_cb = {
 	.name			= &cheza_get_name,
 	.version		= &cheza_get_version,
 	.sku_number		= &cheza_get_sku_id,
-#ifdef CONFIG_CROS_CONFIG
-	/* Only unibuild has the concept of a signature ID */
-	.signature_id		= sku_get_signature_id,
-#endif
 };

@@ -52,7 +52,6 @@ enum {
 	PLATFORM_ID_CHASSIS,
 	PLATFORM_ID_BRAND,
 	PLATFORM_ID_CUSTOMIZATION,
-	PLATFORM_ID_SIGNATURE,
 };
 
 static int print_platforminfo(const char *key, const char *value);
@@ -102,16 +101,6 @@ static int platform_generic_identifier_cmd(struct platform_intf *intf,
 		case PLATFORM_ID_CUSTOMIZATION:
 			getter = intf->cb->sys->customization;
 			fallback = sku_get_customization;
-			break;
-
-		case PLATFORM_ID_SIGNATURE:
-			/*
-			 * We don't have a fallback to sku_get_signature_id
-			 * here. This means that any platform using unified
-			 * builds must have a * signature_id field in its
-			 * callbacks in sys.c
-			 */
-			getter = intf->cb->sys->signature_id;
 			break;
 	}
 
@@ -174,14 +163,6 @@ static int platform_customization_cmd(struct platform_intf *intf,
 {
 	return platform_generic_identifier_cmd(intf, cmd,
 					       PLATFORM_ID_CUSTOMIZATION);
-}
-
-static int platform_signature_cmd(struct platform_intf *intf,
-				  struct platform_cmd *cmd,
-				  int argc, char **argv)
-{
-	return platform_generic_identifier_cmd(intf, cmd,
-					       PLATFORM_ID_SIGNATURE);
 }
 
 static int platform_sku_cmd(struct platform_intf *intf,
@@ -259,12 +240,6 @@ struct platform_cmd platform_cmds[] = {
 		.desc	= "Display Customization ID (deprecated)",
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_customization_cmd }
-	},
-	{
-		.name   = "signature",
-		.desc   = "Display Signature ID (deprecated)",
-		.type   = ARG_TYPE_GETTER,
-		.arg    = { .func = platform_signature_cmd }
 	},
 	{
 		.name	= "version",

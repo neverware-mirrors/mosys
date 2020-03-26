@@ -8,7 +8,6 @@
 
 #include "lib/probe.h"
 #include "lib/fdt.h"
-#include "lib/sku.h"
 
 static char *trogdor_get_version(struct platform_intf *intf)
 {
@@ -42,5 +41,4 @@ struct sys_cb trogdor_sys_cb = {
 	.name			= &trogdor_get_name,
 	.version		= &trogdor_get_version,
 	.sku_number		= &trogdor_get_sku_id,
-	.signature_id		= sku_get_signature_id,
 };
