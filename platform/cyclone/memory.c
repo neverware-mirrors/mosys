@@ -62,6 +62,9 @@ enum cyclone_board_id {
 	BOARD_ID_GALE_CR_CONFIG_C = 11, /* 021 */
 	BOARD_ID_GALE_CR_CONFIG_D = 12, /* 022 */
 	BOARD_ID_GALE_CR_CONFIG_E = 13, /* 102 */
+	BOARD_ID_GALE_CR_CONFIG_F = 14, /* 112 */
+	BOARD_ID_GALE_CR_CONFIG_G = 15, /* 120 */
+	BOARD_ID_GALE_CR_CONFIG_H = 16, /* 121 */
 };
 
 /*
@@ -94,10 +97,13 @@ static enum cyclone_memory_config get_memory_config(struct platform_intf *intf)
 		case BOARD_ID_GALE_CR_CONFIG_B:
 			return NANYA_DDR3L_1600_512M;
 		case BOARD_ID_GALE_CR_CONFIG_C:
+		case BOARD_ID_GALE_CR_CONFIG_F:
 			return SAMSUNG_DDR3_1600_512M_2;
 		case BOARD_ID_GALE_CR_CONFIG_D:
+		case BOARD_ID_GALE_CR_CONFIG_G:
 			return NANYA_DDR3L_1600_512M_2;
 		case BOARD_ID_GALE_CR_CONFIG_E:
+		case BOARD_ID_GALE_CR_CONFIG_H:
 			return HYNIX_DDR3L_1600_512M;
 		}
 	}
