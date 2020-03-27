@@ -38,7 +38,6 @@
 struct sys_cb fizz_sys_cb = {
 	.version		= &cros_ec_board_version_str,
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
 };
 #endif /* CONFIG_CROS_CONFIG */

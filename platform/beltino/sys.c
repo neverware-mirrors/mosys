@@ -33,5 +33,4 @@
 
 struct sys_cb beltino_sys_cb = {
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.firmware_vendor	= &smbios_bios_get_vendor,
 };

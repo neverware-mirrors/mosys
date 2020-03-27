@@ -34,6 +34,5 @@
 
 struct sys_cb auron_sys_cb = {
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.firmware_vendor	= &smbios_bios_get_vendor,
 	.version		= &smbios_sysinfo_get_version,
 };

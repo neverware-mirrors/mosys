@@ -67,5 +67,4 @@ static char *rambi_get_version(struct platform_intf *intf)
 struct sys_cb rambi_sys_cb = {
 	.version		= &rambi_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.firmware_vendor	= &smbios_bios_get_vendor,
 };

@@ -215,7 +215,6 @@ struct eeprom_cb {
 
 /* smbios callbacks */
 struct smbios_cb {
-	char *(*bios_vendor)(struct platform_intf *intf);
 	char *(*system_vendor)(struct platform_intf *intf);
 	char *(*system_name)(struct platform_intf *intf);
 	char *(*system_version)(struct platform_intf *intf);
@@ -243,10 +242,6 @@ struct sys_cb {
 	 * can support multiple models. This allows the model to be obtained,
 	 * which can be used to adjust how various packages work. */
 	char *(*model)(struct platform_intf *intf);
-
-	/* firmware info */
-	char *(*firmware_vendor)(struct platform_intf *intf);
-	char *(*firmware_version)(struct platform_intf *intf);
 };
 
 struct ec_cb {
