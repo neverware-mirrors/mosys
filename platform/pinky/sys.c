@@ -50,12 +50,6 @@ static char *pinky_get_version(struct platform_intf *intf)
 	return mosys_strdup(board_id_str);
 }
 
-static char *pinky_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
-
 struct sys_cb pinky_sys_cb = {
-	.name			= &pinky_get_name,
 	.version		= &pinky_get_version,
 };

@@ -29,19 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/alloc.h"
-#include "mosys/platform.h"
-
 #include "lib/smbios.h"
-
-static char *auron_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
+#include "mosys/platform.h"
 
 struct sys_cb auron_sys_cb = {
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.name			= &auron_get_name,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.version		= &smbios_sysinfo_get_version,
 };

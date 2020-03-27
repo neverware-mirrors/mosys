@@ -227,7 +227,6 @@ struct smbios_cb {
 struct sys_cb {
 	/* methods useful for probing */
 	char *(*vendor)(struct platform_intf *intf);
-	char *(*name)(struct platform_intf *intf);
 	char *(*version)(struct platform_intf *intf);
 	char *(*variant)(struct platform_intf *intf);
 

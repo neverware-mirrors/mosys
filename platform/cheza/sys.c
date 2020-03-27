@@ -53,13 +53,7 @@ static int cheza_get_sku_id(struct platform_intf *intf)
 	return fdt_get_sku_id();
 }
 
-static char *cheza_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
-
 struct sys_cb cheza_sys_cb = {
-	.name			= &cheza_get_name,
 	.version		= &cheza_get_version,
 	.sku_number		= &cheza_get_sku_id,
 };

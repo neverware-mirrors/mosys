@@ -29,22 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/alloc.h"
-#include "mosys/platform.h"
-
 #include "drivers/google/cros_ec.h"
-
-#include "lib/probe.h"
 #include "lib/fdt.h"
-
-static char *kukui_get_name(struct platform_intf *intf)
-{
-	char *ret = NULL;
-
-	ret = mosys_strdup(intf->name);
-
-	return ret;
-}
+#include "mosys/platform.h"
 
 static int kukui_get_sku_id(struct platform_intf *intf)
 {
@@ -52,7 +39,6 @@ static int kukui_get_sku_id(struct platform_intf *intf)
 }
 
 struct sys_cb kukui_sys_cb = {
-	.name			= kukui_get_name,
 	.version		= cros_ec_board_version_str,
 	.sku_number		= kukui_get_sku_id,
 };

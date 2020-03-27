@@ -64,14 +64,8 @@ static char *rambi_get_version(struct platform_intf *intf)
 	return mosys_strdup(version);
 }
 
-static char *rambi_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
-
 struct sys_cb rambi_sys_cb = {
 	.version		= &rambi_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.name			= &rambi_get_name,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 };

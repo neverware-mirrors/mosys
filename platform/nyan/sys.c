@@ -29,19 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/alloc.h"
+#include "drivers/google/cros_ec.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/cros_ec.h"
-
-#include "nyan.h"
-
-static char *nyan_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
-
 struct sys_cb nyan_sys_cb = {
-	.name		= &nyan_get_name,
 	.version	= &cros_ec_board_version_str,
 };

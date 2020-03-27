@@ -31,22 +31,13 @@
 
 #ifdef CONFIG_CROS_CONFIG
 
-#include "mosys/alloc.h"
-#include "mosys/platform.h"
-
 #include "drivers/google/cros_ec.h"
-
 #include "lib/smbios.h"
-
-static char *fizz_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
+#include "mosys/platform.h"
 
 struct sys_cb fizz_sys_cb = {
 	.version		= &cros_ec_board_version_str,
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.name			= &fizz_get_name,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
 };

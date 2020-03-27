@@ -29,21 +29,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/alloc.h"
-#include "mosys/platform.h"
 
 #include "drivers/google/cros_ec.h"
-
 #include "lib/smbios.h"
-
-static char *cyan_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
+#include "mosys/platform.h"
 
 struct sys_cb cyan_sys_cb = {
 	.version		= &cros_ec_board_version_str,
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.name			= &cyan_get_name,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 };

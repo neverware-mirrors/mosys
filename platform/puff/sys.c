@@ -3,22 +3,12 @@
  * found in the LICENSE file.
  */
 
-#include "mosys/alloc.h"
-#include "mosys/platform.h"
-
-#include "lib/acpi.h"
 #include "lib/smbios.h"
-#include "lib/string.h"
-
-static char *puff_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
+#include "mosys/platform.h"
 
 struct sys_cb puff_sys_cb = {
 	.version		= &smbios_sysinfo_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.name			= &puff_get_name,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
 };

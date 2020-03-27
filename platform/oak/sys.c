@@ -29,24 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/alloc.h"
+#include "drivers/google/cros_ec.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/cros_ec.h"
-
-#include "lib/probe.h"
-#include "lib/fdt.h"
-
-static char *oak_get_name(struct platform_intf *intf)
-{
-	char *ret = NULL;
-
-	ret = mosys_strdup(intf->name);
-
-	return ret;
-}
-
 struct sys_cb oak_sys_cb = {
-	.name			= &oak_get_name,
 	.version		= &cros_ec_board_version_str,
 };

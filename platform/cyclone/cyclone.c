@@ -93,7 +93,6 @@ struct platform_cb cyclone_cb = {
 	.eeprom 	= &cyclone_eeprom_cb,
 	.memory		= &cyclone_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
-	.sys 		= &cyclone_sys_cb,
 	.eventlog	= &cyclone_eventlog_cb,
 };
 

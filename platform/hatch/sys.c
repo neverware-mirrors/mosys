@@ -29,22 +29,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mosys/alloc.h"
-#include "mosys/platform.h"
-
-#include "lib/acpi.h"
 #include "lib/smbios.h"
-#include "lib/string.h"
-
-static char *hatch_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
+#include "mosys/platform.h"
 
 struct sys_cb hatch_sys_cb = {
 	.version		= &smbios_sysinfo_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.name			= &hatch_get_name,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
 };

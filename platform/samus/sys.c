@@ -29,23 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <valstr.h>
-
-#include "mosys/alloc.h"
-#include "mosys/platform.h"
-
 #include "lib/smbios.h"
-
-#include "drivers/google/cros_ec.h"
-
-static char *samus_get_name(struct platform_intf *intf)
-{
-	return mosys_strdup(intf->name);
-}
+#include "mosys/platform.h"
 
 struct sys_cb samus_sys_cb = {
 	.vendor			= &smbios_sysinfo_get_vendor,
-	.name			= &samus_get_name,
 	.firmware_vendor	= &smbios_bios_get_vendor,
 	.version		= &smbios_sysinfo_get_version,
 };

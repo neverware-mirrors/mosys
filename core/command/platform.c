@@ -46,7 +46,6 @@
 /* Identifiers for platform_generic_identifier_cmd. */
 enum {
 	PLATFORM_ID_VENDOR,
-	PLATFORM_ID_NAME,
 	PLATFORM_ID_VERSION,
 	PLATFORM_ID_MODEL,
 	PLATFORM_ID_CHASSIS,
@@ -62,21 +61,20 @@ static int platform_generic_identifier_cmd(struct platform_intf *intf,
 					   int id_enum)
 {
 	char *id = NULL;
-	char* (*fallback)(struct platform_intf *intf) = NULL;
+	char *(*fallbacks[])(struct platform_intf *intf) = {
+		[PLATFORM_ID_VENDOR] = NULL,
+		[PLATFORM_ID_VERSION] = NULL,
+		[PLATFORM_ID_MODEL] = sku_get_model,
+		[PLATFORM_ID_CHASSIS] = sku_get_chassis,
+		[PLATFORM_ID_BRAND] = sku_get_brand,
+		[PLATFORM_ID_CUSTOMIZATION] = sku_get_customization,
+	};
 	char* (*getter)(struct platform_intf *intf) = NULL;
 
-	if (!intf->cb || !intf->cb->sys) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	switch (id_enum) {
+	if (intf->cb && intf->cb->sys) {
+		switch (id_enum) {
 		case PLATFORM_ID_VENDOR:
 			getter = intf->cb->sys->vendor;
-			break;
-
-		case PLATFORM_ID_NAME:
-			getter = intf->cb->sys->name;
 			break;
 
 		case PLATFORM_ID_VERSION:
@@ -85,29 +83,26 @@ static int platform_generic_identifier_cmd(struct platform_intf *intf,
 
 		case PLATFORM_ID_MODEL:
 			getter = intf->cb->sys->model;
-			fallback = sku_get_model;
 			break;
 
 		case PLATFORM_ID_CHASSIS:
 			getter = intf->cb->sys->chassis;
-			fallback = sku_get_chassis;
 			break;
 
 		case PLATFORM_ID_BRAND:
 			getter = intf->cb->sys->brand;
-			fallback = sku_get_brand;
 			break;
 
 		case PLATFORM_ID_CUSTOMIZATION:
 			getter = intf->cb->sys->customization;
-			fallback = sku_get_customization;
 			break;
+		}
 	}
 
 	if (getter) {
 		id = getter(intf);
-	} else if (fallback) {
-		id = fallback(intf);
+	} else if (fallbacks[id_enum]) {
+		id = fallbacks[id_enum](intf);
 	} else {
 		errno = ENOSYS;
 	}
@@ -126,7 +121,14 @@ static int platform_name_cmd(struct platform_intf *intf,
 			     struct platform_cmd *cmd,
 			     int argc, char **argv)
 {
-	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_NAME);
+	int rc;
+	struct kv_pair *kv = kv_pair_new();
+
+	kv_pair_add(kv, "name", intf->name);
+	rc = kv_pair_print(kv);
+	kv_pair_free(kv);
+
+	return rc;
 }
 
 static int platform_version_cmd(struct platform_intf *intf,
