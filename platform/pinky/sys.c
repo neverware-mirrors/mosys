@@ -50,19 +50,12 @@ static char *pinky_get_version(struct platform_intf *intf)
 	return mosys_strdup(board_id_str);
 }
 
-static char *pinky_get_vendor(struct platform_intf *intf)
-{
-	/* FIXME: implement this */
-	return mosys_strdup("Unknown");
-}
-
 static char *pinky_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }
 
 struct sys_cb pinky_sys_cb = {
-	.vendor			= &pinky_get_vendor,
 	.name			= &pinky_get_name,
 	.version		= &pinky_get_version,
 };

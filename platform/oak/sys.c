@@ -37,15 +37,6 @@
 #include "lib/probe.h"
 #include "lib/fdt.h"
 
-static char *oak_get_vendor(struct platform_intf *intf)
-{
-	char *ret = NULL;
-
-	ret = mosys_strdup("Google");
-
-	return ret;
-}
-
 static char *oak_get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
@@ -56,7 +47,6 @@ static char *oak_get_name(struct platform_intf *intf)
 }
 
 struct sys_cb oak_sys_cb = {
-	.vendor			= &oak_get_vendor,
 	.name			= &oak_get_name,
 	.version		= &cros_ec_board_version_str,
 };

@@ -32,25 +32,11 @@
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
-static char *storm_get_version(struct platform_intf *intf)
-{
-	/* FIXME: implement this */
-	return mosys_strdup("Unknown");
-}
-
-static char *storm_get_vendor(struct platform_intf *intf)
-{
-	/* FIXME: implement this */
-	return mosys_strdup("Unknown");
-}
-
 static char *storm_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }
 
 struct sys_cb storm_sys_cb = {
-	.vendor			= &storm_get_vendor,
 	.name			= &storm_get_name,
-	.version		= &storm_get_version,
 };

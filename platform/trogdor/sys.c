@@ -26,18 +26,12 @@ static int trogdor_get_sku_id(struct platform_intf *intf)
 	return fdt_get_sku_id();
 }
 
-static char *trogdor_get_vendor(struct platform_intf *intf)
-{
-	return mosys_strdup("Google");
-}
-
 static char *trogdor_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }
 
 struct sys_cb trogdor_sys_cb = {
-	.vendor			= &trogdor_get_vendor,
 	.name			= &trogdor_get_name,
 	.version		= &trogdor_get_version,
 	.sku_number		= &trogdor_get_sku_id,

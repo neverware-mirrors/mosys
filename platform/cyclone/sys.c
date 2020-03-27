@@ -32,25 +32,11 @@
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
-static char *cyclone_get_version(struct platform_intf *intf)
-{
-	/* FIXME: implement this */
-	return mosys_strdup("Unknown");
-}
-
-static char *cyclone_get_vendor(struct platform_intf *intf)
-{
-	/* FIXME: implement this */
-	return mosys_strdup("Unknown");
-}
-
 static char *cyclone_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }
 
 struct sys_cb cyclone_sys_cb = {
-	.vendor			= &cyclone_get_vendor,
 	.name			= &cyclone_get_name,
-	.version		= &cyclone_get_version,
 };

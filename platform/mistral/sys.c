@@ -32,18 +32,6 @@
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
-static char *mistral_get_version(struct platform_intf *intf)
-{
-	/* FIXME: implement this */
-	return mosys_strdup("Unknown");
-}
-
-static char *mistral_get_vendor(struct platform_intf *intf)
-{
-	/* FIXME: implement this */
-	return mosys_strdup("Unknown");
-}
-
 static char *mistral_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
@@ -55,8 +43,6 @@ static char *mistral_get_brand(struct platform_intf *intf)
 }
 
 struct sys_cb mistral_sys_cb = {
-	.vendor			= &mistral_get_vendor,
 	.name			= &mistral_get_name,
-	.version		= &mistral_get_version,
 	.brand			= &mistral_get_brand,
 };

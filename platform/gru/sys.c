@@ -52,19 +52,12 @@ static int gru_get_sku_id(struct platform_intf *intf)
 	return fdt_get_sku_id();
 }
 
-static char *gru_get_vendor(struct platform_intf *intf)
-{
-	/* FIXME: implement this */
-	return mosys_strdup("Unknown");
-}
-
 static char *gru_get_name(struct platform_intf *intf)
 {
 	return mosys_strdup(intf->name);
 }
 
 struct sys_cb gru_sys_cb = {
-	.vendor			= &gru_get_vendor,
 	.name			= &gru_get_name,
 	.version		= &gru_get_version,
 	.sku_number		= &gru_get_sku_id,

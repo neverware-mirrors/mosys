@@ -37,15 +37,6 @@
 #include "lib/probe.h"
 #include "lib/fdt.h"
 
-static char *kukui_get_vendor(struct platform_intf *intf)
-{
-	char *ret = NULL;
-
-	ret = mosys_strdup("Google");
-
-	return ret;
-}
-
 static char *kukui_get_name(struct platform_intf *intf)
 {
 	char *ret = NULL;
@@ -61,7 +52,6 @@ static int kukui_get_sku_id(struct platform_intf *intf)
 }
 
 struct sys_cb kukui_sys_cb = {
-	.vendor			= kukui_get_vendor,
 	.name			= kukui_get_name,
 	.version		= cros_ec_board_version_str,
 	.sku_number		= kukui_get_sku_id,

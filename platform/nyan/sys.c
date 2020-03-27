@@ -41,13 +41,7 @@ static char *nyan_get_name(struct platform_intf *intf)
 	return mosys_strdup(intf->name);
 }
 
-static char *nyan_get_vendor(struct platform_intf *intf)
-{
-	return mosys_strdup("Google");
-}
-
 struct sys_cb nyan_sys_cb = {
 	.name		= &nyan_get_name,
-	.vendor		= &nyan_get_vendor,
 	.version	= &cros_ec_board_version_str,
 };
