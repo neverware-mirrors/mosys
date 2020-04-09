@@ -64,7 +64,6 @@ extern struct platform_intf platform_rambi;
 extern struct platform_intf platform_reef;
 extern struct platform_intf platform_samus;
 extern struct platform_intf platform_sarien;
-extern struct platform_intf platform_slippy;
 extern struct platform_intf platform_storm;
 extern struct platform_intf platform_strago;
 extern struct platform_intf platform_trogdor;
@@ -81,7 +80,6 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_rambi,
 	&platform_reef,
 	&platform_samus,
-	&platform_slippy,
 	&platform_strago,
 #ifdef CONFIG_CROS_CONFIG
         &platform_dedede,
