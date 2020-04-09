@@ -22,7 +22,6 @@ use getopts::Options;
 use logging::{Log, LogError};
 
 const PROG_NAME: &'static str = "mosys";
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const LOCK_TIMEOUT_SECS: i32 = 180;
 
 lazy_static! {
@@ -89,18 +88,12 @@ impl<'a> Mosys<'a> {
             "[id]",
         );
         opts.optflag("h", "help", "print this help");
-        opts.optflag("V", "version", "print version");
 
         let matches = opts.parse(&self.args)?;
 
         if matches.opt_present("h") {
             self.print_usage(&opts);
             return Err(MosysError::Help);
-        }
-
-        if matches.opt_present("V") {
-            Log::Warning.logln(&format!("{} version {}", &self.program, VERSION))?;
-            return Ok(());
         }
 
         for _ in 0..matches.opt_count("v") {
@@ -565,18 +558,6 @@ mod tests {
             Err(MosysError::PlatformNotSupported) => (),
             _ => panic!("Should have failed to find a platform"),
         }
-    }
-
-    #[test]
-    fn test_version() {
-        let _test_lock = LOCK.lock().unwrap();
-        let args = ["someprogname", "-V"];
-        let mut mosys = Mosys::new(&args).unwrap();
-        mosys.run().expect("Should have exited Ok(())");
-        assert_eq!(
-            &**LAST_LOG.lock().unwrap(),
-            &format!("someprogname version {}\n", env!("CARGO_PKG_VERSION"))
-        );
     }
 
     #[test]
