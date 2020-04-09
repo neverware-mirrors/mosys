@@ -6,12 +6,6 @@ include_common = include_directories(['include'])
 # Config data used for creating a config header and including it
 conf_data = configuration_data()
 
-# Set for all platforms
-conf_data.set('PROGRAM', '"mosys"')
-conf_data.set('VERSION', '"1.2.03"')
-conf_data.set('CONFIG_LITTLE_ENDIAN', 1)
-conf_data.set('CONFIG_LOGLEVEL', 4)
-conf_data.set('CONFIG_PLATFORM_EXPERIMENTAL', 1)
 use_cros_config = get_option('use_cros_config') == true
 if use_cros_config
   conf_data.set('CONFIG_CROS_CONFIG', 1)
