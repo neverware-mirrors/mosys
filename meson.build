@@ -55,8 +55,6 @@ deps = [
 # Cros config is a special snowflake.
 if use_cros_config
   libmosys_src += mosys_lib_cros_config_src
-  fdt_dep = meson.get_compiler('c').find_library('fdt')
-  deps += fdt_dep
 endif
 
 # Lib momsys shared library target
