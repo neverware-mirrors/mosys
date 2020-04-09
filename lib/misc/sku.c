@@ -9,7 +9,6 @@
 #include <unistd.h>
 
 #include "mosys/alloc.h"
-#include "mosys/big_lock.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -17,23 +16,6 @@
 #include "lib/file.h"
 #include "lib/sku.h"
 #include "lib/string.h"
-
-
-static int _release_lock(void)
-{
-	return mosys_release_big_lock() >= 0;
-}
-
-static int _acquire_lock()
-{
-	/* Timeout copied from lib/flashrom/flashrom.c */
-	if (mosys_acquire_big_lock(50000) < 0) {
-		lprintf(LOG_DEBUG, "%s: could not re-acquire lock\n",
-			__func__);
-		return -1;
-	}
-	return 0;
-}
 
 /*
  * Strips the "end of line" character (\n) in string.
@@ -76,17 +58,13 @@ static char *_get_vpd_value(const char *key_name)
 {
 	char command[PATH_MAX];
 	FILE *fp = NULL;
-	int relock = 0;
 	char *value;
 
 	snprintf(command, sizeof(command), "vpd_get_value %s", key_name);
 	command[sizeof(command) - 1] = '\0';
 
-	relock = _release_lock();
 	fp = popen(command, "r");
 	value = _read_close_stripped_line(fp);
-	if (relock)
-		_acquire_lock();
 	return value;
 }
 

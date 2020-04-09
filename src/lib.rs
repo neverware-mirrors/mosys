@@ -22,7 +22,6 @@ use getopts::Options;
 use logging::{Log, LogError};
 
 const PROG_NAME: &'static str = "mosys";
-const LOCK_TIMEOUT_SECS: i32 = 180;
 
 lazy_static! {
     pub static ref INSTANCES: Mutex<u8> = Mutex::new(0);
@@ -74,11 +73,6 @@ impl<'a> Mosys<'a> {
         opts.optflag("l", "long", "print data in long format");
         opts.optopt("s", "singlekey", "print value for single key", "[key]");
         opts.optflagmulti("v", "verbose", "verbose (can be used multiple times)");
-        opts.optflag(
-            "f",
-            "force",
-            "force (ignore mosys lock, sanity checks, etc)",
-        );
         opts.optflag("t", "tree", "display command tree for detected platform");
         opts.optflag("S", "supported", "print supported platform ID's");
         opts.optopt(
@@ -127,16 +121,6 @@ impl<'a> Mosys<'a> {
                     0 => Ok(()),
                     _ => Err(MosysError::NonzeroPlatformListRet),
                 };
-            }
-        }
-
-        if !matches.opt_present("f") {
-            // Safe because argument and return are primitives. Note: this requires root perms
-            let rc = unsafe { mosys_acquire_big_lock(LOCK_TIMEOUT_SECS) };
-
-            if rc < 0 {
-                Log::Err.logln("Acquiring lock failed")?;
-                return Err(MosysError::AcqLockFail);
             }
         }
 

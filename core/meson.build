@@ -1,7 +1,6 @@
 libmosys_src += files(
   'log.c',
   'intf_list.c',
-  'big_lock.c',
   'globals.c',
   'file_backed_range.c',
   'output.c',
