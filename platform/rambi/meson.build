@@ -4,5 +4,4 @@ libmosys_src += files(
   'sys.c',
   'rambi.c',
   'psu.c',
-  'ec.c',
 )
