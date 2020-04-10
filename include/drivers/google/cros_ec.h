@@ -34,8 +34,10 @@
 #ifndef MOSYS_DRIVERS_EC_GOOGLE_H__
 #define MOSYS_DRIVERS_EC_GOOGLE_H__
 
-#include "intf/io.h"
+#include <stddef.h>
+
 #include "cros_ec_commands.h"
+#include "mosys/platform.h"
 
 #define CROS_EC_DEV_NAME		"/dev/cros_ec"
 #define CROS_PD_DEV_NAME		"/dev/cros_pd"
@@ -65,16 +67,7 @@ struct cros_ec_priv {
 		   const void *indata, int insize,
 		   const void *outdata, int outsize);
 
-	/*
-	 * We usually only have one raw interface on any given platform. However
-	 * we want a single mosys binary to be able to support many platforms,
-	 * so this allows the drivers to check what interfaces are available and
-	 * try them in a generic manner.
-	 *
-	 * Unused interfaces must be set/initialized to NULL.
-	 */
 	struct cros_ec_dev *devfs;
-	struct io_port *io;
 
 	int device_index;
 };
@@ -108,7 +101,6 @@ char *cros_ec_board_version_str(struct platform_intf *intf);
 int cros_ec_get_firmware_rom_size(struct platform_intf *intf);
 
 int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec);
-int cros_ec_probe_lpc(struct platform_intf *intf);
 
 int cros_ec_setup(struct platform_intf *intf);
 int cros_pd_setup(struct platform_intf *intf);

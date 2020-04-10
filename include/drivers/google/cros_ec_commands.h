@@ -8,6 +8,8 @@
 #ifndef __CROS_EC_COMMANDS_H
 #define __CROS_EC_COMMANDS_H
 
+#include <stdint.h>
+
 /*
  * Current version of this protocol
  *
