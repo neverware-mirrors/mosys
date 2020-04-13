@@ -8,7 +8,6 @@ libmosys_src += files(
   'kv_pair.c',
   'alloc.c',
   'platform.c',
-  'file_lock.c',
 )
 
 unittest_src += files(
