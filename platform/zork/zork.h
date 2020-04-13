@@ -12,7 +12,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb zork_eeprom_cb; /* eeprom.c */
-extern struct memory_cb zork_memory_cb; /* memory.c */
 extern struct sys_cb zork_sys_cb; /* sys.c */
 
 #endif /* PLATFORM_ZORK_H_ */
