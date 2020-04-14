@@ -37,7 +37,6 @@ struct platform_cmd;
 
 extern struct platform_cmd cmd_platform;
 extern struct platform_cmd cmd_memory;
-extern struct platform_cmd cmd_sensor;
 extern struct platform_cmd cmd_eventlog;
 extern struct platform_cmd cmd_nvram;
 extern struct platform_cmd cmd_eeprom;

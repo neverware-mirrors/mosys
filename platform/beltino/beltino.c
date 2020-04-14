@@ -90,7 +90,6 @@ struct platform_cmd *beltino_sub[] = {
 	&cmd_memory,
 	&cmd_platform,
 	&cmd_psu,
-	&cmd_sensor,
 	&cmd_eventlog,
 	NULL
 };
