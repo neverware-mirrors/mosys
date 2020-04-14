@@ -50,11 +50,6 @@
 #define ACPI_BD_EC	0x83		/* burst disable */
 #define ACPI_QR_EC	0x84		/* query EC */
 
-/* forward declarations */
-struct platform_intf;
-struct sensor;
-struct sensor_reading;
-
 /*
  * acpi_get_frid - retrieve FRID
  *
@@ -65,18 +60,5 @@ struct sensor_reading;
  * returns <0 to indicate error
  */
 extern ssize_t acpi_get_frid(char *buf, size_t buf_sz);
-
-/*
- * acpi_read_temp - read ACPI thermal_zone temperature
- *
- * @intf:	platform interface
- * @sensor:	sensor struct
- * @reading:	location to store reading
- *
- * returns 0 to indicate success
- * returns <0 to indicate failure
- */
-extern int acpi_read_temp(struct platform_intf *intf, struct sensor *sensor,
-                          struct sensor_reading *reading);
 
 #endif /* MOSYS_LIB_ACPI_H__ */
