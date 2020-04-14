@@ -79,14 +79,12 @@ struct platform_cmd {
 /* platform operations handlers */
 struct pci_intf;
 struct mmio_intf;
-struct io_intf;
 struct smi_intf;
 struct i2c_intf;
 
 struct platform_op {
 	struct pci_intf *pci;		/* pci interface */
 	struct mmio_intf *mmio;		/* mmio interface */
-	struct io_intf *io;		/* io interface */
 	struct smi_intf *smi;		/* smi interface */
 	struct i2c_intf *i2c;		/* i2c interface */
 	struct fru_intf *fru;		/* FRU interface */

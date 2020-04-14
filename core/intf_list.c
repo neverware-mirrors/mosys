@@ -34,7 +34,6 @@
 #include "mosys/platform.h"
 
 #include "intf/i2c.h"
-#include "intf/io.h"
 #include "intf/pci.h"
 #include "intf/mmio.h"
 
@@ -42,7 +41,6 @@
 struct platform_op platform_common_op = {
 	.pci		= &pci_file_intf,
 	.i2c		= &i2c_dev_intf,
-	.io		= &io_intf,
 	.mmio		= &mmio_mmap_intf,
 };
 
@@ -61,8 +59,6 @@ int intf_op_setup(struct platform_intf *intf)
 		rc |= intf->op->pci->setup(intf);
 	if (intf->op->i2c && intf->op->i2c->setup)
 		rc |= intf->op->i2c->setup(intf);
-	if (intf->op->io && intf->op->io->setup)
-		rc |= intf->op->io->setup(intf);
 	if (intf->op->mmio && intf->op->mmio->setup)
 		rc |= intf->op->mmio->setup(intf);
 
@@ -80,8 +76,6 @@ void intf_op_destroy(struct platform_intf *intf)
 		intf->op->pci->destroy(intf);
 	if (intf->op->i2c && intf->op->i2c->destroy)
 		intf->op->i2c->destroy(intf);
-	if (intf->op->io && intf->op->io->destroy)
-		intf->op->io->destroy(intf);
 	if (intf->op->mmio && intf->op->mmio->destroy)
 		intf->op->mmio->destroy(intf);
 }
