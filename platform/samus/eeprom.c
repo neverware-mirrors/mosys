@@ -42,8 +42,6 @@
 #include "lib/flashrom.h"
 #include "lib/smbios.h"
 
-#include "drivers/intel/lynxpoint_lp.h"
-
 #include "samus.h"
 
 static int samus_host_firmware_size(struct platform_intf *intf)
