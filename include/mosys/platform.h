@@ -93,36 +93,6 @@ struct platform_op {
 	struct sched_intf *sched;	/* process scheduler interface */
 };
 
-/* sensor related callbacks */
-struct sensor;
-struct sensor_array;
-struct sensor_cb {
-	struct sensor_array *(*get_sensors)(struct platform_intf *intf);
-	void (*add_sensors)(struct platform_intf *intf,
-	                    struct sensor_array *array);
-
-	/* methods for reading data and setting thresholds */
-	int (*read_fantach)(struct platform_intf *intf, const char *name);
-	int (*set_fantach)(struct platform_intf *intf, const char *sensor_name,
-	                   unsigned int percent);
-	int (*set_fantach_auto)(struct platform_intf *intf,
-	                        const char *sensor_name);
-	int (*set_fantach_off)(struct platform_intf *intf,
-	                       const char *sensor_name);
-
-	int (*read_thermal)(struct platform_intf *intf, const char *name);
-	int (*set_thermal)(struct platform_intf *intf, const char *sensor_name,
-	                   const char *param, double val);
-
-	int (*read_voltage)(struct platform_intf *intf, const char *name);
-	int (*set_voltage)(struct platform_intf *intf, const char *sensor_name,
-	                   const char *param, double val);
-
-	/* current and power are typically not set explicitly */
-	int (*read_current)(struct platform_intf *intf, const char *name);
-	int (*read_power)(struct platform_intf *intf, const char *name);
-};
-
 /*
  * mappings of logical DIMM to physical
  * not all map types apply to all platforms
@@ -274,7 +244,6 @@ struct psu_cb {
 
 /* platform-specific callbacks */
 struct platform_cb {
-	struct sensor_cb *sensor;	/* sensor callbacks */
 	struct memory_cb *memory;	/* memory callbacks */
 	struct eventlog_cb *eventlog;	/* eventlog callbacks */
 	struct smbios_cb *smbios;	/* smbios related callbacks */
