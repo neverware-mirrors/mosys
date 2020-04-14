@@ -42,7 +42,6 @@
 extern struct eeprom_cb beltino_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb beltino_memory_cb;	/* memory.c */
 extern struct psu_cb beltino_psu_cb;		/* psu.c */
-extern struct sensor_cb beltino_sensor_cb;	/* sensors.c */
 extern struct sys_cb beltino_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_BELTINO_H_ */
