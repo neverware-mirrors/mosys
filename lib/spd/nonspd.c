@@ -68,15 +68,6 @@ int nonspd_print_field(struct kv_pair *kv,
 	switch (type) {
 	case SPD_GET_DRAM_TYPE:
 		switch (info->dram_type) {
-		case SPD_DRAM_TYPE_DDR:
-			kv_pair_add(kv, "dram", "DDR3");
-			break;
-		case SPD_DRAM_TYPE_DDR2:
-			kv_pair_add(kv, "dram", "DDR2");
-			break;
-		case SPD_DRAM_TYPE_FBDIMM:
-			kv_pair_add(kv, "dram", "FBDIMM");
-			break;
 		case SPD_DRAM_TYPE_DDR3:
 			kv_pair_add(kv, "dram", "DDR3");
 			break;
@@ -109,10 +100,7 @@ int nonspd_print_field(struct kv_pair *kv,
 					    ddr3_module_type_lut));
 			ret = 1;
 			break;
-		case SPD_DRAM_TYPE_DDR:
-		case SPD_DRAM_TYPE_DDR2:
 		case SPD_DRAM_TYPE_DDR4:
-		case SPD_DRAM_TYPE_FBDIMM:
 		default:
 			ret = -1;
 			break;

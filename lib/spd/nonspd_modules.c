@@ -1006,12 +1006,6 @@ static int transfer_speed_from_smbios_to_nonspd_mem_info(
 enum spd_dram_type map_smbios_mem_type_to_spd(struct smbios_table *table)
 {
 	switch (table->data.mem_device.type) {
-	case SMBIOS_MEMORY_TYPE_DDR:
-		return SPD_DRAM_TYPE_DDR;
-	case SMBIOS_MEMORY_TYPE_DDR2:
-		return SPD_DRAM_TYPE_DDR2;
-	case SMBIOS_MEMORY_TYPE_DDR2_FBDIMM:
-		return SPD_DRAM_TYPE_FBDIMM;
 	case SMBIOS_MEMORY_TYPE_DDR3:
 		return SPD_DRAM_TYPE_DDR3;
 	case SMBIOS_MEMORY_TYPE_DDR4:

@@ -4,7 +4,6 @@ libmosys_src += files(
   'nonspd.c',
   'jedec_id.c',
   'ddr4.c',
-  'ddr2.c',
   'ddr3.c',
   'spd.c',
 )

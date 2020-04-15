@@ -64,22 +64,8 @@ int spd_total_size(uint8_t *data)
 	int size;
 
 	switch (data[2]) {
-	case SPD_DRAM_TYPE_DDR:
-	case SPD_DRAM_TYPE_DDR2:{
-		if (data[1] == 0) {
-			lprintf(LOG_DEBUG, "Undefined SPD size, "
-					   "assuming %d bytes\n",
-					   SPD_MAX_LENGTH);
-			size = SPD_MAX_LENGTH;
-		} else {
-			size = 1 << data[1];
-		}
-
-		break;
-	}
 	case SPD_DRAM_TYPE_DDR3:
-	case SPD_DRAM_TYPE_LPDDR3:
-	case SPD_DRAM_TYPE_FBDIMM:{
+	case SPD_DRAM_TYPE_LPDDR3: {
 		uint8_t tmp;
 
 		tmp = ((data[0] & __mask(6, 4)) >> 4);
@@ -155,12 +141,6 @@ int spd_print_field(struct platform_intf *intf,
 		return -1;
 
 	switch (byte[2]) {
-//	case SPD_DRAM_TYPE_DDR:
-//		return spd_print_field_ddr1(intf, kv, data, type);
-	case SPD_DRAM_TYPE_DDR2:
-		return spd_print_field_ddr2(intf, kv, data, type);
-//	case SPD_DRAM_TYPE_FBDIMM:
-//		return spd_print_field_fbdimm(intf, kv, data, type);
 	case SPD_DRAM_TYPE_DDR3:
 	case SPD_DRAM_TYPE_LPDDR3:
 		return spd_print_field_ddr3(intf, kv, data, type);

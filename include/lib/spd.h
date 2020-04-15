@@ -63,9 +63,6 @@ struct spd_reg;
 
 /* different types of DRAM (fundamental memory type) for SPD */
 enum spd_dram_type {
-	SPD_DRAM_TYPE_DDR	= 0x07,
-	SPD_DRAM_TYPE_DDR2	= 0x08,
-	SPD_DRAM_TYPE_FBDIMM	= 0x09,
 	SPD_DRAM_TYPE_DDR3	= 0x0b,
 	SPD_DRAM_TYPE_LPDDR3	= 0xf1,
 	SPD_DRAM_TYPE_JEDEC_LPDDR3 = 0x0f,
@@ -271,22 +268,6 @@ extern const char *spd_readbyte(struct spd_reg *reg,
                                 const uint8_t * eeprom, uint8_t byte);
 extern const char *spd_table_lookup(struct spd_reg *reg,
                                     const uint8_t * eeprom, uint8_t byte);
-
-/*
- * spd_print_field_ddr2  -  add common DDR SPD fields into key=value pair
- *
- * @intf:       platform interface
- * @kv:         key=value pair
- * @data:       raw spd data
- * @type:       type of field to retrieve
- *
- * returns 1 to indicate data added to key=value pair
- * returns 0 to indicate no data added
- * returns <0 to indicate error
- *
- */
-extern int spd_print_field_ddr2(struct platform_intf *intf, struct kv_pair *kv,
-                                const void *data, enum spd_field_type type);
 
 /*
  * spd_print_field_ddr3  -  add common DDR SPD fields into key=value pair
