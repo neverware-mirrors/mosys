@@ -32,7 +32,6 @@
 #define _GNU_SOURCE
 
 #include <errno.h>
-#include <libfdt.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
