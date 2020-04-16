@@ -13,7 +13,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb puff_eeprom_cb;	/* eeprom.c */
-extern struct memory_cb puff_memory_cb;	/* memory.c */
 extern struct sys_cb puff_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_PUFF_H_ */

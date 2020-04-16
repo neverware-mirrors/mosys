@@ -11,6 +11,7 @@
 
 #include "lib/cros_config.h"
 #include "lib/eeprom.h"
+#include "lib/memory.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
 
@@ -54,7 +55,7 @@ static struct eventlog_cb puff_eventlog_cb = {
 static struct platform_cb puff_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &puff_eeprom_cb,
-	.memory		= &puff_memory_cb,
+	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &puff_sys_cb,

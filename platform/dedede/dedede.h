@@ -13,7 +13,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb dedede_eeprom_cb;	/* eeprom.c */
-extern struct memory_cb dedede_memory_cb;	/* memory.c */
 extern struct sys_cb dedede_sys_cb;		/* sys.c */
 
 #endif

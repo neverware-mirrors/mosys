@@ -39,7 +39,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb octopus_eeprom_cb;	/* eeprom.c */
-extern struct memory_cb octopus_memory_cb;	/* memory.c */
 extern struct sys_cb octopus_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_OCTOPUS_H_ */

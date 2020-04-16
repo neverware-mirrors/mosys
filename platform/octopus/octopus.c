@@ -43,6 +43,7 @@
 
 #include "lib/cros_config.h"
 #include "lib/eeprom.h"
+#include "lib/memory.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
@@ -87,7 +88,7 @@ struct eventlog_cb octopus_eventlog_cb = {
 struct platform_cb octopus_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &octopus_eeprom_cb,
-	.memory		= &octopus_memory_cb,
+	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &octopus_sys_cb,

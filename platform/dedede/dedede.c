@@ -1,4 +1,3 @@
-
 /* Copyright 2019 The Chromium OS Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
@@ -12,6 +11,7 @@
 
 #include "lib/cros_config.h"
 #include "lib/elog.h"
+#include "lib/memory.h"
 
 #include "dedede.h"
 
@@ -52,7 +52,7 @@ struct eventlog_cb dedede_eventlog_cb = {
 struct platform_cb dedede_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &dedede_eeprom_cb,
-	.memory		= &dedede_memory_cb,
+	.memory		= &smbios_memory_cb,
 	.sys 		= &dedede_sys_cb,
 	.eventlog	= &dedede_eventlog_cb,
 };
