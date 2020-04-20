@@ -50,8 +50,7 @@
 #define ANX74XX_VENDOR_ID	0xAAAA
 #define PS8751_VENDOR_ID	0x1DA0
 
-ssize_t cros_ec_version(struct platform_intf *intf, struct ec_cb *ec, char *buf,
-			size_t buf_sz)
+ssize_t cros_ec_version(struct ec_cb *ec, char *buf, size_t buf_sz)
 {
 	static const char *const fw_copies[] = { "unknown", "RO", "RW" };
 	struct ec_response_get_version r;
@@ -61,7 +60,7 @@ ssize_t cros_ec_version(struct platform_intf *intf, struct ec_cb *ec, char *buf,
 	priv = ec->priv;
 
 	MOSYS_CHECK(priv->cmd);
-	if (priv->cmd(intf, ec, EC_CMD_GET_VERSION, 0, &r, sizeof(r), NULL, 0))
+	if (priv->cmd(ec, EC_CMD_GET_VERSION, 0, &r, sizeof(r), NULL, 0))
 		return -1;
 
 	/* Ensure versions are null-terminated before we print them */
@@ -86,35 +85,28 @@ ssize_t cros_ec_version(struct platform_intf *intf, struct ec_cb *ec, char *buf,
 	return -1;
 }
 
-ssize_t cros_ec_build_info(struct platform_intf *intf, struct ec_cb *ec,
-			   char *buf, size_t buf_sz)
-{
-	struct cros_ec_priv *priv;
-
-	MOSYS_CHECK(ec && ec->priv);
-	priv = ec->priv;
-
-	MOSYS_CHECK(priv->cmd);
-	if (priv->cmd(intf, ec, EC_CMD_GET_BUILD_INFO, 0, buf, buf_sz, NULL, 0))
-		return -1;
-
-	lprintf(LOG_DEBUG, "Build Info: %.*s\n", (int)buf_sz, buf);
-
-	return buf_sz;
-}
-
-int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec)
+int cros_ec_board_version(struct ec_cb *ec)
 {
 	struct cros_ec_priv *priv;
 	struct ec_response_board_version r;
 	int rc = 0;
 
+	if (ec->setup && ec->setup(ec) < 0) {
+		lprintf(LOG_ERR, "%s: EC setup failed!\n", __func__);
+		return -1;
+	}
+
 	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
 
 	MOSYS_CHECK(priv->cmd);
-	rc = priv->cmd(intf, ec, EC_CMD_GET_BOARD_VERSION, 0,
-		       &r, sizeof(r), NULL, 0);
+	rc = priv->cmd(ec, EC_CMD_GET_BOARD_VERSION, 0, &r, sizeof(r), NULL, 0);
+
+	if (ec->destroy && ec->destroy(ec) < 0) {
+		lprintf(LOG_ERR, "%s: EC destroy failed!\n", __func__);
+		return -1;
+	}
+
 	if (rc)
 		return -1;
 
@@ -132,7 +124,7 @@ char *cros_ec_board_version_str(struct platform_intf *intf)
 	   function needs to be used more selectively. */
 	MOSYS_CHECK(intf && intf->cb->ec);
 
-	version = cros_ec_board_version(intf, intf->cb->ec);
+	version = cros_ec_board_version(intf->cb->ec);
 	if (version < 0) {
 		snprintf(str, BOARD_VERSION_LEN, "Unknown");
 	} else {
@@ -147,8 +139,7 @@ char *cros_ec_board_version_str(struct platform_intf *intf)
 	return str;
 }
 
-int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,
-		  struct ec_response_get_chip_info *info)
+int cros_ec_chip_info(struct ec_cb *ec, struct ec_response_get_chip_info *info)
 {
 	int rc = 0;
 	struct cros_ec_priv *priv;
@@ -157,8 +148,8 @@ int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,
 	priv = ec->priv;
 
 	MOSYS_CHECK(priv->cmd);
-	rc = priv->cmd(intf, ec,EC_CMD_GET_CHIP_INFO, 0,
-		       info, sizeof(*info), NULL, 0);
+	rc = priv->cmd(ec, EC_CMD_GET_CHIP_INFO, 0, info, sizeof(*info), NULL,
+		       0);
 	if (rc)
 		return rc;
 
@@ -169,7 +160,7 @@ int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,
 	return rc;
 }
 
-int cros_ec_pd_chip_info(struct platform_intf *intf, struct ec_cb *ec, int port)
+int cros_ec_pd_chip_info(struct ec_cb *ec, int port)
 {
 	struct cros_ec_priv *priv;
 	struct ec_params_pd_chip_info p;
@@ -184,7 +175,7 @@ int cros_ec_pd_chip_info(struct platform_intf *intf, struct ec_cb *ec, int port)
 	p.renew = 0;
 
 	MOSYS_CHECK(priv->cmd);
-	rc = priv->cmd(intf, ec, EC_CMD_PD_CHIP_INFO, 0,
+	rc = priv->cmd(ec, EC_CMD_PD_CHIP_INFO, 0,
 		       &info, sizeof(info), &p, sizeof(p));
 	if (rc)
 		return rc;
@@ -208,8 +199,8 @@ int cros_ec_pd_chip_info(struct platform_intf *intf, struct ec_cb *ec, int port)
 	return rc;
 }
 
-int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
-		   struct ec_response_flash_info *info)
+static int cros_ec_flash_info(struct ec_cb *ec,
+			      struct ec_response_flash_info *info)
 {
 	int rc = 0;
 	struct cros_ec_priv *priv;
@@ -217,8 +208,7 @@ int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
 	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
 
-	rc = priv->cmd(intf, ec, EC_CMD_FLASH_INFO, 0,
-		       info, sizeof(*info), NULL, 0);
+	rc = priv->cmd(ec, EC_CMD_FLASH_INFO, 0, info, sizeof(*info), NULL, 0);
 	if (rc)
 		return rc;
 
@@ -235,58 +225,43 @@ int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
 
 int cros_ec_get_firmware_rom_size(struct platform_intf *intf)
 {
+	int rv = 0;
 	struct ec_response_flash_info info;
 
-	if (cros_ec_flash_info(intf, intf->cb->ec, &info) < 0) {
+	if (!intf || !intf->cb || !intf->cb->ec) {
+		lprintf(LOG_ERR, "%s: No EC interface on this platform.\n",
+			__func__);
+		return -1;
+	}
+
+	if (intf->cb->ec->setup && intf->cb->ec->setup(intf->cb->ec) < 0) {
+		lprintf(LOG_ERR, "%s: EC setup failed!\n", __func__);
+		return -1;
+	}
+
+	if (cros_ec_flash_info(intf->cb->ec, &info) < 0) {
 		lprintf(LOG_ERR, "%s: Failed to obtain flash info\n", __func__);
-		return -1;
-	}
-
-	return info.flash_size;
-}
-
-/* returns 1 if EC detected, 0 if not, <0 to indicate failure */
-int cros_ec_detect(struct platform_intf *intf, struct ec_cb *ec)
-{
-	struct ec_params_hello request;
-	struct ec_response_hello response;
-	int result = 0;
-	int ret = 0;
-	struct cros_ec_priv *priv;
-
-	if (!intf->cb || !ec || !ec->priv)
-		return -1;
-	priv = ec->priv;
-
-	/* Say hello to EC. */
-	request.in_data = 0xf0e0d0c0;  /* Expect EC will add on 0x01020304. */
-
-	MOSYS_CHECK(priv->cmd);
-	lprintf(LOG_DEBUG, "%s: sending HELLO request with 0x%08x\n",
-		__func__, request.in_data);
-	result  = priv->cmd(intf, ec, EC_CMD_HELLO, 0,
-			    &response, sizeof(response),
-			    &request, sizeof(request));
-	lprintf(LOG_DEBUG, "%s: response: 0x%08x\n",
-		__func__, response.out_data);
-
-	if (result || response.out_data != 0xf1e2d3c4) {
-		lprintf(LOG_DEBUG, "response.out_data is not 0xf1e2d3c4.\n"
-			"result=%d, request=0x%x response=0x%x\n",
-		        result, request.in_data, response.out_data);
+		rv = -1;
 	} else {
-		ret = 1;
+		rv = info.flash_size;
 	}
 
-	return ret;
+	if (intf->cb->ec->destroy && intf->cb->ec->destroy(intf->cb->ec) < 0)
+		lprintf(LOG_ERR, "%s: EC destroy failed!\n", __func__);
+
+	return rv;
 }
 
-static int cros_ec_vbnvcontext_read(struct platform_intf *intf,
-				    struct ec_cb *ec, uint8_t *block)
+static int cros_ec_vbnvcontext_read(struct ec_cb *ec, uint8_t *block)
 {
 	struct ec_params_vbnvcontext request;
 	struct cros_ec_priv *priv;
 	int result;
+
+	if (ec->setup && ec->setup(ec) < 0) {
+		lprintf(LOG_ERR, "%s: EC setup failed!\n", __func__);
+		return -1;
+	}
 
 	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
@@ -295,9 +270,15 @@ static int cros_ec_vbnvcontext_read(struct platform_intf *intf,
 	lprintf(LOG_DEBUG, "%s: sending VBNV_CONTEXT read request\n",
 		__func__);
 	request.op = EC_VBNV_CONTEXT_OP_READ;
-	result = priv->cmd(intf, ec, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
+	result = priv->cmd(ec, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
 			   block, EC_VBNV_BLOCK_SIZE,
 			   &request, sizeof(request.op));
+
+	if (ec->destroy && ec->destroy(ec) < 0) {
+		lprintf(LOG_ERR, "%s: EC setup failed!\n", __func__);
+		return -1;
+	}
+
 	if (result) {
 		lprintf(LOG_DEBUG, "%s: result=%d\n", __func__, result);
 		return -1;
@@ -306,12 +287,16 @@ static int cros_ec_vbnvcontext_read(struct platform_intf *intf,
 	return 0;
 }
 
-static int cros_ec_vbnvcontext_write(struct platform_intf *intf,
-				     struct ec_cb *ec, const uint8_t *block)
+static int cros_ec_vbnvcontext_write(struct ec_cb *ec, const uint8_t *block)
 {
 	struct ec_params_vbnvcontext request;
 	struct cros_ec_priv *priv;
 	int result;
+
+	if (ec->setup && ec->setup(ec) < 0) {
+		lprintf(LOG_ERR, "%s: EC setup failed!\n", __func__);
+		return -1;
+	}
 
 	MOSYS_CHECK(ec && ec->priv);
 	priv = ec->priv;
@@ -321,9 +306,15 @@ static int cros_ec_vbnvcontext_write(struct platform_intf *intf,
 		__func__);
 	request.op = EC_VBNV_CONTEXT_OP_WRITE;
 	memcpy(request.block, block, sizeof(request.block));
-	result = priv->cmd(intf, ec, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
+	result = priv->cmd(ec, EC_CMD_VBNV_CONTEXT, EC_VER_VBNV_CONTEXT,
 			   NULL, 0,
 			   &request, sizeof(request));
+
+	if (ec->destroy && ec->destroy(ec) < 0) {
+		lprintf(LOG_ERR, "%s: EC setup failed!\n", __func__);
+		return -1;
+	}
+
 	if (result) {
 		lprintf(LOG_DEBUG, "%s: result=%d\n", __func__, result);
 		return -1;
@@ -339,7 +330,7 @@ static int cros_ec_vboot_read(struct platform_intf *intf)
 	char hexstring[EC_VBNV_BLOCK_SIZE * 2 + 1];
 	int i, rc;
 
-	if (cros_ec_vbnvcontext_read(intf, intf->cb->ec, block))
+	if (cros_ec_vbnvcontext_read(intf->cb->ec, block))
 		return -1;
 
 	for (i = 0; i < EC_VBNV_BLOCK_SIZE; i++)
@@ -376,43 +367,10 @@ static int cros_ec_vboot_write(struct platform_intf *intf,
 		block[i] = strtol(hexdigit, NULL, 16);
 	}
 
-	return cros_ec_vbnvcontext_write(intf, intf->cb->ec, block);
+	return cros_ec_vbnvcontext_write(intf->cb->ec, block);
 }
 
 struct nvram_cb cros_ec_nvram_cb = {
 	.vboot_read	= cros_ec_vboot_read,
 	.vboot_write	= cros_ec_vboot_write,
 };
-
-int cros_ec_setup(struct platform_intf *intf)
-{
-	MOSYS_CHECK(intf->cb && intf->cb->ec);
-
-	lprintf(LOG_DEBUG, "%s: Trying devfs interface...\n", __func__);
-	if (cros_ec_setup_dev(intf) == 1)
-		return 1;
-
-	return 0;
-}
-
-int cros_pd_setup(struct platform_intf *intf)
-{
-	MOSYS_CHECK(intf->cb && intf->cb->pd);
-
-	lprintf(LOG_DEBUG, "%s: Trying devfs interface...\n", __func__);
-	if (cros_pd_setup_dev(intf) == 1)
-		return 1;
-
-	return 0;
-}
-
-int cros_fp_setup(struct platform_intf *intf)
-{
-	MOSYS_CHECK(intf->cb && intf->cb->fp);
-
-	lprintf(LOG_DEBUG, "%s: Trying devfs interface...\n", __func__);
-	if (cros_fp_setup_dev(intf) == 1)
-		return 1;
-
-	return 0;
-}

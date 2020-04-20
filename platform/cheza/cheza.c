@@ -74,14 +74,6 @@ static int cheza_probe(struct platform_intf *intf)
 	return ret;
 }
 
-static int cheza_setup_post(struct platform_intf *intf)
-{
-	if (cros_ec_setup(intf) < 0)
-		return -1;
-
-	return 0;
-}
-
 struct eventlog_cb cheza_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -110,6 +102,5 @@ struct platform_intf platform_cheza = {
 	.sub		= cheza_sub,
 	.cb		= &cheza_cb,
 	.probe		= &cheza_probe,
-	.setup_post	= &cheza_setup_post,
 };
 #endif /* CONFIG_CROS_CONFIG */

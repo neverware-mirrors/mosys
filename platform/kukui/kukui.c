@@ -80,9 +80,6 @@ static int kukui_probe(struct platform_intf *intf)
 
 static int kukui_setup_post(struct platform_intf *intf)
 {
-	if (cros_ec_setup(intf) < 0)
-		return -1;
-
 	if (fdt_set_nvram_cb(intf) < 0)
 		return -1;
 

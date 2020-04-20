@@ -76,20 +76,6 @@ static int poppy_probe(struct platform_intf *intf)
 }
 
 /* late setup routine; not critical to core functionality */
-static int poppy_setup_post(struct platform_intf *intf)
-{
-	if (cros_ec_setup(intf) < 0)
-		return -1;
-
-	if (cros_pd_setup(intf) < 0)
-		return -1;
-
-	if (cros_fp_setup(intf) < 0)
-		return -1;
-
-	return 0;
-}
-
 struct eventlog_cb poppy_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -117,5 +103,4 @@ struct platform_intf platform_poppy = {
 	.sub		= poppy_sub,
 	.cb		= &poppy_cb,
 	.probe		= &poppy_probe,
-	.setup_post	= &poppy_setup_post,
 };

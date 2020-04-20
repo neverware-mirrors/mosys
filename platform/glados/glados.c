@@ -126,21 +126,6 @@ exit:
 	return status;
 }
 
-/* late setup routine; not critical to core functionality */
-static int glados_setup_post(struct platform_intf *intf)
-{
-	if (cros_ec_setup(intf) < 0)
-		return -1;
-
-	if (cros_pd_setup(intf) < 0)
-		return -1;
-
-	if (cros_fp_setup(intf) < 0)
-		return -1;
-
-	return 0;
-}
-
 struct eventlog_cb glados_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -168,5 +153,4 @@ struct platform_intf platform_glados = {
 	.sub		= glados_sub,
 	.cb		= &glados_cb,
 	.probe		= &glados_probe,
-	.setup_post	= &glados_setup_post,
 };

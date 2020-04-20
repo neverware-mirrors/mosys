@@ -127,12 +127,6 @@ exit:
 	return status;
 }
 
-/* late setup routine; not critical to core functionality */
-static int strago_setup_post(struct platform_intf *intf)
-{
-	return cros_ec_setup(intf);
-}
-
 struct eventlog_cb strago_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -157,5 +151,4 @@ struct platform_intf platform_strago = {
 	.sub		= strago_sub,
 	.cb		= &strago_cb,
 	.probe		= &strago_probe,
-	.setup_post	= &strago_setup_post,
 };

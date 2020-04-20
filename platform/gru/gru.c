@@ -118,14 +118,6 @@ static int gru_probe(struct platform_intf *intf)
 #endif /* CONFIG_CROS_CONFIG */
 }
 
-static int gru_setup_post(struct platform_intf *intf)
-{
-	if (cros_ec_setup(intf) < 0)
-		return -1;
-
-	return 0;
-}
-
 struct eventlog_cb gru_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -154,5 +146,4 @@ struct platform_intf platform_gru = {
 	.sub		= gru_sub,
 	.cb		= &gru_cb,
 	.probe		= &gru_probe,
-	.setup_post	= &gru_setup_post,
 };

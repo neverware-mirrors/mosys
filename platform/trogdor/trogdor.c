@@ -30,14 +30,6 @@ static int trogdor_probe(struct platform_intf *intf)
 	return cros_config_probe(intf, NULL);
 }
 
-static int trogdor_setup_post(struct platform_intf *intf)
-{
-	if (cros_ec_setup(intf) < 0)
-		return -1;
-
-	return 0;
-}
-
 struct eventlog_cb trogdor_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -66,5 +58,4 @@ struct platform_intf platform_trogdor = {
 	.sub		= trogdor_sub,
 	.cb		= &trogdor_cb,
 	.probe		= &trogdor_probe,
-	.setup_post	= &trogdor_setup_post,
 };

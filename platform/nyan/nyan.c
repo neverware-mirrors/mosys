@@ -83,11 +83,6 @@ int nyan_probe(struct platform_intf *intf)
 	return 0;
 }
 
-static int nyan_setup_post(struct platform_intf *intf)
-{
-	return cros_ec_setup(intf);
-}
-
 struct eventlog_cb nyan_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -116,5 +111,4 @@ struct platform_intf platform_nyan = {
 	.sub		= nyan_sub,
 	.cb		= &nyan_cb,
 	.probe		= &nyan_probe,
-	.setup_post	= &nyan_setup_post,
 };

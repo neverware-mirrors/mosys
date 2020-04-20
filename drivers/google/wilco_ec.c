@@ -42,20 +42,17 @@
 #define WILCO_EC_SYSFS_VERSION                                                 \
 	"/sys/bus/platform/devices/GOOG000C:00/version"
 
-static ssize_t wilco_ec_name(struct platform_intf *intf, struct ec_cb *ec,
-			     char *buf, size_t buf_sz)
+static ssize_t wilco_ec_name(struct ec_cb *ec, char *buf, size_t buf_sz)
 {
 	return strlcpy(buf, WILCO_EC_NAME, buf_sz);
 }
 
-static ssize_t wilco_ec_vendor(struct platform_intf *intf, struct ec_cb *ec,
-			       char *buf, size_t buf_sz)
+static ssize_t wilco_ec_vendor(struct ec_cb *ec, char *buf, size_t buf_sz)
 {
 	return strlcpy(buf, WILCO_EC_VENDOR, buf_sz);
 }
 
-static ssize_t wilco_ec_fw_version(struct platform_intf *intf, struct ec_cb *ec,
-				   char *buf, size_t buf_sz)
+static ssize_t wilco_ec_fw_version(struct ec_cb *ec, char *buf, size_t buf_sz)
 {
 	ssize_t bytes_read;
 

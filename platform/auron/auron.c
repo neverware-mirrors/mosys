@@ -121,12 +121,6 @@ exit:
 	return status;
 }
 
-/* late setup routine; not critical to core functionality */
-static int auron_setup_post(struct platform_intf *intf)
-{
-	return cros_ec_setup(intf);
-}
-
 static struct eventlog_cb auron_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -153,5 +147,4 @@ struct platform_intf platform_auron = {
 	.sub		= auron_sub,
 	.cb		= &auron_cb,
 	.probe		= &auron_probe,
-	.setup_post	= &auron_setup_post,
 };

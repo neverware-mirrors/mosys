@@ -68,14 +68,6 @@ int kahlee_probe(struct platform_intf *intf)
 	return cros_config_probe(intf, NULL);
 }
 
-/* late setup routine; not critical to core functionality */
-static int kahlee_setup_post(struct platform_intf *intf)
-{
-	if (cros_ec_setup(intf) < 0)
-		return -1;
-	return 0;
-}
-
 struct eventlog_cb kahlee_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -101,6 +93,5 @@ struct platform_intf platform_kahlee = {
 	.sub		= kahlee_sub,
 	.cb		= &kahlee_cb,
 	.probe		= &kahlee_probe,
-	.setup_post	= &kahlee_setup_post,
 };
 #endif /* CONFIG_CROS_CONFIG */

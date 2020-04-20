@@ -172,14 +172,6 @@ int coral_probe(struct platform_intf *intf)
 #endif
 }
 
-/* late setup routine; not critical to core functionality */
-static int reef_setup_post(struct platform_intf *intf)
-{
-	if (cros_ec_setup(intf) < 0)
-		return -1;
-	return 0;
-}
-
 struct eventlog_cb reef_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -215,7 +207,6 @@ struct platform_intf platform_reef = {
 	.sub		= reef_sub,
 	.cb		= &reef_cb,
 	.probe		= &reef_probe,
-	.setup_post	= &reef_setup_post,
 };
 
 struct platform_intf platform_coral = {
@@ -224,5 +215,4 @@ struct platform_intf platform_coral = {
 	.sub		= reef_sub,
 	.cb		= &coral_cb,
 	.probe		= &coral_probe,
-	.setup_post	= &reef_setup_post,
 };

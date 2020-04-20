@@ -169,7 +169,7 @@ static int rambi_dimm_count(struct platform_intf *intf)
 	} else if (!strncmp(intf->name, "Expresso", 8) ||
 		   !strncmp(intf->name, "Rambi", 5)) {
 		int index = rambi_get_spd_index(intf);
-		int board_version = cros_ec_board_version(intf, intf->cb->ec);
+		int board_version = cros_ec_board_version(intf->cb->ec);
 
 		if (board_version < 0) {
 			return -1;

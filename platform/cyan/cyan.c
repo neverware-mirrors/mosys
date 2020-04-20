@@ -94,12 +94,6 @@ exit:
 	return status;
 }
 
-/* late setup routine; not critical to core functionality */
-static int cyan_setup_post(struct platform_intf *intf)
-{
-	return cros_ec_setup(intf);
-}
-
 struct eventlog_cb cyan_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
@@ -124,5 +118,4 @@ struct platform_intf platform_cyan = {
 	.sub		= cyan_sub,
 	.cb		= &cyan_cb,
 	.probe		= &cyan_probe,
-	.setup_post	= &cyan_setup_post,
 };

@@ -114,9 +114,9 @@ static int command_wait_for_response(struct cros_ec_priv *priv)
  *
  * Returns >=0 for success, or negative if other error.
  */
-static int cros_ec_command_dev(struct platform_intf *intf, struct ec_cb *ec,
-		int command, int version, const void *indata, int insize,
-		const void *outdata, int outsize)
+static int cros_ec_command_dev(struct ec_cb *ec, int command, int version,
+			       const void *indata, int insize,
+			       const void *outdata, int outsize)
 {
 	struct cros_ec_priv *priv;
 	struct cros_ec_command cmd;
@@ -196,9 +196,9 @@ static int command_wait_for_response_v2(struct cros_ec_priv *priv)
 	return ret;
 }
 
-static int cros_ec_command_dev_v2(struct platform_intf *intf, struct ec_cb *ec,
-		int command, int version, const void *indata, int insize,
-		const void *outdata, int outsize)
+static int cros_ec_command_dev_v2(struct ec_cb *ec, int command, int version,
+				  const void *indata, int insize,
+				  const void *outdata, int outsize)
 {
 	struct cros_ec_priv *priv;
 	struct cros_ec_command_v2 *s_cmd;
@@ -278,13 +278,6 @@ static int ec_dev_is_v2(int fd)
 	return 0;
 }
 
-static int cros_ec_close_dev(struct platform_intf *intf, struct ec_cb *ec)
-{
-	struct cros_ec_priv *priv;
-	priv = ec->priv;
-	return close(priv->devfs->fd);
-}
-
 /*
  * cros_ec_probe_dev - Probe for CrOS EC type device using devfs.
  *
@@ -295,126 +288,44 @@ static int cros_ec_close_dev(struct platform_intf *intf, struct ec_cb *ec)
  * returns 0 if EC is not detected
  * returns <0 to indicate error
  */
-int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec)
+int cros_ec_probe_dev(struct ec_cb *ec)
 {
-	int ret = 0;
 	struct cros_ec_priv *priv = ec->priv;
-	char filename[PATH_MAX];
 
 	MOSYS_CHECK(priv && priv->devfs && priv->devfs->name);
-	sprintf(filename, "%s/%s", mosys_get_root_prefix(), priv->devfs->name);
-	priv->devfs->fd = open(filename, O_RDWR);
+	for (size_t i = 0; i < 10; i++) {
+		priv->devfs->fd = open(priv->devfs->name, O_RDWR);
+
+		if (priv->devfs->fd >= 0)
+			break;
+
+		switch (errno) {
+		case EBUSY:
+		case EAGAIN:
+		case EACCES:
+			/* Retry again in 10ms. */
+			usleep(10 * 1000);
+			continue;
+		default:
+			break;
+		}
+
+		lprintf(LOG_ERR, "%s: Unable to open %s: %s.", __func__,
+			priv->devfs->name, strerror(errno));
+		return -1;
+	}
+
 	if (priv->devfs->fd < 0) {
-		lprintf(LOG_DEBUG, "%s: unable to open \"%s\"\n",
-				__func__, filename);
-		ret = -1;
-	} else {
-		ec->destroy = cros_ec_close_dev;
-		if (ec_dev_is_v2(priv->devfs->fd))
-			priv->cmd = cros_ec_command_dev_v2;
-		else
-			priv->cmd = cros_ec_command_dev;
-		ret = cros_ec_detect(intf, ec);
+		lprintf(LOG_ERR,
+			"%s: Maximum retries exceeded when opening %s.",
+			__func__, priv->devfs->name);
+		return -1;
 	}
 
-	return ret;
-}
-
-int cros_ec_setup_dev(struct platform_intf *intf)
-{
-	int ret;
-	static struct cros_ec_dev default_ec_dev = {
-		.name = CROS_EC_DEV_NAME,
-	};
-	static struct cros_ec_priv default_ec_priv = {
-		.devfs = &default_ec_dev,
-	};
-
-	MOSYS_CHECK(intf->cb && intf->cb->ec);
-	if (!intf->cb->ec->priv) {
-		/*
-		 * Whoever ported the platform was lazy. Assume they want to
-		 * use the default CrOS EC device.
-		 */
-		intf->cb->ec->priv = &default_ec_priv;
-		lprintf(LOG_DEBUG, "Using default EC devfs interface.\n");
-	}
-
-	ret = cros_ec_probe_dev(intf, intf->cb->ec);
-	if (ret == 1)
-		lprintf(LOG_DEBUG, "CrOS EC found via kernel driver\n");
-	else if (ret == 0)
-		lprintf(LOG_DEBUG, "CrOS EC not found via kernel driver\n");
+	if (ec_dev_is_v2(priv->devfs->fd))
+		priv->cmd = cros_ec_command_dev_v2;
 	else
-		lprintf(LOG_ERR, "Error probing CrOS EC via kernel driver\n");
+		priv->cmd = cros_ec_command_dev;
 
-	return ret;
-}
-
-int cros_pd_setup_dev(struct platform_intf *intf)
-{
-	int ret;
-	static struct cros_ec_dev default_pd_dev = {
-		.name = CROS_PD_DEV_NAME,
-	};
-	static struct cros_ec_priv default_pd_priv = {
-		.devfs = &default_pd_dev,
-	};
-
-	MOSYS_CHECK(intf->cb && intf->cb->pd);
-	if (!intf->cb->pd->priv) {
-		/*
-		 * Whoever ported the platform was lazy. Assume they want to
-		 * use the default CrOS PD device.
-		 */
-		intf->cb->pd->priv = &default_pd_priv;
-		lprintf(LOG_DEBUG, "Using default PD devfs interface.\n");
-	}
-
-	ret = cros_ec_probe_dev(intf, intf->cb->pd);
-	if (ret == 1)
-		lprintf(LOG_DEBUG, "CrOS PD found via kernel driver\n");
-	else if (ret == 0)
-		lprintf(LOG_DEBUG, "CrOS PD not found via kernel driver\n");
-	else {
-		/* Allow PD probe to fail if not present on a board */
-		lprintf(LOG_DEBUG, "Error probing CrOS PD via kernel driver\n");
-		intf->cb->pd = NULL;
-	}
-
-	return ret;
-}
-
-int cros_fp_setup_dev(struct platform_intf *intf)
-{
-	int ret;
-	static struct cros_ec_dev default_fp_dev = {
-		.name = CROS_FP_DEV_NAME,
-	};
-	static struct cros_ec_priv default_fp_priv = {
-		.devfs = &default_fp_dev,
-	};
-
-	MOSYS_CHECK(intf->cb && intf->cb->fp);
-	if (!intf->cb->fp->priv) {
-		/*
-		 * Whoever ported the platform was lazy. Assume they want to
-		 * use the default CrOS FP device.
-		 */
-		intf->cb->fp->priv = &default_fp_priv;
-		lprintf(LOG_DEBUG, "Using default FP devfs interface.\n");
-	}
-
-	ret = cros_ec_probe_dev(intf, intf->cb->fp);
-	if (ret == 1)
-		lprintf(LOG_DEBUG, "CrOS FP found via kernel driver\n");
-	else if (ret == 0)
-		lprintf(LOG_DEBUG, "CrOS FP not found via kernel driver\n");
-	else {
-		/* Allow FP probe to fail if not present on a board */
-		lprintf(LOG_DEBUG, "Error probing CrOS FP via kernel driver\n");
-		intf->cb->fp = NULL;
-	}
-
-	return ret;
+	return 1;
 }

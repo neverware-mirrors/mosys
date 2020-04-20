@@ -47,48 +47,36 @@ struct nvram_cb;
 struct platform_intf;
 
 struct cros_ec_dev {
-	/*
-	 * For now name is assumed (CROS_*_DEV_NAME, depending on the
-	 * driver) but platforms can specify other interfaces to use.
-	 */
-	char *name;
+	const char *name;
 	int fd;
 };
 
 struct cros_ec_priv {
 	/* Wrapped with EC lock */
-	int (*cmd)(struct platform_intf *intf, struct ec_cb *ec,
+	int (*cmd)(struct ec_cb *ec,
 		   int command, int command_version,
 		   const void *indata, int insize,
 		   const void *outdata, int outsize);
 	/* Low level command function, bus and version specific */
-	int (*raw)(struct platform_intf *intf, struct ec_cb *ec,
+	int (*raw)(struct ec_cb *ec,
 		   int command, int command_version,
 		   const void *indata, int insize,
 		   const void *outdata, int outsize);
 
 	struct cros_ec_dev *devfs;
-
-	int device_index;
 };
+
+int cros_ec_probe_dev(struct ec_cb *ec);
 
 extern struct ec_cb cros_ec_cb;
 extern struct ec_cb cros_pd_cb;
 extern struct ec_cb cros_fp_cb;
 
 /* EC commands */
-ssize_t cros_ec_version(struct platform_intf *intf, struct ec_cb *ec, char *buf,
-			size_t buf_sz);
-ssize_t cros_ec_build_info(struct platform_intf *intf, struct ec_cb *ec,
-			   char *buf, size_t buf_sz);
-int cros_ec_chip_info(struct platform_intf *intf, struct ec_cb *ec,
-		      struct ec_response_get_chip_info *info);
-int cros_ec_flash_info(struct platform_intf *intf, struct ec_cb *ec,
-		         struct ec_response_flash_info *info);
-int cros_ec_detect(struct platform_intf *intf, struct ec_cb *ec);
-int cros_ec_board_version(struct platform_intf *intf, struct ec_cb *ec);
-int cros_ec_pd_chip_info(struct platform_intf *intf, struct ec_cb *ec,
-			 int port);
+ssize_t cros_ec_version(struct ec_cb *ec, char *buf, size_t buf_sz);
+int cros_ec_chip_info(struct ec_cb *ec, struct ec_response_get_chip_info *info);
+int cros_ec_board_version(struct ec_cb *ec);
+int cros_ec_pd_chip_info(struct ec_cb *ec, int port);
 
 /*
  * This is intended to be used in platform-specific system callbacks (sys_cb)
@@ -99,12 +87,6 @@ int cros_ec_pd_chip_info(struct platform_intf *intf, struct ec_cb *ec,
 char *cros_ec_board_version_str(struct platform_intf *intf);
 
 int cros_ec_get_firmware_rom_size(struct platform_intf *intf);
-
-int cros_ec_probe_dev(struct platform_intf *intf, struct ec_cb *ec);
-
-int cros_ec_setup(struct platform_intf *intf);
-int cros_pd_setup(struct platform_intf *intf);
-int cros_fp_setup(struct platform_intf *intf);
 
 /**
  * cros_ec_nvram_cb - A generic nvram_cb to read and write

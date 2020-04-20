@@ -173,16 +173,6 @@ void mosys_platform_destroy(struct platform_intf *intf)
 		/* cleanup interface operations */
 		if (intf->op)
 			intf_op_destroy(intf);
-
-		/* call destroy defined for any callbacks */
-		if (intf->cb) {
-			if (intf->cb->ec && intf->cb->ec->destroy)
-				intf->cb->ec->destroy(intf, intf->cb->ec);
-			if (intf->cb->pd && intf->cb->pd->destroy)
-				intf->cb->pd->destroy(intf, intf->cb->pd);
-			if (intf->cb->fp && intf->cb->fp->destroy)
-				intf->cb->fp->destroy(intf, intf->cb->fp);
-		}
 	}
 }
 

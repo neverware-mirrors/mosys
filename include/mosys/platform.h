@@ -181,17 +181,13 @@ struct sys_cb {
 };
 
 struct ec_cb {
-	ssize_t (*vendor)(struct platform_intf *intf, struct ec_cb *ec,
-			  char *buf, size_t buf_sz);
-	ssize_t (*name)(struct platform_intf *intf, struct ec_cb *ec, char *buf,
-			size_t buf_sz);
-	ssize_t (*fw_version)(struct platform_intf *intf, struct ec_cb *ec,
-			      char *buf, size_t buf_sz);
-	int (*pd_chip_info)(struct platform_intf *intf, struct ec_cb *ec,
-			    int port);
+	ssize_t (*vendor)(struct ec_cb *ec, char *buf, size_t buf_sz);
+	ssize_t (*name)(struct ec_cb *ec, char *buf, size_t buf_sz);
+	ssize_t (*fw_version)(struct ec_cb *ec, char *buf, size_t buf_sz);
+	int (*pd_chip_info)(struct ec_cb *ec, int port);
 
-	int (*setup)(struct platform_intf *intf, struct ec_cb *ec);
-	int (*destroy)(struct platform_intf *intf, struct ec_cb *ec);
+	int (*setup)(struct ec_cb *ec);
+	int (*destroy)(struct ec_cb *ec);
 
 	void *priv;	/* private data for EC */
 };

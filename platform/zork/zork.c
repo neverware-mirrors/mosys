@@ -30,15 +30,6 @@ static int zork_probe(struct platform_intf *intf)
 	return cros_config_probe(intf, NULL);
 }
 
-/* late setup routine; not critical to core functionality */
-static int zork_setup_post(struct platform_intf *intf)
-{
-	if (cros_ec_setup(intf) < 0)
-		return -1;
-
-	return 0;
-}
-
 static struct eventlog_cb zork_eventlog_cb = {
 	.print_type = &elog_print_type,
 	.print_data = &elog_print_data,
@@ -64,5 +55,4 @@ struct platform_intf platform_zork = {
 	.sub = zork_sub,
 	.cb = &zork_cb,
 	.probe = &zork_probe,
-	.setup_post = &zork_setup_post,
 };
