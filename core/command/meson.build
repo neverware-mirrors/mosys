@@ -3,7 +3,6 @@ libmosys_src += files(
   'eeprom.c',
   'eventlog.c',
   'nvram.c',
-  'memory.c',
   'memory_spd.c',
   'psu.c',
   'platform.c',

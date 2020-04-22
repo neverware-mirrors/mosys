@@ -37,46 +37,10 @@
 
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
-#include "mosys/output.h"
 #include "mosys/platform.h"
 
 #include "lib/nonspd.h"
 #include "lib/spd.h"
-
-static int memory_spd_dump_cmd(struct platform_intf *intf,
-			       struct platform_cmd *cmd, int argc, char **argv)
-{
-	struct spd_device *spd;
-	uint8_t dimm;
-
-	/* get dimm number from command line */
-	if (argc < 1) {
-		platform_cmd_usage(cmd);
-		errno = EINVAL;
-		return -1;
-	}
-
-	if (!intf->cb->memory->spd || !intf->cb->memory->spd->read) {
-		errno = ENOSYS;
-		return -1;
-	}
-
-	dimm = (uint8_t) strtoul(argv[0], NULL, 0);
-
-	lprintf(LOG_DEBUG, "memory spd dump %u\n", dimm);
-
-	spd = new_spd_device(intf, dimm);
-	if (spd == NULL) {
-		lprintf(LOG_ERR, "Failed to read from SPD %u (not present?)\n",
-				 dimm);
-		return -1;
-	}
-
-	print_buffer(&spd->eeprom.data[0], spd->eeprom.length);
-
-	free(spd);
-	return 0;
-}
 
 static int memory_spd_print_geometry(struct platform_intf *intf, int dimm)
 {
@@ -535,7 +499,7 @@ static struct platform_cmd memory_spd_print_cmds[] = {
 	{ NULL }
 };
 
-struct platform_cmd memory_spd_cmds[] = {
+static struct platform_cmd memory_spd_cmds[] = {
 	{
 		.name	= "print",
 		.desc	= "Print SPD Information",
@@ -543,12 +507,22 @@ struct platform_cmd memory_spd_cmds[] = {
 		.type	= ARG_TYPE_SUB,
 		.arg	= { .sub = memory_spd_print_cmds }
 	},
+	{ NULL }
+};
+
+static struct platform_cmd memory_cmds[] = {
 	{
-		.name	= "dump",
-		.desc	= "Dump SPD info as raw binary",
-		.usage	= "<dimm number>",
-		.type	= ARG_TYPE_GETTER,
-		.arg	= { .func = memory_spd_dump_cmd }
+		.name	= "spd",
+		.desc	= "Information from SPD",
+		.type	= ARG_TYPE_SUB,
+		.arg	= { .sub = memory_spd_cmds }
 	},
 	{ NULL }
+};
+
+struct platform_cmd cmd_memory = {
+	.name	= "memory",
+	.desc	= "Memory Information",
+	.type	= ARG_TYPE_SUB,
+	.arg	= { .sub = memory_cmds }
 };
