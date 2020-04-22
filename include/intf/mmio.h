@@ -75,43 +75,6 @@ struct mmio_intf {
 		    uint64_t address, int length, void *data);
 
 	/*
-	 * write  -  write buffer to memory address
-	 *
-	 * @intf:     platform interface
-	 * @address:  physical address to write into
-	 * @length:   length of data to write
-	 * @data:     buffer to write into memory
-	 *
-	 * returns length of data written
-	 * returns -1 if failed to write
-	 */
-	int (*write)(struct platform_intf *intf,
-		     uint64_t address, int length, const void *data);
-
-	/*
-	 * clear  -  clear range of physical memory
-	 *
-	 * @intf:       platform interface
-	 * @address:    address of physical memory to clear
-	 * @length:     length of physical memory to clear
-	 *
-	 * returns length of memory cleared
-	 * returns <0 if failed to clear
-	 */
-	int (*clear)(struct platform_intf *intf,
-		     uint64_t address, int length);
-
-	/*
-	 * dump  -  dump range of physical memory
-	 *
-	 * @intf:     platform interface
-	 * @address:  address of memory to dump
-	 * @length:   length of data to dump
-	 */
-	void (*dump)(struct platform_intf *intf,
-		     uint64_t address, int length);
-
-	/*
 	 * map -  map a piece of physical memory into the address space
 	 *
 	 * @intf:     platform interface
@@ -199,93 +162,6 @@ static inline int
 mmio_read64(struct platform_intf *intf, uint64_t address, uint64_t *data)
 {
 	return mmio_read(intf, address, sizeof(*data), data);
-}
-
-/*
- * mmio_write  -  write from physical memory
- *
- * @intf:     platform interface
- * @address:  physical address to write to
- * @length:   number of bytes to write
- * @data:     pointer to data buffer
- *
- * returns <0 if failure, 0 on success
- */
-static inline int
-mmio_write(struct platform_intf *intf, uint64_t address,
-           size_t length, const void *data)
-{
-	if (intf->op->mmio->write(intf, address, length, data) != length) {
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * mmio_write8  -  write 8 bits to physical memory
- */
-static inline int
-mmio_write8(struct platform_intf *intf, uint64_t address, const uint8_t data)
-{
-	return mmio_write(intf, address, sizeof(data), &data);
-}
-
-/*
- * mmio_write16  -  write 16 bits to physical memory
- */
-static inline int
-mmio_write16(struct platform_intf *intf, uint64_t address, const uint16_t data)
-{
-	return mmio_write(intf, address, sizeof(data), &data);
-}
-
-/*
- * mmio_write32  -  write 32 bits to physical memory
- */
-static inline int
-mmio_write32(struct platform_intf *intf, uint64_t address, const uint32_t data)
-{
-	return mmio_write(intf, address, sizeof(data), &data);
-}
-
-/*
- * mmio_write64  -  write 64 bits to physical memory
- */
-static inline int
-mmio_write64(struct platform_intf *intf, uint64_t address, const uint64_t data)
-{
-	return mmio_write(intf, address, sizeof(data), &data);
-}
-
-/*
- * mmio_clear  -  clear range of physical memory
- *
- * @intf:       platform interface
- * @address:    address of physical memory to clear
- * @length:     length of physical memory to clear
- *
- * returns <0 if failure, 0 on success
- */
-static inline int
-mmio_clear(struct platform_intf *intf, uint64_t address, int length)
-{
-	if (intf->op->mmio->clear(intf, address, length) != length) {
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * mmio_dump  -  dump range of physical memory
- *
- * @intf:     platform interface
- * @address:  address of memory to dump
- * @length:   length of data to dump
- */
-static inline void
-mmio_dump(struct platform_intf *intf, uint64_t address, int length)
-{
-	intf->op->mmio->dump(intf, address, length);
 }
 
 /*

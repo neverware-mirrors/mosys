@@ -43,7 +43,6 @@
 #include "mosys/file_backed_range.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
-#include "mosys/output.h"
 #include "mosys/platform.h"
 
 #include "intf/mmio.h"
@@ -100,7 +99,6 @@ static void *mmio_mmap(struct platform_intf *intf, int flags,
 	size_t moffset;
 	void *mptr;
 	int fd;
-	int prot;
 	struct file_backed_range *file_range;
 	char *file_name;
 
@@ -124,15 +122,6 @@ static void *mmio_mmap(struct platform_intf *intf, int flags,
 		return NULL;
 	}
 
-	prot = 0;
-	if ((flags & O_ACCMODE) == O_RDWR) {
-		prot = PROT_READ | PROT_WRITE;
-	} else if ((flags & O_ACCMODE) == O_RDONLY) {
-		prot = PROT_READ;
-	} else if  ((flags & O_ACCMODE) == O_WRONLY) {
-		prot = PROT_WRITE;
-	}
-
 	file_name = format_string("%s/%s", mosys_get_root_prefix(),
 	                          file_range->file_name);
 	fd = open(file_name, flags);
@@ -152,7 +141,7 @@ static void *mmio_mmap(struct platform_intf *intf, int flags,
 
 	mptr = mmap(0,	                /* result address (don't care) */
 	            moffset + length,   /* total length (aligned) */
-	            prot,               /* memory protection */
+		    PROT_READ,          /* memory protection */
 	            MAP_SHARED,	        /* flags */
 	            fd,	                /* source file descriptor */
 	            address - moffset);	/* offset into file */
@@ -246,97 +235,6 @@ static int mmio_mmap_read(struct platform_intf *intf,
 	return length;
 }
 
-/*
- * mmio_mmap_write  -  write buffer to memory-mapped address
- *
- * @intf:       platform interface
- * @address:    physical address to write into
- * @length:     length of data to write
- * @data:       buffer to write into memory
- *
- * returns length of data written
- * returns <0 if failed to write
- */
-static int mmio_mmap_write(struct platform_intf *intf,
-                           uint64_t address, int length, const void *data)
-{
-	void *mptr;
-
-	/* Map in the requested address. */
-	mptr = mmio_map(intf, O_RDWR, address, length);
-
-	if (mptr == NULL) {
-		return -1;
-	}
-
-	/* copy data into mapped range */
-	memcpy(mptr, data, length);
-
-	/* clean up */
-	mmio_unmap(intf, mptr, address , length);
-
-	return length;
-}
-
-/*
- * mmio_mmap_clear  -  clear range of physical memory
- *
- * @intf:       platform interface
- * @address:    address of physical memory to clear
- * @length:     length of physical memory to clear
- *
- * returns length of memory cleared
- * returns <0 if failed to clear
- *
- */
-static int mmio_mmap_clear(struct platform_intf *intf,
-                           uint64_t address, int length)
-{
-	uint8_t *data;
-	int rc;
-
-	if (length <= 0)
-		return -1;
-
-	data = mosys_zalloc(length);
-	rc = mmio_write(intf, address, length, data);
-	free(data);
-
-	if (rc < 0) {
-		return rc;
-	}
-	return length;
-}
-
-/*
- * mmio_dump_range  -  dump range of physical memory
- *
- * @intf:       platform interface
- * @address:    address of memory to dump
- * @length:     length of data to dump
- *
- */
-static void
-mmio_dump_range(struct platform_intf *intf, uint64_t address, int length)
-{
-	uint8_t *data;
-
-	if (length <= 0)
-		return;
-
-	data = mosys_malloc(length);
-
-	/* read and print the buffer */
-	if (mmio_read(intf, address, length, data) == 0) {
-		mosys_printf("\nMemory at 0x%016lx (%d bytes)\n",
-		            (unsigned long)address, length);
-		print_buffer(data, length);
-		mosys_printf("\n");
-	}
-
-	free(data);
-}
-
 #define MEM_DEV		"/dev/mem"
 
 static struct file_backed_range mmio_file_ranges[] = {
@@ -352,9 +250,6 @@ struct mmio_intf mmio_mmap_intf = {
 	.setup		= mmio_setup,
 	.destroy	= mmio_destroy,
 	.read   	= mmio_mmap_read,
-	.write  	= mmio_mmap_write,
-	.clear		= mmio_mmap_clear,
-	.dump   	= mmio_dump_range,
 	.map    	= mmio_mmap,
 	.unmap		= mmio_munmap,
 };
