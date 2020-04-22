@@ -29,7 +29,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string.h>
+
+#include "lib/math.h"
 #include "lib/nonspd.h"
+#include "mosys/log.h"
 
 const struct nonspd_mem_info elpida_lpddr3_edfa164a2ma_jd_f = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR3,

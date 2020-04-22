@@ -30,6 +30,7 @@
  */
 
 #include <errno.h>
+#include <stddef.h>
 
 #include "mosys/platform.h"
 

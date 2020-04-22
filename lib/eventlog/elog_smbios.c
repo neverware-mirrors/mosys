@@ -48,6 +48,7 @@
 #include "mosys/alloc.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
+#include "mosys/mosys.h"
 #include "mosys/kv_pair.h"
 #include "mosys/platform.h"
 #include "mosys/output.h"

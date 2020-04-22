@@ -37,15 +37,12 @@
 
 #include "lib/elog.h"
 
-#include "mosys/mosys.h"
-
 struct kv_pair;
 struct nonspd_mem_info;
 
 /* defined platform types */
 enum platform_type {
 	PLATFORM_DEFAULT,
-	PLATFORM_X86,
 	PLATFORM_X86_64,
 	PLATFORM_ARMV7,
 	PLATFORM_ARMV8,
@@ -79,16 +76,12 @@ struct platform_cmd {
 /* platform operations handlers */
 struct pci_intf;
 struct mmio_intf;
-struct smi_intf;
 struct i2c_intf;
 
 struct platform_op {
 	struct pci_intf *pci;		/* pci interface */
 	struct mmio_intf *mmio;		/* mmio interface */
-	struct smi_intf *smi;		/* smi interface */
 	struct i2c_intf *i2c;		/* i2c interface */
-	struct fru_intf *fru;		/* FRU interface */
-	struct sched_intf *sched;	/* process scheduler interface */
 };
 
 /*
@@ -98,44 +91,21 @@ struct platform_op {
 enum dimm_map_type {
 	DIMM_TO_BUS,			/* SPD bus */
 	DIMM_TO_ADDRESS,		/* SPD address */
-	DIMM_TO_CHANNEL,		/* AMB channel */
-	DIMM_TO_DEVICE,			/* AMB device */
-	DIMM_TO_NODE,			/* NUMA node */
 };
 
 /* memory related callbacks */
 struct smbios_table;
-struct memory_component;
 struct memory_spd_cb {
 	int (*read)(struct platform_intf *intf,
 	            int dimm, int reg, int len, unsigned char *buf);
-	int (*write)(struct platform_intf *intf,
-	             int dimm, int reg, int len, unsigned char *buf);
 };
 
 struct memory_cb {
 	int (*dimm_count)(struct platform_intf *intf);
 	int (*dimm_map)(struct platform_intf *intf,
 	                enum dimm_map_type type, int dimm);
-	int (*dimm_convert)(struct platform_intf *intf,
-	                    uint64_t address);
-	int (*dimm_location)(struct platform_intf *intf, int array,
-	                     const char *location);
-	int (*dimm_print)(struct platform_intf *intf, int array, int index,
-	                  struct smbios_table *device, struct kv_pair *kv);
-	int (*dimm_test)(struct platform_intf *intf,
-	                 const char *type, int dimm, int count);
 	int (*dimm_speed)(struct platform_intf *intf,
 	                  int dimm, struct kv_pair *kv);
-	int (*dimm_present)(struct platform_intf *intf, int dimm);
-	/* Translate an address to its components. Fill in the array of
-	 * components of size num_components with components that make up the
-	 * physical_address. num_components should be updated to reflect the
-	 * number of entries added to the array. */
-	int (*address_translate)(struct platform_intf *intf,
-	                         uint64_t physical_address,
-	                         struct memory_component *components,
-	                         size_t *num_components);
 
 	struct memory_spd_cb *spd;
 
@@ -147,7 +117,6 @@ struct memory_cb {
 /* eventlog related callbacks */
 enum smbios_log_entry_type;
 struct smbios_log_entry;
-struct smbios_table_log;
 struct eventlog_cb {
 	int (*print_type)(struct platform_intf *intf,
 	                  struct smbios_log_entry *entry,
@@ -195,7 +164,6 @@ struct sys_cb {
 	/* methods useful for probing */
 	char *(*vendor)(struct platform_intf *intf);
 	char *(*version)(struct platform_intf *intf);
-	char *(*variant)(struct platform_intf *intf);
 
 	/*
 	 * Query identifiers for chassis id, brand code, customization id, and

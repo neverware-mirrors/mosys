@@ -29,6 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <stdint.h>
+#include <stdio.h>
+
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
