@@ -735,6 +735,38 @@ const struct nonspd_mem_info micron_lpddr4x_mt53e1g32d4nq_046wte = {
 		  'Q', '-', '4', '6', 'W', 'T', ':', 'E'},
 };
 
+const struct nonspd_mem_info micron_lpddr4x_mt53e1g32d2np_046wta = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4X,
+
+	.module_size_mbits	= 32768,
+	.num_ranks		= 1,
+	.device_width		= 32,
+	.ddr_freq		= { DDR_2133 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num	=
+		{ 'M', 'T', '5', '3', 'E', '1', 'G', '3', '2', 'D', '2', 'N',
+		  'P', '-', '4', '6', 'W', 'T', ':', 'A'},
+};
+
+const struct nonspd_mem_info micron_lpddr4x_mt53e2g32d4nq_046wta = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4X,
+
+	.module_size_mbits	= 32768,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq		= { DDR_2133 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'M', 'T', '5', '3', 'E', '2', 'G', '3', '2', 'D', '4', 'N',
+		  'Q', '-', '4', '6', 'W', 'T', ':', 'A'},
+};
+
 const struct nonspd_mem_info micron_lpddr4x_mt29vzzzad8dqksl = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR4X,
 
@@ -948,7 +980,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&hynix_ddr3l_h5tc8g63amr_pba,
 	&hynix_lpddr3_h9ccnnnbptblbr_nud,
 	&hynix_lpddr3_h9ccnnnbltblar_nud,
-        &hynix_lpddr3_h9ccnnnbktmlbr_ntd,
+	&hynix_lpddr3_h9ccnnnbktmlbr_ntd,
 	&hynix_lpddr4_h9hcnnn8kumlhr,
 	&hynix_lpddr4_h9hcnnnbpumlhr,
 	&hynix_lpddr4x_h9hcnnncpmalhr_nee,
@@ -960,6 +992,8 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&micron_lpddr4_mt53e512m32d2np,
 	&micron_lpddr4x_mt29vzzzad8dqksl,
 	&micron_lpddr4x_mt53e1g32d4nq_046wte,
+	&micron_lpddr4x_mt53e1g32d2np_046wta,
+	&micron_lpddr4x_mt53e2g32d4nq_046wta,
 	&micron_mt41k256m16ha,
 	&micron_mt52l256m32d1pf,
 	&micron_mt52l512m32d2pf,
