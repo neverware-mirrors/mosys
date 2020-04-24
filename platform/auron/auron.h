@@ -39,8 +39,6 @@
 
 /* platform callbacks */
 extern struct eeprom_cb auron_eeprom_cb;	/* eeprom.c */
-extern struct memory_cb auron_memory_cb;	/* memory.c */
-extern struct memory_cb dimm_memory_cb;		/* memory.c */
 extern struct sys_cb auron_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_AURON_H_ */

@@ -51,35 +51,26 @@
 struct probe_ids {
 	const char *names[2];
 	const char *frids[2];
-	const int has_dimms;
 };
-
-struct platform_cb auron_cb;
 
 static const struct probe_ids probe_id_list[] = {
 	{ { "Buddy", NULL },
 	  { "Google_Buddy", NULL },
-	  1
 	},
 	{ { "Cid", NULL },
 	  { "Google_Cid", NULL },
-	  0
 	},
 	{ { "Gandof", NULL },
 	  { "Google_Gandof", NULL },
-	  0
 	},
 	{ { "Lulu", NULL },
 	  { "Google_Lulu", NULL },
-	  0
 	},
 	{ { "Paine", NULL },
 	  { "Google_Auron_Paine", NULL },
-	  0
 	},
 	{ { "Yuna", NULL },
 	  { "Google_Auron_Yuna", NULL },
-	  0
 	},
 	/*
 	 * Leave this entry last in the table -- otherwise it will break
@@ -87,7 +78,6 @@ static const struct probe_ids probe_id_list[] = {
 	 */
 	{ { "Auron", NULL },
 	  { "Google_Auron", NULL },
-	  0
 	},
 	{ { NULL } }
 };
@@ -125,8 +115,6 @@ exit:
 	probed = 1;
 	/* Update canonical platform name */
 	intf->name = pid->names[0];
-	if (pid->has_dimms == 1)
-		auron_cb.memory = &dimm_memory_cb;
 	return status;
 }
 
@@ -136,7 +124,7 @@ static int auron_setup_post(struct platform_intf *intf)
 	return cros_ec_setup(intf);
 }
 
-struct eventlog_cb auron_eventlog_cb = {
+static struct eventlog_cb auron_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -145,11 +133,11 @@ struct eventlog_cb auron_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb auron_cb = {
+static struct platform_cb auron_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
 	.eeprom		= &auron_eeprom_cb,
-	.memory		= &cbfs_memory_cb,
+	.memory		= &smbios_memory_cb,
 	.psu		= &generic_psu_battery_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &auron_sys_cb,
