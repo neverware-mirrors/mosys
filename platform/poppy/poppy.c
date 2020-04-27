@@ -62,10 +62,10 @@ struct platform_cmd *poppy_sub[] = {
 	NULL
 };
 
-int poppy_probe(struct platform_intf *intf)
+static int poppy_probe(struct platform_intf *intf)
 {
 	const char *platform_names[] = {
-		"Soraka", "Rammus", "Nautilus",
+		"Poppy", "Soraka", "Rammus", "Nautilus",
 		NULL
 	};
 
