@@ -30,27 +30,23 @@
  */
 
 #include <stdlib.h>
-#include <unistd.h>
 
 #include "lib/cros_config.h"
 #include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/memory.h"
-#include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
 
-#include "mosys/alloc.h"
 #include "mosys/command_list.h"
 #include "mosys/intf_list.h"
-#include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "drivers/google/cros_ec.h"
 
 #include "poppy.h"
 
-struct platform_cmd *poppy_sub[] = {
+static struct platform_cmd *poppy_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_fp,
@@ -64,19 +60,10 @@ struct platform_cmd *poppy_sub[] = {
 
 static int poppy_probe(struct platform_intf *intf)
 {
-	const char *platform_names[] = {
-		"Poppy", "Soraka", "Rammus", "Nautilus",
-		NULL
-	};
-
-	/* At least for Nautilus, some old firmware may fail to report SKU ID so
-	 * a default value is needed.
-	 */
-	return cros_config_probe_default_sku(intf, platform_names, 0);
+	return cros_config_probe(intf, NULL);
 }
 
-/* late setup routine; not critical to core functionality */
-struct eventlog_cb poppy_eventlog_cb = {
+static struct eventlog_cb poppy_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -85,7 +72,7 @@ struct eventlog_cb poppy_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb poppy_cb = {
+static struct platform_cb poppy_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
 	.fp		= &cros_fp_cb,
