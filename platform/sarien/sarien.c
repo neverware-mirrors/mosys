@@ -44,6 +44,7 @@
 
 #include "lib/cros_config.h"
 #include "lib/eeprom.h"
+#include "lib/memory.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
 #include "lib/sku.h"
@@ -78,7 +79,7 @@ struct eventlog_cb sarien_eventlog_cb = {
 struct platform_cb sarien_cb = {
 	.ec		= &wilco_ec_cb,
 	.eeprom		= &sarien_eeprom_cb,
-	.memory		= &sarien_memory_cb,
+	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &sarien_sys_cb,
@@ -96,7 +97,7 @@ struct platform_intf platform_sarien = {
 struct platform_cb drallion_cb = {
 	.ec		= &wilco_ec_cb,
 	.eeprom		= &sarien_eeprom_cb,
-	.memory		= &drallion_memory_cb,
+	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &sarien_sys_cb,
