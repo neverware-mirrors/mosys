@@ -33,9 +33,6 @@
 
 #include "mosys/platform.h"
 
-/* experimental */
-extern struct platform_intf platform_dummy;
-
 /* production platforms */
 extern struct platform_intf platform_auron;
 extern struct platform_intf platform_beltino;
@@ -93,8 +90,6 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_drallion,
 	&platform_zork,
 #endif // CONFIG_PLATFORM_ARCH_X86
-/* experimental platforms */
-	&platform_dummy,
 #endif // CONFIG_PLATFORM_ARCH_X86
 
 #ifdef CONFIG_PLATFORM_ARCH_ARMEL
