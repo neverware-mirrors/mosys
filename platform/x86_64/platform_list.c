@@ -12,7 +12,6 @@ extern struct platform_intf platform_beltino;
 extern struct platform_intf platform_coral;
 extern struct platform_intf platform_cyan;
 extern struct platform_intf platform_dedede;
-extern struct platform_intf platform_drallion;
 extern struct platform_intf platform_fizz;
 extern struct platform_intf platform_glados;
 extern struct platform_intf platform_hatch;
@@ -32,7 +31,6 @@ struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_CROS_CONFIG
 	&platform_coral,
         &platform_dedede,
-	&platform_drallion,
 	&platform_fizz,
 	&platform_kahlee,
 	&platform_hatch,

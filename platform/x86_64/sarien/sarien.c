@@ -29,8 +29,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef CONFIG_CROS_CONFIG
-
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -51,7 +49,7 @@
 
 #include "sarien.h"
 
-struct platform_cmd *sarien_sub[] = {
+static struct platform_cmd *sarien_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
@@ -61,13 +59,13 @@ struct platform_cmd *sarien_sub[] = {
 	NULL
 };
 
-int sarien_probe(struct platform_intf *intf)
+static int sarien_probe(struct platform_intf *intf)
 {
 	/* support single platform from configs->platform_name */
 	return cros_config_probe(intf, NULL);
 }
 
-struct eventlog_cb sarien_eventlog_cb = {
+static struct eventlog_cb sarien_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -76,13 +74,13 @@ struct eventlog_cb sarien_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb sarien_cb = {
+static struct platform_cb sarien_cb = {
 	.ec		= &wilco_ec_cb,
 	.eeprom		= &sarien_eeprom_cb,
 	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
 	.smbios		= &smbios_sysinfo_cb,
-	.sys 		= &sarien_sys_cb,
+	.sys		= &sarien_sys_cb,
 	.eventlog	= &sarien_eventlog_cb,
 };
 
@@ -93,22 +91,3 @@ struct platform_intf platform_sarien = {
 	.cb		= &sarien_cb,
 	.probe		= &sarien_probe,
 };
-
-struct platform_cb drallion_cb = {
-	.ec		= &wilco_ec_cb,
-	.eeprom		= &sarien_eeprom_cb,
-	.memory		= &smbios_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
-	.smbios		= &smbios_sysinfo_cb,
-	.sys 		= &sarien_sys_cb,
-	.eventlog	= &sarien_eventlog_cb,
-};
-
-struct platform_intf platform_drallion = {
-	.type		= PLATFORM_X86_64,
-	.name		= "Drallion",
-	.sub		= sarien_sub,
-	.cb		= &drallion_cb,
-	.probe		= &sarien_probe,
-};
-#endif /* CONFIG_CROS_CONFIG */
