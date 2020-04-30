@@ -19,6 +19,11 @@ elif arch == 'arm' or arch == 'arm64'
   conf_data.set('CONFIG_PLATFORM_ARCH_ARMEL', 1)
 endif
 
+platform_intf = get_option('platform_intf')
+if platform_intf != ''
+  conf_data.set_quoted('CONFIG_SINGLE_PLATFORM', platform_intf)
+endif
+
 # Create the config header file and include it by default while compiling
 configure_file(
   output : 'config.h',

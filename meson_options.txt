@@ -17,3 +17,9 @@ option(
   type: 'string',
   description: 'cros_config_data source file',
 )
+
+option(
+  'platform_intf',
+  type: 'string',
+  description: 'If set to a non-empty string, compile for just this platform.',
+)
