@@ -10,9 +10,4 @@ lto = true
 panic = 'abort'
 
 [dependencies]
-getopts = "=0.2.21"
 io_jail = { path = "io_jail" }
-lazy_static = "=1.4.0"
-
-[build-dependencies]
-bindgen = "=0.31.3"

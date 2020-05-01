@@ -2,24 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-extern crate io_jail;
-extern crate mosys;
+#![no_main]
 
-use std::env;
+extern crate io_jail;
+
+use std::os::raw::{c_char, c_int};
 use std::path::Path;
-use std::process;
 
 use io_jail::Minijail;
-use mosys::Mosys;
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
+extern "C" {
+    fn mosys_main(argc: c_int, argv: *mut *mut c_char) -> c_int;
+}
 
-    let mut mosys = Mosys::new(&args).unwrap_or_else(|err| {
-        eprintln!("Problem creating program: {}", err);
-        process::exit(1);
-    });
-
+#[no_mangle]
+extern "C" fn main(argc: c_int, argv: *mut *mut c_char) -> c_int {
     let mut j = Minijail::new().unwrap();
 
     // For unknown reasons, this code slows boot on arm machines.
@@ -56,8 +53,7 @@ fn main() {
     // Jail will be destroyed when it is dropped.
     j.enter();
 
-    if let Err(err) = mosys.run() {
-        eprintln!("Application error: {}", err);
-        process::exit(1);
+    unsafe {
+        return mosys_main(argc, argv);
     }
 }
