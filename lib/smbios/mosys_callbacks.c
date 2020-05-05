@@ -28,22 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <errno.h>
-#include <fcntl.h>
+#include <limits.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#include <sys/types.h>
 
 #include "mosys/alloc.h"
 #include "mosys/kv_pair.h"
-#include "mosys/list.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "lib/file.h"
 #include "lib/smbios.h"
 #include "lib/smbios_tables.h"
-#include "lib/string.h"
 
 #define	SYSFS_SMBIOS_DIR	"/sys/class/dmi/id"
 
@@ -59,40 +56,20 @@
  */
 static char *smbios_scan_sysfs(const char *filename)
 {
-	struct ll_node *list = NULL, *head;
-	int fd = 0;
-	char *val = NULL;
-	char *path;
+	ssize_t bytes_read;
+	char path[PATH_MAX];
+	char contents[SMBIOS_MAX_STRING_LENGTH + 1];
 
-	list = scanft(&list, SYSFS_SMBIOS_DIR, filename, NULL, -1, 1);
-	if (!list_count(list))
-		goto smbios_scan_sysfs_exit;
+	snprintf(path, sizeof(path), SYSFS_SMBIOS_DIR "/%s", filename);
+	bytes_read = read_file(path, contents, sizeof(contents), LOG_DEBUG);
+	if (bytes_read <= 0)
+		return NULL;
 
-	/* Note: this assumes 1 node in the list (1 SMBIOS table in sysfs) */
-	head = list_head(list);
-	path = (char *)head->data;
+	/* Trim off trailing newline, if there is one. */
+	if (contents[bytes_read - 1] == '\n')
+		contents[bytes_read - 1] = '\0';
 
-	if ((fd = open(path, O_RDONLY)) < 0) {
-		lprintf(LOG_DEBUG, "Error opening %s: %s\n",
-		        path, strerror(errno));
-		goto smbios_scan_sysfs_exit;
-	}
-
-	val = mosys_malloc(SMBIOS_MAX_STRING_LENGTH);
-	memset(val, 0, SMBIOS_MAX_STRING_LENGTH);
-	if (read(fd, val, SMBIOS_MAX_STRING_LENGTH) < 0) {
-		lprintf(LOG_DEBUG, "Error reading %s: %s\n",
-		        path, strerror(errno));
-		free(val);
-		val = NULL;
-		goto smbios_scan_sysfs_exit;
-	}
-
-smbios_scan_sysfs_exit:
-	if (fd)
-		close(fd);
-
-	return val;
+	return mosys_strdup(contents);
 }
 
 /*
