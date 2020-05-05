@@ -175,8 +175,6 @@ int cros_config_read_default_sku_info(
 	sku_id = get_sku_id(intf);
 	if (sku_id == -1) {
 		lprintf(LOG_DEBUG, "%s: Unknown SKU ID\n", __func__);
-		if (default_sku_id == -1)
-			return -1;
 		sku_id = default_sku_id;
 	}
 
