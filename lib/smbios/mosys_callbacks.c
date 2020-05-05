@@ -82,21 +82,7 @@ static char *smbios_scan_sysfs(const char *filename)
  */
 char *smbios_sysinfo_get_vendor(struct platform_intf *intf)
 {
-	char *str = NULL;
-	struct smbios_table table;
-
-	if (smbios_find_table(intf, SMBIOS_TYPE_SYSTEM, 0, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
-		lprintf(LOG_DEBUG, "%s: normal method failed, "
-		                   "trying sysfs\n", __func__);
-		str = smbios_scan_sysfs("sys_vendor");
-	} else {
-		str = mosys_strdup(table.string
-				   [table.data.system.manufacturer]);
-	}
-
-	return str;
+	return smbios_scan_sysfs("sys_vendor");
 }
 
 /*
@@ -109,19 +95,7 @@ char *smbios_sysinfo_get_vendor(struct platform_intf *intf)
  */
 char *smbios_sysinfo_get_name(struct platform_intf *intf)
 {
-	char *str = NULL;
-	struct smbios_table table;
-
-	if (smbios_find_table(intf, SMBIOS_TYPE_SYSTEM, 0, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
-		lprintf(LOG_DEBUG, "%s: attempting to use sysfs\n", __func__);
-		str = smbios_scan_sysfs("product_name");
-	} else {
-		str = mosys_strdup(table.string[table.data.system.name]);
-	}
-
-	return str;
+	return smbios_scan_sysfs("product_name");
 }
 
 /*
@@ -134,20 +108,7 @@ char *smbios_sysinfo_get_name(struct platform_intf *intf)
  */
 char *smbios_sysinfo_get_version(struct platform_intf *intf)
 {
-	char *str = NULL;
-	struct smbios_table table;
-
-	if (smbios_find_table(intf, SMBIOS_TYPE_SYSTEM, 0, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
-		lprintf(LOG_INFO, "%s: normal approach failed, trying sysfs\n",
-		                  __func__);
-		str = smbios_scan_sysfs("product_version");
-	} else {
-		str = mosys_strdup(table.string[table.data.system.version]);
-	}
-
-	return str;
+	return smbios_scan_sysfs("product_version");
 }
 
 /*
@@ -160,14 +121,7 @@ char *smbios_sysinfo_get_version(struct platform_intf *intf)
  */
 char *smbios_sysinfo_get_sku(struct platform_intf *intf)
 {
-	struct smbios_table table;
-
-	if (smbios_find_table(intf, SMBIOS_TYPE_SYSTEM, 0, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0)
-		return NULL;
-
-	return mosys_strdup(table.string[table.data.system.sku_number]);
+	return smbios_scan_sysfs("product_sku");
 }
 
 /*

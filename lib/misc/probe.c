@@ -117,17 +117,11 @@ int probe_smbios(struct platform_intf *intf, const char *const ids[])
 	if (id)
 		goto probe_smbios_cmp;
 
-	/* Attempt platform-specific SMBIOS handler if one exists, else use the
-	 * default approach. */
-	if (intf->cb->smbios && intf->cb->smbios->system_name) {
-		id = intf->cb->smbios->system_name(intf);
-	} else {
-		struct smbios_table table;
-		if (smbios_find_table(intf, SMBIOS_TYPE_SYSTEM, 0, &table,
-				      SMBIOS_LEGACY_ENTRY_BASE,
-				      SMBIOS_LEGACY_ENTRY_LEN) == 0)
-			id = table.string[table.data.system.name];
-	}
+	/* TODO(jrosenth): getting the product name does not actually
+	   require the platform_intf.  Remove this from
+	   smbios_sysinfo_get_name and clean up all probe_smbios calls
+	   to not pass intf. */
+	id = smbios_sysinfo_get_name(intf);
 
 probe_smbios_cmp:
 	if (!id) {
