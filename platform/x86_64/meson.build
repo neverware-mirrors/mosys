@@ -7,7 +7,6 @@ if use_cros_config
   subdir('fizz')
   subdir('kahlee')
   subdir('hatch')
-  subdir('nami')
   subdir('poppy')
   subdir('puff')
   subdir('octopus')

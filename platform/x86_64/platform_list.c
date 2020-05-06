@@ -16,7 +16,6 @@ extern struct platform_intf platform_fizz;
 extern struct platform_intf platform_glados;
 extern struct platform_intf platform_hatch;
 extern struct platform_intf platform_kahlee;
-extern struct platform_intf platform_nami;
 extern struct platform_intf platform_octopus;
 extern struct platform_intf platform_poppy;
 extern struct platform_intf platform_puff;
@@ -34,7 +33,6 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_fizz,
 	&platform_kahlee,
 	&platform_hatch,
-	&platform_nami,
 	&platform_poppy,
 	&platform_puff,
 	&platform_octopus,
