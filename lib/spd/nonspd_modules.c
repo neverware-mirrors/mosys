@@ -550,6 +550,22 @@ const struct nonspd_mem_info samsung_lpddr3_k4e6e304eb_egce = {
 		  'E', 'G', 'C', 'E' },
 };
 
+const struct nonspd_mem_info samsung_lpddr3_k4e6e304ec_egcf = {
+	.dram_type = SPD_DRAM_TYPE_LPDDR3,
+	.module_type.ddr3_type = DDR3_MODULE_TYPE_SO_DIMM,
+
+	.module_size_mbits = 4096 * 8,
+	.num_ranks = 2,
+	.device_width = 64,
+	.ddr_freq = { DDR_400, DDR_533, DDR_667, DDR_800, DDR_933 },
+
+	.module_mfg_id = { .msb = 0xce, .lsb = 0x00 },
+	.dram_mfg_id = { .msb = 0xce, .lsb = 0x00 },
+
+	.part_num = { 'K', '4', 'E', '6', 'E', '3', '0', '4', 'E', 'C', '-',
+		      'E', 'G', 'C', 'F' },
+};
+
 const struct nonspd_mem_info samsung_lpddr3_k4e6e304ee_egce = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR3,
 	.module_type.ddr3_type	= DDR3_MODULE_TYPE_SO_DIMM,
@@ -1074,6 +1090,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&samsung_ddr3l_k4b8g1646q_myk0,
 	&samsung_lpddr3_k3qf2f20em_agce,
 	&samsung_lpddr3_k4e6e304eb_egce,
+	&samsung_lpddr3_k4e6e304ec_egcf,
 	&samsung_lpddr3_k4e6e304ee_egce,
 	&samsung_lpddr3_k4e6e304ee_egcf,
 	&samsung_lpddr3_k4e6e304eb_egcf,
