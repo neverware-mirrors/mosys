@@ -783,6 +783,22 @@ const struct nonspd_mem_info micron_lpddr3_mt52l512m32d2pf_107wtb = {
 		  '2', 'P', 'F', '-', '1', '0', '7', 'W', 'T', ':', 'B' },
 };
 
+const struct nonspd_mem_info micron_lpddr3_mt52l512m32d2pf_10 = {
+	.dram_type = SPD_DRAM_TYPE_LPDDR3,
+	.module_type.ddr3_type = DDR3_MODULE_TYPE_SO_DIMM,
+
+	.module_size_mbits = 4096 * 8,
+	.num_ranks = 2,
+	.device_width = 64,
+	.ddr_freq = { DDR_400, DDR_533, DDR_667, DDR_800, DDR_933 },
+
+	.module_mfg_id = { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id = { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num = { 'M', 'T', '5', '2', 'L', '5', '1', '2', 'M', '3', '2',
+		      'D', '2', 'P', 'F', '-', '1', '0' },
+};
+
 static const struct nonspd_mem_info micron_lpddr4_mt53b256m32d1np = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
 
@@ -1103,6 +1119,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&micron_lpddr3_mt52l256m32d1pf_107wtb,
 	&micron_lpddr3_mt52l256m64d2pp_107wtb,
 	&micron_lpddr3_mt52l512m32d2pf_107wtb,
+	&micron_lpddr3_mt52l512m32d2pf_10,
 	&micron_lpddr4_mt53b256m32d1np,
 	&micron_lpddr4_mt53b512m32d2np,
 	&micron_lpddr4_mt53e512m32d2np,
