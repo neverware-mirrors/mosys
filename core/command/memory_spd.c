@@ -166,7 +166,7 @@ static int memory_spd_print_id(struct platform_intf *intf, int dimm)
 
 	kv_pair_fmt(kv, "dimm", "%u", dimm);
 	spd_print_field(intf, kv, spd_data, SPD_GET_MFG_ID);
-	spd_print_field(intf, kv, spd_data, SPD_GET_SERIAL_NUMBER);
+	kv_pair_fmt(kv, "serial_number", "REDACTED");
 	spd_print_field(intf, kv, spd_data, SPD_GET_PART_NUMBER);
 
 	rc = kv_pair_print(kv);
@@ -194,7 +194,7 @@ static int memory_nonspd_print_id(struct platform_intf *intf, int dimm)
 
 	kv_pair_fmt(kv, "dimm", "%u", dimm);
 	nonspd_print_field(kv, info, SPD_GET_MFG_ID);
-	nonspd_print_field(kv, info, SPD_GET_SERIAL_NUMBER);
+	kv_pair_fmt(kv, "serial_number", "REDACTED");
 	nonspd_print_field(kv, info, SPD_GET_PART_NUMBER);
 
 	rc = kv_pair_print(kv);
