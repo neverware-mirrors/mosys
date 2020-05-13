@@ -3,4 +3,6 @@ mosys_main = executable(
   libmosys_src + ['mosys.c'],
   dependencies : deps,
   include_directories : include_common,
+  c_args : ['-flto'],
+  link_args : ['-flto'],
 )
