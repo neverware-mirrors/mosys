@@ -40,6 +40,7 @@ add_global_arguments('-Wundef', language : 'c')
 
 # External libs used by Mosys
 fmap_dep = dependency('fmap')
+minijail_dep = declare_dependency(link_args: '-lminijail')
 uuid_dep = dependency('uuid')
 
 libmosys_src = files()
@@ -54,6 +55,7 @@ subdir('platform')
 
 deps = [
   fmap_dep,
+  minijail_dep,
   uuid_dep,
 ]
 
@@ -70,6 +72,8 @@ libmosys = static_library(
   include_directories: include_common,
   pic: true,
 )
+
+subdir('mains')
 
 # Tests need the libmosys library, so they must be configured at the end.
 subdir('unittests')
