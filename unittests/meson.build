@@ -9,9 +9,8 @@ foreach f: unittest_src
 
     test_target = executable(
         name,
-        f,
+        [f] + libmosys_src,
         include_directories: include_common,
-        dependencies: cmocka_dep,
-        link_with: libmosys,
+        dependencies: [cmocka_dep] + deps,
     )
 endforeach

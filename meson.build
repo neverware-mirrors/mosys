@@ -62,16 +62,5 @@ if use_cros_config
   libmosys_src += mosys_lib_cros_config_src
 endif
 
-# Lib momsys shared library target
-libmosys = static_library(
-  'mosys',
-  libmosys_src,
-  dependencies: deps,
-  include_directories: include_common,
-  pic: true,
-)
-
 subdir('mains')
-
-# Tests need the libmosys library, so they must be configured at the end.
 subdir('unittests')
