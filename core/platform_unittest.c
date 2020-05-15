@@ -3,9 +3,14 @@
  * found in the LICENSE file.
  */
 
+/* These unit tests are designed to test probing from multiple
+   platforms.  CONFIG_SINGLE_PLATFORM should not be enabled. */
+#undef CONFIG_SINGLE_PLATFORM
+
 #include <limits.h>
 #include <setjmp.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
@@ -36,10 +41,11 @@ static int probe_never_match(struct platform_intf *intf)
 	return 0;
 }
 
-static int probe_always_match(struct platform_intf *intf)
+static bool probe_mocked_match_enable;
+static int probe_mocked_match(struct platform_intf *intf)
 {
 	probe_called = intf;
-	return 1;
+	return probe_mocked_match_enable;
 }
 
 static int probe_always_error(struct platform_intf *intf)
@@ -161,13 +167,14 @@ static struct platform_intf error_setup_post_no_destroy_intf = {
 };
 
 /*
- * Same as basic, but always matches during probing.
+ * Same as basic, but matches conditionally during probing based on
+ * the probe_mocked_match_enable variable.
  */
-static struct platform_intf always_match_intf = {
+static struct platform_intf mocked_match_intf = {
 	.type = PLATFORM_X86_64,
-	.name = "always_match",
+	.name = "mocked_match",
 	.sub = no_subcommands,
-	.probe = &probe_always_match,
+	.probe = &probe_mocked_match,
 	.setup = &setup_always_success,
 	.destroy = &destroy,
 	.setup_post = &setup_post_always_success,
@@ -176,34 +183,20 @@ static struct platform_intf always_match_intf = {
 /*
  * An intf list for most tests.
  */
-static struct platform_intf *test_intf_list[] = {
+struct platform_intf *platform_intf_list[] = {
 	&minimal_intf,
 	&basic_intf,
 	&error_probe_intf,
 	&error_setup_intf,
 	&error_setup_post_intf,
 	&error_setup_post_no_destroy_intf,
-	&always_match_intf,
-	NULL,
-};
-
-/*
- * An intf list which will never match anything during probing.
- */
-static struct platform_intf *never_match_during_probing_intf_list[] = {
-	&minimal_intf,
-	&basic_intf,
-	&error_probe_intf,
-	&error_setup_intf,
-	&error_setup_post_intf,
-	&error_setup_post_no_destroy_intf,
+	&mocked_match_intf,
 	NULL,
 };
 
 static void find_minimal_by_name(void **state)
 {
-	assert_ptr_equal(mosys_platform_setup(test_intf_list, "minimal"),
-			 &minimal_intf);
+	assert_ptr_equal(mosys_platform_setup("minimal"), &minimal_intf);
 	assert_null(probe_called);
 	assert_null(setup_called);
 	assert_null(destroy_called);
@@ -212,8 +205,7 @@ static void find_minimal_by_name(void **state)
 
 static void find_basic_by_name(void **state)
 {
-	assert_ptr_equal(mosys_platform_setup(test_intf_list, "basic"),
-			 &basic_intf);
+	assert_ptr_equal(mosys_platform_setup("basic"), &basic_intf);
 	assert_null(probe_called);
 	assert_ptr_equal(setup_called, &basic_intf);
 	assert_null(destroy_called);
@@ -225,8 +217,7 @@ static void find_basic_by_name(void **state)
 
 static void find_by_name_is_case_insensitive(void **state)
 {
-	assert_ptr_equal(mosys_platform_setup(test_intf_list, "BaSiC"),
-			 &basic_intf);
+	assert_ptr_equal(mosys_platform_setup("BaSiC"), &basic_intf);
 	assert_null(probe_called);
 	assert_ptr_equal(setup_called, &basic_intf);
 	assert_null(destroy_called);
@@ -238,7 +229,7 @@ static void find_by_name_is_case_insensitive(void **state)
 
 static void find_bad_name_fails(void **state)
 {
-	assert_null(mosys_platform_setup(test_intf_list, "BAD~NAME"));
+	assert_null(mosys_platform_setup("BAD~NAME"));
 	assert_null(probe_called);
 	assert_null(setup_called);
 	assert_null(destroy_called);
@@ -247,7 +238,7 @@ static void find_bad_name_fails(void **state)
 
 static void setup_error_fails(void **state)
 {
-	assert_null(mosys_platform_setup(test_intf_list, "error_setup"));
+	assert_null(mosys_platform_setup("error_setup"));
 	assert_null(probe_called);
 	assert_ptr_equal(setup_called, &error_setup_intf);
 	assert_null(destroy_called);
@@ -259,7 +250,7 @@ static void setup_error_fails(void **state)
 
 static void setup_post_error_fails(void **state)
 {
-	assert_null(mosys_platform_setup(test_intf_list, "error_setup_post"));
+	assert_null(mosys_platform_setup("error_setup_post"));
 	assert_null(probe_called);
 	assert_ptr_equal(setup_called, &error_setup_post_intf);
 	assert_ptr_equal(destroy_called, &error_setup_post_intf);
@@ -272,8 +263,7 @@ static void setup_post_error_fails(void **state)
 
 static void setup_post_error_fails_no_destroy(void **state)
 {
-	assert_null(mosys_platform_setup(test_intf_list,
-					 "error_setup_post_no_destroy"));
+	assert_null(mosys_platform_setup("error_setup_post_no_destroy"));
 	assert_null(probe_called);
 	assert_ptr_equal(setup_called, &error_setup_post_no_destroy_intf);
 	assert_null(destroy_called);
@@ -285,23 +275,22 @@ static void setup_post_error_fails_no_destroy(void **state)
 
 static void probe_matches(void **state)
 {
-	assert_ptr_equal(mosys_platform_setup(test_intf_list, NULL),
-			 &always_match_intf);
-	assert_ptr_equal(probe_called, &always_match_intf);
-	assert_ptr_equal(setup_called, &always_match_intf);
+	probe_mocked_match_enable = true;
+	assert_ptr_equal(mosys_platform_setup(NULL), &mocked_match_intf);
+	assert_ptr_equal(probe_called, &mocked_match_intf);
+	assert_ptr_equal(setup_called, &mocked_match_intf);
 	assert_null(destroy_called);
-	assert_ptr_equal(setup_post_called, &always_match_intf);
+	assert_ptr_equal(setup_post_called, &mocked_match_intf);
 
 	probe_called = NULL;
 	setup_called = NULL;
 	setup_post_called = NULL;
+	probe_mocked_match_enable = false;
 }
 
 static void probe_fails(void **state)
 {
-	assert_null(
-		mosys_platform_setup(
-			never_match_during_probing_intf_list, NULL));
+	assert_null(mosys_platform_setup(NULL));
 	assert_non_null(probe_called);
 	assert_null(setup_called);
 	assert_null(destroy_called);

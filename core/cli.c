@@ -209,7 +209,7 @@ int mosys_main(int argc, char **argv)
 
 	mosys_set_kv_pair_style(style);
 	if (print_platforms_opt)
-		return print_platforms(platform_intf_list);
+		return print_platforms();
 
 	/*
 	 * Init the logging system and the default log output file (stderr).
@@ -225,7 +225,7 @@ int mosys_main(int argc, char **argv)
 	mosys_set_verbosity(verbose);
 
 	/* try to identify the platform */
-	intf = mosys_platform_setup(platform_intf_list, p_opt);
+	intf = mosys_platform_setup(p_opt);
 	if (!intf) {
 		lprintf(LOG_ERR, "Platform not supported\n");
 		rc = -1;

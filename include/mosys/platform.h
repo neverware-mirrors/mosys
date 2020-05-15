@@ -244,9 +244,7 @@ extern __attribute__((weak)) struct platform_intf *platform_intf_list[];
  * returns NULL if platform not identified or other error
  *
  */
-extern struct platform_intf *
-mosys_platform_setup(struct platform_intf *platform_list[],
-		     const char *platform_name);
+extern struct platform_intf *mosys_platform_setup(const char *platform_name);
 
 /*
  * mosys_platform_destroy  -  clean up platform interface
@@ -271,6 +269,6 @@ extern void platform_cmd_usage(struct platform_cmd *cmd);
  */
 extern void print_tree(struct platform_intf *intf);
 
-extern int print_platforms(struct platform_intf **platform_list);
+extern int print_platforms(void);
 
 #endif /* MOSYS_PLATFORM_H__ */

@@ -54,13 +54,11 @@
  * Internal function used by mosys_platform_setup to search for a
  * supported platform by name
  */
-static struct platform_intf *
-find_platform_by_name(struct platform_intf *platform_list[],
-		      const char *platform_name)
+static struct platform_intf *find_platform_by_name(const char *platform_name)
 {
 	struct platform_intf **_intf, *intf;
 
-	for (_intf = platform_list; _intf && *_intf; _intf++) {
+	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
 		intf = *_intf;
 		if (!strcasecmp(intf->name, platform_name))
 			return intf;
@@ -74,12 +72,11 @@ find_platform_by_name(struct platform_intf *platform_list[],
  * Internal function used by mosys_platform_setup to probe each
  * platform until one matches
  */
-static struct platform_intf *
-probe_platform(struct platform_intf *platform_list[])
+static struct platform_intf *probe_platform(void)
 {
 	struct platform_intf **_intf, *intf;
 
-	for (_intf = platform_list; _intf && *_intf; _intf++) {
+	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
 		intf = *_intf;
 
 		if (intf->probe) {
@@ -103,22 +100,18 @@ probe_platform(struct platform_intf *platform_list[])
 /*
  * mosys_platform_setup  -  identify platform, setup interfaces and commands
  *
- * @platform_list: A NULL terminated list of struct platform_intf
- *     pointers to search by name or probe.
  * @platform_name: Optional platform name given to bypass
  *     auto-detection
  *
  * returns pointer to identified platform interface
  * returns NULL if platform not identified or other error
  */
-struct platform_intf *
-mosys_platform_setup(struct platform_intf *platform_list[],
-		     const char *platform_name)
+struct platform_intf *mosys_platform_setup(const char *platform_name)
 {
 	struct platform_intf **_intf, *intf;
 
 	/* setup defaults for each platform */
-	for (_intf = platform_list; _intf && *_intf; _intf++) {
+	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
 		intf = *_intf;
 		if (!intf->name)
 			intf->name = "";
@@ -127,9 +120,9 @@ mosys_platform_setup(struct platform_intf *platform_list[],
 	}
 
 	if (platform_name)
-		intf = find_platform_by_name(platform_list, platform_name);
+		intf = find_platform_by_name(platform_name);
 	else
-		intf = probe_platform(platform_list);
+		intf = probe_platform();
 
 	if (!intf)
 		return NULL;
@@ -282,13 +275,13 @@ void print_tree(struct platform_intf *intf)
  * returns 0 to indicate success
  * returns <0 to indicate failure
  */
-int print_platforms(struct platform_intf *platform_list[]) {
+int print_platforms() {
 	struct platform_intf **_intf, *intf;
 	struct kv_pair *kv;
 	int rc;
 
 	/* go through all supported interfaces */
-	for (_intf = platform_list; _intf && *_intf; _intf++) {
+	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
 		intf = *_intf;
 
 		if (intf->type == PLATFORM_DEFAULT)
