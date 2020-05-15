@@ -65,7 +65,7 @@
 #define BLOCK_WRITE_DELAY	1000
 #define BLOCK_WRITE_RETRIES	32
 
-struct i2c_handle {
+static struct i2c_handle {
 	struct i2c_addr addr;
 	int fd;
 } i2c_handles[I2C_HANDLE_MAX];

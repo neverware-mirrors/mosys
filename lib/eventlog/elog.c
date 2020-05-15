@@ -945,8 +945,8 @@ static int elog_fill_timestamp(struct smbios_log_entry *entry)
  * @data_size:	how big the data is
  * returns 0 on success, non-zero on failure
  */
-int elog_prepare_entry(void *buf, enum smbios_log_entry_type entry_type,
-		       void *data, uint8_t data_size)
+static int elog_prepare_entry(void *buf, enum smbios_log_entry_type entry_type,
+			      void *data, uint8_t data_size)
 {
 	struct smbios_log_entry *entry = buf;
 

@@ -29,7 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <mosys/platform.h>
+#include "lib/generic_callbacks.h"
+#include "mosys/platform.h"
 
 static enum psu_types psu_type_ac_only(struct platform_intf *intf)
 {

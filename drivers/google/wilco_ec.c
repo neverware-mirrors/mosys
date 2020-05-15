@@ -31,6 +31,7 @@
 #include <string.h>
 #include <errno.h>
 
+#include "drivers/google/wilco_ec.h"
 #include "lib/file.h"
 #include "lib/string.h"
 #include "mosys/alloc.h"

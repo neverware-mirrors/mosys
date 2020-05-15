@@ -287,7 +287,7 @@ const struct nonspd_mem_info hynix_lpddr3_h9ccnnncltmlar_nud = {
 		      'L', 'A', 'R', '-', 'N', 'U', 'D' },
 };
 
-const struct nonspd_mem_info hynix_lpddr4_h9hcnnn8kumlhr = {
+static const struct nonspd_mem_info hynix_lpddr4_h9hcnnn8kumlhr = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR4,
 
         .module_size_mbits      = 8192,
@@ -303,7 +303,7 @@ const struct nonspd_mem_info hynix_lpddr4_h9hcnnn8kumlhr = {
                   'H', 'R',},
 };
 
-const struct nonspd_mem_info hynix_lpddr4_h9hcnnnbpumlhr = {
+static const struct nonspd_mem_info hynix_lpddr4_h9hcnnnbpumlhr = {
         .dram_type              = SPD_DRAM_TYPE_LPDDR4,
 
         .module_size_mbits      = 16384,
@@ -1161,7 +1161,7 @@ static int transfer_speed_from_smbios_to_nonspd_mem_info(
 	return -1;
 }
 
-enum spd_dram_type map_smbios_mem_type_to_spd(struct smbios_table *table)
+static enum spd_dram_type map_smbios_mem_type_to_spd(struct smbios_table *table)
 {
 	switch (table->data.mem_device.type) {
 	case SMBIOS_MEMORY_TYPE_DDR3:
