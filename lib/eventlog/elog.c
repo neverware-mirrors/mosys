@@ -1194,9 +1194,7 @@ int elog_fetch_from_smbios(struct platform_intf *intf, uint8_t **data,
 {
 	struct smbios_table table;
 
-	if (smbios_find_table(intf, SMBIOS_TYPE_LOG, 0, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+	if (smbios_find_table(intf, SMBIOS_TYPE_LOG, 0, &table) < 0) {
 		lprintf(LOG_WARNING, "Unable to find SMBIOS eventlog table.\n");
 		return -1;
 	}

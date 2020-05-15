@@ -262,9 +262,7 @@ static ssize_t find_spd_by_part_number(struct platform_intf *intf, int dimm,
 	const struct spd_info *info = &spd_mem_info[SPD_INFO_DEFAULT];
 
 	lprintf(LOG_DEBUG, "Use SMBIOS type 17 to get memory information\n");
-	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, table) < 0) {
 		lprintf(LOG_DEBUG, "Can't find smbios type17\n");
 		goto out;
 	}

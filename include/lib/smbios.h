@@ -92,10 +92,8 @@ extern int smbios_dimm_speed(struct platform_intf *intf,
 		     int dimm, struct kv_pair *kv);
 
 /* SMBIOS main API. */
-extern int smbios_find_table(struct platform_intf *intf,
-                             enum smbios_types type,
-                             int instance, struct smbios_table *table,
-                             unsigned int baseaddr, unsigned int len);
+extern int smbios_find_table(struct platform_intf *intf, enum smbios_types type,
+			     int instance, struct smbios_table *table);
 
 extern char *smbios_sysinfo_get_vendor(struct platform_intf *intf);
 extern char *smbios_sysinfo_get_name(struct platform_intf *intf);

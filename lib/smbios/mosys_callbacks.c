@@ -164,9 +164,7 @@ int smbios_dimm_count(struct platform_intf *intf)
 
 	while (status == 0) {
 		status = smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm_cnt,
-					   &table,
-					   SMBIOS_LEGACY_ENTRY_BASE,
-					   SMBIOS_LEGACY_ENTRY_LEN);
+					   &table);
 		if (status == 0)
 			dimm_cnt++;
 	}
@@ -178,9 +176,7 @@ int smbios_dimm_speed(struct platform_intf *intf,
 		     int dimm, struct kv_pair *kv)
 {
 	struct smbios_table table;
-	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table,
-			      SMBIOS_LEGACY_ENTRY_BASE,
-			      SMBIOS_LEGACY_ENTRY_LEN) < 0) {
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table) < 0) {
 		return -1;
 	}
 

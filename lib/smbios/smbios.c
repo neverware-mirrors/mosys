@@ -440,21 +440,20 @@ static int smbios_find_table_raw(struct platform_intf *intf,
  * @type:	smbios table type to locate
  * @instance:	what instance to retrieve (0-based)
  * @table:	OUTPUT buffer to store table data
- * @baseaddr:	base address to start searching in
- * @len:	length of region to search (in bytes)
  *
  * returns 0 to indicate success
  * returns <0 to indicate failure
  */
 int smbios_find_table(struct platform_intf *intf, enum smbios_types type,
-                      int instance, struct smbios_table *table,
-                      unsigned int baseaddr, unsigned int len)
+		      int instance, struct smbios_table *table)
 {
 	if (!table || type > SMBIOS_TYPE_END)
 		return -1;
 
 	/* get the table as raw buffer */
-	if (smbios_find_table_raw(intf, type, instance, baseaddr, len) < 0) {
+	if (smbios_find_table_raw(intf, type, instance,
+				  SMBIOS_LEGACY_ENTRY_BASE,
+				  SMBIOS_LEGACY_ENTRY_LEN) < 0) {
 		lprintf(LOG_DEBUG, "Unable to locate table %d:%d\n",
 		        type, instance);
 		return -1;
