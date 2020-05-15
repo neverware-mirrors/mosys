@@ -12,10 +12,10 @@ if use_cros_config
 endif
 
 # Setting on a per-arch basis
-arch = get_option('arch')
-if arch == 'x86' or arch == 'x86_64' or arch == 'amd64'
+arch = host_machine.cpu_family()
+if arch == 'x86' or arch == 'x86_64'
   conf_data.set('CONFIG_PLATFORM_ARCH_X86', 1)
-elif arch == 'arm' or arch == 'arm64'
+elif arch == 'arm' or arch == 'aarch64'
   conf_data.set('CONFIG_PLATFORM_ARCH_ARMEL', 1)
 endif
 
