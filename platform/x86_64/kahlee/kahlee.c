@@ -82,7 +82,6 @@ struct platform_cb kahlee_cb = {
 	.eeprom		= &kahlee_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &kahlee_sys_cb,
 	.eventlog	= &kahlee_eventlog_cb,
 };

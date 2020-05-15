@@ -80,7 +80,6 @@ struct platform_cb hatch_cb = {
 	.eeprom		= &hatch_eeprom_cb,
 	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &hatch_sys_cb,
 	.eventlog	= &hatch_eventlog_cb,
 };

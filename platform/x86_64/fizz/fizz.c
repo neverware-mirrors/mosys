@@ -96,7 +96,6 @@ struct platform_cb fizz_cb = {
 	.memory		= &fizz_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
 	.psu		= &generic_psu_ac_only_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &fizz_sys_cb,
 	.eventlog	= &fizz_eventlog_cb,
 };

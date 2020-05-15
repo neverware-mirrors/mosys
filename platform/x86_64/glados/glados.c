@@ -142,7 +142,6 @@ struct platform_cb glados_cb = {
 	.eeprom		= &glados_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &glados_sys_cb,
 	.eventlog	= &glados_eventlog_cb,
 };

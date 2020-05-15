@@ -44,7 +44,6 @@ static struct platform_cb zork_cb = {
 	.eeprom = &zork_eeprom_cb,
 	.memory = &smbios_memory_cb,
 	.nvram = &cros_spi_flash_nvram_cb,
-	.smbios = &smbios_sysinfo_cb,
 	.sys = &zork_sys_cb,
 	.eventlog = &zork_eventlog_cb,
 };

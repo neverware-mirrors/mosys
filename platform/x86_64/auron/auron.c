@@ -136,7 +136,6 @@ static struct platform_cb auron_cb = {
 	.eeprom		= &auron_eeprom_cb,
 	.memory		= &smbios_memory_cb,
 	.psu		= &generic_psu_battery_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &auron_sys_cb,
 	.eventlog	= &auron_eventlog_cb,
 };

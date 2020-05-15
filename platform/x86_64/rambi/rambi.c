@@ -156,7 +156,6 @@ struct platform_cb rambi_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &rambi_eeprom_cb,
 	.memory		= &rambi_memory_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.psu		= &rambi_psu_cb,
 	.sys 		= &rambi_sys_cb,
 	.eventlog	= &rambi_eventlog_cb,

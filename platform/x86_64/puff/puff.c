@@ -48,7 +48,6 @@ static struct platform_cb puff_cb = {
 	.eeprom		= &puff_eeprom_cb,
 	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &puff_sys_cb,
 	.eventlog	= &puff_eventlog_cb,
 };

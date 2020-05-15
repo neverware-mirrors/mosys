@@ -150,15 +150,6 @@ struct eeprom_cb {
 	struct eeprom *eeprom_list;
 };
 
-/* smbios callbacks */
-struct smbios_cb {
-	char *(*system_vendor)(struct platform_intf *intf);
-	char *(*system_name)(struct platform_intf *intf);
-	char *(*system_version)(struct platform_intf *intf);
-	char *(*system_sku)(struct platform_intf *intf);
-	char *(*system_serial)(struct platform_intf *intf);
-};
-
 /* system information callbacks */
 struct sys_cb {
 	/* methods useful for probing */
@@ -208,7 +199,6 @@ struct psu_cb {
 struct platform_cb {
 	struct memory_cb *memory;	/* memory callbacks */
 	struct eventlog_cb *eventlog;	/* eventlog callbacks */
-	struct smbios_cb *smbios;	/* smbios related callbacks */
 	struct sys_cb *sys;		/* system callbacks */
 	struct nvram_cb *nvram;		/* nvram related callbacks */
 	struct eeprom_cb *eeprom;	/* eeprom callbacks */

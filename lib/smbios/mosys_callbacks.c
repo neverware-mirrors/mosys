@@ -146,13 +146,6 @@ int smbios_sysinfo_get_sku_number(struct platform_intf *intf)
 	return result;
 }
 
-struct smbios_cb smbios_sysinfo_cb = {
-	.system_vendor		= smbios_sysinfo_get_vendor,
-	.system_name		= smbios_sysinfo_get_name,
-	.system_version		= smbios_sysinfo_get_version,
-	.system_sku		= smbios_sysinfo_get_sku,
-};
-
 /*
  * Memory callbacks
  */

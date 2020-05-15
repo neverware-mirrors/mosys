@@ -81,7 +81,6 @@ struct platform_cb octopus_cb = {
 	.eeprom		= &octopus_eeprom_cb,
 	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &octopus_sys_cb,
 	.eventlog	= &octopus_eventlog_cb,
 };

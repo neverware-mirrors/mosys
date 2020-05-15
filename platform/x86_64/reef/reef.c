@@ -186,7 +186,6 @@ struct platform_cb reef_cb = {
 	.eeprom		= &reef_eeprom_cb,
 	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &reef_sys_cb,
 	.eventlog	= &reef_eventlog_cb,
 };
@@ -196,7 +195,6 @@ struct platform_cb coral_cb = {
 	.eeprom		= &reef_eeprom_cb,
 	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.sys 		= &coral_sys_cb,
 	.eventlog	= &reef_eventlog_cb,
 };

@@ -79,7 +79,6 @@ static struct platform_cb sarien_cb = {
 	.eeprom		= &sarien_eeprom_cb,
 	.memory		= &smbios_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
-	.smbios		= &smbios_sysinfo_cb,
 	.sys		= &sarien_sys_cb,
 	.eventlog	= &sarien_eventlog_cb,
 };
