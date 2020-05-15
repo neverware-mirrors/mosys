@@ -85,21 +85,6 @@ static struct eeprom strago_eeproms[] = {
 	{ 0 },
 };
 
-int strago_eeprom_setup(struct platform_intf *intf)
-{
-	struct eeprom *eeprom;
-	int rc = 0;
-
-	for (eeprom = intf->cb->eeprom->eeprom_list;
-	     eeprom && eeprom->name;
-	     eeprom++) {
-		if (eeprom->setup)
-			rc |= eeprom->setup(intf, eeprom);
-	}
-
-	return rc;
-}
-
 struct eeprom_cb strago_eeprom_cb = {
 	.eeprom_list	= strago_eeproms,
 };

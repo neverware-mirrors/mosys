@@ -114,21 +114,6 @@ static struct eeprom storm_eeproms[] = {
 	{ 0 },
 };
 
-int storm_eeprom_setup(struct platform_intf *intf)
-{
-	struct eeprom *eeprom;
-	int rc = 0;
-
-	for (eeprom = intf->cb->eeprom->eeprom_list;
-	     eeprom && eeprom->name;
-	     eeprom++) {
-		if (eeprom->setup)
-			rc |= eeprom->setup(intf, eeprom);
-	}
-
-	return rc;
-}
-
 struct eeprom_cb storm_eeprom_cb = {
 	.eeprom_list	= storm_eeproms,
 };

@@ -85,21 +85,6 @@ static struct eeprom beltino_eeproms[] = {
 	{ 0 },
 };
 
-int beltino_eeprom_setup(struct platform_intf *intf)
-{
-	struct eeprom *eeprom;
-	int rc = 0;
-
-	for (eeprom = intf->cb->eeprom->eeprom_list;
-	     eeprom && eeprom->name;
-	     eeprom++) {
-		if (eeprom->setup)
-			rc |= eeprom->setup(intf, eeprom);
-	}
-
-	return rc;
-}
-
 struct eeprom_cb beltino_eeprom_cb = {
 	.eeprom_list	= beltino_eeproms,
 };

@@ -114,21 +114,6 @@ static struct eeprom mistral_eeproms[] = {
 	{ 0 },
 };
 
-int mistral_eeprom_setup(struct platform_intf *intf)
-{
-	struct eeprom *eeprom;
-	int rc = 0;
-
-	for (eeprom = intf->cb->eeprom->eeprom_list;
-	     eeprom && eeprom->name;
-	     eeprom++) {
-		if (eeprom->setup)
-			rc |= eeprom->setup(intf, eeprom);
-	}
-
-	return rc;
-}
-
 struct eeprom_cb mistral_eeprom_cb = {
 	.eeprom_list	= mistral_eeproms,
 };
