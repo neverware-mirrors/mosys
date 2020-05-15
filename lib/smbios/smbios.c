@@ -69,8 +69,8 @@ static struct smbios_iterator *smbios_itr = NULL;
  *
  * returns number of strings present in table, < 0 on error.
  */
-int smbios_parse_string_table(char *ptr,
-         char strings[SMBIOS_MAX_STRINGS][SMBIOS_MAX_STRING_LENGTH])
+static int smbios_parse_string_table(
+	char *ptr, char strings[SMBIOS_MAX_STRINGS][SMBIOS_MAX_STRING_LENGTH])
 {
 	int id, len, i;
 
@@ -111,7 +111,7 @@ int smbios_parse_string_table(char *ptr,
  * returns offset to end of string list (including terminating null byte).
  * returns < 0 if ptr is invalid.
  */
-int smbios_string_table_len(const char *ptr)
+static int smbios_string_table_len(const char *ptr)
 {
 	int len, tlen;
 
@@ -132,28 +132,6 @@ int smbios_string_table_len(const char *ptr)
 }
 
 /*
- * smbios_get_string  -  return string at index
- *
- * @ptr:	pointer to start of strings
- * @num:	number of string to return (0-based)
- *
- * returns pointer to string
- */
-char *smbios_get_string(const char *ptr, int num)
-{
-	if (num < 0 || ptr == NULL)
-		return NULL;
-
-	for (; num && ptr && *ptr; num--)
-		ptr += strlen(ptr) + 1;
-
-	if (!ptr || !*ptr)
-		return NULL;
-	else
-		return (char *)ptr;
-}
-
-/*
  * smbios_find_entry  -  locate entry pointer in EBDA
  *
  * @intf:	platform interface
@@ -164,8 +142,9 @@ char *smbios_get_string(const char *ptr, int num)
  * returns 0 if found
  * returns <0 if not found
  */
-int smbios_find_entry(struct platform_intf *intf, struct smbios_entry *entry,
-                      unsigned long int baseaddr, unsigned long int len)
+static int smbios_find_entry(struct platform_intf *intf,
+			     struct smbios_entry *entry,
+			     unsigned long int baseaddr, unsigned long int len)
 {
 	uint8_t csum;
 	uint8_t *data;
@@ -494,48 +473,4 @@ int smbios_find_table(struct platform_intf *intf, enum smbios_types type,
 	                          smbios_itr->header->length, table->string);
 
 	return 0;
-}
-
-/*
- * smbios_find_string  -  locate specific string in SMBIOS table
- *                        (conforms to legacy smbios utility)
- *
- * @intf:	platform interface
- * @type:	smbios table type
- * @number:	string number to retrieve
- * @baseaddr:	base address to start searching in
- * @len:	length of region to search (in bytes)
- *
- * returns allocated buffer containing null-terminated string
- *         !! caller is expected to free returned buffer !!
- * returns NULL to indicate error
- */
-char *smbios_find_string(struct platform_intf *intf,
-                         enum smbios_types type, int number,
-                         unsigned int baseaddr, unsigned int len)
-{
-	char *sptr;
-
-	if (type > SMBIOS_TYPE_END)
-		return NULL;
-
-	/* get instance 0 of the table */
-	if (smbios_find_table_raw(intf, type, 0, baseaddr, len) < 0) {
-		lprintf(LOG_DEBUG, "Unable to locate table %d\n", type);
-		return NULL;
-	}
-
-	/* lookup string location in table */
-	sptr = smbios_get_string((char *)smbios_itr->current +
-				 smbios_itr->header->length,
-				 number);
-
-	if (!sptr) {
-		lprintf(LOG_DEBUG, "String %d not found in table %d\n",
-		        number, type);
-		return NULL;
-	}
-
-	/* return allocated copy of string */
-	return mosys_strdup(sptr);
 }

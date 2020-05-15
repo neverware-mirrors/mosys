@@ -99,13 +99,6 @@ extern int smbios_find_table(struct platform_intf *intf,
                              enum smbios_types type,
                              int instance, struct smbios_table *table,
                              unsigned int baseaddr, unsigned int len);
-extern char *smbios_find_string(struct platform_intf *intf,
-                                enum smbios_types type, int number,
-                             unsigned int baseaddr, unsigned int len);
-extern int smbios_find_entry(struct platform_intf *intf,
-			     struct smbios_entry *entry,
-                             unsigned long int baseaddr,
-                             unsigned long int len);
 
 extern char *smbios_sysinfo_get_vendor(struct platform_intf *intf);
 extern char *smbios_sysinfo_get_name(struct platform_intf *intf);
