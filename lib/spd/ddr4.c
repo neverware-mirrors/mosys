@@ -145,17 +145,6 @@ int spd_print_field_ddr4(struct platform_intf *intf, struct kv_pair *kv,
 		break;
 	}
 
-	case SPD_GET_SERIAL_NUMBER:
-	{
-		kv_pair_fmt(kv, "serial_number", "%02x%02x%02x%02x",
-		            byte[DDR4_SPD_REG_MODULE_MANUF_SERIAL_0],
-		            byte[DDR4_SPD_REG_MODULE_MANUF_SERIAL_1],
-		            byte[DDR4_SPD_REG_MODULE_MANUF_SERIAL_2],
-		            byte[DDR4_SPD_REG_MODULE_MANUF_SERIAL_3]);
-		ret = 1;
-		break;
-	}
-
 	case SPD_GET_PART_NUMBER:
 	{
 		char part[21];

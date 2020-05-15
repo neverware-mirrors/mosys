@@ -156,7 +156,6 @@ enum spd_field_type {
 	SPD_GET_MFG_ID_DRAM,	/* DRAM Manufacturer ID */
 	SPD_GET_MFG_LOC,	/* Module Manufacturing Location */
 	SPD_GET_MFG_DATE,	/* Module Manufacturing Date */
-	SPD_GET_SERIAL_NUMBER,	/* Module Serial Number */
 	SPD_GET_PART_NUMBER,	/* Module Part Number */
 	SPD_GET_REVISION_CODE,	/* Module Revision Code */
 	SPD_GET_SIZE,		/* Module Size (in MB) */

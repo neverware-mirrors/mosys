@@ -162,15 +162,6 @@ int nonspd_print_field(struct kv_pair *kv,
 		break;
 	}
 
-	case SPD_GET_SERIAL_NUMBER:
-	{
-		kv_pair_fmt(kv, "serial_number", "%02x%02x%02x%02x",
-		            info->serial_num[0], info->serial_num[1],
-		            info->serial_num[2], info->serial_num[3]);
-		ret = 1;
-		break;
-	}
-
 	case SPD_GET_PART_NUMBER:
 	{
 		char part[sizeof(info->part_num)+1];
