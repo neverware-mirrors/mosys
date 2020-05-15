@@ -38,6 +38,11 @@ add_global_arguments('-Werror', language : 'c')
 add_global_arguments('-Wstrict-prototypes', language : 'c')
 add_global_arguments('-Wundef', language : 'c')
 
+# Require that externally-visible symbols have a prototype.  This
+# helps find missing usages of 'static'.
+add_global_arguments('-Wmissing-variable-declarations', language : 'c')
+add_global_arguments('-Wmissing-prototypes', language : 'c')
+
 # External libs used by Mosys
 fmap_dep = dependency('fmap')
 minijail_dep = declare_dependency(link_args: '-lminijail')
