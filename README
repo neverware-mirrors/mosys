@@ -6,46 +6,18 @@ Mosys is designed to aid in obtaining obscure system-specific information
 and present it in a uniform, human-friendly manner that is also parseable. It
 is intended to complement other systems software and may overlap in some areas.
 
-Examples of information this program is useful for:
-- Platform identification
-- Snapshot of machine information
-- Listing non-enumerable devices
-- Retrieving vital product data
-
-Due to the system-specific nature of this program, it is unlikely to work with
-most platforms. A generic subset of functionality will be available, though
-its usefulness may be extremely limited.
-
 Configuration & Building
 ------------------------
 Dependencies:
   libfmap
-  libuuid
 
-Mosys is a two-stage compile: the first stage is for all of the C components and
-uses the Meson build system and the second stage is Rust Cargo for all of the
-Rust components.
+Mosys uses meson to build.  To setup the build, use:
 
-Chrome OS contributors will want to use cros_workon instead. Using the ebuild is
-vastly easier than trying to build manually.
-
-See meson.build for valid arch options.
+    meson output_dir
 
 Flags of interest:
 -Duse_cros_config=true/false: whether to enable linking to cros_config for
                               Chrome OS. See Chrome OS example in Mosys ebuild.
-
-Note that you might have better luck compiling Mosys with Clang while -Werror is
-enabled. This is because we (Chromium) use Clang as our default compiler. To do
-that, add CC=clang before you invoke Meson.
-
-All of this should look something like, for the C components:
-  CC=clang meson -Darch=amd64 output_dir
-  ninja -C output_dir
-
-or:
-  CC=clang meson -Darch=amd64 -Duse_cros_config=true output_dir
-  ninja -C output_dir
 
 To build with use_cros_config=true, you need one file that is dynamically
 provided as inputs to the build process from other ebuilds in the Chrome OS
@@ -58,36 +30,11 @@ by the build system.
 If you just want to compile something quickly, you can do:
   cp lib/cros_config/dummy_cros_config_data.c lib/cros_config/cros_config_data.c
 
-and then run the `meson` command as above.
+Then, to compile mosys, run:
 
-Then, to build the Rust components, first build the C components using the
-instructions above. Then, run:
+    ninja -C output_dir
 
-  MESON_BUILD_ROOT=output_dir cargo build
-
-If you are building with use_cros_config, as above, instead you will do:
-
-  MESON_BUILD_ROOT=output_dir USE=unibuild cargo build
-
-In the end, this will output a "target/debug/mosys" binary that is dynamically
-linked. Use `--release` argument to `cargo` to get a release build.
-
-The `mosys` binary that is output will typically abort on most platforms when
-run as a user without root privs. To try to work with this locally without
-moving it to a target platform, you can run:
-
-  sudo mosys --help
-
-or:
-
-  sudo mosys -j -p dummy
-
-to disable the Minijail and force the platform to the "dummy" platform.
-
-To run tests (with cros_config enabled):
-  CC=clang meson -Darch=amd64 -Duse_cros_config=true -Dtest_cros_config=true out
-  ninja -C out
-  USE=unibuild MESON_BUILD_ROOT=out cargo test
+The mosys executable will be placed at `output_dir/mains/mosys`.
 
 Usage
 -----
