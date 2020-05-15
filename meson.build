@@ -43,6 +43,7 @@ fmap_dep = dependency('fmap')
 minijail_dep = declare_dependency(link_args: '-lminijail')
 
 libmosys_src = files()
+platform_support_src = files()
 unittest_src = files()
 
 # Subdirs with source to link against

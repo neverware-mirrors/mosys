@@ -233,8 +233,9 @@ struct platform_intf {
 	int (*destroy)(struct platform_intf *intf);
 };
 
-/* The global list of all platforms. */
-extern struct platform_intf *platform_intf_list[];
+/* The global list of all platforms.  Temporarily weakly defined so
+   unit tests compile until this list is removed (crbug.com/1070692). */
+extern __attribute__((weak)) struct platform_intf *platform_intf_list[];
 
 /*
  * mosys_platform_setup  -  determine current platform and return handler
