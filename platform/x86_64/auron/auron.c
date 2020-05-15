@@ -85,7 +85,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { NULL } }
 };
 
-struct platform_cmd *auron_sub[] = {
+static struct platform_cmd *auron_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
@@ -139,6 +139,9 @@ static struct platform_cb auron_cb = {
 	.sys 		= &auron_sys_cb,
 	.eventlog	= &auron_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_auron;
 
 struct platform_intf platform_auron = {
 	.type		= PLATFORM_X86_64,

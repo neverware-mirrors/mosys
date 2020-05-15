@@ -32,6 +32,8 @@
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
+#include "mistral.h"
+
 static char *mistral_get_brand(struct platform_intf *intf)
 {
 	return mosys_strdup("BAMH");

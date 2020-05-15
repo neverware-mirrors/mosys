@@ -46,8 +46,6 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
-#ifdef CONFIG_CROS_CONFIG
-
 static struct platform_cmd *cheza_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
@@ -74,7 +72,7 @@ static int cheza_probe(struct platform_intf *intf)
 	return ret;
 }
 
-struct eventlog_cb cheza_eventlog_cb = {
+static struct eventlog_cb cheza_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -86,7 +84,7 @@ struct eventlog_cb cheza_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb cheza_cb = {
+static struct platform_cb cheza_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &cheza_eeprom_cb,
 	.memory		= &cheza_memory_cb,
@@ -96,6 +94,9 @@ struct platform_cb cheza_cb = {
 	.eventlog	= &cheza_eventlog_cb,
 };
 
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_cheza;
+
 struct platform_intf platform_cheza = {
 	.type		= PLATFORM_ARMV8,
 	.name		= "Cheza",
@@ -103,4 +104,3 @@ struct platform_intf platform_cheza = {
 	.cb		= &cheza_cb,
 	.probe		= &cheza_probe,
 };
-#endif /* CONFIG_CROS_CONFIG */

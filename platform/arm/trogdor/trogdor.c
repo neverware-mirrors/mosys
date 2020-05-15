@@ -13,7 +13,6 @@
 #include "mosys/platform.h"
 #include "mosys/intf_list.h"
 
-
 static struct platform_cmd *trogdor_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
@@ -30,7 +29,7 @@ static int trogdor_probe(struct platform_intf *intf)
 	return cros_config_probe(intf, NULL);
 }
 
-struct eventlog_cb trogdor_eventlog_cb = {
+static struct eventlog_cb trogdor_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -42,7 +41,7 @@ struct eventlog_cb trogdor_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb trogdor_cb = {
+static struct platform_cb trogdor_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &trogdor_eeprom_cb,
 	.memory		= &trogdor_memory_cb,
@@ -51,6 +50,9 @@ struct platform_cb trogdor_cb = {
 	.sys 		= &trogdor_sys_cb,
 	.eventlog	= &trogdor_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_trogdor;
 
 struct platform_intf platform_trogdor = {
 	.type		= PLATFORM_ARMV8,

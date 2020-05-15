@@ -51,7 +51,7 @@
 
 #include "octopus.h"
 
-struct platform_cmd *octopus_sub[] = {
+static struct platform_cmd *octopus_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
@@ -61,13 +61,13 @@ struct platform_cmd *octopus_sub[] = {
 	NULL
 };
 
-int octopus_probe(struct platform_intf *intf)
+static int octopus_probe(struct platform_intf *intf)
 {
 	/* cros_config model.yaml 'platform-name' should match intf.name. */
 	return cros_config_probe(intf, NULL);
 }
 
-struct eventlog_cb octopus_eventlog_cb = {
+static struct eventlog_cb octopus_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -76,7 +76,7 @@ struct eventlog_cb octopus_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb octopus_cb = {
+static struct platform_cb octopus_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &octopus_eeprom_cb,
 	.memory		= &smbios_memory_cb,
@@ -84,6 +84,9 @@ struct platform_cb octopus_cb = {
 	.sys 		= &octopus_sys_cb,
 	.eventlog	= &octopus_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_octopus;
 
 struct platform_intf platform_octopus = {
 	.type		= PLATFORM_X86_64,

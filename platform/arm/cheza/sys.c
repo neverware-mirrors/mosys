@@ -39,6 +39,8 @@
 #include "lib/fdt.h"
 #include "lib/sku.h"
 
+#include "cheza.h"
+
 static char *cheza_get_version(struct platform_intf *intf)
 {
 	uint32_t board_id;

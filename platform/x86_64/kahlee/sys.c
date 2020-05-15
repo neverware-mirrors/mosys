@@ -29,14 +29,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef CONFIG_CROS_CONFIG
-
 #include "lib/smbios.h"
 #include "mosys/platform.h"
+
+#include "kahlee.h"
 
 struct sys_cb kahlee_sys_cb = {
 	.version		= &smbios_sysinfo_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
 };
-#endif /* CONFIG_CROS_CONFIG */

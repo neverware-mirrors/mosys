@@ -32,6 +32,8 @@
 #include "lib/smbios.h"
 #include "mosys/platform.h"
 
+#include "hatch.h"
+
 struct sys_cb hatch_sys_cb = {
 	.version		= &smbios_sysinfo_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,

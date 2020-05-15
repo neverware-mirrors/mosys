@@ -16,7 +16,7 @@
 
 #include "volteer.h"
 
-struct platform_cmd *volteer_sub[] = {
+static struct platform_cmd *volteer_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
@@ -27,13 +27,13 @@ struct platform_cmd *volteer_sub[] = {
 	NULL
 };
 
-int volteer_probe(struct platform_intf *intf)
+static int volteer_probe(struct platform_intf *intf)
 {
 	/* cros_config model.yaml 'platform-name' should match intf.name. */
 	return cros_config_probe(intf, NULL);
 }
 
-struct eventlog_cb volteer_eventlog_cb = {
+static struct eventlog_cb volteer_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -42,7 +42,7 @@ struct eventlog_cb volteer_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb volteer_cb = {
+static struct platform_cb volteer_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &volteer_eeprom_cb,
 	.memory		= &smbios_memory_cb,
@@ -50,6 +50,9 @@ struct platform_cb volteer_cb = {
 	.sys 		= &volteer_sys_cb,
 	.eventlog	= &volteer_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_volteer;
 
 struct platform_intf platform_volteer = {
 	.type		= PLATFORM_X86_64,

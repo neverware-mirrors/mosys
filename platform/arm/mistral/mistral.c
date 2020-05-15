@@ -53,7 +53,7 @@ static const char *id_list[] = {
 	NULL,
 };
 
-struct platform_cmd *mistral_sub[] = {
+static struct platform_cmd *mistral_sub[] = {
 	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
@@ -62,7 +62,7 @@ struct platform_cmd *mistral_sub[] = {
 	NULL
 };
 
-int mistral_probe(struct platform_intf *intf)
+static int mistral_probe(struct platform_intf *intf)
 {
 	int index;
 
@@ -75,7 +75,7 @@ int mistral_probe(struct platform_intf *intf)
 	return index >= 0 ? 1 : 0;
 }
 
-struct eventlog_cb mistral_eventlog_cb = {
+static struct eventlog_cb mistral_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -87,13 +87,16 @@ struct eventlog_cb mistral_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb mistral_cb = {
+static struct platform_cb mistral_cb = {
 	.eeprom 	= &mistral_eeprom_cb,
 	.memory		= &mistral_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys 		= &mistral_sys_cb,
 	.eventlog	= &mistral_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_mistral;
 
 struct platform_intf platform_mistral = {
 	.type		= PLATFORM_ARMV8,

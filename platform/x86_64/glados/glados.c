@@ -83,7 +83,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { NULL }, },
 };
 
-struct platform_cmd *glados_sub[] = {
+static struct platform_cmd *glados_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_fp,
@@ -126,7 +126,7 @@ exit:
 	return status;
 }
 
-struct eventlog_cb glados_eventlog_cb = {
+static struct eventlog_cb glados_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -135,7 +135,7 @@ struct eventlog_cb glados_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb glados_cb = {
+static struct platform_cb glados_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
 	.fp		= &cros_fp_cb,
@@ -145,6 +145,9 @@ struct platform_cb glados_cb = {
 	.sys 		= &glados_sys_cb,
 	.eventlog	= &glados_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_glados;
 
 struct platform_intf platform_glados = {
 	.type		= PLATFORM_X86_64,

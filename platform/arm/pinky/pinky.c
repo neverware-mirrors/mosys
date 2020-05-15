@@ -58,7 +58,7 @@ enum pinky_boards {
 
 static enum pinky_boards probed_board = UNKNOWN;
 
-struct veyron_probe_id {
+static struct veyron_probe_id {
 	const char *name;
 	const char *fdt_compat;
 	int has_ec;
@@ -75,7 +75,7 @@ struct veyron_probe_id {
 };
 
 #define PINKY_CMD_EC_NUM	0
-struct platform_cmd *pinky_sub[] = {
+static struct platform_cmd *pinky_sub[] = {
 	/* Keep this as the first entry. intf->sub will be set to point to
          * the next entry if it turns out that we don't have an EC. */
 	[PINKY_CMD_EC_NUM] = &cmd_ec,
@@ -124,7 +124,7 @@ static int pinky_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-struct eventlog_cb pinky_eventlog_cb = {
+static struct eventlog_cb pinky_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -136,7 +136,7 @@ struct eventlog_cb pinky_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb pinky_cb = {
+static struct platform_cb pinky_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &pinky_eeprom_cb,
 	.memory		= &pinky_memory_cb,
@@ -144,6 +144,9 @@ struct platform_cb pinky_cb = {
 	.sys 		= &pinky_sys_cb,
 	.eventlog	= &pinky_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_pinky;
 
 struct platform_intf platform_pinky = {
 	.type		= PLATFORM_ARMV7,

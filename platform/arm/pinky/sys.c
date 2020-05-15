@@ -38,6 +38,8 @@
 #include "lib/probe.h"
 #include "lib/fdt.h"
 
+#include "pinky.h"
+
 /* Pinky uses device-tree compatible typle: google,<family>-<name>-rev<N>,
  * ie "google,veyron-pinky-rev0" */
 

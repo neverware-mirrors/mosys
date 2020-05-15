@@ -29,8 +29,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef CONFIG_CROS_CONFIG
-
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -53,7 +51,7 @@
 
 #include "fizz.h"
 
-struct platform_cmd *fizz_sub[] = {
+static struct platform_cmd *fizz_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_fp,
@@ -66,7 +64,7 @@ struct platform_cmd *fizz_sub[] = {
 	NULL
 };
 
-int fizz_probe(struct platform_intf *intf)
+static int fizz_probe(struct platform_intf *intf)
 {
 	/**
 	 * 'fizz' interface is shared by multiple overlays (with different
@@ -80,7 +78,7 @@ int fizz_probe(struct platform_intf *intf)
 	return cros_config_probe(intf, platform_names);
 }
 
-struct eventlog_cb fizz_eventlog_cb = {
+static struct eventlog_cb fizz_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -89,7 +87,7 @@ struct eventlog_cb fizz_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb fizz_cb = {
+static struct platform_cb fizz_cb = {
 	.ec		= &cros_ec_cb,
 	.fp		= &cros_fp_cb,
 	.eeprom		= &fizz_eeprom_cb,
@@ -100,6 +98,9 @@ struct platform_cb fizz_cb = {
 	.eventlog	= &fizz_eventlog_cb,
 };
 
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_fizz;
+
 struct platform_intf platform_fizz = {
 	.type		= PLATFORM_X86_64,
 	.name		= "Fizz",
@@ -107,4 +108,3 @@ struct platform_intf platform_fizz = {
 	.cb		= &fizz_cb,
 	.probe		= &fizz_probe,
 };
-#endif /* CONFIG_CROS_CONFIG */

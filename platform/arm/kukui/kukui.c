@@ -49,9 +49,7 @@
 
 #include "kukui.h"
 
-
-
-struct platform_cmd *kukui_sub[] = {
+static struct platform_cmd *kukui_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
@@ -86,7 +84,7 @@ static int kukui_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-struct eventlog_cb kukui_eventlog_cb = {
+static struct eventlog_cb kukui_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -98,7 +96,7 @@ struct eventlog_cb kukui_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb kukui_cb = {
+static struct platform_cb kukui_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &kukui_eeprom_cb,
 	.memory		= &kukui_memory_cb,
@@ -106,6 +104,9 @@ struct platform_cb kukui_cb = {
 	.sys		= &kukui_sys_cb,
 	.eventlog	= &kukui_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_kukui;
 
 struct platform_intf platform_kukui = {
 	.type		= PLATFORM_ARMV8,

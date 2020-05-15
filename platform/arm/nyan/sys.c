@@ -32,6 +32,8 @@
 #include "drivers/google/cros_ec.h"
 #include "mosys/platform.h"
 
+#include "nyan.h"
+
 struct sys_cb nyan_sys_cb = {
 	.version	= &cros_ec_board_version_str,
 };

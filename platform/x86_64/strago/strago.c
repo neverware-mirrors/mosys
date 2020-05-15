@@ -92,7 +92,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { NULL } }
 };
 
-struct platform_cmd *strago_sub[] = {
+static struct platform_cmd *strago_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
@@ -127,7 +127,7 @@ exit:
 	return status;
 }
 
-struct eventlog_cb strago_eventlog_cb = {
+static struct eventlog_cb strago_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -136,13 +136,16 @@ struct eventlog_cb strago_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb strago_cb = {
+static struct platform_cb strago_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &strago_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
 	.sys 		= &strago_sys_cb,
 	.eventlog	= &strago_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_strago;
 
 struct platform_intf platform_strago = {
 	.type		= PLATFORM_X86_64,

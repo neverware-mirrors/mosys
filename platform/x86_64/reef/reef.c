@@ -104,7 +104,7 @@ static const struct probe_ids probe_id_list[] = {
 
 #endif /* CONFIG_CROS_CONFIG */
 
-struct platform_cmd *reef_sub[] = {
+static struct platform_cmd *reef_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
@@ -115,7 +115,7 @@ struct platform_cmd *reef_sub[] = {
 	NULL
 };
 
-int reef_probe(struct platform_intf *intf)
+static int reef_probe(struct platform_intf *intf)
 {
 
 #ifdef CONFIG_CROS_CONFIG
@@ -162,7 +162,7 @@ exit:
 #endif /* CONFIG_CROS_CONFIG */
 }
 
-int coral_probe(struct platform_intf *intf)
+static int coral_probe(struct platform_intf *intf)
 {
 #ifdef CONFIG_CROS_CONFIG
 	/* cros_config model.yaml 'platform-name' should match intf.name. */
@@ -172,7 +172,7 @@ int coral_probe(struct platform_intf *intf)
 #endif
 }
 
-struct eventlog_cb reef_eventlog_cb = {
+static struct eventlog_cb reef_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -181,7 +181,7 @@ struct eventlog_cb reef_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb reef_cb = {
+static struct platform_cb reef_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &reef_eeprom_cb,
 	.memory		= &smbios_memory_cb,
@@ -190,7 +190,7 @@ struct platform_cb reef_cb = {
 	.eventlog	= &reef_eventlog_cb,
 };
 
-struct platform_cb coral_cb = {
+static struct platform_cb coral_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom		= &reef_eeprom_cb,
 	.memory		= &smbios_memory_cb,
@@ -198,6 +198,10 @@ struct platform_cb coral_cb = {
 	.sys 		= &coral_sys_cb,
 	.eventlog	= &reef_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_reef;
+extern struct platform_intf platform_coral;
 
 struct platform_intf platform_reef = {
 	.type		= PLATFORM_X86_64,

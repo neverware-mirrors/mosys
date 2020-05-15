@@ -33,6 +33,8 @@
 #include "lib/smbios.h"
 #include "mosys/platform.h"
 
+#include "reef.h"
+
 struct sys_cb reef_sys_cb = {
 	.version		= &smbios_sysinfo_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,

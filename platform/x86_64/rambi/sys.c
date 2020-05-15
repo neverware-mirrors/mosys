@@ -31,12 +31,12 @@
 
 #include <valstr.h>
 
+#include "drivers/google/cros_ec.h"
+#include "lib/smbios.h"
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
-#include "lib/smbios.h"
-
-#include "drivers/google/cros_ec.h"
+#include "rambi.h"
 
 static struct valstr rambi_board_version[] = {
 	{ 0, "Proto1/1.5" },

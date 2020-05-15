@@ -46,7 +46,7 @@
 
 #include "nyan.h"
 
-const char *nyan_kitty_id_list[] = {
+static const char *nyan_kitty_id_list[] = {
 	"google,nyan-kitty-rev5",
 	"google,nyan-kitty-rev4",
 	"google,nyan-kitty-rev3",
@@ -56,7 +56,7 @@ const char *nyan_kitty_id_list[] = {
 	NULL,
 };
 
-struct platform_cmd *nyan_sub[] = {
+static struct platform_cmd *nyan_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
@@ -67,7 +67,7 @@ struct platform_cmd *nyan_sub[] = {
 	NULL
 };
 
-int nyan_probe(struct platform_intf *intf)
+static int nyan_probe(struct platform_intf *intf)
 {
 	int index;
 
@@ -83,7 +83,7 @@ int nyan_probe(struct platform_intf *intf)
 	return 0;
 }
 
-struct eventlog_cb nyan_eventlog_cb = {
+static struct eventlog_cb nyan_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -95,7 +95,7 @@ struct eventlog_cb nyan_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb nyan_cb = {
+static struct platform_cb nyan_cb = {
 	.ec 		= &cros_ec_cb,
 	.eeprom 	= &nyan_eeprom_cb,
 	.memory		= &nyan_memory_cb,
@@ -104,6 +104,9 @@ struct platform_cb nyan_cb = {
 	.sys 		= &nyan_sys_cb,
 	.eventlog	= &nyan_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_nyan;
 
 struct platform_intf platform_nyan = {
 	.type		= PLATFORM_ARMV7,

@@ -72,8 +72,8 @@ static int dimm_count(struct platform_intf *intf)
 }
 
 /* Parse vpd partition and get value of key */
-int parse_vpd(uint8_t *buf, size_t size, char *key,
-		char value[MISTRAL_VPD_ENTRY_VALUE_SIZE])
+static int parse_vpd(uint8_t *buf, size_t size, char *key,
+		     char value[MISTRAL_VPD_ENTRY_VALUE_SIZE])
 {
 	size_t offset = 0;
 	int i = 0;

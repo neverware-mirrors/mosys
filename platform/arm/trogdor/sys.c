@@ -12,6 +12,8 @@
 #include "lib/probe.h"
 #include "lib/fdt.h"
 
+#include "trogdor.h"
+
 static char *trogdor_get_version(struct platform_intf *intf)
 {
 	uint32_t board_id;

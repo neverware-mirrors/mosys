@@ -32,6 +32,8 @@
 #include "lib/smbios.h"
 #include "mosys/platform.h"
 
+#include "auron.h"
+
 struct sys_cb auron_sys_cb = {
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.version		= &smbios_sysinfo_get_version,

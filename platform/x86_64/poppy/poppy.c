@@ -83,6 +83,9 @@ static struct platform_cb poppy_cb = {
 	.eventlog	= &poppy_eventlog_cb,
 };
 
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_poppy;
+
 struct platform_intf platform_poppy = {
 	.type		= PLATFORM_X86_64,
 	.name		= "Poppy",

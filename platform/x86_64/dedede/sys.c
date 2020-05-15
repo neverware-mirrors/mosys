@@ -6,6 +6,8 @@
 #include "lib/smbios.h"
 #include "mosys/platform.h"
 
+#include "dedede.h"
+
 struct sys_cb dedede_sys_cb = {
 	.version		= &smbios_sysinfo_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,

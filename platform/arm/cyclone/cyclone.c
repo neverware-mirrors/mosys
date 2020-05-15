@@ -55,7 +55,7 @@ static const char *id_list[] = {
 	NULL,
 };
 
-struct platform_cmd *cyclone_sub[] = {
+static struct platform_cmd *cyclone_sub[] = {
 	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
@@ -64,7 +64,7 @@ struct platform_cmd *cyclone_sub[] = {
 	NULL
 };
 
-int cyclone_probe(struct platform_intf *intf)
+static int cyclone_probe(struct platform_intf *intf)
 {
 	int index;
 
@@ -77,7 +77,7 @@ int cyclone_probe(struct platform_intf *intf)
 	return index >= 0 ? 1 : 0;
 }
 
-struct eventlog_cb cyclone_eventlog_cb = {
+static struct eventlog_cb cyclone_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -89,12 +89,15 @@ struct eventlog_cb cyclone_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb cyclone_cb = {
+static struct platform_cb cyclone_cb = {
 	.eeprom 	= &cyclone_eeprom_cb,
 	.memory		= &cyclone_memory_cb,
 	.nvram		= &cros_spi_flash_nvram_cb,
 	.eventlog	= &cyclone_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_cyclone;
 
 struct platform_intf platform_cyclone = {
 	.type		= PLATFORM_ARMV7,

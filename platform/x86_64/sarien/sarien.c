@@ -83,6 +83,9 @@ static struct platform_cb sarien_cb = {
 	.eventlog	= &sarien_eventlog_cb,
 };
 
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_sarien;
+
 struct platform_intf platform_sarien = {
 	.type		= PLATFORM_X86_64,
 	.name		= "Sarien",

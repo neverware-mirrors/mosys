@@ -85,7 +85,7 @@ static const struct probe_ids probe_id_list[] = {
 	{ { NULL } }
 };
 
-struct platform_cmd *beltino_sub[] = {
+static struct platform_cmd *beltino_sub[] = {
 	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_platform,
@@ -120,7 +120,7 @@ exit:
 	return status;
 }
 
-struct eventlog_cb beltino_eventlog_cb = {
+static struct eventlog_cb beltino_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -129,13 +129,16 @@ struct eventlog_cb beltino_eventlog_cb = {
 	.fetch		= &elog_fetch_from_smbios,
 };
 
-struct platform_cb beltino_cb = {
+static struct platform_cb beltino_cb = {
 	.eeprom		= &beltino_eeprom_cb,
 	.memory		= &beltino_memory_cb,
 	.psu		= &generic_psu_ac_only_cb,
 	.sys 		= &beltino_sys_cb,
 	.eventlog	= &beltino_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_beltino;
 
 struct platform_intf platform_beltino = {
 	.type		= PLATFORM_X86_64,

@@ -31,6 +31,8 @@
 
 #include "lib/smbios.h"
 
+#include "beltino.h"
+
 struct sys_cb beltino_sys_cb = {
 	.vendor			= &smbios_sysinfo_get_vendor,
 };

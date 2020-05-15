@@ -50,7 +50,7 @@
 
 static int probed_board = -1;
 
-struct oak_probe_id {
+static struct oak_probe_id {
 	const char *name;
 	const char *fdt_compat;
 	const struct sku_info single_sku;
@@ -64,7 +64,7 @@ struct oak_probe_id {
 
 #define OAK_CMD_PD_NUM	0
 
-struct platform_cmd *oak_sub[] = {
+static struct platform_cmd *oak_sub[] = {
 	/* Keep this as the first entry. intf->sub will be set to point to
          * the next entry if it turns out that we don't have a PD. */
 	[OAK_CMD_PD_NUM] = &cmd_pd,
@@ -113,7 +113,7 @@ static int oak_setup_post(struct platform_intf *intf)
 	return 0;
 }
 
-struct eventlog_cb oak_eventlog_cb = {
+static struct eventlog_cb oak_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -125,7 +125,7 @@ struct eventlog_cb oak_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb oak_cb = {
+static struct platform_cb oak_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &oak_eeprom_cb,
 	.memory		= &oak_memory_cb,
@@ -134,6 +134,9 @@ struct platform_cb oak_cb = {
 	.sys		= &oak_sys_cb,
 	.eventlog	= &oak_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_oak;
 
 struct platform_intf platform_oak = {
 	.type		= PLATFORM_ARMV8,

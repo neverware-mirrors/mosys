@@ -34,6 +34,8 @@
 #include "lib/smbios.h"
 #include "mosys/platform.h"
 
+#include "cyan.h"
+
 struct sys_cb cyan_sys_cb = {
 	.version		= &cros_ec_board_version_str,
 	.vendor			= &smbios_sysinfo_get_vendor,

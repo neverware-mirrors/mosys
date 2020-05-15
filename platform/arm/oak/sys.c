@@ -32,6 +32,8 @@
 #include "drivers/google/cros_ec.h"
 #include "mosys/platform.h"
 
+#include "oak.h"
+
 struct sys_cb oak_sys_cb = {
 	.version		= &cros_ec_board_version_str,
 };

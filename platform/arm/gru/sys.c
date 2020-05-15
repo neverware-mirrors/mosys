@@ -38,6 +38,8 @@
 #include "lib/probe.h"
 #include "lib/fdt.h"
 
+#include "gru.h"
+
 static char *gru_get_version(struct platform_intf *intf)
 {
 	uint32_t board_id;

@@ -33,6 +33,8 @@
 #include "lib/smbios.h"
 #include "mosys/platform.h"
 
+#include "strago.h"
+
 struct sys_cb strago_sys_cb = {
 	.version		= &cros_ec_board_version_str,
 	.vendor			= &smbios_sysinfo_get_vendor,

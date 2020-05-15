@@ -57,9 +57,8 @@ enum gru_boards {
 
 #ifndef CONFIG_CROS_CONFIG
 static enum gru_boards probed_board = UNKNOWN;
-#endif
 
-struct gru_probe_id {
+static struct gru_probe_id {
 	const char *name;
 	const char *fdt_compat;
 	const struct sku_info single_sku;
@@ -69,8 +68,9 @@ struct gru_probe_id {
 	[KEVIN]		= { "Kevin", "google,kevin-rev", { .brand = "SMAJ" } },
 	[RAINIER]	= { "Rainier", "google,rainier-rev" },
 };
+#endif
 
-struct platform_cmd *gru_sub[] = {
+static struct platform_cmd *gru_sub[] = {
 	&cmd_ec,
 	&cmd_eeprom,
 	&cmd_memory,
@@ -118,7 +118,7 @@ static int gru_probe(struct platform_intf *intf)
 #endif /* CONFIG_CROS_CONFIG */
 }
 
-struct eventlog_cb gru_eventlog_cb = {
+static struct eventlog_cb gru_eventlog_cb = {
 	.print_type	= &elog_print_type,
 	.print_data	= &elog_print_data,
 	.print_multi	= &elog_print_multi,
@@ -130,7 +130,7 @@ struct eventlog_cb gru_eventlog_cb = {
 	.write		= &elog_write_to_flash,
 };
 
-struct platform_cb gru_cb = {
+static struct platform_cb gru_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &gru_eeprom_cb,
 	.memory		= &gru_memory_cb,
@@ -139,6 +139,9 @@ struct platform_cb gru_cb = {
 	.sys 		= &gru_sys_cb,
 	.eventlog	= &gru_eventlog_cb,
 };
+
+/* TODO(crbug.com/1070692): make static */
+extern struct platform_intf platform_gru;
 
 struct platform_intf platform_gru = {
 	.type		= PLATFORM_ARMV8,

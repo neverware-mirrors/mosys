@@ -33,6 +33,8 @@
 #include "lib/fdt.h"
 #include "mosys/platform.h"
 
+#include "kukui.h"
+
 static int kukui_get_sku_id(struct platform_intf *intf)
 {
 	return fdt_get_sku_id();

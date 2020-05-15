@@ -33,6 +33,8 @@
 
 #include "mosys/platform.h"
 
+#include "pinky.h"
+
 static enum psu_types psu_type(struct platform_intf *intf)
 {
 	if (!strncmp(intf->name, "Mickey", strlen(intf->name)) ||
