@@ -31,10 +31,11 @@
 
 #include <stdio.h>
 
+#include "mosys/command_list.h"
 #include "mosys/kv_pair.h"
 #include "mosys/platform.h"
 
-const char *psu_type_names[] = {
+static const char *psu_type_names[] = {
 	[PSU_TYPE_UNKNOWN]	= "unknown",
 	[PSU_TYPE_BATTERY]	= "battery",
 	[PSU_TYPE_AC_ONLY]	= "AC_only",
@@ -67,7 +68,7 @@ static int psu_print_type(struct platform_intf *intf,
 	return 0;
 }
 
-struct platform_cmd psu_cmds[] = {
+static struct platform_cmd psu_cmds[] = {
 	{
 		.name	= "type",
 		.desc	= "Print Power Supply Type",

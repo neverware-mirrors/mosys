@@ -32,6 +32,7 @@
 #include <errno.h>
 #include <stddef.h>
 
+#include "mosys/command_list.h"
 #include "mosys/platform.h"
 
 static int nvram_vboot_read(struct platform_intf *intf,
@@ -62,7 +63,7 @@ static int nvram_vboot_write(struct platform_intf *intf,
 	return intf->cb->nvram->vboot_write(intf, argv[0]);
 }
 
-struct platform_cmd nvram_vboot_cmds[] = {
+static struct platform_cmd nvram_vboot_cmds[] = {
 	{
 		.name	= "read",
 		.desc	= "Read VbNvContext from NVRAM (deprecated)",
@@ -78,7 +79,7 @@ struct platform_cmd nvram_vboot_cmds[] = {
 	{ NULL }
 };
 
-struct platform_cmd nvram_cmds[] = {
+static struct platform_cmd nvram_cmds[] = {
 	{
 		.name	= "vboot",
 		.desc	= "For internal use by crossystem only",

@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #include "lib/math.h"
+#include "mosys/command_list.h"
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -105,7 +106,7 @@ error_usage:
 	return -1;
 }
 
-struct platform_cmd ec_cmds[] = {
+static struct platform_cmd ec_cmds[] = {
 	{
 		.name	= "info",
 		.desc	= "Print basic EC information",
@@ -115,7 +116,7 @@ struct platform_cmd ec_cmds[] = {
 	{ NULL }
 };
 
-struct platform_cmd pd_cmds[] = {
+static struct platform_cmd pd_cmds[] = {
 	{
 		.name	= "info",
 		.desc	= "Print basic PD information",
@@ -131,7 +132,7 @@ struct platform_cmd pd_cmds[] = {
 	{ NULL }
 };
 
-struct platform_cmd fp_cmds[] = {
+static struct platform_cmd fp_cmds[] = {
 	{
 		.name	= "info",
 		.desc	= "Print basic FP MCU information",

@@ -35,6 +35,7 @@
 #include <string.h>
 #include <inttypes.h>
 
+#include "mosys/command_list.h"
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"

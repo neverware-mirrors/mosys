@@ -41,6 +41,7 @@
 #include <fmap.h>
 #include <valstr.h>
 
+#include "mosys/command_list.h"
 #include "mosys/platform.h"
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
@@ -222,7 +223,7 @@ eeprom_map_cmd_exit:
 
 #define EEPROM_DEPRECATED " (deprecated, use flashrom or dump_fmap instead)"
 
-struct platform_cmd eeprom_cmds[] = {
+static struct platform_cmd eeprom_cmds[] = {
 	{
 		.name	= "map",
 		.desc	= "Print EEPROM maps if present" EEPROM_DEPRECATED,

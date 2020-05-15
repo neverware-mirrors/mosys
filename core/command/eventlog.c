@@ -37,6 +37,7 @@
 #include "lib/elog_smbios.h"
 
 #include "mosys/alloc.h"
+#include "mosys/command_list.h"
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 #include "mosys/platform.h"
@@ -183,7 +184,7 @@ static int eventlog_smbios_clear_cmd(struct platform_intf *intf,
 	return intf->cb->eventlog->clear(intf);
 }
 
-struct platform_cmd eventlog_smbios_cmds[] = {
+static struct platform_cmd eventlog_smbios_cmds[] = {
 	{
 		.name	= "list",
 		.desc	= "List Event Log",

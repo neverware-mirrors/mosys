@@ -36,6 +36,7 @@
 #include <inttypes.h>
 
 #include "mosys/alloc.h"
+#include "mosys/command_list.h"
 #include "mosys/platform.h"
 
 #include "lib/probe.h"
@@ -54,7 +55,6 @@ enum {
 };
 
 static int print_platforminfo(const char *key, const char *value);
-struct platform_cmd platform_cmds[];
 
 static int platform_generic_identifier_cmd(struct platform_intf *intf,
 					   struct platform_cmd *cmd,
@@ -200,7 +200,7 @@ static int print_platforminfo(const char *key, const char *value)
 	return rc;
 }
 
-struct platform_cmd platform_cmds[] = {
+static struct platform_cmd platform_cmds[] = {
 	{
 		.name	= "vendor",
 		.desc	= "Display Platform Vendor (deprecated)",
