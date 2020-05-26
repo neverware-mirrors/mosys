@@ -7,6 +7,7 @@
 
 #include "mosys/platform.h"
 
+extern struct platform_intf platform_asurada;
 extern struct platform_intf platform_cheza;
 extern struct platform_intf platform_cyclone;
 extern struct platform_intf platform_gru;
@@ -20,6 +21,7 @@ extern struct platform_intf platform_trogdor;
 
 struct platform_intf *platform_intf_list[] = {
 #ifdef CONFIG_CROS_CONFIG
+	&platform_asurada,
 	&platform_cheza,
 	&platform_kukui,
 	&platform_trogdor,

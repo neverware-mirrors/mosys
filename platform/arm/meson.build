@@ -3,6 +3,7 @@ platform_support_src += files(
 )
 
 if use_cros_config
+  subdir('asurada')
   subdir('cheza')
   subdir('kukui')
   subdir('trogdor')
