@@ -137,7 +137,6 @@ static struct eventlog_cb strago_eventlog_cb = {
 
 static struct platform_cb strago_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom		= &strago_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
 	.sys 		= &strago_sys_cb,
 	.eventlog	= &strago_eventlog_cb,

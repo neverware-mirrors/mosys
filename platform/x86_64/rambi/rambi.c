@@ -153,7 +153,6 @@ static struct eventlog_cb rambi_eventlog_cb = {
 
 static struct platform_cb rambi_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom		= &rambi_eeprom_cb,
 	.memory		= &rambi_memory_cb,
 	.psu		= &rambi_psu_cb,
 	.sys 		= &rambi_sys_cb,

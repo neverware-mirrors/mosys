@@ -35,10 +35,7 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define AURON_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
-
 /* platform callbacks */
-extern struct eeprom_cb auron_eeprom_cb;	/* eeprom.c */
 extern struct sys_cb auron_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_AURON_H_ */

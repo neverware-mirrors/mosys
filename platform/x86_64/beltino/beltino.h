@@ -35,11 +35,7 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define BELTINO_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
-#define BELTINO_SIO_FAN_NUM			2
-
 /* platform callbacks */
-extern struct eeprom_cb beltino_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb beltino_memory_cb;	/* memory.c */
 extern struct psu_cb beltino_psu_cb;		/* psu.c */
 extern struct sys_cb beltino_sys_cb;		/* sys.c */

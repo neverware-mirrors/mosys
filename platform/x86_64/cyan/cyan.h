@@ -35,10 +35,7 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define CYAN_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
-
 /* platform callbacks */
-extern struct eeprom_cb cyan_eeprom_cb;	/* eeprom.c */
 extern struct sys_cb cyan_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_CYAN_H__ */

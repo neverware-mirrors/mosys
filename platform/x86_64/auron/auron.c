@@ -132,7 +132,6 @@ static struct eventlog_cb auron_eventlog_cb = {
 static struct platform_cb auron_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
-	.eeprom		= &auron_eeprom_cb,
 	.memory		= &smbios_memory_cb,
 	.psu		= &generic_psu_battery_cb,
 	.sys 		= &auron_sys_cb,

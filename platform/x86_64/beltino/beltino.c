@@ -129,7 +129,6 @@ static struct eventlog_cb beltino_eventlog_cb = {
 };
 
 static struct platform_cb beltino_cb = {
-	.eeprom		= &beltino_eeprom_cb,
 	.memory		= &beltino_memory_cb,
 	.psu		= &generic_psu_ac_only_cb,
 	.sys 		= &beltino_sys_cb,

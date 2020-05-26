@@ -104,7 +104,6 @@ static struct eventlog_cb cyan_eventlog_cb = {
 
 static struct platform_cb cyan_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom		= &cyan_eeprom_cb,
 	.memory		= &smbios_memory_cb,
 	.sys 		= &cyan_sys_cb,
 	.eventlog	= &cyan_eventlog_cb,
