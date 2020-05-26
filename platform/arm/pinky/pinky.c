@@ -80,7 +80,6 @@ static struct platform_cmd *pinky_sub[] = {
          * the next entry if it turns out that we don't have an EC. */
 	[PINKY_CMD_EC_NUM] = &cmd_ec,
 
-	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,

@@ -58,7 +58,6 @@ static const char *nyan_kitty_id_list[] = {
 
 static struct platform_cmd *nyan_sub[] = {
 	&cmd_ec,
-	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,

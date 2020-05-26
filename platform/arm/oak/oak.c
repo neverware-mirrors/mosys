@@ -70,7 +70,6 @@ static struct platform_cmd *oak_sub[] = {
 	[OAK_CMD_PD_NUM] = &cmd_pd,
 
 	&cmd_ec,
-	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,

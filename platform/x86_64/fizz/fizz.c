@@ -53,7 +53,6 @@
 
 static struct platform_cmd *fizz_sub[] = {
 	&cmd_ec,
-	&cmd_eeprom,
 	&cmd_fp,
 	&cmd_memory,
 	&cmd_nvram,

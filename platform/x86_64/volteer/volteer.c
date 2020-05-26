@@ -18,7 +18,6 @@
 
 static struct platform_cmd *volteer_sub[] = {
 	&cmd_ec,
-	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_pd,

@@ -109,7 +109,6 @@ static const struct probe_ids probe_id_list[] = {
 
 static struct platform_cmd *rambi_sub[] = {
 	&cmd_ec,
-	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_platform,
 	&cmd_psu,

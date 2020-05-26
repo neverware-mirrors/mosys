@@ -72,7 +72,6 @@ static struct gru_probe_id {
 
 static struct platform_cmd *gru_sub[] = {
 	&cmd_ec,
-	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,

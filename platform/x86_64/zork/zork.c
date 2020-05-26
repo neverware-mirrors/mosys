@@ -19,10 +19,15 @@
 
 #include "zork.h"
 
-static struct platform_cmd *zork_sub[] = { &cmd_ec,	  &cmd_eeprom,
-					   &cmd_memory,	  &cmd_nvram,
-					   &cmd_pd,	  &cmd_platform,
-					   &cmd_eventlog, NULL };
+static struct platform_cmd *zork_sub[] = {
+	&cmd_ec,
+	&cmd_memory,
+	&cmd_nvram,
+	&cmd_pd,
+	&cmd_platform,
+	&cmd_eventlog,
+	NULL,
+};
 
 static int zork_probe(struct platform_intf *intf)
 {

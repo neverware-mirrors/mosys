@@ -53,7 +53,6 @@
 
 static struct platform_cmd *octopus_sub[] = {
 	&cmd_ec,
-	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_nvram,
 	&cmd_platform,

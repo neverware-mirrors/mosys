@@ -17,7 +17,6 @@
 
 static struct platform_cmd *dedede_sub[] = {
 	&cmd_ec,
-	&cmd_eeprom,
 	&cmd_memory,
 	&cmd_pd,
 	&cmd_platform,

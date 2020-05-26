@@ -48,7 +48,6 @@
 
 static struct platform_cmd *poppy_sub[] = {
 	&cmd_ec,
-	&cmd_eeprom,
 	&cmd_fp,
 	&cmd_memory,
 	&cmd_nvram,
