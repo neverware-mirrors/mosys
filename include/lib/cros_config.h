@@ -112,7 +112,7 @@ int cros_config_read_default_sku_info(struct platform_intf *intf,
  * @intf: Platform information, used to access platform name and SKU ID
  * @platform_names: Array of supported platform names that ends with NULL;
  *    can be NULL for interfaces with single platform name.
- * @return: 0 if OK, other value on error
+ * @return: 1 if probed successfully, 0 if not found, or <0 for error.
  */
 int cros_config_probe(struct platform_intf *intf, const char *platform_names[]);
 
@@ -124,7 +124,7 @@ int cros_config_probe(struct platform_intf *intf, const char *platform_names[]);
  * @platform_names: Array of supported platform names that ends with NULL;
  *    can be NULL for interfaces with single platform name.
  * @default_sku_id: default sku ID number
- * @return: 0 if OK, other value on error
+ * @return: 1 if probed successfully, 0 if not found, or <0 for error.
  */
 int cros_config_probe_default_sku(struct platform_intf *intf,
 				  const char *platform_names[],
