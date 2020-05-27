@@ -10,14 +10,14 @@
 
 #include "trogdor.h"
 
+static int trogdor_dimm_count;
+static const struct nonspd_mem_info *trogdor_mem_info;
+
 /* read RAM code and fill in values needed by memory commands */
-static int read_ram_code(struct platform_intf *intf, int *dimm_count,
-			 const struct nonspd_mem_info **mem_info)
+static int read_ram_code(struct platform_intf *intf)
 {
 	static int done;
 	static int ret;
-	static int s_dimm_count;
-	static const struct nonspd_mem_info *s_mem_info;
 
 	uint32_t ram_code;
 
@@ -29,13 +29,13 @@ static int read_ram_code(struct platform_intf *intf, int *dimm_count,
 
 		switch (ram_code) {
 		case 2:
-			s_dimm_count = 1;
-			s_mem_info = &micron_lpddr4x_mt53e1g32d2np_046wta;
+			trogdor_dimm_count = 1;
+			trogdor_mem_info = &micron_lpddr4x_mt53e1g32d2np_046wta;
 			break;
 
 		case 3:
-			s_dimm_count = 1;
-			s_mem_info = &micron_lpddr4x_mt53e2g32d4nq_046wta;
+			trogdor_dimm_count = 1;
+			trogdor_mem_info = &micron_lpddr4x_mt53e2g32d4nq_046wta;
 			break;
 
 		default:
@@ -59,25 +59,19 @@ static int read_ram_code(struct platform_intf *intf, int *dimm_count,
  */
 static int dimm_count(struct platform_intf *intf)
 {
-	int dimm_count;
-	const struct nonspd_mem_info *mem_info;
-
-	if (read_ram_code(intf, &dimm_count, &mem_info) < 0)
+	if (read_ram_code(intf) < 0)
 		return -1;
 
-	return dimm_count;
+	return trogdor_dimm_count;
 }
 
 static int get_mem_info(struct platform_intf *intf,
 			const struct nonspd_mem_info **info)
 {
-	int dimm_count;
-	const struct nonspd_mem_info *mem_info;
-
-	if (read_ram_code(intf, &dimm_count, &mem_info) < 0)
+	if (read_ram_code(intf) < 0)
 		return -1;
 
-	*info = mem_info;
+	*info = trogdor_mem_info;
 	return 0;
 }
 
