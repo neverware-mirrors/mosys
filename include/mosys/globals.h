@@ -43,7 +43,6 @@ void mosys_globals_init(void);
  * manage the global filesystem root-prefix (for testing)
  */
 extern const char *mosys_get_root_prefix(void);
-extern void mosys_set_root_prefix(const char *prefix);
 
 /*
  * manage the global output file

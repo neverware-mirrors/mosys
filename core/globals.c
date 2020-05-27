@@ -48,14 +48,6 @@ const char *mosys_get_root_prefix(void)
 	return mosys_root_prefix;
 }
 
-void mosys_set_root_prefix(const char *prefix)
-{
-	if (prefix == NULL) {
-		prefix = "";
-	}
-	mosys_root_prefix = prefix;
-}
-
 /*
  * The global output destination
  */
