@@ -62,7 +62,6 @@ static ssize_t fdt_read_node(const char *path, char *buf, size_t buf_sz)
 	struct string_builder *sb;
 
 	sb = new_string_builder();
-	string_builder_strcat(sb, mosys_get_root_prefix());
 	string_builder_strcat(sb, FDT_ROOT);
 	string_builder_strcat(sb, path);
 

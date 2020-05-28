@@ -100,7 +100,7 @@ static void *mmio_mmap(struct platform_intf *intf, int flags,
 	void *mptr;
 	int fd;
 	struct file_backed_range *file_range;
-	char *file_name;
+	const char *file_name;
 
 	/* FIXME: hack to get thru SMBIOS parsing in early platform setup */
 	if (mmio_setup(intf) < 0) {
@@ -122,15 +122,12 @@ static void *mmio_mmap(struct platform_intf *intf, int flags,
 		return NULL;
 	}
 
-	file_name = format_string("%s/%s", mosys_get_root_prefix(),
-	                          file_range->file_name);
+	file_name = file_range->file_name;
 	fd = open(file_name, flags);
 	if (fd < 0) {
 		lprintf(LOG_ERR, "Failed to open file %s\n", file_name);
-		free(file_name);
 		return NULL;
 	}
-	free(file_name);
 
 	/* adjust the address to reflect the base address that the start of
 	 * the file represents. */

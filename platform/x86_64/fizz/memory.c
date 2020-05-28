@@ -97,7 +97,6 @@ static int dimm_fizz_dimm_map(struct platform_intf *intf,
 	 *    and the lowest bus number seen in sysfs matching the criteria.
 	 */
 	if (first_run) {
-		char path[PATH_MAX];
 		int lowest_known_bus = INT_MAX, x;
 
 		for (x = 0; x < intf->cb->memory->dimm_count(intf); x++) {
@@ -105,9 +104,8 @@ static int dimm_fizz_dimm_map(struct platform_intf *intf,
 				lowest_known_bus = fizz_dimm_map[x].bus;
 		}
 
-		snprintf(path, sizeof(path), "%s/%s",
-		         mosys_get_root_prefix(), "/sys/bus/i2c/devices");
-		x = sysfs_lowest_smbus(path, SERIES6_SMBUS_ADAPTER);
+		x = sysfs_lowest_smbus("/sys/bus/i2c/devices",
+				       SERIES6_SMBUS_ADAPTER);
 		if (x >= 0) {
 			bus_offset = x - lowest_known_bus;
 			lprintf(LOG_DEBUG, "%s: bus_offset: %d\n",

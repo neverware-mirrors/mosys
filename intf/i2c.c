@@ -143,10 +143,6 @@ static void i2c_close_dev(struct platform_intf *intf)
 		i2c_handles[i].addr.addr = -1;
 	}
 	i2c_handle_num = 0;
-
-	/* we store these as const in the structure */
-	free((char *)intf->op->i2c->sys_root);
-	free((char *)intf->op->i2c->dev_root);
 }
 
 static int smbus_read_reg(struct platform_intf *intf, int bus,
@@ -474,15 +470,12 @@ static int smbus_write_raw(struct platform_intf *intf,
 
 static int i2c_find_driver(struct platform_intf *intf, const char *module)
 {
-	char *path;
 	char s[80];
 	FILE *fp;
 	int len = strlen(module);
 	int ret = 0;
 
-	path = format_string("%s/proc/modules", mosys_get_root_prefix());
-	fp = fopen(path, "r");
-	free(path);
+	fp = fopen("/proc/modules", "r");
 	if (fp == NULL)
 		return 0;
 	len = __min(len, 80);
@@ -497,18 +490,10 @@ static int i2c_find_driver(struct platform_intf *intf, const char *module)
 	return ret;
 }
 
-static int i2c_setup_dev(struct platform_intf *intf)
-{
-	intf->op->i2c->sys_root
-	        = format_string("%s/%s", mosys_get_root_prefix(), I2C_SYS_ROOT);
-	intf->op->i2c->dev_root
-	        = format_string("%s/%s", mosys_get_root_prefix(), I2C_DEV_ROOT);
-	return 0;
-}
-
 /* I2C operations based on Linux /dev interface */
 struct i2c_intf i2c_dev_intf = {
-	.setup  		= i2c_setup_dev,
+	.sys_root		= I2C_SYS_ROOT,
+	.dev_root		= I2C_DEV_ROOT,
 	.destroy		= i2c_close_dev,
 	.smbus_read_reg		= smbus_read_reg,
 	.smbus_write_reg	= smbus_write_reg,

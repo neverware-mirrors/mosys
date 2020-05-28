@@ -54,21 +54,6 @@
 /* default PCI root directory */
 #define PCI_PROC_DIR	"/proc/bus/pci"
 
-/* used throughout this file */
-static char *pci_proc_dir;
-
-static int pci_setup(struct platform_intf *intf)
-{
-	pci_proc_dir = format_string("%s/%s", mosys_get_root_prefix(),
-	                             PCI_PROC_DIR);
-	return 0;
-}
-
-static void pci_destroy(struct platform_intf *intf)
-{
-	free(pci_proc_dir);
-}
-
 /*
  * pci_open_file  -  Open PCI dev file based on bus/dev/func under given root
  *
@@ -85,7 +70,7 @@ static int pci_open_file(int bus, int dev, int func, int rw)
 	char pcif[1024];
 
 	snprintf(pcif, sizeof(pcif), "%s/%02x/%02x.%x",
-	         pci_proc_dir, bus, dev, func);
+	         PCI_PROC_DIR, bus, dev, func);
 
 	return open(pcif, rw);
 }
@@ -226,7 +211,7 @@ static int pci_do_foreach_in_bus(struct platform_intf *intf, int bus,
 
 	/* directory is a bus number */
 	snprintf(path, sizeof(path), "%s/%02x/",
-		 pci_proc_dir, bus);
+		 PCI_PROC_DIR, bus);
 
 	if (!(dp = opendir(path))) {
 		lprintf(LOG_DEBUG, "Failed to open %s\n", path);
@@ -277,8 +262,8 @@ static int pci_do_foreach(struct platform_intf *intf,
 	DIR *topdp;
 	int ret = 0;
 
-	if (!(topdp = opendir(pci_proc_dir))) {
-		lprintf(LOG_DEBUG, "Failed to open %s\n", pci_proc_dir);
+	if (!(topdp = opendir(PCI_PROC_DIR))) {
+		lprintf(LOG_DEBUG, "Failed to open %s\n", PCI_PROC_DIR);
 		return -1;
 	}
 
@@ -307,8 +292,6 @@ static int pci_do_foreach(struct platform_intf *intf,
 
 /* PCI operations based on /proc directory */
 struct pci_intf pci_file_intf = {
-	.setup		= pci_setup,
-	.destroy	= pci_destroy,
 	.read		= pci_read_file,
 	.write		= pci_write_file,
 	.foreach	= pci_do_foreach,

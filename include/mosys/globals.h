@@ -40,11 +40,6 @@
 void mosys_globals_init(void);
 
 /*
- * manage the global filesystem root-prefix (for testing)
- */
-extern const char *mosys_get_root_prefix(void);
-
-/*
  * manage the global output file
  */
 #include <stdio.h>

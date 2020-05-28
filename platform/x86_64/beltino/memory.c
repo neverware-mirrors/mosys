@@ -97,7 +97,6 @@ static int beltino_dimm_map(struct platform_intf *intf,
 	 *    and the lowest bus number seen in sysfs matching the criteria.
 	 */
 	if (first_run) {
-		char path[PATH_MAX];
 		int lowest_known_bus = INT_MAX, x;
 
 		for (x = 0; x < intf->cb->memory->dimm_count(intf); x++) {
@@ -105,16 +104,15 @@ static int beltino_dimm_map(struct platform_intf *intf,
 				lowest_known_bus = beltino_dimm_map[x].bus;
 		}
 
-		snprintf(path, sizeof(path), "%s/%s",
-		         mosys_get_root_prefix(), "/sys/bus/i2c/devices");
-		x = sysfs_lowest_smbus(path, SERIES6_SMBUS_ADAPTER);
+		x = sysfs_lowest_smbus("/sys/bus/i2c/devices",
+				       SERIES6_SMBUS_ADAPTER);
 		if (x >= 0) {
 			bus_offset = x - lowest_known_bus;
 			lprintf(LOG_DEBUG, "%s: bus_offset: %d\n",
-			        __func__, bus_offset);
+				__func__, bus_offset);
 		} else {
 			lprintf(LOG_DEBUG, "%s: unable to determine "
-			                   "bus offset\n", __func__);
+				"bus offset\n", __func__);
 			bus_offset = 0;
 		}
 
@@ -136,7 +134,7 @@ static int beltino_dimm_map(struct platform_intf *intf,
 }
 
 static int beltino_spd_read(struct platform_intf *intf,
-                          int dimm, int reg, int len, uint8_t *buf)
+			    int dimm, int reg, int len, uint8_t *buf)
 {
 	int bus;
 	int address;

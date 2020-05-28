@@ -55,10 +55,6 @@ int intf_op_setup(struct platform_intf *intf)
 {
 	int rc = 0;
 
-	if (intf->op->pci && intf->op->pci->setup)
-		rc |= intf->op->pci->setup(intf);
-	if (intf->op->i2c && intf->op->i2c->setup)
-		rc |= intf->op->i2c->setup(intf);
 	if (intf->op->mmio && intf->op->mmio->setup)
 		rc |= intf->op->mmio->setup(intf);
 
@@ -72,8 +68,6 @@ int intf_op_setup(struct platform_intf *intf)
  */
 void intf_op_destroy(struct platform_intf *intf)
 {
-	if (intf->op->pci && intf->op->pci->destroy)
-		intf->op->pci->destroy(intf);
 	if (intf->op->i2c && intf->op->i2c->destroy)
 		intf->op->i2c->destroy(intf);
 	if (intf->op->mmio && intf->op->mmio->destroy)

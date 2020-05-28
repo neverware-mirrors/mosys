@@ -39,16 +39,6 @@ void mosys_globals_init() {
 }
 
 /*
- * The global root-prefix
- */
-static const char *mosys_root_prefix = "";
-
-const char *mosys_get_root_prefix(void)
-{
-	return mosys_root_prefix;
-}
-
-/*
  * The global output destination
  */
 static FILE *mosys_output_file;

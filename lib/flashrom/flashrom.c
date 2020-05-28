@@ -97,11 +97,8 @@ static int do_cmd(const char *cmd, char *const *argv,
 	int status = 0;
 	int i;
 	int null_fd;
-	char dev_null[PATH_MAX];
 
-	snprintf(dev_null, sizeof(dev_null),
-			"%s/dev/null", mosys_get_root_prefix());
-	null_fd = open(dev_null, O_WRONLY);
+	null_fd = open("/dev/null", O_WRONLY);
 	if (null_fd < 0)
 		return -1;
 

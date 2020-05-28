@@ -44,22 +44,6 @@ typedef int (*pci_callback_t)(struct platform_intf *intf,
 			      int bus, int dev, int func, void *data);
 
 struct pci_intf {
-	/*
-	 * setup  -  prepare interface
-	 *
-	 * @intf:       platform interface
-	 *
-	 * returns 0 to indicate success
-	 * returns <0 to indicate failure
-	 */
-	int (*setup)(struct platform_intf *intf);
-
-	/*
-	 * destroy  -  teardown interface
-	 *
-	 * @intf:       platform interface
-	 */
-	void (*destroy)(struct platform_intf *intf);
 
 	/*
 	 * read  -  Read from PCI configuration space

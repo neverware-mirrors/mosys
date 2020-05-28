@@ -139,17 +139,14 @@ int probe_fdt_compatible(const char * const id_list[], int num_ids,
 			 int allow_partial)
 {
 	int ret = -1, i, fd;
-	char path[PATH_MAX];
 	char compat[64];	/* arbitrarily chosen max size */
 	char *p;
 
 	lprintf(LOG_DEBUG, "Probing platform with FDT compatible node\n");
 
-	snprintf(path, PATH_MAX, "%s/%s",
-			mosys_get_root_prefix(), FDT_COMPATIBLE);
-	fd = file_open(path, FILE_READ);
+	fd = file_open(FDT_COMPATIBLE, FILE_READ);
 	if (fd < 0) {
-		lprintf(LOG_DEBUG, "Cannot open %s\n", path);
+		lprintf(LOG_DEBUG, "Cannot open %s\n", FDT_COMPATIBLE);
 		return -1;
 	}
 
