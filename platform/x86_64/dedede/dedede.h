@@ -9,7 +9,9 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
+#define DEDEDE_HOST_FIRMWARE_ROM_SIZE	(32768 * 1024)
 /* platform callbacks */
+extern struct eeprom_cb dedede_eeprom_cb;	/* eeprom.c */
 extern struct sys_cb dedede_sys_cb;		/* sys.c */
 
 #endif

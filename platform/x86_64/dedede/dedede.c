@@ -10,6 +10,7 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
+#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/memory.h"
 
@@ -18,6 +19,7 @@
 static struct platform_cmd *dedede_sub[] = {
 	&cmd_ec,
 	&cmd_memory,
+	&cmd_nvram,
 	&cmd_pd,
 	&cmd_platform,
 	&cmd_eventlog,
@@ -41,7 +43,9 @@ static struct eventlog_cb dedede_eventlog_cb = {
 
 static struct platform_cb dedede_cb = {
 	.ec		= &cros_ec_cb,
+	.eeprom		= &dedede_eeprom_cb,
 	.memory		= &smbios_memory_cb,
+	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys 		= &dedede_sys_cb,
 	.eventlog	= &dedede_eventlog_cb,
 };
