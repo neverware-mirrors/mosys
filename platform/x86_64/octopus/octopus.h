@@ -35,10 +35,7 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define OCTOPUS_HOST_FIRMWARE_ROM_SIZE		(16384 * 1024)
-
 /* platform callbacks */
-extern struct eeprom_cb octopus_eeprom_cb;	/* eeprom.c */
 extern struct sys_cb octopus_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_OCTOPUS_H_ */

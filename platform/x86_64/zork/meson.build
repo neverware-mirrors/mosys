@@ -3,7 +3,6 @@
 # found in the LICENSE file.
 
 platform_support_src += files(
-  'eeprom.c',
   'sys.c',
   'zork.c',
 )

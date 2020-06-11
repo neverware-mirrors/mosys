@@ -35,10 +35,7 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define SARIEN_HOST_FIRMWARE_ROM_SIZE		(32768 * 1024)
-
 /* platform callbacks */
-extern struct eeprom_cb sarien_eeprom_cb;	/* eeprom.c */
 extern struct sys_cb sarien_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_SARIEN_H_ */

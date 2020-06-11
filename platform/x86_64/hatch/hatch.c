@@ -52,7 +52,6 @@
 static struct platform_cmd *hatch_sub[] = {
 	&cmd_ec,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_pd,
 	&cmd_platform,
 	&cmd_eventlog,
@@ -76,9 +75,7 @@ static struct eventlog_cb hatch_eventlog_cb = {
 
 static struct platform_cb hatch_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom		= &hatch_eeprom_cb,
 	.memory		= &smbios_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys 		= &hatch_sys_cb,
 	.eventlog	= &hatch_eventlog_cb,
 };

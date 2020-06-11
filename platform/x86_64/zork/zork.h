@@ -8,10 +8,7 @@
 
 #include "mosys/platform.h"
 
-#define ZORK_HOST_FIRMWARE_ROM_SIZE (16384 * 1024)
-
 /* platform callbacks */
-extern struct eeprom_cb zork_eeprom_cb; /* eeprom.c */
 extern struct sys_cb zork_sys_cb; /* sys.c */
 
 #endif /* PLATFORM_ZORK_H_ */

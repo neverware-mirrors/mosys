@@ -33,7 +33,6 @@
 #include <unistd.h>
 
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/memory.h"
 #include "lib/sku.h"
@@ -52,7 +51,6 @@
 static struct platform_cmd *kahlee_sub[] = {
 	&cmd_ec,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_pd,
 	&cmd_platform,
 	&cmd_eventlog,
@@ -76,9 +74,7 @@ static struct eventlog_cb kahlee_eventlog_cb = {
 
 static struct platform_cb kahlee_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom		= &kahlee_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys 		= &kahlee_sys_cb,
 	.eventlog	= &kahlee_eventlog_cb,
 };

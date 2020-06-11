@@ -42,7 +42,6 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/generic_callbacks.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
@@ -55,7 +54,6 @@ static struct platform_cmd *fizz_sub[] = {
 	&cmd_ec,
 	&cmd_fp,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_pd,
 	&cmd_platform,
 	&cmd_psu,
@@ -89,9 +87,7 @@ static struct eventlog_cb fizz_eventlog_cb = {
 static struct platform_cb fizz_cb = {
 	.ec		= &cros_ec_cb,
 	.fp		= &cros_fp_cb,
-	.eeprom		= &fizz_eeprom_cb,
 	.memory		= &fizz_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.psu		= &generic_psu_ac_only_cb,
 	.sys 		= &fizz_sys_cb,
 	.eventlog	= &fizz_eventlog_cb,

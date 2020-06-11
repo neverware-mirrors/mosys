@@ -42,7 +42,6 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/memory.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
@@ -54,7 +53,6 @@
 static struct platform_cmd *octopus_sub[] = {
 	&cmd_ec,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_eventlog,
 	NULL
@@ -77,9 +75,7 @@ static struct eventlog_cb octopus_eventlog_cb = {
 
 static struct platform_cb octopus_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom		= &octopus_eeprom_cb,
 	.memory		= &smbios_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys 		= &octopus_sys_cb,
 	.eventlog	= &octopus_eventlog_cb,
 };

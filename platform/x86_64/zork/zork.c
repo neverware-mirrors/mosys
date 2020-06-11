@@ -13,7 +13,6 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/smbios.h"
 
@@ -46,9 +45,7 @@ static struct eventlog_cb zork_eventlog_cb = {
 
 static struct platform_cb zork_cb = {
 	.ec = &cros_ec_cb,
-	.eeprom = &zork_eeprom_cb,
 	.memory = &smbios_memory_cb,
-	.nvram = &cros_spi_flash_nvram_cb,
 	.sys = &zork_sys_cb,
 	.eventlog = &zork_eventlog_cb,
 };

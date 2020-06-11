@@ -32,7 +32,6 @@
 #include <stdlib.h>
 
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/memory.h"
 #include "lib/sku.h"
@@ -50,7 +49,6 @@ static struct platform_cmd *poppy_sub[] = {
 	&cmd_ec,
 	&cmd_fp,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_pd,
 	&cmd_platform,
 	&cmd_eventlog,
@@ -75,9 +73,7 @@ static struct platform_cb poppy_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
 	.fp		= &cros_fp_cb,
-	.eeprom		= &poppy_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys 		= &poppy_sys_cb,
 	.eventlog	= &poppy_eventlog_cb,
 };

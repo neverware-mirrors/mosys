@@ -32,7 +32,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/memory.h"
 #include "lib/probe.h"
@@ -87,7 +86,6 @@ static struct platform_cmd *glados_sub[] = {
 	&cmd_ec,
 	&cmd_fp,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_pd,
 	&cmd_platform,
 	&cmd_eventlog,
@@ -138,9 +136,7 @@ static struct platform_cb glados_cb = {
 	.ec		= &cros_ec_cb,
 	.pd		= &cros_pd_cb,
 	.fp		= &cros_fp_cb,
-	.eeprom		= &glados_eeprom_cb,
 	.memory		= &cbfs_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys 		= &glados_sys_cb,
 	.eventlog	= &glados_eventlog_cb,
 };

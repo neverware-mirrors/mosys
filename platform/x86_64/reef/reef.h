@@ -35,10 +35,7 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define REEF_HOST_FIRMWARE_ROM_SIZE		(16384 * 1024)
-
 /* platform callbacks */
-extern struct eeprom_cb reef_eeprom_cb;	/* eeprom.c */
 extern struct sys_cb reef_sys_cb;		/* sys.c */
 extern struct sys_cb coral_sys_cb;		/* sys.c */
 

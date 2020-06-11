@@ -41,7 +41,6 @@
 #include "drivers/google/wilco_ec.h"
 
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/memory.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"
@@ -52,7 +51,6 @@
 static struct platform_cmd *sarien_sub[] = {
 	&cmd_ec,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_eventlog,
 	NULL
@@ -75,9 +73,7 @@ static struct eventlog_cb sarien_eventlog_cb = {
 
 static struct platform_cb sarien_cb = {
 	.ec		= &wilco_ec_cb,
-	.eeprom		= &sarien_eeprom_cb,
 	.memory		= &smbios_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys		= &sarien_sys_cb,
 	.eventlog	= &sarien_eventlog_cb,
 };

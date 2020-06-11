@@ -35,11 +35,7 @@
 #include <inttypes.h>
 #include "mosys/platform.h"
 
-#define HATCH_HOST_FIRMWARE_ROM_SIZE_32MB	(32768 * 1024)
-#define HATCH_HOST_FIRMWARE_ROM_SIZE_16MB	(16384 * 1024)
-
 /* platform callbacks */
-extern struct eeprom_cb hatch_eeprom_cb;	/* eeprom.c */
 extern struct sys_cb hatch_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_HATCH_H_ */
