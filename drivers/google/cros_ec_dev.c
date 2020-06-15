@@ -293,32 +293,11 @@ int cros_ec_probe_dev(struct ec_cb *ec)
 	struct cros_ec_priv *priv = ec->priv;
 
 	MOSYS_CHECK(priv && priv->devfs && priv->devfs->name);
-	for (size_t i = 0; i < 10; i++) {
-		priv->devfs->fd = open(priv->devfs->name, O_RDWR);
-
-		if (priv->devfs->fd >= 0)
-			break;
-
-		switch (errno) {
-		case EBUSY:
-		case EAGAIN:
-		case EACCES:
-			/* Retry again in 10ms. */
-			usleep(10 * 1000);
-			continue;
-		default:
-			break;
-		}
-
-		lprintf(LOG_ERR, "%s: Unable to open %s: %s.", __func__,
-			priv->devfs->name, strerror(errno));
-		return -1;
-	}
+	priv->devfs->fd = open(priv->devfs->name, O_RDWR);
 
 	if (priv->devfs->fd < 0) {
-		lprintf(LOG_ERR,
-			"%s: Maximum retries exceeded when opening %s.",
-			__func__, priv->devfs->name);
+		lprintf(LOG_ERR, "%s: Unable to open %s: %s.", __func__,
+			priv->devfs->name, strerror(errno));
 		return -1;
 	}
 
