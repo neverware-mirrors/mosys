@@ -38,7 +38,6 @@
 #include "mosys/log.h"
 
 #include "lib/file.h"
-#include "lib/eeprom.h"
 #include "lib/math.h"
 #include "lib/probe.h"
 
@@ -59,7 +58,6 @@ static const char *id_list[] = {
 
 static struct platform_cmd *storm_sub[] = {
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_eventlog,
 	NULL
@@ -100,7 +98,6 @@ static struct eventlog_cb storm_eventlog_cb = {
 static struct platform_cb storm_cb = {
 	.eeprom 	= &storm_eeprom_cb,
 	.memory		= &storm_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.eventlog	= &storm_eventlog_cb,
 };
 

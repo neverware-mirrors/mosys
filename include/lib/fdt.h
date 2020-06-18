@@ -69,20 +69,4 @@ extern int fdt_get_sku_id(void);
  */
 extern ssize_t fdt_get_frid(char *buf, size_t buf_sz);
 
-enum vbnv_storage_media {
-	VBNV_STORAGE_UNKNOWN	= -1,
-	VBNV_STORAGE_CROS_EC,	/* ChromeOS EC */
-	VBNV_STORAGE_DISK,	/* Block device */
-	VBNV_STORAGE_FLASH,	/* Flash memory (implies firmware ROM) */
-	VBNV_STORAGE_NVRAM,	/* NVRAM such as in CMOS (many x86 platforms)
-				 * and in some PMIC/RTC chips */
-};
-
-/*
- * fdt_set_nvram_cb - Set platform's nvram callbacks based on FDT
- *
- * returns 0 to indicate success, <0 to indicate failure.
- */
-extern int fdt_set_nvram_cb(struct platform_intf *intf);
-
 #endif	/* MOSYS_LIB_FDT_H__ */

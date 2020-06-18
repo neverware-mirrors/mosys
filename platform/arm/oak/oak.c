@@ -39,7 +39,6 @@
 
 #include "drivers/google/cros_ec.h"
 
-#include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/generic_callbacks.h"
 #include "lib/math.h"
@@ -71,7 +70,6 @@ static struct platform_cmd *oak_sub[] = {
 
 	&cmd_ec,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_psu,
 	&cmd_eventlog,
@@ -105,9 +103,6 @@ static int oak_setup_post(struct platform_intf *intf)
 		intf->cb->pd = NULL;
 		intf->sub = &oak_sub[OAK_CMD_PD_NUM + 1];
 	}
-
-	if (fdt_set_nvram_cb(intf) < 0)
-		return -1;
 
 	return 0;
 }

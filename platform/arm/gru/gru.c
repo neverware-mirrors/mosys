@@ -35,7 +35,6 @@
 #include "gru.h"
 #include "drivers/google/cros_ec.h"
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -73,7 +72,6 @@ static struct gru_probe_id {
 static struct platform_cmd *gru_sub[] = {
 	&cmd_ec,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_psu,
 	&cmd_eventlog,
@@ -133,7 +131,6 @@ static struct platform_cb gru_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &gru_eeprom_cb,
 	.memory		= &gru_memory_cb,
-	.nvram	= &cros_spi_flash_nvram_cb,
 	.psu 		= &generic_psu_battery_cb,
 	.sys 		= &gru_sys_cb,
 	.eventlog	= &gru_eventlog_cb,

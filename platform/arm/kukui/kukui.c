@@ -40,7 +40,6 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
-#include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/generic_callbacks.h"
 #include "lib/math.h"
@@ -52,7 +51,6 @@
 static struct platform_cmd *kukui_sub[] = {
 	&cmd_ec,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_psu,
 	&cmd_eventlog,
@@ -73,14 +71,6 @@ static int kukui_probe(struct platform_intf *intf)
 		NULL,
 	};
 	return cros_config_probe(intf, platform_names);
-}
-
-static int kukui_setup_post(struct platform_intf *intf)
-{
-	if (fdt_set_nvram_cb(intf) < 0)
-		return -1;
-
-	return 0;
 }
 
 static struct eventlog_cb kukui_eventlog_cb = {
@@ -113,5 +103,4 @@ struct platform_intf platform_kukui = {
 	.sub		= kukui_sub,
 	.cb		= &kukui_cb,
 	.probe		= &kukui_probe,
-	.setup_post	= &kukui_setup_post,
 };

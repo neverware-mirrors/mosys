@@ -35,7 +35,6 @@
 #include "cheza.h"
 #include "drivers/google/cros_ec.h"
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -49,7 +48,6 @@
 static struct platform_cmd *cheza_sub[] = {
 	&cmd_ec,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_psu,
 	&cmd_eventlog,
@@ -87,7 +85,6 @@ static struct platform_cb cheza_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &cheza_eeprom_cb,
 	.memory		= &cheza_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.psu 		= &generic_psu_battery_cb,
 	.sys 		= &cheza_sys_cb,
 	.eventlog	= &cheza_eventlog_cb,

@@ -37,7 +37,6 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
-#include "lib/eeprom.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -55,7 +54,6 @@ static const char *id_list[] = {
 
 static struct platform_cmd *mistral_sub[] = {
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_eventlog,
 	NULL
@@ -89,7 +87,6 @@ static struct eventlog_cb mistral_eventlog_cb = {
 static struct platform_cb mistral_cb = {
 	.eeprom 	= &mistral_eeprom_cb,
 	.memory		= &mistral_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.sys 		= &mistral_sys_cb,
 	.eventlog	= &mistral_eventlog_cb,
 };

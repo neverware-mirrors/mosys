@@ -8,7 +8,6 @@
 
 #include "drivers/google/cros_ec.h"
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/file.h"
 #include "lib/generic_callbacks.h"
@@ -21,7 +20,6 @@
 static struct platform_cmd *asurada_sub[] = {
 	&cmd_ec,
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_psu,
 	&cmd_eventlog,
@@ -49,7 +47,6 @@ static struct platform_cb asurada_cb = {
 	.ec		= &cros_ec_cb,
 	.eeprom 	= &asurada_eeprom_cb,
 	.memory		= &asurada_memory_cb,
-	.nvram		= &cros_spi_flash_nvram_cb,
 	.psu		= &generic_psu_battery_cb,
 	.sys		= &asurada_sys_cb,
 	.eventlog	= &asurada_eventlog_cb,

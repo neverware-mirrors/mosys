@@ -213,10 +213,4 @@ extern int eeprom_mmio_read(struct platform_intf *intf, struct eeprom *eeprom,
 extern struct fmap *eeprom_get_fmap(struct platform_intf *intf,
                                     struct eeprom *eeprom);
 
-/**
- * cros_spi_flash_nvram_cb - A generic nvram_cb to read and write
- * vboot parameters using flashrom.
- */
-extern struct nvram_cb cros_spi_flash_nvram_cb;
-
 #endif /* MOSYS_LIB_EEPROM_H__ */

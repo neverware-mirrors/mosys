@@ -34,7 +34,6 @@
 
 #include "pinky.h"
 #include "drivers/google/cros_ec.h"
-#include "lib/eeprom.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -114,7 +113,6 @@ static int pinky_setup_post(struct platform_intf *intf)
 		intf->cb->nvram = &cros_ec_nvram_cb;
 	} else {
 		intf->cb->ec = NULL;
-		intf->cb->nvram = &cros_spi_flash_nvram_cb;
 		intf->sub = &pinky_sub[PINKY_CMD_EC_NUM + 1];
 	}
 
