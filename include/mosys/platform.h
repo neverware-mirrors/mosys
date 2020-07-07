@@ -110,7 +110,7 @@ struct memory_cb {
 	struct memory_spd_cb *spd;
 
 	/* for systems where SPD-formatted memory info is not available */
-	int (*nonspd_mem_info)(struct platform_intf *intf,
+	int (*nonspd_mem_info)(struct platform_intf *intf, int dimm,
 				const struct nonspd_mem_info **info);
 };
 

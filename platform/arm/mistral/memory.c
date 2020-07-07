@@ -66,7 +66,7 @@ const static struct {
 	{ "HYNIX_H5TC4G63EFR-RDA", &hynix_ddr3l_h5tc4g63efr_rda },
 };
 
-static int get_mem_info(struct platform_intf *intf,
+static int get_mem_info(struct platform_intf *intf, int dimm,
 			const struct nonspd_mem_info **info_out)
 {
 	static bool first_run = true;

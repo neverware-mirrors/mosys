@@ -89,7 +89,7 @@ static int memory_nonspd_print_geometry(struct platform_intf *intf, int dimm)
 		return -1;
 	}
 
-	if (intf->cb->memory->nonspd_mem_info(intf, &info) < 0)
+	if (intf->cb->memory->nonspd_mem_info(intf, dimm, &info) < 0)
 		return -1;
 
 	kv = kv_pair_new();
@@ -187,7 +187,7 @@ static int memory_nonspd_print_id(struct platform_intf *intf, int dimm)
 		return -1;
 	}
 
-	if (intf->cb->memory->nonspd_mem_info(intf, &info) < 0)
+	if (intf->cb->memory->nonspd_mem_info(intf, dimm, &info) < 0)
 		return -1;
 
 	kv = kv_pair_new();
@@ -283,7 +283,7 @@ static int memory_nonspd_print_timings(struct platform_intf *intf, int dimm)
 		return -1;
 	}
 
-	if (intf->cb->memory->nonspd_mem_info(intf, &info) < 0)
+	if (intf->cb->memory->nonspd_mem_info(intf, dimm, &info) < 0)
 		return -1;
 
 	kv = kv_pair_new();
@@ -379,7 +379,7 @@ static int memory_nonspd_print_type(struct platform_intf *intf, int dimm)
 		return -1;
 	}
 
-	if (intf->cb->memory->nonspd_mem_info(intf, &info) < 0)
+	if (intf->cb->memory->nonspd_mem_info(intf, dimm, &info) < 0)
 		return -1;
 
 	kv = kv_pair_new();

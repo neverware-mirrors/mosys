@@ -101,7 +101,7 @@ static int dimm_count(struct platform_intf *intf)
 
 }
 
-static int get_mem_info(struct platform_intf *intf,
+static int get_mem_info(struct platform_intf *intf, int dimm,
 			const struct nonspd_mem_info **info)
 {
 	switch (get_memory_config(intf)) {

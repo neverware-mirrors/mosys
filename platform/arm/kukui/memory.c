@@ -63,7 +63,7 @@ static const struct nonspd_mem_info *kukui_dram[] = {
 	[8] = &samsung_lpddr4x_k4ube3d4aa_mgcl,
 };
 
-static int get_mem_info(struct platform_intf *intf,
+static int get_mem_info(struct platform_intf *intf, int dimm,
 			const struct nonspd_mem_info **info)
 {
 	uint32_t ram_code;

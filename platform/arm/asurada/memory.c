@@ -27,7 +27,7 @@ static int dimm_count(struct platform_intf *intf)
 static const struct nonspd_mem_info *asurada_dram[] = {
 };
 
-static int get_mem_info(struct platform_intf *intf,
+static int get_mem_info(struct platform_intf *intf, int dimm,
 			const struct nonspd_mem_info **info)
 {
 	uint32_t ram_code;

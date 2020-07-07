@@ -65,7 +65,7 @@ static int dimm_count(struct platform_intf *intf)
 	return trogdor_dimm_count;
 }
 
-static int get_mem_info(struct platform_intf *intf,
+static int get_mem_info(struct platform_intf *intf, int dimm,
 			const struct nonspd_mem_info **info)
 {
 	if (read_ram_code(intf) < 0)
