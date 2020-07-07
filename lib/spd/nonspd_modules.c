@@ -1219,8 +1219,6 @@ int spd_set_nonspd_info(struct platform_intf *intf, int dimm,
 	int index;
 	struct smbios_table table;
 
-	dimm = 0; // FIXME: Assume idx:=0 for now and remove in a follow up.
-
 	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table) < 0) {
 		lprintf(LOG_ERR, "%s: SMBIOS Memory info table missing\n"
 			, __func__);
