@@ -61,7 +61,6 @@ struct probe_ids {
 /* sku_info: brand, model, chassis, customization */
 static const struct probe_ids probe_id_list[] = {
 	{ { "Asuka", }, .single_sku = { .brand = "DEAH", }, },
-	{ { "Atlas", }, .single_sku = { .brand = "XWJE", }, },
 	{ { "Caroline", }, .single_sku = { .brand = "SMAK", }, },
 	{ { "Cave", }, .single_sku = { .brand = "ASUL", }, },
 	{ { "Chell", }, .single_sku = { .brand = "HPZR", }, },
@@ -74,11 +73,6 @@ static const struct probe_ids probe_id_list[] = {
         /* TODO(b/73852456) Allocate a brand code */
 	{ { "Sentry", }, .single_sku = { .brand = "LEAJ", }, },
 	{ { "Skylake", }, },
-
-	/* Following platforms are KBL without unibuild/cros_config. */
-	{ { "Eve", }, .single_sku = { .brand = "ZZAF", }, },
-	{ { "Meowth", }, .single_sku = { .brand = NULL, }, },
-	{ { "Nocturne", }, .single_sku = { .brand = "NBQS", }, },
 	{ { NULL }, },
 };
 
