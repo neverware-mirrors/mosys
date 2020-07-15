@@ -61,6 +61,7 @@ static const struct nonspd_mem_info *kukui_dram[] = {
 	[6] = &samsung_lpddr4x_kmdv6001da_b620,
 	[7] = &sandisk_lpddr4x_sdada4cr_128g,
 	[8] = &samsung_lpddr4x_k4ube3d4aa_mgcl,
+	[10] = &hynix_lpddr4x_h9hcnnncpmmlxr_nee,
 };
 
 static int get_mem_info(struct platform_intf *intf,
