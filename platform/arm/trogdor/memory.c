@@ -28,6 +28,11 @@ static int read_ram_code(struct platform_intf *intf)
 		}
 
 		switch (ram_code) {
+		case 1:
+			trogdor_dimm_count = 1;
+			trogdor_mem_info = &micron_lpddr4x_mt53d1g32d4dt_046wtd;
+			break;
+
 		case 2:
 			trogdor_dimm_count = 1;
 			trogdor_mem_info = &micron_lpddr4x_mt53e1g32d2np_046wta;

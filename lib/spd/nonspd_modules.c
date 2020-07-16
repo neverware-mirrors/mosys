@@ -879,6 +879,22 @@ const struct nonspd_mem_info micron_lpddr4x_mt53e2g32d4nq_046wta = {
 		  'Q', '-', '4', '6', 'W', 'T', ':', 'A'},
 };
 
+const struct nonspd_mem_info micron_lpddr4x_mt53d1g32d4dt_046wtd = {
+	.dram_type		= SPD_DRAM_TYPE_LPDDR4X,
+
+	.module_size_mbits	= 32768,
+	.num_ranks		= 2,
+	.device_width		= 32,
+	.ddr_freq		= { DDR_2133 },
+
+	.module_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id		= { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num		=
+		{ 'M', 'T', '5', '3', 'D', '1', 'G', '3', '2', 'D', '4', 'D',
+		  'T', '-', '4', '6', 'W', 'T', ':', 'D'},
+};
+
 const struct nonspd_mem_info micron_lpddr4x_mt29vzzzad8dqksl = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR4X,
 
@@ -1127,6 +1143,7 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&micron_lpddr4x_mt53e1g32d4nq_046wte,
 	&micron_lpddr4x_mt53e1g32d2np_046wta,
 	&micron_lpddr4x_mt53e2g32d4nq_046wta,
+	&micron_lpddr4x_mt53d1g32d4dt_046wtd,
 	&micron_mt41k256m16ha,
 	&micron_mt52l256m32d1pf,
 	&micron_mt52l512m32d2pf,
