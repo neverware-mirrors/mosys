@@ -911,6 +911,38 @@ const struct nonspd_mem_info micron_lpddr4x_mt29vzzzad8dqksl = {
 		  'Q', 'K', 'S', 'L'},
 };
 
+const struct nonspd_mem_info micron_lpddr4x_mt29vzzzad8gqfsl_046 = {
+	.dram_type              = SPD_DRAM_TYPE_LPDDR4X,
+
+	.module_size_mbits      = 32768,
+	.num_ranks              = 2,
+	.device_width           = 32,
+	.ddr_freq               = { DDR_2133 },
+
+	.module_mfg_id          = { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id            = { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num               =
+		{ 'M', 'T', '2', '9', 'V', 'Z', 'Z', 'Z', 'A', 'D', '8', 'G',
+		  'Q', 'F', 'S', 'L', '-', '0', '4', '6'},
+};
+
+const struct nonspd_mem_info micron_lpddr4x_mt29vzzzbd9dqkpr_046 = {
+	.dram_type              = SPD_DRAM_TYPE_LPDDR4X,
+
+	.module_size_mbits      = 32768,
+	.num_ranks              = 2,
+	.device_width           = 32,
+	.ddr_freq               = { DDR_2133 },
+
+	.module_mfg_id          = { .msb = 0x2c, .lsb = 0x00 },
+	.dram_mfg_id            = { .msb = 0x2c, .lsb = 0x00 },
+
+	.part_num               =
+		{ 'M', 'T', '2', '9', 'V', 'Z', 'Z', 'Z', 'B', 'D', '9', 'D',
+		  'Q', 'K', 'P', 'R', '-', '0', '4', '6'},
+};
+
 const struct nonspd_mem_info samsung_lpddr4_k3uh5h50mm_agcj = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
 
@@ -1140,6 +1172,8 @@ static const struct nonspd_mem_info *nospdmemory[] = {
 	&micron_lpddr4_mt53b512m32d2np,
 	&micron_lpddr4_mt53e512m32d2np,
 	&micron_lpddr4x_mt29vzzzad8dqksl,
+	&micron_lpddr4x_mt29vzzzad8gqfsl_046,
+	&micron_lpddr4x_mt29vzzzbd9dqkpr_046,
 	&micron_lpddr4x_mt53e1g32d4nq_046wte,
 	&micron_lpddr4x_mt53e1g32d2np_046wta,
 	&micron_lpddr4x_mt53e2g32d4nq_046wta,

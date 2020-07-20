@@ -25,6 +25,8 @@ static int dimm_count(struct platform_intf *intf)
 }
 
 static const struct nonspd_mem_info *asurada_dram[] = {
+	[0] = &micron_lpddr4x_mt29vzzzbd9dqkpr_046,
+	[1] = &micron_lpddr4x_mt29vzzzad8gqfsl_046,
 };
 
 static int get_mem_info(struct platform_intf *intf, int dimm,
