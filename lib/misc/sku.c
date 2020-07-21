@@ -246,7 +246,8 @@ char *sku_get_whitelabel_from_vpd(void)
 
 	value = _get_vpd_value("whitelabel_tag");
 	if (!value)
-		value = "";
+		/* use default tag if whitelabel_tag not found */
+		value = "default";
 	return mosys_strdup(value);
 }
 
