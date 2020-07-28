@@ -60,18 +60,7 @@ static struct platform_cmd *kukui_sub[] = {
 
 static int kukui_probe(struct platform_intf *intf)
 {
-	/**
-	 * 'kukui' interface is shared by multiple overlays (with different
-	 * platform-name value in cros_config model.yaml 'platform-name')
-	 * so we have to pass explicit platform (overlay) names.
-	 */
-	static const char* platform_names[] = {
-		"Flapjack",
-		"Jacuzzi",
-		"Kukui",
-		NULL,
-	};
-	return cros_config_probe(intf, platform_names);
+	return cros_config_probe(intf, NULL);
 }
 
 static struct eventlog_cb kukui_eventlog_cb = {
