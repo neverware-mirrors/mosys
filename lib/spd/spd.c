@@ -55,8 +55,6 @@
 #include "lib/smbios_tables.h"
 #include "lib/spd.h"
 
-static spd_raw_override spd_raw_access_override;
-
 struct memory_spd_cb memory_spd_cbfs = {
 	.read		= spd_read_cbfs_flashrom,
 };
@@ -127,11 +125,6 @@ static int spd_raw_i2c(struct platform_intf *intf, int bus,
 int spd_raw_access(struct platform_intf *intf, int bus, int address,
                    int reg, int length, void *data, int rw)
 {
-	if (spd_raw_access_override != NULL) {
-		return spd_raw_access_override(intf, bus, address,
-		                               reg, length, data, rw);
-	}
-
 	return spd_raw_i2c(intf, bus, address, reg, length, data, rw);
 }
 
@@ -169,12 +162,6 @@ int spd_read_i2c(struct platform_intf *intf, int bus,
 	}
 
 	return -1;
-}
-
-int override_spd_raw_access(spd_raw_override override)
-{
-	spd_raw_access_override = override;
-	return 0;
 }
 
 /* new_spd_device() - create a new instance of spd_device

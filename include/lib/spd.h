@@ -219,20 +219,6 @@ extern int spd_read_i2c(struct platform_intf *intf, int bus,
 extern int spd_raw_access(struct platform_intf *intf, int bus, int address,
                           int reg, int length, void *data, int rw);
 
-/* Introduce ability to override SPD raw access operation. Provide a type for
- * smaller function signatures. */
-typedef int (*spd_raw_override)(struct platform_intf *intf, int bus,
-                                int address, int reg, int length, void *data,
-                                int rw);
-
-/* override_spd_raw_access - override the spd_raw() function.
- *
- * @override:  function to invoke instead of the normal spd_raw() path.
- *
- * return 0 on success, < 0 otherwise.
- */
-extern int override_spd_raw_access(spd_raw_override override);
-
 /*
  * spd_total_size  -  determine total bytes in spd from first few bytes
  *
