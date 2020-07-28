@@ -40,6 +40,7 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
+#include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/generic_callbacks.h"
 #include "lib/math.h"
@@ -90,7 +91,7 @@ static struct platform_cb kukui_cb = {
 	.eeprom 	= &kukui_eeprom_cb,
 	.memory		= &kukui_memory_cb,
 	.psu		= &generic_psu_battery_cb,
-	.sys		= &kukui_sys_cb,
+	.sys		= &fdt_sysinfo_cb,
 	.eventlog	= &kukui_eventlog_cb,
 };
 

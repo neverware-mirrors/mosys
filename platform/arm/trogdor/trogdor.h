@@ -13,6 +13,5 @@
 /* platform callbacks */
 extern struct eeprom_cb trogdor_eeprom_cb;
 extern struct memory_cb trogdor_memory_cb;
-extern struct sys_cb trogdor_sys_cb;
 
 #endif /* GOOGLE_TROGDOR_H */

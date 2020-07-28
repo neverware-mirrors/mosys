@@ -35,13 +35,12 @@
 #include <inttypes.h>
 #include <string.h>
 
-#include "drivers/google/cros_ec.h"
-#include "lib/chromeos.h"
 #include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/string_builder.h"
 
+#include "mosys/alloc.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
@@ -144,3 +143,26 @@ ssize_t fdt_get_frid(char *buf, size_t buf_sz)
 
 	return len + 1;
 }
+
+/* Common sysinfo callbacks for almost all ARM devices. */
+static char *fdt_sysinfo_get_version(struct platform_intf *intf)
+{
+	uint32_t board_id;
+	char board_id_str[16];
+
+	if (fdt_get_board_id(&board_id) < 0)
+		return NULL;
+
+	snprintf(board_id_str, sizeof(board_id_str), "rev%u", board_id);
+	return mosys_strdup(board_id_str);
+}
+
+static int fdt_sysinfo_get_sku(struct platform_intf *intf)
+{
+	return fdt_get_sku_id();
+}
+
+struct sys_cb fdt_sysinfo_cb = {
+	.version = fdt_sysinfo_get_version,
+	.sku_number = fdt_sysinfo_get_sku,
+};

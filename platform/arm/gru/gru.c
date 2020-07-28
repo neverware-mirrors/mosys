@@ -35,6 +35,7 @@
 #include "gru.h"
 #include "drivers/google/cros_ec.h"
 #include "lib/cros_config.h"
+#include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -132,7 +133,7 @@ static struct platform_cb gru_cb = {
 	.eeprom 	= &gru_eeprom_cb,
 	.memory		= &gru_memory_cb,
 	.psu 		= &generic_psu_battery_cb,
-	.sys 		= &gru_sys_cb,
+	.sys		= &fdt_sysinfo_cb,
 	.eventlog	= &gru_eventlog_cb,
 };
 

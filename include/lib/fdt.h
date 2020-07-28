@@ -69,4 +69,9 @@ extern int fdt_get_sku_id(void);
  */
 extern ssize_t fdt_get_frid(char *buf, size_t buf_sz);
 
+/**
+ * fdt_sysinfo_cb - common sysinfo callbacks for ARM
+ */
+extern struct sys_cb fdt_sysinfo_cb;
+
 #endif	/* MOSYS_LIB_FDT_H__ */

@@ -6,6 +6,7 @@
 #include "trogdor.h"
 #include "drivers/google/cros_ec.h"
 #include "lib/cros_config.h"
+#include "lib/fdt.h"
 #include "lib/sku.h"
 #include "lib/generic_callbacks.h"
 #include "mosys/command_list.h"
@@ -43,7 +44,7 @@ static struct platform_cb trogdor_cb = {
 	.eeprom 	= &trogdor_eeprom_cb,
 	.memory		= &trogdor_memory_cb,
 	.psu 		= &generic_psu_battery_cb,
-	.sys 		= &trogdor_sys_cb,
+	.sys		= &fdt_sysinfo_cb,
 	.eventlog	= &trogdor_eventlog_cb,
 };
 

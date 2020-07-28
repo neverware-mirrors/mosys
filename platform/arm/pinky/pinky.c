@@ -34,6 +34,7 @@
 
 #include "pinky.h"
 #include "drivers/google/cros_ec.h"
+#include "lib/fdt.h"
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
@@ -138,7 +139,7 @@ static struct platform_cb pinky_cb = {
 	.eeprom 	= &pinky_eeprom_cb,
 	.memory		= &pinky_memory_cb,
 	.psu 		= &pinky_psu_cb,
-	.sys 		= &pinky_sys_cb,
+	.sys		= &fdt_sysinfo_cb,
 	.eventlog	= &pinky_eventlog_cb,
 };
 

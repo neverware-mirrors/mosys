@@ -41,7 +41,5 @@
 /* platform callbacks */
 extern struct eeprom_cb gru_eeprom_cb;
 extern struct memory_cb gru_memory_cb;
-extern struct psu_cb gru_psu_cb;
-extern struct sys_cb gru_sys_cb;
 
 #endif /* GOOGLE_GRU_H */

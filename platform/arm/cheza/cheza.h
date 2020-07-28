@@ -40,7 +40,5 @@
 /* platform callbacks */
 extern struct eeprom_cb cheza_eeprom_cb;
 extern struct memory_cb cheza_memory_cb;
-extern struct psu_cb cheza_psu_cb;
-extern struct sys_cb cheza_sys_cb;
 
 #endif /* GOOGLE_CHEZA_H */

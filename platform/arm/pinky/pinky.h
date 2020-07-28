@@ -41,7 +41,6 @@
 extern struct eeprom_cb pinky_eeprom_cb;
 extern struct memory_cb pinky_memory_cb;
 extern struct psu_cb pinky_psu_cb;
-extern struct sys_cb pinky_sys_cb;
 
 /* functions called by setup routines */
 extern void pinky_eeprom_setup(struct platform_intf *intf, int has_ec);
