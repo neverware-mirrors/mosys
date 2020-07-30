@@ -36,7 +36,6 @@
 #include "mosys/platform.h"
 
 /* platform callbacks */
-extern struct memory_cb fizz_memory_cb;	/* memory.c */
 extern struct sys_cb fizz_sys_cb;		/* sys.c */
 
 #endif /* FIZZ_H_ */

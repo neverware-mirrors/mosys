@@ -43,6 +43,7 @@
 
 #include "lib/cros_config.h"
 #include "lib/generic_callbacks.h"
+#include "lib/memory.h"
 #include "lib/probe.h"
 #include "lib/sku.h"
 #include "lib/smbios.h"
@@ -87,7 +88,7 @@ static struct eventlog_cb fizz_eventlog_cb = {
 static struct platform_cb fizz_cb = {
 	.ec		= &cros_ec_cb,
 	.fp		= &cros_fp_cb,
-	.memory		= &fizz_memory_cb,
+	.memory		= &smbios_memory_cb,
 	.psu		= &generic_psu_ac_only_cb,
 	.sys 		= &fizz_sys_cb,
 	.eventlog	= &fizz_eventlog_cb,
