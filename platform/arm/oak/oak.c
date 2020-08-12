@@ -47,27 +47,17 @@
 
 #include "oak.h"
 
-static int probed_board = -1;
-
 static struct oak_probe_id {
 	const char *name;
 	const char *fdt_compat;
 	const struct sku_info single_sku;
-	int has_pd;
 } oak_id_list[] = {
-	{ "Elm", "google,elm", { .brand = "ACAZ" }, 0 },
-	{ "Hana", "google,hana", { .brand = "LEAO" }, 0 },
-	{ "Oak", "google,oak", { .brand = NULL }, 1 },
-	{ "Rowan", "google,rowan", { .brand = NULL }, 0 },
+	{ "Elm", "google,elm", { .brand = "ACAZ" } },
+	{ "Hana", "google,hana", { .brand = "LEAO" } },
+	{ "Oak", "google,oak", { .brand = NULL } },
 };
 
-#define OAK_CMD_PD_NUM	0
-
 static struct platform_cmd *oak_sub[] = {
-	/* Keep this as the first entry. intf->sub will be set to point to
-         * the next entry if it turns out that we don't have a PD. */
-	[OAK_CMD_PD_NUM] = &cmd_pd,
-
 	&cmd_ec,
 	&cmd_memory,
 	&cmd_platform,
@@ -88,20 +78,8 @@ static int oak_probe(struct platform_intf *intf)
 				"compatible node.\n", oak_id_list[i].name);
 			intf->name = oak_id_list[i].name;
 			intf->sku_info = &oak_id_list[i].single_sku;
-			probed_board = i;
-			break;
+			return 1;
 		}
-	}
-
-	lprintf(LOG_DEBUG, "%s: probed_board: %d\n", __func__, probed_board);
-	return probed_board > -1 ? 1 : 0;
-}
-
-static int oak_setup_post(struct platform_intf *intf)
-{
-	if (!oak_id_list[probed_board].has_pd) {
-		intf->cb->pd = NULL;
-		intf->sub = &oak_sub[OAK_CMD_PD_NUM + 1];
 	}
 
 	return 0;
@@ -138,5 +116,4 @@ struct platform_intf platform_oak = {
 	.sub		= oak_sub,
 	.cb		= &oak_cb,
 	.probe		= &oak_probe,
-	.setup_post	= &oak_setup_post,
 };
