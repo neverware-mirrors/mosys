@@ -39,6 +39,7 @@
 
 #include "drivers/google/cros_ec.h"
 
+#include "lib/cros_config.h"
 #include "lib/file.h"
 #include "lib/generic_callbacks.h"
 #include "lib/math.h"
@@ -47,6 +48,7 @@
 
 #include "oak.h"
 
+#ifndef CONFIG_CROS_CONFIG
 static struct oak_probe_id {
 	const char *name;
 	const char *fdt_compat;
@@ -56,6 +58,7 @@ static struct oak_probe_id {
 	{ "Hana", "google,hana", { .brand = "LEAO" } },
 	{ "Oak", "google,oak", { .brand = NULL } },
 };
+#endif
 
 static struct platform_cmd *oak_sub[] = {
 	&cmd_ec,
@@ -68,6 +71,9 @@ static struct platform_cmd *oak_sub[] = {
 
 static int oak_probe(struct platform_intf *intf)
 {
+#ifdef CONFIG_CROS_CONFIG
+	return cros_config_probe(intf, NULL);
+#else
 	int i;
 
 	for (i = 0; i < ARRAY_SIZE(oak_id_list); i++) {
@@ -83,6 +89,7 @@ static int oak_probe(struct platform_intf *intf)
 	}
 
 	return 0;
+#endif
 }
 
 static struct eventlog_cb oak_eventlog_cb = {

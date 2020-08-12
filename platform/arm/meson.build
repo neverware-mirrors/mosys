@@ -11,9 +11,9 @@ else
   subdir('cyclone')
   subdir('mistral')
   subdir('nyan')
-  subdir('oak')
   subdir('pinky')
   subdir('storm')
 endif
 
+subdir('oak')
 subdir('gru')

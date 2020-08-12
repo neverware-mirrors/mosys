@@ -29,10 +29,15 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_cyclone,
 	&platform_mistral,
 	&platform_nyan,
-	&platform_oak,
 	&platform_pinky,
 	&platform_storm,
 #endif
+	/*
+	 * Oak is currently undergoing unibuild migration.
+	 * TODO(crbug.com/1115620): make unibuild-only.
+	 */
+	&platform_oak,
+
 	/* Gru is a special-snowflake, as the platform was used to
 	   implement both legacy and unibuild boards. */
 	&platform_gru,
