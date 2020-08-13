@@ -10,6 +10,7 @@ if use_cros_config
   subdir('poppy')
   subdir('puff')
   subdir('octopus')
+  subdir('reef')
   subdir('sarien')
   subdir('volteer')
   subdir('zork')
@@ -21,5 +22,3 @@ else
   subdir('rambi')
   subdir('strago')
 endif
-
-subdir('reef')

@@ -36,6 +36,7 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_poppy,
 	&platform_puff,
 	&platform_octopus,
+	&platform_reef,
 	&platform_sarien,
         &platform_volteer,
 	&platform_zork,
@@ -47,8 +48,5 @@ struct platform_intf *platform_intf_list[] = {
 	&platform_rambi,
 	&platform_strago,
 #endif
-	/* Reef is a special-snowflake since the unibuild migration
-	   was never finished. */
-	&platform_reef,
 	NULL,
 };
