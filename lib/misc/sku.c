@@ -221,12 +221,3 @@ char *sku_get_whitelabel_from_vpd(void)
 		value = "";
 	return mosys_strdup(value);
 }
-
-void *sku_get_data(struct platform_intf *intf)
-{
-	const struct sku_info *info = intf->sku_info;
-
-	if (info && info->data)
-		return info->data;
-	return NULL;
-}

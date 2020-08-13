@@ -27,8 +27,6 @@ enum {
  *         for example 'GOOGLE-SAMUS', also used as network config key.
  * 'signature_id' is the signature ID used for zero-touch whitelabels in
  *         unified builds. Pending removal.
- * `data` is a general pointer for platform implementations to use, for example
- *         adding peripheral status like number of cameras or form factor.
  */
 struct sku_info {
 	const char *brand;
@@ -36,7 +34,6 @@ struct sku_info {
 	const char *chassis;
 	const char *customization;
 	const char *signature_id;
-	void *data;
 };
 
 /**
@@ -117,14 +114,5 @@ extern char *sku_get_whitelabel_from_vpd(void);
  * returns NULL to indicate value not found or error
  */
 extern char *sku_get_model(struct platform_intf *intf);
-
-/**
- * sku_get_data - get SKU specific data
- *
- * returns a pointer to the `data` member in `sku_info`.
- * returns NULL to indicate value not found or error
- */
-extern void *sku_get_data(struct platform_intf *intf);
-
 
 #endif /* MOSYS_LIB_SKU_H__ */
