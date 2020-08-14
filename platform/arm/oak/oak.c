@@ -114,13 +114,10 @@ static struct platform_cb oak_cb = {
 	.eventlog	= &oak_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_oak;
-
-struct platform_intf platform_oak = {
+static struct platform_intf platform_oak = {
 	.type		= PLATFORM_ARMV8,
-	.name		= "Oak",
 	.sub		= oak_sub,
 	.cb		= &oak_cb,
 	.probe		= &oak_probe,
 };
+REGISTER_PLATFORM(platform_oak, "Oak");

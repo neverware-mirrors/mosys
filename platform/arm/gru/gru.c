@@ -137,13 +137,10 @@ static struct platform_cb gru_cb = {
 	.eventlog	= &gru_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_gru;
-
-struct platform_intf platform_gru = {
+static struct platform_intf platform_gru = {
 	.type		= PLATFORM_ARMV8,
-	.name		= "Gru",
 	.sub		= gru_sub,
 	.cb		= &gru_cb,
 	.probe		= &gru_probe,
 };
+REGISTER_PLATFORM(platform_gru, "Gru");

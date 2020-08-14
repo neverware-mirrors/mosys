@@ -1,7 +1,3 @@
-platform_support_src += files(
-  'platform_list.c',
-)
-
 if use_cros_config
   subdir('asurada')
   subdir('cheza')
@@ -15,5 +11,7 @@ else
   subdir('storm')
 endif
 
+# These platforms are currently undergoing unibuild migrations and
+# have support for pre-unibuild and unibuild using some ugly ifdefs.
 subdir('oak')
 subdir('gru')

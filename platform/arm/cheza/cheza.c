@@ -91,13 +91,10 @@ static struct platform_cb cheza_cb = {
 	.eventlog	= &cheza_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_cheza;
-
-struct platform_intf platform_cheza = {
+static struct platform_intf platform_cheza = {
 	.type		= PLATFORM_ARMV8,
-	.name		= "Cheza",
 	.sub		= cheza_sub,
 	.cb		= &cheza_cb,
 	.probe		= &cheza_probe,
 };
+REGISTER_PLATFORM(platform_cheza, "Cheza");

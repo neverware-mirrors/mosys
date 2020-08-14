@@ -94,13 +94,10 @@ static struct platform_cb fizz_cb = {
 	.eventlog	= &fizz_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_fizz;
-
-struct platform_intf platform_fizz = {
+static struct platform_intf platform_fizz = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Fizz",
 	.sub		= fizz_sub,
 	.cb		= &fizz_cb,
 	.probe		= &fizz_probe,
 };
+REGISTER_PLATFORM(platform_fizz, "Fizz");

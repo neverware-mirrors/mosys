@@ -46,13 +46,10 @@ static struct platform_cb volteer_cb = {
 	.eventlog	= &volteer_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_volteer;
-
-struct platform_intf platform_volteer = {
+static struct platform_intf platform_volteer = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Volteer",
 	.sub		= volteer_sub,
 	.cb		= &volteer_cb,
 	.probe		= &volteer_probe,
 };
+REGISTER_PLATFORM(platform_volteer, "Volteer");

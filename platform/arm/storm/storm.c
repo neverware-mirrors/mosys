@@ -101,13 +101,10 @@ static struct platform_cb storm_cb = {
 	.eventlog	= &storm_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_storm;
-
-struct platform_intf platform_storm = {
+static struct platform_intf platform_storm = {
 	.type		= PLATFORM_ARMV7,
-	.name		= "Storm",
 	.sub		= storm_sub,
 	.cb		= &storm_cb,
 	.probe		= &storm_probe,
 };
+REGISTER_PLATFORM(platform_storm, "Storm");

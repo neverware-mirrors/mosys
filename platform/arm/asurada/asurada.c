@@ -52,13 +52,10 @@ static struct platform_cb asurada_cb = {
 	.eventlog	= &asurada_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_asurada;
-
-struct platform_intf platform_asurada = {
+static struct platform_intf platform_asurada = {
 	.type		= PLATFORM_ARMV8,
-	.name		= "Asurada",
 	.sub		= asurada_sub,
 	.cb		= &asurada_cb,
 	.probe		= &asurada_probe,
 };
+REGISTER_PLATFORM(platform_asurada, "Asurada");

@@ -47,13 +47,10 @@ static struct platform_cb dedede_cb = {
 	.eventlog	= &dedede_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_dedede;
-
-struct platform_intf platform_dedede = {
+static struct platform_intf platform_dedede = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Dedede",
 	.sub		= dedede_sub,
 	.cb		= &dedede_cb,
 	.probe		= &dedede_probe,
 };
+REGISTER_PLATFORM(platform_dedede, "Dedede");

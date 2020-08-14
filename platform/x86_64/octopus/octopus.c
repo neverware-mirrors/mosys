@@ -80,13 +80,10 @@ static struct platform_cb octopus_cb = {
 	.eventlog	= &octopus_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_octopus;
-
-struct platform_intf platform_octopus = {
+static struct platform_intf platform_octopus = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Octopus",
 	.sub		= octopus_sub,
 	.cb		= &octopus_cb,
 	.probe		= &octopus_probe,
 };
+REGISTER_PLATFORM(platform_octopus, "Octopus");

@@ -159,13 +159,10 @@ static struct platform_cb rambi_cb = {
 	.eventlog	= &rambi_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_rambi;
-
-struct platform_intf platform_rambi = {
+static struct platform_intf platform_rambi = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Rambi",
 	.sub		= rambi_sub,
 	.cb		= &rambi_cb,
 	.probe		= &rambi_probe,
 };
+REGISTER_PLATFORM(platform_rambi, "Rambi");

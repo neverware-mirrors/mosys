@@ -138,13 +138,10 @@ static struct platform_cb auron_cb = {
 	.eventlog	= &auron_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_auron;
-
-struct platform_intf platform_auron = {
+static struct platform_intf platform_auron = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Auron",
 	.sub		= auron_sub,
 	.cb		= &auron_cb,
 	.probe		= &auron_probe,
 };
+REGISTER_PLATFORM(platform_auron, "Auron");

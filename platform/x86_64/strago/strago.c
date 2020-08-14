@@ -142,13 +142,10 @@ static struct platform_cb strago_cb = {
 	.eventlog	= &strago_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_strago;
-
-struct platform_intf platform_strago = {
+static struct platform_intf platform_strago = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Strago",
 	.sub		= strago_sub,
 	.cb		= &strago_cb,
 	.probe		= &strago_probe,
 };
+REGISTER_PLATFORM(platform_strago, "Strago");

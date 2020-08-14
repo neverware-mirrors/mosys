@@ -135,13 +135,10 @@ static struct platform_cb glados_cb = {
 	.eventlog	= &glados_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_glados;
-
-struct platform_intf platform_glados = {
+static struct platform_intf platform_glados = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Glados",
 	.sub		= glados_sub,
 	.cb		= &glados_cb,
 	.probe		= &glados_probe,
 };
+REGISTER_PLATFORM(platform_glados, "Glados");

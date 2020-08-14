@@ -109,13 +109,10 @@ static struct platform_cb cyan_cb = {
 	.eventlog	= &cyan_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_cyan;
-
-struct platform_intf platform_cyan = {
+static struct platform_intf platform_cyan = {
 	.type		= PLATFORM_X86_64,
-	.name		= "cyan",
 	.sub		= cyan_sub,
 	.cb		= &cyan_cb,
 	.probe		= &cyan_probe,
 };
+REGISTER_PLATFORM(platform_cyan, "cyan");

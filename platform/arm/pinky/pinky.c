@@ -143,14 +143,11 @@ static struct platform_cb pinky_cb = {
 	.eventlog	= &pinky_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_pinky;
-
-struct platform_intf platform_pinky = {
+static struct platform_intf platform_pinky = {
 	.type		= PLATFORM_ARMV7,
-	.name		= "Pinky",
 	.sub		= pinky_sub,
 	.cb		= &pinky_cb,
 	.probe		= &pinky_probe,
 	.setup_post	= &pinky_setup_post,
 };
+REGISTER_PLATFORM(platform_pinky, "Pinky");

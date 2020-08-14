@@ -135,13 +135,10 @@ static struct platform_cb beltino_cb = {
 	.eventlog	= &beltino_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_beltino;
-
-struct platform_intf platform_beltino = {
+static struct platform_intf platform_beltino = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Beltino",
 	.sub		= beltino_sub,
 	.cb		= &beltino_cb,
 	.probe		= &beltino_probe,
 };
+REGISTER_PLATFORM(platform_beltino, "Beltino");

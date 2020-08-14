@@ -48,13 +48,10 @@ static struct platform_cb trogdor_cb = {
 	.eventlog	= &trogdor_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_trogdor;
-
-struct platform_intf platform_trogdor = {
+static struct platform_intf platform_trogdor = {
 	.type		= PLATFORM_ARMV8,
-	.name		= "Trogdor",
 	.sub		= trogdor_sub,
 	.cb		= &trogdor_cb,
 	.probe		= &trogdor_probe,
 };
+REGISTER_PLATFORM(platform_trogdor, "Trogdor");

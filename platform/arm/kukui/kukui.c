@@ -84,13 +84,10 @@ static struct platform_cb kukui_cb = {
 	.eventlog	= &kukui_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_kukui;
-
-struct platform_intf platform_kukui = {
+static struct platform_intf platform_kukui = {
 	.type		= PLATFORM_ARMV8,
-	.name		= "Kukui",
 	.sub		= kukui_sub,
 	.cb		= &kukui_cb,
 	.probe		= &kukui_probe,
 };
+REGISTER_PLATFORM(platform_kukui, "Kukui");

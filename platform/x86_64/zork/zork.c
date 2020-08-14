@@ -50,13 +50,10 @@ static struct platform_cb zork_cb = {
 	.eventlog = &zork_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_zork;
-
-struct platform_intf platform_zork = {
+static struct platform_intf platform_zork = {
 	.type = PLATFORM_X86_64,
-	.name = "Zork",
 	.sub = zork_sub,
 	.cb = &zork_cb,
 	.probe = &zork_probe,
 };
+REGISTER_PLATFORM(platform_zork, "Zork");

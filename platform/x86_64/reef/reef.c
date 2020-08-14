@@ -80,22 +80,18 @@ static struct platform_cb coral_cb = {
 	.eventlog	= &reef_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_reef;
-extern struct platform_intf platform_coral;
-
-struct platform_intf platform_reef = {
+static struct platform_intf platform_reef = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Reef",
 	.sub		= reef_sub,
 	.cb		= &reef_cb,
 	.probe		= &reef_probe,
 };
+REGISTER_PLATFORM(platform_reef, "Reef");
 
-struct platform_intf platform_coral = {
+static struct platform_intf platform_coral = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Coral",
 	.sub		= reef_sub,
 	.cb		= &coral_cb,
 	.probe		= &reef_probe,
 };
+REGISTER_PLATFORM(platform_coral, "Coral");

@@ -233,9 +233,90 @@ struct platform_intf {
 	int (*destroy)(struct platform_intf *intf);
 };
 
-/* The global list of all platforms.  Temporarily weakly defined so
-   unit tests compile until this list is removed (crbug.com/1070692). */
-extern __attribute__((weak)) struct platform_intf *platform_intf_list[];
+/* Used for the global linked-list of all platforms. */
+struct platform_list {
+	struct platform_intf *entry;
+	struct platform_list *next;
+};
+
+/**
+ * REGISTER_PLATFORM - Macro to register a platform_intf in the global
+ * platforms list.
+ *
+ * @intf:       The platform interface to register.
+ * @name:       The name of the platform.  For unibuild devices, this
+ *              platform_intf will be matched based on a comparison to
+ *              /identity:platform-name in cros_config.
+ *
+ * This should be placed after the definition of a platform_intf, like so:
+ *    static struct platform_intf platform_foo {
+ *         ...
+ *    };
+ *    REGISTER_PLATFORM(platform_foo, "Foo");
+ */
+#define REGISTER_PLATFORM(intf, name) \
+	_REGISTER_PLATFORM(intf, name, _register_platform_##intf)
+
+/*
+ * _REGISTER_PLATFORM Internal helper macro for REGISTER_PLATFORM.
+ *
+ * @_intf:        Platform interface.
+ * @_name:        The name of the platform.
+ * @function_id:  Identifier to be used for the generated function.
+ *
+ * This works by creating a constructor function [1] which
+ * conditionally places the platform interface into the global list
+ * before main runs.  In the case that _PLATFORM_IS_ENABLED(_name) can
+ * be determined to be false at compile-time, the entire function,
+ * including the references to the platform interface, will be
+ * optimized away by the compiler.
+ *
+ * [1]: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html
+ */
+#define _REGISTER_PLATFORM(_intf, _name, function_id)                       \
+	static void __attribute__((constructor)) function_id(void)          \
+	{                                                                   \
+		static struct platform_list ent;                            \
+		_Static_assert(                                             \
+			__builtin_constant_p(_name),                        \
+			"Platform names must be a compile-time constant."); \
+		if (_PLATFORM_IS_ENABLED(_name)) {                          \
+			struct platform_intf *intf = &(_intf);              \
+			intf->name = _name;                                 \
+			push_platform_intf(intf, &ent);                     \
+		}                                                           \
+	}
+
+/*
+ * _PLATFORM_IS_ENABLED - Determine if a platform_intf (by-name) is
+ * enabled in this build.
+ *
+ * @name:       The name of the platform.
+ *
+ * For binary size optimizations to happen, this should result in an
+ * expression which can be evaluated at compile-time under the current
+ * optimization settings.
+ */
+#ifdef CONFIG_SINGLE_PLATFORM
+/*
+ * TODO(crbug.com/1070692): if CONFIG_SINGLE_PLATFORM is defined, use
+ * that to select only the right platform.
+ */
+#define _PLATFORM_IS_ENABLED(name) 1
+#else
+#define _PLATFORM_IS_ENABLED(name) 1
+#endif
+
+/**
+ * push_platform_intf - push an entry to the global platform list
+ *
+ * @intf:       Platform interface to register.
+ * @dest:       Statically-allocated platform_list node.
+ *
+ * This is an internal helper used by the REGISTER_PLAFTORM macro.
+ */
+extern void push_platform_intf(struct platform_intf *intf,
+			       struct platform_list *dest);
 
 /*
  * mosys_platform_setup  -  determine current platform and return handler

@@ -1,7 +1,3 @@
-platform_support_src += files(
-  'platform_list.c',
-)
-
 if use_cros_config
   subdir('dedede')
   subdir('fizz')

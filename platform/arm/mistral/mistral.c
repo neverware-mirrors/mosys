@@ -91,13 +91,10 @@ static struct platform_cb mistral_cb = {
 	.eventlog	= &mistral_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_mistral;
-
-struct platform_intf platform_mistral = {
+static struct platform_intf platform_mistral = {
 	.type		= PLATFORM_ARMV8,
-	.name		= "Mistral",
 	.sub		= mistral_sub,
 	.cb		= &mistral_cb,
 	.probe		= &mistral_probe,
 };
+REGISTER_PLATFORM(platform_mistral, "Mistral");

@@ -47,13 +47,10 @@ static struct platform_cb puff_cb = {
 	.eventlog	= &puff_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_puff;
-
-struct platform_intf platform_puff = {
+static struct platform_intf platform_puff = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Puff",
 	.sub		= puff_sub,
 	.cb		= &puff_cb,
 	.probe		= &puff_probe,
 };
+REGISTER_PLATFORM(platform_puff, "Puff");

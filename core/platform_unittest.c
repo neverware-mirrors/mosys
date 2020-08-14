@@ -97,9 +97,8 @@ static int setup_post_always_error(struct platform_intf *intf)
  * A minimal platform intf definition that should match by name, but
  * not call any probe, setup, destroy, or setup-post functions.
  */
-static struct platform_intf minimal_intf = {
-	.name = "minimal",
-};
+static struct platform_intf minimal_intf;
+REGISTER_PLATFORM(minimal_intf, "minimal");
 
 /*
  * A more complete definition which should never match, but may probe,
@@ -107,64 +106,65 @@ static struct platform_intf minimal_intf = {
  */
 static struct platform_intf basic_intf = {
 	.type = PLATFORM_X86_64,
-	.name = "basic",
 	.sub = no_subcommands,
 	.probe = &probe_never_match,
 	.setup = &setup_always_success,
 	.destroy = &destroy,
 	.setup_post = &setup_post_always_success,
 };
+REGISTER_PLATFORM(basic_intf, "basic");
 
 /*
  * Same as basic, but always errors during probing
  */
 static struct platform_intf error_probe_intf = {
 	.type = PLATFORM_X86_64,
-	.name = "error_probe",
 	.sub = no_subcommands,
 	.probe = &probe_always_error,
 	.setup = &setup_always_success,
 	.destroy = &destroy,
 	.setup_post = &setup_post_always_success,
 };
+REGISTER_PLATFORM(error_probe_intf, "error_probe");
 
 /*
  * Same as basic, but always errors during setup
  */
 static struct platform_intf error_setup_intf = {
 	.type = PLATFORM_X86_64,
-	.name = "error_setup",
 	.sub = no_subcommands,
 	.probe = &probe_never_match,
 	.setup = &setup_always_error,
 	.destroy = &destroy,
 	.setup_post = &setup_post_always_success,
 };
+REGISTER_PLATFORM(error_setup_intf, "error_setup");
 
 /*
  * Same as basic, but always errors during setup-post
  */
 static struct platform_intf error_setup_post_intf = {
 	.type = PLATFORM_X86_64,
-	.name = "error_setup_post",
 	.sub = no_subcommands,
 	.probe = &probe_never_match,
 	.setup = &setup_always_success,
 	.destroy = &destroy,
 	.setup_post = &setup_post_always_error,
 };
+REGISTER_PLATFORM(error_setup_post_intf, "error_setup_post");
 
 /*
  * Same as error_setup_post, but always errors during setup-post
  */
 static struct platform_intf error_setup_post_no_destroy_intf = {
 	.type = PLATFORM_X86_64,
-	.name = "error_setup_post_no_destroy",
 	.sub = no_subcommands,
 	.probe = &probe_never_match,
 	.setup = &setup_always_success,
 	.setup_post = &setup_post_always_error,
 };
+REGISTER_PLATFORM(error_setup_post_no_destroy_intf,
+		  "error_setup_post_no_destroy");
 
 /*
  * Same as basic, but matches conditionally during probing based on
@@ -172,27 +172,13 @@ static struct platform_intf error_setup_post_no_destroy_intf = {
  */
 static struct platform_intf mocked_match_intf = {
 	.type = PLATFORM_X86_64,
-	.name = "mocked_match",
 	.sub = no_subcommands,
 	.probe = &probe_mocked_match,
 	.setup = &setup_always_success,
 	.destroy = &destroy,
 	.setup_post = &setup_post_always_success,
 };
-
-/*
- * An intf list for most tests.
- */
-struct platform_intf *platform_intf_list[] = {
-	&minimal_intf,
-	&basic_intf,
-	&error_probe_intf,
-	&error_setup_intf,
-	&error_setup_post_intf,
-	&error_setup_post_no_destroy_intf,
-	&mocked_match_intf,
-	NULL,
-};
+REGISTER_PLATFORM(mocked_match_intf, "mocked_match");
 
 static void find_minimal_by_name(void **state)
 {

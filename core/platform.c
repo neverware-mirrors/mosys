@@ -50,16 +50,23 @@
 #define LINE_MAX 64
 #endif
 
+static struct platform_list *platform_list;
+
+void push_platform_intf(struct platform_intf *intf, struct platform_list *dest)
+{
+	dest->entry = intf;
+	dest->next = platform_list;
+	platform_list = dest;
+}
+
 /*
  * Internal function used by mosys_platform_setup to search for a
  * supported platform by name
  */
 static struct platform_intf *find_platform_by_name(const char *platform_name)
 {
-	struct platform_intf **_intf, *intf;
-
-	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
-		intf = *_intf;
+	for (struct platform_list *p = platform_list; p; p = p->next) {
+		struct platform_intf *intf = p->entry;
 		if (!strcasecmp(intf->name, platform_name))
 			return intf;
 		continue;
@@ -74,10 +81,8 @@ static struct platform_intf *find_platform_by_name(const char *platform_name)
  */
 static struct platform_intf *probe_platform(void)
 {
-	struct platform_intf **_intf, *intf;
-
-	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
-		intf = *_intf;
+	for (struct platform_list *p = platform_list; p; p = p->next) {
+		struct platform_intf *intf = p->entry;
 
 		if (intf->probe) {
 			int rc = intf->probe(intf);
@@ -108,11 +113,11 @@ static struct platform_intf *probe_platform(void)
  */
 struct platform_intf *mosys_platform_setup(const char *platform_name)
 {
-	struct platform_intf **_intf, *intf;
+	struct platform_intf *intf;
 
 	/* setup defaults for each platform */
-	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
-		intf = *_intf;
+	for (struct platform_list *p = platform_list; p; p = p->next) {
+		intf = p->entry;
 		if (!intf->name)
 			intf->name = "";
 		if (!intf->op)
@@ -276,13 +281,12 @@ void print_tree(struct platform_intf *intf)
  * returns <0 to indicate failure
  */
 int print_platforms() {
-	struct platform_intf **_intf, *intf;
 	struct kv_pair *kv;
 	int rc;
 
 	/* go through all supported interfaces */
-	for (_intf = platform_intf_list; _intf && *_intf; _intf++) {
-		intf = *_intf;
+	for (struct platform_list *p = platform_list; p; p = p->next) {
+		struct platform_intf *intf = p->entry;
 
 		if (intf->type == PLATFORM_DEFAULT)
 			continue;

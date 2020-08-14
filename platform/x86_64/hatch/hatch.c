@@ -80,13 +80,10 @@ static struct platform_cb hatch_cb = {
 	.eventlog	= &hatch_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_hatch;
-
-struct platform_intf platform_hatch = {
+static struct platform_intf platform_hatch = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Hatch",
 	.sub		= hatch_sub,
 	.cb		= &hatch_cb,
 	.probe		= &hatch_probe,
 };
+REGISTER_PLATFORM(platform_hatch, "Hatch");

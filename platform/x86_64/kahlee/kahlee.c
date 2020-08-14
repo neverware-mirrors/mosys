@@ -79,13 +79,10 @@ static struct platform_cb kahlee_cb = {
 	.eventlog	= &kahlee_eventlog_cb,
 };
 
-/* TODO(crbug.com/1070692): make static */
-extern struct platform_intf platform_kahlee;
-
-struct platform_intf platform_kahlee = {
+static struct platform_intf platform_kahlee = {
 	.type		= PLATFORM_X86_64,
-	.name		= "Grunt",
 	.sub		= kahlee_sub,
 	.cb		= &kahlee_cb,
 	.probe		= &kahlee_probe,
 };
+REGISTER_PLATFORM(platform_kahlee, "Grunt");

@@ -1,7 +1,3 @@
-platform_support_src += files(
-  'platform_list.c',
-)
-
 # aarch64 userspace in ChromeOS is still experimental.
 #
 # - Devices which have a 64-bit processor but 32-bit userspace should
