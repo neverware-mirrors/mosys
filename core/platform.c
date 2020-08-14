@@ -31,6 +31,7 @@
  */
 
 #include <inttypes.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -114,6 +115,8 @@ static struct platform_intf *probe_platform(void)
 struct platform_intf *mosys_platform_setup(const char *platform_name)
 {
 	struct platform_intf *intf;
+	int platform_count = 0;
+	bool probe_called = false;
 
 	/* setup defaults for each platform */
 	for (struct platform_list *p = platform_list; p; p = p->next) {
@@ -122,15 +125,38 @@ struct platform_intf *mosys_platform_setup(const char *platform_name)
 			intf->name = "";
 		if (!intf->op)
 			intf->op = &platform_common_op;
+
+		platform_count++;
 	}
 
-	if (platform_name)
+	if (platform_name) {
 		intf = find_platform_by_name(platform_name);
-	else
+	} else if (platform_count == 1) {
+		intf = platform_list->entry;
+	} else {
 		intf = probe_platform();
+		probe_called = true;
+	}
 
 	if (!intf)
 		return NULL;
+
+	/*
+	 * If we did not call the platform's probe function earlier
+	 * (e.g., selection by string or there is only a single
+	 * platform compiled in mosys), we need to call it now as this
+	 * may provide model-specific information.
+	 *
+	 * In the case the probe fails, most commands will still work.
+	 * We setup the platform_intf anyway, but provide a warning.
+	 */
+	if (!probe_called && intf->probe) {
+		if (intf->probe(intf) <= 0) {
+			lprintf(LOG_ERR,
+				"Platform probe function failed. "
+				"Model-specific commands may be incorrect.\n");
+		}
+	}
 
 	/* call platform-specific setup if found */
 	if (intf->setup && intf->setup(intf) < 0)

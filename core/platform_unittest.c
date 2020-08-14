@@ -192,11 +192,12 @@ static void find_minimal_by_name(void **state)
 static void find_basic_by_name(void **state)
 {
 	assert_ptr_equal(mosys_platform_setup("basic"), &basic_intf);
-	assert_null(probe_called);
+	assert_ptr_equal(probe_called, &basic_intf);
 	assert_ptr_equal(setup_called, &basic_intf);
 	assert_null(destroy_called);
 	assert_ptr_equal(setup_post_called, &basic_intf);
 
+	probe_called = NULL;
 	setup_called = NULL;
 	setup_post_called = NULL;
 }
@@ -204,11 +205,12 @@ static void find_basic_by_name(void **state)
 static void find_by_name_is_case_insensitive(void **state)
 {
 	assert_ptr_equal(mosys_platform_setup("BaSiC"), &basic_intf);
-	assert_null(probe_called);
+	assert_ptr_equal(probe_called, &basic_intf);
 	assert_ptr_equal(setup_called, &basic_intf);
 	assert_null(destroy_called);
 	assert_ptr_equal(setup_post_called, &basic_intf);
 
+	probe_called = NULL;
 	setup_called = NULL;
 	setup_post_called = NULL;
 }
@@ -225,11 +227,12 @@ static void find_bad_name_fails(void **state)
 static void setup_error_fails(void **state)
 {
 	assert_null(mosys_platform_setup("error_setup"));
-	assert_null(probe_called);
+	assert_ptr_equal(probe_called, &error_setup_intf);
 	assert_ptr_equal(setup_called, &error_setup_intf);
 	assert_null(destroy_called);
 	assert_null(setup_post_called);
 
+	probe_called = NULL;
 	setup_called = NULL;
 	destroy_called = NULL;
 }
@@ -237,11 +240,12 @@ static void setup_error_fails(void **state)
 static void setup_post_error_fails(void **state)
 {
 	assert_null(mosys_platform_setup("error_setup_post"));
-	assert_null(probe_called);
+	assert_ptr_equal(probe_called, &error_setup_post_intf);
 	assert_ptr_equal(setup_called, &error_setup_post_intf);
 	assert_ptr_equal(destroy_called, &error_setup_post_intf);
 	assert_ptr_equal(setup_post_called, &error_setup_post_intf);
 
+	probe_called = NULL;
 	setup_called = NULL;
 	destroy_called = NULL;
 	setup_post_called = NULL;
@@ -250,11 +254,12 @@ static void setup_post_error_fails(void **state)
 static void setup_post_error_fails_no_destroy(void **state)
 {
 	assert_null(mosys_platform_setup("error_setup_post_no_destroy"));
-	assert_null(probe_called);
+	assert_ptr_equal(probe_called, &error_setup_post_no_destroy_intf);
 	assert_ptr_equal(setup_called, &error_setup_post_no_destroy_intf);
 	assert_null(destroy_called);
 	assert_ptr_equal(setup_post_called, &error_setup_post_no_destroy_intf);
 
+	probe_called = NULL;
 	setup_called = NULL;
 	setup_post_called = NULL;
 }
