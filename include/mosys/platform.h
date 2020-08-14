@@ -298,11 +298,8 @@ struct platform_list {
  * optimization settings.
  */
 #ifdef CONFIG_SINGLE_PLATFORM
-/*
- * TODO(crbug.com/1070692): if CONFIG_SINGLE_PLATFORM is defined, use
- * that to select only the right platform.
- */
-#define _PLATFORM_IS_ENABLED(name) 1
+#define _PLATFORM_IS_ENABLED(name) \
+	!__builtin_strcmp(CONFIG_SINGLE_PLATFORM, name)
 #else
 #define _PLATFORM_IS_ENABLED(name) 1
 #endif
