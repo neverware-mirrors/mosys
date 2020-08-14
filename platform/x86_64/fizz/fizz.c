@@ -64,16 +64,7 @@ static struct platform_cmd *fizz_sub[] = {
 
 static int fizz_probe(struct platform_intf *intf)
 {
-	/**
-	 * 'fizz' interface is shared by multiple overlays (with different
-	 * platform-name value in cros_config model.yaml 'platform-name')
-	 * so we have to pass explicit platform (overlay) names.
-	 */
-	static const char *platform_names[] = {
-		"Fizz", "Kalista",
-		NULL
-	};
-	return cros_config_probe(intf, platform_names);
+	return cros_config_probe(intf, NULL);
 }
 
 static struct eventlog_cb fizz_eventlog_cb = {
@@ -101,3 +92,11 @@ static struct platform_intf platform_fizz = {
 	.probe		= &fizz_probe,
 };
 REGISTER_PLATFORM(platform_fizz, "Fizz");
+
+static struct platform_intf platform_kalista = {
+	.type		= PLATFORM_X86_64,
+	.sub		= fizz_sub,
+	.cb		= &fizz_cb,
+	.probe		= &fizz_probe,
+};
+REGISTER_PLATFORM(platform_kalista, "Kalista");
