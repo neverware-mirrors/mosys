@@ -21,15 +21,12 @@ struct platform_intf;
  *         example 'SAMUS'.
  * `customization` is the legacy support for customization_id in upper case,
  *         for example 'GOOGLE-SAMUS', also used as network config key.
- * 'signature_id' is the signature ID used for zero-touch whitelabels in
- *         unified builds. Pending removal.
  */
 struct sku_info {
 	const char *brand;
 	const char *model;
 	const char *chassis;
 	const char *customization;
-	const char *signature_id;
 };
 
 /**
