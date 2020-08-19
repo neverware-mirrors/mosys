@@ -50,11 +50,6 @@
 
 struct probe_ids {
 	const char *names[2];
-	/**
-	 * Devices with SKU-based mapping should define sku_table,
-	 * otherwise use single_sku.
-	 */
-	struct sku_mapping *sku_table;
 	const struct sku_info single_sku;
 };
 
@@ -109,11 +104,7 @@ exit:
 	probed = 1;
 	/* Update canonical platform name */
 	intf->name = pid->names[0];
-	if (pid->sku_table) {
-		intf->sku_info = sku_find_info(intf, pid->sku_table);
-	} else {
-		intf->sku_info = &pid->single_sku;
-	}
+	intf->sku_info = &pid->single_sku;
 	return status;
 }
 
