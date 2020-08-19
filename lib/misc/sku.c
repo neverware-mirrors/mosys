@@ -105,23 +105,6 @@ int sku_get_number(struct platform_intf *intf)
 	return -1;
 }
 
-const struct sku_info *sku_find_info(struct platform_intf *intf,
-                                     const struct sku_mapping *mappings)
-{
-	int sku_number = 0;
-
-	if (!mappings)
-		return NULL;
-
-	sku_number = sku_get_number(intf);
-	for (; mappings->info; mappings++) {
-		if (sku_number == mappings->number ||
-		    mappings->number == SKU_NUMBER_ANY)
-			return mappings->info;
-	}
-	return NULL;
-}
-
 char *sku_get_brand(struct platform_intf *intf)
 {
 	const struct sku_info *info = intf->sku_info;

@@ -9,10 +9,6 @@
 
 struct platform_intf;
 
-enum {
-	SKU_NUMBER_ANY = -1,  /* Matches any SKU number. */
-};
-
 /**
  * sku_info - a structure to hold per-SKU information.
  *
@@ -37,33 +33,12 @@ struct sku_info {
 };
 
 /**
- * sku_mapping - a mapping from SKU number to sku_info.
- *
- * `number` is an integer. Use SKU_NUMBER_ANY to match all devices.
- * `info` points to a sku_info entry. NULL to indicate end of entries.
- */
-struct sku_mapping {
-	int number;
-	const struct sku_info *info;
-};
-
-/**
  * sku_get_number - get SKU number
  *
  * returns integer representing SKU number
  * returns -1 to indicate value not found or error
  */
 extern int sku_get_number(struct platform_intf *intf);
-
-/**
- * sku_find_info - find matched SKU info from a list of mappings.
- *
- * returns a pointer to matched sku_info record
- * returns NULL to indicate SKU not found or error
- */
-extern const struct sku_info *sku_find_info(struct platform_intf *intf,
-					    const struct sku_mapping *mappings);
-
 
 /**
  * sku_get_brand - get (RLZ) brand code
