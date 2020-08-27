@@ -52,7 +52,7 @@ static int dimm_count(struct platform_intf *intf)
 }
 
 static const struct nonspd_mem_info *kukui_dram[] = {
-	[0] = &samsung_lpddr4x_k4ube3d4am_mgcj,
+	[0] = &samsung_lpddr4x_k4ube3d4aa_mgcr,
 	[1] = &hynix_lpddr4x_h9hcnnncpmalhr_nee,
 	[2] = &micron_lpddr4x_mt53e1g32d4nq_046wte,
 	[3] = &samsung_lpddr4x_kmdh6001da_b422,
@@ -62,6 +62,13 @@ static const struct nonspd_mem_info *kukui_dram[] = {
 	[7] = &sandisk_lpddr4x_sdada4cr_128g,
 	[8] = &samsung_lpddr4x_k4ube3d4aa_mgcl,
 	[10] = &hynix_lpddr4x_h9hcnnncpmmlxr_nee,
+	/* Burnet dram table */
+	[0x10] = &samsung_lpddr4x_k4ube3d4aa_mgcr,
+	[0x11] = &hynix_lpddr4x_h9hcnnncpmalhr_nee,
+	[0x12] = &micron_lpddr4x_mt53e1g32d4nq_046wte,
+	[0x13] = &samsung_lpddr4x_k4ube3d4aa_mgcl,
+	[0x14] = &hynix_lpddr4x_h9hcnnncpmmlxr_nee,
+	[0x16] = &micron_lpddr4x_mt53e2g32d4nq_046wta,
 };
 
 static int get_mem_info(struct platform_intf *intf,
