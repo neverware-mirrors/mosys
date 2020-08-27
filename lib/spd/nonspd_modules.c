@@ -1119,6 +1119,22 @@ const struct nonspd_mem_info samsung_lpddr4x_k4ube3d4aa_mgcl = {
 		  'M', 'G', 'C', 'L' },
 };
 
+const struct nonspd_mem_info samsung_lpddr4x_k4ube3d4aa_mgcr = {
+        .dram_type              = SPD_DRAM_TYPE_LPDDR4X,
+
+        .module_size_mbits      = 32768,
+        .num_ranks              = 2,
+        .device_width           = 32,
+        .ddr_freq               = { DDR_667, DDR_800, DDR_933, DDR_1067, DDR_1200},
+
+        .module_mfg_id          = { .msb = 0xce, .lsb = 0x00 },
+        .dram_mfg_id            = { .msb = 0xce, .lsb = 0x00 },
+
+        .part_num               =
+                { 'K', '4', 'U', 'B', 'E', '3', 'D', '4', 'A', 'A', '-',
+                  'M', 'G', 'C', 'R' },
+};
+
 static const struct nonspd_mem_info samsung_lpddr4_k4f6e304hb_mgch = {
 	.dram_type		= SPD_DRAM_TYPE_LPDDR4,
 
