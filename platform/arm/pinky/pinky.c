@@ -33,9 +33,9 @@
 #include <unistd.h>
 
 #include "pinky.h"
-#include "drivers/google/cros_ec.h"
 #include "lib/fdt.h"
 #include "lib/file.h"
+#include "lib/generic_callbacks.h"
 #include "lib/math.h"
 #include "lib/probe.h"
 #include "mosys/command_list.h"
@@ -43,45 +43,17 @@
 #include "mosys/intf_list.h"
 #include "mosys/log.h"
 
-enum pinky_boards {
-	UNKNOWN = -1,
-	FIEVEL,
-	JAQ,
-	JERRY,
-	MICKEY,
-	MIGHTY,
-        MINNIE,
-	PINKY,
-	SPEEDY,
-	TIGER
-};
-
-static enum pinky_boards probed_board = UNKNOWN;
-
 static struct veyron_probe_id {
 	const char *name;
 	const char *fdt_compat;
-	int has_ec;
 } veyron_id_list[] = {
-	[FIEVEL]	= { "Fievel", "google,veyron-fievel", 0 },
-	[JAQ]		= { "Jaq", "google,veyron-jaq", 1 },
-	[JERRY]		= { "Jerry", "google,veyron-jerry", 1 },
-	[MICKEY]	= { "Mickey", "google,veyron-mickey", 0 },
-	[MIGHTY]	= { "Mighty", "google,veyron-mighty", 1 },
-        [MINNIE]	= { "Minnie", "google,veyron-minnie", 1 },
-	[PINKY]		= { "Pinky", "google,veyron-pinky", 1 },
-	[SPEEDY]	= { "Speedy", "google,veyron-speedy", 1 },
-	[TIGER]		= { "Tiger", "google,veyron-tiger", 0 },
+	{ "Fievel", "google,veyron-fievel" },
+	{ "Mickey", "google,veyron-mickey" },
+	{ "Tiger", "google,veyron-tiger" },
 };
 
-#define PINKY_CMD_EC_NUM	0
 static struct platform_cmd *pinky_sub[] = {
-	/* Keep this as the first entry. intf->sub will be set to point to
-         * the next entry if it turns out that we don't have an EC. */
-	[PINKY_CMD_EC_NUM] = &cmd_ec,
-
 	&cmd_memory,
-	&cmd_nvram,
 	&cmd_platform,
 	&cmd_psu,
 	&cmd_eventlog,
@@ -99,25 +71,9 @@ static int pinky_probe(struct platform_intf *intf)
 			lprintf(LOG_DEBUG, "Found platform \"%s\" via FDT "
 				"compatible node.\n", veyron_id_list[i].name);
 			intf->name = veyron_id_list[i].name;
-			probed_board = i;
-			break;
+			return 1;
 		}
 	}
-
-	lprintf(LOG_DEBUG, "%s: probed_board: %d\n", __func__, probed_board);
-	return probed_board > UNKNOWN ? 1 : 0;
-}
-
-static int pinky_setup_post(struct platform_intf *intf)
-{
-	if (veyron_id_list[probed_board].has_ec) {
-		intf->cb->nvram = &cros_ec_nvram_cb;
-	} else {
-		intf->cb->ec = NULL;
-		intf->sub = &pinky_sub[PINKY_CMD_EC_NUM + 1];
-	}
-
-	pinky_eeprom_setup(intf, veyron_id_list[probed_board].has_ec);
 
 	return 0;
 }
@@ -135,10 +91,9 @@ static struct eventlog_cb pinky_eventlog_cb = {
 };
 
 static struct platform_cb pinky_cb = {
-	.ec		= &cros_ec_cb,
 	.eeprom 	= &pinky_eeprom_cb,
 	.memory		= &pinky_memory_cb,
-	.psu 		= &pinky_psu_cb,
+	.psu		= &generic_psu_ac_only_cb,
 	.sys		= &fdt_sysinfo_cb,
 	.eventlog	= &pinky_eventlog_cb,
 };
@@ -148,6 +103,5 @@ static struct platform_intf platform_pinky = {
 	.sub		= pinky_sub,
 	.cb		= &pinky_cb,
 	.probe		= &pinky_probe,
-	.setup_post	= &pinky_setup_post,
 };
 REGISTER_PLATFORM(platform_pinky, "Pinky");

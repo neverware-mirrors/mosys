@@ -38,20 +38,12 @@
 #include "mosys/platform.h"
 #include "mosys/log.h"
 
-#include "drivers/google/cros_ec.h"
-#include "drivers/google/cros_ec_commands.h"
-
 #include "lib/eeprom.h"
 #include "lib/flashrom.h"
 
 #include "pinky.h"
 
 #define PINKY_HOST_FIRMWARE_ROM_SIZE	(4096 * 1024)
-
-enum pinky_firmware {
-	PINKY_EC_FIRMWARE = 0,
-	PINKY_HOST_FIRMWARE
-};
 
 static int host_firmware_size(struct platform_intf *intf)
 {
@@ -104,54 +96,11 @@ static struct eeprom_region host_firmware_regions[] = {
 		.name	= "RW_ELOG",
 		.flag	= EEPROM_FLAG_EVENTLOG,
 	},
-
-	/*
-	 * RW_NVRAM section might only be available on certain variants
-	 * of veyron (specifically, those without an EC). Since the nvram
-	 * callback will be set to use EC or SPI flash for NVRAM storage
-	 * during platform init, we can list RW_NVRAM here anyway so that
-	 * the region can be found in the latter case.
-	 */
-	{
-		.name	= "RW_NVRAM",
-		.flag	= EEPROM_FLAG_VBNV,
-	},
-
 	{ NULL },
 };
 
-static int ec_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
-			  unsigned int offset, unsigned int len, void *data)
-{
-	uint8_t *buf;
-	size_t rom_size;
-
-	rom_size = eeprom->device->size(intf);
-	buf = mosys_malloc(rom_size);
-
-	if (flashrom_read(buf, rom_size, EC_FIRMWARE, NULL) < 0)
-		return -1;
-
-	memcpy(data, &buf[offset], len);
-	free(buf);
-	return 0;
-}
-
-static struct eeprom_dev ec_firmware = {
-	.size		= cros_ec_get_firmware_rom_size,
-	.read		= ec_firmware_read,
-	.get_map	= eeprom_get_fmap,
-};
-
 static struct eeprom eeproms[] = {
-	/* ordering is important, see pinky_eeprom_setup() */
-	[PINKY_EC_FIRMWARE] = {
-		.name		= "ec_firmware",
-		.type		= EEPROM_TYPE_FW,
-		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
-		.device		= &ec_firmware,
-	},
-	[PINKY_HOST_FIRMWARE] = {
+	{
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
 		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
@@ -160,12 +109,6 @@ static struct eeprom eeproms[] = {
 	},
 	{ 0 },
 };
-
-void pinky_eeprom_setup(struct platform_intf *intf, int has_ec)
-{
-	if (!has_ec)
-		intf->cb->eeprom->eeprom_list = &eeproms[PINKY_HOST_FIRMWARE];
-}
 
 struct eeprom_cb pinky_eeprom_cb = {
 	.eeprom_list	= eeproms,

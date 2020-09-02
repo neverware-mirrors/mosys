@@ -42,14 +42,6 @@
 static int pinky_dimm_count;
 static const struct nonspd_mem_info *pinky_mem_info;
 
-static int supports_tristate(struct platform_intf *intf)
-{
-	if(!strncmp(intf->name, "Jerry", 5) ||
-	   !strncmp(intf->name, "Jaq", 3) ||
-	   !strncmp(intf->name, "Mighty", 6))
-		return 0;
-	return 1;
-}
 /* read RAM code and fill in values needed by memory commands */
 static int read_ram_code(struct platform_intf *intf)
 {
@@ -64,124 +56,81 @@ static int read_ram_code(struct platform_intf *intf)
 		return -1;
 	}
 
-	if(!strncmp(intf->name, "Speedy", 6) ||
-	   !strncmp(intf->name, "Minnie", 6))
-	{
+	if (!strcmp(intf->name, "Mickey")) {
 		switch (ram_code) {
 		case 0:
 			pinky_dimm_count = 2;
-			pinky_mem_info = &samsung_lpddr3_k4e8e304ee_egce;
+			pinky_mem_info = &samsung_lpddr3_k3qf2f20em_agce;
 			break;
-		case 1:
-			pinky_dimm_count = 2;
-			pinky_mem_info = &hynix_lpddr3_h9ccnnn8gtmlar_nud;
-			break;
-		case 2:
-			pinky_dimm_count = 2;
-			pinky_mem_info = &samsung_lpddr3_k4e6e304eb_egcf;
+		case 3:
+			pinky_dimm_count = 1;
+			pinky_mem_info = &hynix_lpddr3_h9ccnnnbptblbr_nud;
 			break;
 		case 7:
 			pinky_dimm_count = 2;
-			pinky_mem_info = &elpida_lpddr3_f8132a3ma_gd_f;
+			pinky_mem_info = &elpida_lpddr3_edfa164a2ma_jd_f;
 			break;
-		case 8:
+		case 17:
 			pinky_dimm_count = 2;
-			pinky_mem_info = &samsung_lpddr3_k4e6e304ee_egce;
+			pinky_mem_info = &micron_lpddr3_mt52l256m64d2pp_107wtb;
 			break;
-		case 9:
-			pinky_dimm_count = 2;
-			pinky_mem_info = &hynix_lpddr3_h9ccnnnbjtmlar_nud;
-			break;
-		case 0x0b:
-			pinky_dimm_count = 2;
-			pinky_mem_info = &elpida_lpddr3_fa232a2ma_gc_f;
+		case 19:
+			pinky_dimm_count = 1;
+			pinky_mem_info = &hynix_lpddr3_h9ccnnnbktmlbr_ntd;
 			break;
 		default:
 			ret = -1;
 			break;
 		}
-	}else{
-                if(!strncmp(intf->name, "Mickey", 6)) {
-			switch (ram_code) {
-			case 0:
-				pinky_dimm_count = 2;
-				pinky_mem_info = &samsung_lpddr3_k3qf2f20em_agce;
-				break;
-			case 3:
-				pinky_dimm_count = 1;
-				pinky_mem_info = &hynix_lpddr3_h9ccnnnbptblbr_nud;
-				break;
-			case 7:
-				pinky_dimm_count = 2;
-				pinky_mem_info = &elpida_lpddr3_edfa164a2ma_jd_f;
-				break;
-			case 17:
-				pinky_dimm_count = 2;
-				pinky_mem_info = &micron_lpddr3_mt52l256m64d2pp_107wtb;
-				break;
-			case 19:
-				pinky_dimm_count = 1;
-				pinky_mem_info = &hynix_lpddr3_h9ccnnnbktmlbr_ntd;
-				break;
-			default:
-				ret = -1;
-				break;
-			}
-		} else {
-			switch (ram_code) {
-			case 0:
-				if(supports_tristate(intf)) {
-					pinky_dimm_count = 2;
-					pinky_mem_info = &samsung_lpddr3_k4e8e304ed_egcc;
-				} else {
-					pinky_dimm_count = 4;
-					pinky_mem_info = &samsung_k4b4g1646e;
-				}
-				break;
-			case 2:
-				pinky_dimm_count = 2;
-				pinky_mem_info = &samsung_lpddr3_k4e6e304eb_egce;
-				break;
-			case 4:
-				pinky_dimm_count = 4;
-				pinky_mem_info = &samsung_ddr3l_k4b4g1646d_byk0;
-				break;
-			case 5:
-				pinky_dimm_count = 4;
-				pinky_mem_info = &hynix_ddr3l_h5tc4g63cfr_pba;
-				break;
-			case 6:
-				pinky_dimm_count = 4;
-				pinky_mem_info = &samsung_ddr3l_k4b4g1646q_hyk0;
-				break;
-			case 0x0a:
-				pinky_dimm_count = 4;
-				pinky_mem_info = &nanya_ddr3l_nt5cc256m16dp_di;
-				break;
-			case 0x0c:
-				pinky_dimm_count = 2;
-				pinky_mem_info = &samsung_lpddr3_k4e8e324eb_egcf;
-				break;
-			case 0x0d:
-				pinky_dimm_count = 4;
-				pinky_mem_info = &hynix_ddr3l_h5tc4g63afr_pba;
-				break;
-			case 0x0e:
-				pinky_dimm_count = 4;
-				pinky_mem_info = &samsung_ddr3l_k4b8g1646q_myk0;
-				break;
-			case 0x0f:
-				pinky_dimm_count = 4;
-				pinky_mem_info = &hynix_ddr3l_h5tc8g63amr_pba;
-				break;
-			case 0x10:
-				pinky_dimm_count = 4;
-				pinky_mem_info = &samsung_k4b4g1646e;
-				break;
-			default:
-				ret = -1;
-				break;
-			}
+	} else {
+		switch (ram_code) {
+		case 0:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &samsung_k4b4g1646e;
+			break;
+		case 2:
+			pinky_dimm_count = 2;
+			pinky_mem_info = &samsung_lpddr3_k4e6e304eb_egce;
+			break;
+		case 4:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &samsung_ddr3l_k4b4g1646d_byk0;
+			break;
+		case 5:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &hynix_ddr3l_h5tc4g63cfr_pba;
+			break;
+		case 6:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &samsung_ddr3l_k4b4g1646q_hyk0;
+			break;
+		case 0x0a:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &nanya_ddr3l_nt5cc256m16dp_di;
+			break;
+		case 0x0c:
+			pinky_dimm_count = 2;
+			pinky_mem_info = &samsung_lpddr3_k4e8e324eb_egcf;
+			break;
+		case 0x0d:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &hynix_ddr3l_h5tc4g63afr_pba;
+			break;
+		case 0x0e:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &samsung_ddr3l_k4b8g1646q_myk0;
+			break;
+		case 0x0f:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &hynix_ddr3l_h5tc8g63amr_pba;
+			break;
+		case 0x10:
+			pinky_dimm_count = 4;
+			pinky_mem_info = &samsung_k4b4g1646e;
+			break;
+		default:
+			ret = -1;
+			break;
 		}
 	}
 
