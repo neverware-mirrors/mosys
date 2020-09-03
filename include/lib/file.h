@@ -34,7 +34,6 @@
 #ifndef MOSYS_LIB_FILE_H__
 #define MOSYS_LIB_FILE_H__
 
-#include "mosys/list.h"
 #include "mosys/log.h"
 
 enum file_mode {
@@ -61,11 +60,5 @@ int file_open(const char *file, int rw);
  */
 ssize_t read_file(const char *path, char *buf, size_t buf_sz,
 		  enum log_levels log_level);
-
-extern struct ll_node *scanft(struct ll_node **list,
-			      const char *root, const char *name,
-			      const char *str, int maxdepth, int symdepth);
-
-extern void scanft_list_cleanup(struct ll_node **phead);
 
 #endif	/* MOSYS_LIB_FILE_H__ */

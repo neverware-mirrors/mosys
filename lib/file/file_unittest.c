@@ -42,22 +42,10 @@
 // clang-format on
 
 #include "lib/math.h"
-#include "mosys/globals.h"
-#include "mosys/list.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "lib/file.h"
-
-// Reads the root of the testdata directory into <buf>. Note that it is assumed
-// <buf> is of size at least PATH_MAX.
-static void get_testdata_root(char *buf)
-{
-	char *src = getenv("SRC");
-	assert_non_null(src);
-
-	snprintf(buf, PATH_MAX, "%s/unittests/testdata", src);
-}
 
 static void get_testdata_file(const char *name, char *buf, size_t buf_sz)
 {
@@ -114,52 +102,6 @@ static void read_file_no_file_test(void **state)
 	assert_int_equal(ret, -1);
 }
 
-static void scanft_test(void **state)
-{
-	// The relevant directories for this test are structured as:
-	//
-	// ├── dir1
-	// │   ├── dir2_symlink -> ../dir2
-	// │   ├── needle0
-	// │   └── subdir
-	// │       └── needle1
-	// └── dir2
-	//     └── needle2
-	//
-	// The scan will start in "dir1", which contains symlinks to dir2.
-	struct ll_node *list = NULL;
-	char testdata_root[PATH_MAX];
-	char root[PATH_MAX];
-
-	get_testdata_root(testdata_root);
-
-	snprintf(root, sizeof(root), "%s/%s", testdata_root,
-		 "scanft_test/dir1/");
-
-	/* The first needle should be in given root. */
-	assert_non_null(scanft(&list, root, /*filename=*/"needle0",
-			       /*str=*/NULL,
-			       /*maxdepth=*/0, /*symdepth=*/0));
-	list_cleanup(&list);
-
-	/* The second needle requires some basic recursion to find. */
-	assert_null(scanft(&list, root, /*filename=*/"needle1", /*str=*/NULL,
-			   /*maxdepth=*/0, /*symdepth=*/0));
-	assert_non_null(scanft(&list, root, /*filename=*/"needle1",
-			       /*str=*/NULL,
-			       /*maxdepth=*/-1, /*symdepth=*/0));
-	list_cleanup(&list);
-
-	/* The third needle requires recursion and symlink
-	 * handling to find. */
-	assert_null(scanft(&list, root, /*filename=*/"needle2", /*str=*/NULL,
-			   /*maxdepth=*/-1, /*symdepth=*/0));
-	assert_non_null(scanft(&list, root, /*filename=*/"needle2",
-			       /*str=*/NULL,
-			       /*maxdepth=*/-1, /*symdepth=*/1));
-	list_cleanup(&list);
-}
-
 int main(void)
 {
 	const struct CMUnitTest tests[] = {
@@ -167,7 +109,6 @@ int main(void)
 		cmocka_unit_test(read_file_no_buffer_test),
 		cmocka_unit_test(read_file_small_buffer_test),
 		cmocka_unit_test(read_file_no_file_test),
-		cmocka_unit_test(scanft_test),
 	};
 
 	return cmocka_run_group_tests(tests, /*group_setup=*/NULL,
