@@ -43,7 +43,6 @@
 #include <errno.h>
 
 #include "mosys/alloc.h"
-#include "mosys/list.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 

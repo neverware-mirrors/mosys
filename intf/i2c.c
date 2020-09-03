@@ -43,7 +43,6 @@
 #include "mosys/alloc.h"
 #include "mosys/globals.h"
 #include "mosys/log.h"
-#include "mosys/list.h"
 #include "mosys/platform.h"
 
 #include "intf/i2c.h"

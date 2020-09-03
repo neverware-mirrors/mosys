@@ -39,8 +39,6 @@
 
 #include <stdarg.h>
 
-#include "mosys/list.h"
-
 struct string_builder;
 
 /*

@@ -5,7 +5,6 @@ libmosys_src += files(
   'globals.c',
   'file_backed_range.c',
   'output.c',
-  'list.c',
   'kv_pair.c',
   'alloc.c',
   'platform.c',
