@@ -14,6 +14,7 @@ else
   subdir('auron')
   subdir('cyan')
   subdir('glados')
+  subdir('jecht')
   subdir('rambi')
   subdir('strago')
 endif
