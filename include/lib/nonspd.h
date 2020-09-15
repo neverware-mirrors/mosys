@@ -161,7 +161,10 @@ extern const struct nonspd_mem_info samsung_lpddr4x_k4ube3d4aa_mgcl;
 extern const struct nonspd_mem_info samsung_lpddr4x_k4ube3d4aa_mgcr;
 extern const struct nonspd_mem_info sandisk_lpddr4x_sdada4cr_128g;
 
+int spd_set_nonspd_info_from_smbios(struct platform_intf *intf, int dimm,
+				    const struct nonspd_mem_info **info);
+
 int spd_set_nonspd_info(struct platform_intf *intf, int dimm,
-                        const struct nonspd_mem_info **info);
+			const struct nonspd_mem_info **info);
 
 #endif /* LIB_NONSPD_H__ */

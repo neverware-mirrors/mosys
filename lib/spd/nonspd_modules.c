@@ -1314,6 +1314,26 @@ static int extract_mem_info_from_smbios(
 	return transfer_speed_from_smbios_to_nonspd_mem_info(table, info);
 }
 
+int spd_set_nonspd_info_from_smbios(struct platform_intf *intf, int dimm,
+				    const struct nonspd_mem_info **info)
+{
+	struct smbios_table table;
+
+	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table) < 0) {
+		lprintf(LOG_ERR, "%s: SMBIOS Memory info table missing\n",
+			__func__);
+		return -1;
+	}
+
+	/* memory device from SMBIOS is mapped into a nonspd_mem_info */
+	if (extract_mem_info_from_smbios(&table, &part_extracted_from_smbios))
+		return -1;
+
+	*info = &part_extracted_from_smbios;
+
+	return 0;
+}
+
 int spd_set_nonspd_info(struct platform_intf *intf, int dimm,
                         const struct nonspd_mem_info **info)
 {
@@ -1321,8 +1341,8 @@ int spd_set_nonspd_info(struct platform_intf *intf, int dimm,
 	struct smbios_table table;
 
 	if (smbios_find_table(intf, SMBIOS_TYPE_MEMORY, dimm, &table) < 0) {
-		lprintf(LOG_ERR, "%s: SMBIOS Memory info table missing\n"
-			, __func__);
+		lprintf(LOG_ERR, "%s: SMBIOS Memory info table missing\n",
+			__func__);
 		return -1;
 	}
 
@@ -1339,7 +1359,7 @@ int spd_set_nonspd_info(struct platform_intf *intf, int dimm,
 		return 0;
 	}
 
-	// memory device from SMBIOS is mapped into a nonspd_mem_info.
+	/* memory device from SMBIOS is mapped into a nonspd_mem_info */
 	if (extract_mem_info_from_smbios(&table, &part_extracted_from_smbios)) {
 		return -1;
 	}
