@@ -41,7 +41,7 @@ static struct eventlog_cb volteer_eventlog_cb = {
 
 static struct platform_cb volteer_cb = {
 	.ec		= &cros_ec_cb,
-	.memory		= &smbios_memory_cb,
+	.memory		= &smbios_only_memory_cb,
 	.sys 		= &volteer_sys_cb,
 	.eventlog	= &volteer_eventlog_cb,
 };
