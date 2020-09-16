@@ -1250,8 +1250,12 @@ static int transfer_speed_from_smbios_to_nonspd_mem_info(
 	struct smbios_table *table,
 	struct nonspd_mem_info *info)
 {
+	uint32_t expected_speed;
+
 	for (int index = DDR_333; index < DDR_FREQ_MAX; index++) {
-		if (table->data.mem_device.speed == atoi(ddr_freq_prettyprint[index])) {
+		expected_speed = strtoul(ddr_freq_prettyprint[index], NULL, 10);
+		if (table->data.mem_device.speed >= expected_speed - 1 &&
+		    table->data.mem_device.speed <= expected_speed + 1) {
 			info->ddr_freq[0] = index;
 			return 0;
 		}
