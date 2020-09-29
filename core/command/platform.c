@@ -80,22 +80,6 @@ static int platform_generic_identifier_cmd(struct platform_intf *intf,
 		case PLATFORM_ID_VERSION:
 			getter = intf->cb->sys->version;
 			break;
-
-		case PLATFORM_ID_MODEL:
-			getter = intf->cb->sys->model;
-			break;
-
-		case PLATFORM_ID_CHASSIS:
-			getter = intf->cb->sys->chassis;
-			break;
-
-		case PLATFORM_ID_BRAND:
-			getter = intf->cb->sys->brand;
-			break;
-
-		case PLATFORM_ID_CUSTOMIZATION:
-			getter = intf->cb->sys->customization;
-			break;
 		}
 	}
 
