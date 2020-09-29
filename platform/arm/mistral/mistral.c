@@ -40,6 +40,7 @@
 #include "lib/file.h"
 #include "lib/math.h"
 #include "lib/probe.h"
+#include "lib/sku.h"
 
 #include "mistral.h"
 
@@ -87,8 +88,12 @@ static struct eventlog_cb mistral_eventlog_cb = {
 static struct platform_cb mistral_cb = {
 	.eeprom 	= &mistral_eeprom_cb,
 	.memory		= &mistral_memory_cb,
-	.sys 		= &mistral_sys_cb,
 	.eventlog	= &mistral_eventlog_cb,
+};
+
+static struct sku_info mistral_sku_info = {
+	.model		= "mistral",
+	.brand		= "BAMH",
 };
 
 static struct platform_intf platform_mistral = {
@@ -96,5 +101,6 @@ static struct platform_intf platform_mistral = {
 	.sub		= mistral_sub,
 	.cb		= &mistral_cb,
 	.probe		= &mistral_probe,
+	.sku_info	= &mistral_sku_info,
 };
 REGISTER_PLATFORM(platform_mistral, "Mistral");
