@@ -29,7 +29,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "lib/sku.h"
 #include "lib/smbios.h"
 #include "mosys/platform.h"
 
@@ -39,7 +38,6 @@ struct sys_cb reef_sys_cb = {
 	.version		= &smbios_sysinfo_get_version,
 	.vendor			= &smbios_sysinfo_get_vendor,
 	.sku_number		= &smbios_sysinfo_get_sku_number,
-	.customization		= sku_get_vpd_customization,
 };
 
 struct sys_cb coral_sys_cb = {
