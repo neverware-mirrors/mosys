@@ -73,13 +73,6 @@ static struct platform_cb reef_cb = {
 	.eventlog	= &reef_eventlog_cb,
 };
 
-static struct platform_cb coral_cb = {
-	.ec		= &cros_ec_cb,
-	.memory		= &smbios_memory_cb,
-	.sys 		= &coral_sys_cb,
-	.eventlog	= &reef_eventlog_cb,
-};
-
 static struct platform_intf platform_reef = {
 	.type		= PLATFORM_X86_64,
 	.sub		= reef_sub,
@@ -91,7 +84,7 @@ REGISTER_PLATFORM(platform_reef, "Reef");
 static struct platform_intf platform_coral = {
 	.type		= PLATFORM_X86_64,
 	.sub		= reef_sub,
-	.cb		= &coral_cb,
+	.cb		= &reef_cb,
 	.probe		= &reef_probe,
 };
 REGISTER_PLATFORM(platform_coral, "Coral");

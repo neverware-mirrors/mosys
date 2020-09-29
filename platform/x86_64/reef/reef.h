@@ -37,6 +37,5 @@
 
 /* platform callbacks */
 extern struct sys_cb reef_sys_cb;		/* sys.c */
-extern struct sys_cb coral_sys_cb;		/* sys.c */
 
 #endif /* PLATFORM_REEF_H_ */
