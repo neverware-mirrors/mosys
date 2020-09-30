@@ -108,15 +108,9 @@ int sku_get_number(struct platform_intf *intf)
 char *sku_get_brand(struct platform_intf *intf)
 {
 	const struct sku_info *info = intf->sku_info;
-	const char *legacy_path = "/opt/oem/etc/BRAND_CODE";
-	FILE *fp = NULL;
 
 	if (info && info->brand)
 		return mosys_strdup(info->brand);
-
-	fp = fopen(legacy_path, "r");
-	if (fp)
-		return _read_close_stripped_line(fp);
 
 	return _get_vpd_value("rlz_brand_code");
 }
