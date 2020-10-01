@@ -44,61 +44,34 @@
 #include "mosys/log.h"
 #include "mosys/kv_pair.h"
 
-/* Identifiers for platform_generic_identifier_cmd. */
-enum {
-	PLATFORM_ID_VENDOR,
-	PLATFORM_ID_VERSION,
-	PLATFORM_ID_MODEL,
-	PLATFORM_ID_CHASSIS,
-	PLATFORM_ID_BRAND,
-	PLATFORM_ID_CUSTOMIZATION,
-};
-
-static int print_platforminfo(const char *key, const char *value);
-
-static int platform_generic_identifier_cmd(struct platform_intf *intf,
-					   struct platform_cmd *cmd,
-					   int id_enum)
+static int print_platforminfo(const char *key, char *value)
 {
-	char *id = NULL;
-	char *(*fallbacks[])(struct platform_intf *intf) = {
-		[PLATFORM_ID_VENDOR] = NULL,
-		[PLATFORM_ID_VERSION] = NULL,
-		[PLATFORM_ID_MODEL] = sku_get_model,
-		[PLATFORM_ID_CHASSIS] = sku_get_chassis,
-		[PLATFORM_ID_BRAND] = sku_get_brand,
-		[PLATFORM_ID_CUSTOMIZATION] = sku_get_customization,
-	};
-	char* (*getter)(struct platform_intf *intf) = NULL;
+	struct kv_pair *kv = kv_pair_new();
+	int rc;
 
-	if (intf->cb && intf->cb->sys) {
-		switch (id_enum) {
-		case PLATFORM_ID_VENDOR:
-			getter = intf->cb->sys->vendor;
-			break;
-
-		case PLATFORM_ID_VERSION:
-			getter = intf->cb->sys->version;
-			break;
-		}
+	if (!value) {
+		lprintf(LOG_ERR, "Unable to determine platform %s\n", key);
+		return -1;
 	}
 
-	if (getter) {
-		id = getter(intf);
-	} else if (fallbacks[id_enum]) {
-		id = fallbacks[id_enum](intf);
-	} else {
-		errno = ENOSYS;
-	}
-
-	return id ? print_platforminfo(cmd->name, id) : -1;
+	kv_pair_add(kv, key, value);
+	rc = kv_pair_print(kv);
+	kv_pair_free(kv);
+	free(value);
+	return rc;
 }
 
 static int platform_vendor_cmd(struct platform_intf *intf,
 			       struct platform_cmd *cmd,
 			       int argc, char **argv)
 {
-	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_VENDOR);
+	if (intf->cb && intf->cb->sys && intf->cb->sys->vendor) {
+		return print_platforminfo("vendor",
+					  intf->cb->sys->vendor(intf));
+	}
+
+	errno = ENOSYS;
+	return -1;
 }
 
 static int platform_name_cmd(struct platform_intf *intf,
@@ -119,36 +92,41 @@ static int platform_version_cmd(struct platform_intf *intf,
 			      struct platform_cmd *cmd,
 			      int argc, char **argv)
 {
-	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_VERSION);
+	if (intf->cb && intf->cb->sys && intf->cb->sys->version) {
+		return print_platforminfo("version",
+					  intf->cb->sys->version(intf));
+	}
+
+	errno = ENOSYS;
+	return -1;
 }
 
 static int platform_model_cmd(struct platform_intf *intf,
 			      struct platform_cmd *cmd,
 			      int argc, char **argv)
 {
-	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_MODEL);
+	return print_platforminfo("model", sku_get_model(intf));
 }
 
 static int platform_chassis_cmd(struct platform_intf *intf,
 				struct platform_cmd *cmd,
 				int argc, char **argv)
 {
-	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_CHASSIS);
+	return print_platforminfo("chassis", sku_get_chassis(intf));
 }
 
 static int platform_brand_cmd(struct platform_intf *intf,
 			      struct platform_cmd *cmd,
 			      int argc, char **argv)
 {
-	return platform_generic_identifier_cmd(intf, cmd, PLATFORM_ID_BRAND);
+	return print_platforminfo("brand", sku_get_brand(intf));
 }
 
 static int platform_customization_cmd(struct platform_intf *intf,
 				      struct platform_cmd *cmd,
 				      int argc, char **argv)
 {
-	return platform_generic_identifier_cmd(intf, cmd,
-					       PLATFORM_ID_CUSTOMIZATION);
+	return print_platforminfo("customization", sku_get_customization(intf));
 }
 
 static int platform_sku_cmd(struct platform_intf *intf,
@@ -165,23 +143,6 @@ static int platform_sku_cmd(struct platform_intf *intf,
 
 	snprintf(buffer, sizeof(buffer), "%d", sku_number);
 	return print_platforminfo(cmd->name, mosys_strdup(buffer));
-}
-
-static int print_platforminfo(const char *key, const char *value)
-{
-	struct kv_pair *kv = kv_pair_new();
-	int rc;
-
-	if (!value) {
-		lprintf(LOG_ERR, "Unable to determine platform %s\n", key);
-		return -1;
-	}
-
-	kv_pair_add(kv, key, value);
-	rc = kv_pair_print(kv);
-	kv_pair_free(kv);
-	free((char*)value);
-	return rc;
 }
 
 static struct platform_cmd platform_cmds[] = {
