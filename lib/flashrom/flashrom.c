@@ -262,7 +262,7 @@ static int append_programmer_arg(const enum programmer_target target,
 		break;
 	case EC_FIRMWARE:
 		prog_arg[slot++] = strdup("-p");
-		prog_arg[slot++] = strdup("ec");
+		prog_arg[slot++] = strdup("google_ec");
 		ret = 2;
 		break;
 	default:
