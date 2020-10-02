@@ -115,6 +115,8 @@ static int platform_chassis_cmd(struct platform_intf *intf,
 	return print_platforminfo("chassis", sku_get_chassis(intf));
 }
 
+/* These commands are completely unused on unibuild systems. */
+#ifndef CONFIG_CROS_CONFIG
 static int platform_brand_cmd(struct platform_intf *intf,
 			      struct platform_cmd *cmd,
 			      int argc, char **argv)
@@ -128,6 +130,7 @@ static int platform_customization_cmd(struct platform_intf *intf,
 {
 	return print_platforminfo("customization", sku_get_customization(intf));
 }
+#endif  /* CONFIG_CROS_CONFIG */
 
 static int platform_sku_cmd(struct platform_intf *intf,
 			    struct platform_cmd *cmd,
@@ -176,6 +179,7 @@ static struct platform_cmd platform_cmds[] = {
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_sku_cmd }
 	},
+#ifndef CONFIG_CROS_CONFIG
 	{
 		.name	= "brand",
 		.desc	= "Display Brand Code (deprecated)",
@@ -188,6 +192,7 @@ static struct platform_cmd platform_cmds[] = {
 		.type	= ARG_TYPE_GETTER,
 		.arg	= { .func = platform_customization_cmd }
 	},
+#endif  /* CONFIG_CROS_CONFIG */
 	{
 		.name	= "version",
 		.desc	= "Display Platform Version (deprecated)",
