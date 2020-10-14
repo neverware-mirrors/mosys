@@ -88,10 +88,4 @@ char *cros_ec_board_version_str(struct platform_intf *intf);
 
 int cros_ec_get_firmware_rom_size(struct platform_intf *intf);
 
-/**
- * cros_ec_nvram_cb - A generic nvram_cb to read and write
- * vboot parameters using the EC. For use on ARM only.
- */
-extern struct nvram_cb cros_ec_nvram_cb;
-
 #endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */
