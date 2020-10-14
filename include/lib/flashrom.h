@@ -37,7 +37,6 @@ enum programmer_target {
 	INTERNAL_BUS_LPC,
 	INTERNAL_BUS_SPI,
 	HOST_FIRMWARE,
-	EC_FIRMWARE,
 };
 
 /*

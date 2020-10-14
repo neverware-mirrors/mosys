@@ -260,11 +260,6 @@ static int append_programmer_arg(const enum programmer_target target,
 		prog_arg[slot++] = strdup("host");
 		ret = 2;
 		break;
-	case EC_FIRMWARE:
-		prog_arg[slot++] = strdup("-p");
-		prog_arg[slot++] = strdup("google_ec");
-		ret = 2;
-		break;
 	default:
 		lprintf(LOG_DEBUG, "Unsupported target: %d\n", target);
 		ret = -1;

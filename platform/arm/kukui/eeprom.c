@@ -38,9 +38,6 @@
 #include "mosys/platform.h"
 #include "mosys/log.h"
 
-#include "drivers/google/cros_ec.h"
-#include "drivers/google/cros_ec_commands.h"
-
 #include "lib/eeprom.h"
 #include "lib/flashrom.h"
 
@@ -106,29 +103,6 @@ static struct eeprom_region host_firmware_regions[] = {
 	{ NULL },
 };
 
-static int ec_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
-			  unsigned int offset, unsigned int len, void *data)
-{
-	uint8_t *buf;
-	size_t rom_size;
-
-	rom_size = eeprom->device->size(intf);
-	buf = mosys_malloc(rom_size);
-
-	if (flashrom_read(buf, rom_size, EC_FIRMWARE, NULL) < 0)
-		return -1;
-
-	memcpy(data, &buf[offset], len);
-	free(buf);
-	return 0;
-}
-
-static struct eeprom_dev ec_firmware = {
-	.size		= cros_ec_get_firmware_rom_size,
-	.read		= ec_firmware_read,
-	.get_map	= eeprom_get_fmap,
-};
-
 static struct eeprom eeproms[] = {
 	{
 		.name		= "host_firmware",
@@ -136,12 +110,6 @@ static struct eeprom eeproms[] = {
 		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
 		.device		= &host_firmware,
 		.regions	= &host_firmware_regions[0],
-	},
-	{
-		.name		= "ec_firmware",
-		.type		= EEPROM_TYPE_FW,
-		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
-		.device		= &ec_firmware,
 	},
 	{ 0 },
 };

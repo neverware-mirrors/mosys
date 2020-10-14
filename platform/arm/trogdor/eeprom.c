@@ -8,16 +8,12 @@
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 
-#include "drivers/google/cros_ec.h"
-#include "drivers/google/cros_ec_commands.h"
-
 #include "lib/eeprom.h"
 #include "lib/flashrom.h"
 
 #include "trogdor.h"
 
 enum trogdor_firmware {
-	TROGDOR_EC_FIRMWARE = 0,
 	TROGDOR_HOST_FIRMWARE
 };
 
@@ -81,36 +77,7 @@ static struct eeprom_region host_firmware_regions[] = {
 	{ NULL },
 };
 
-static int ec_firmware_read(struct platform_intf *intf, struct eeprom *eeprom,
-			    unsigned int offset, unsigned int len, void *data)
-{
-	uint8_t *buf;
-	size_t rom_size;
-
-	rom_size = eeprom->device->size(intf);
-	buf = mosys_malloc(rom_size);
-
-	if (flashrom_read(buf, rom_size, EC_FIRMWARE, NULL) < 0)
-		return -1;
-
-	memcpy(data, &buf[offset], len);
-	free(buf);
-	return 0;
-}
-
-static struct eeprom_dev ec_firmware = {
-	.size		= cros_ec_get_firmware_rom_size,
-	.read		= ec_firmware_read,
-	.get_map	= eeprom_get_fmap,
-};
-
 static struct eeprom eeproms[] = {
-	[TROGDOR_EC_FIRMWARE] = {
-		.name		= "ec_firmware",
-		.type		= EEPROM_TYPE_FW,
-		.flags		= EEPROM_FLAG_RDWR | EEPROM_FLAG_FMAP,
-		.device		= &ec_firmware,
-	},
 	[TROGDOR_HOST_FIRMWARE] = {
 		.name		= "host_firmware",
 		.type		= EEPROM_TYPE_FW,
