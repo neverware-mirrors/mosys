@@ -138,13 +138,6 @@ struct eventlog_cb {
 	int (*write)(struct platform_intf *intf, uint8_t *data, size_t length);
 };
 
-/* NVRAM callbacks */
-struct nvram_cb {
-	int (*vboot_read)(struct platform_intf *intf);
-	int (*vboot_write)(struct platform_intf *intf,
-			   const char *hexstring);
-};
-
 /* EEPROM and EEPROM-related callbacks */
 struct eeprom_cb {
 	struct eeprom *eeprom_list;
@@ -187,7 +180,6 @@ struct platform_cb {
 	struct memory_cb *memory;	/* memory callbacks */
 	struct eventlog_cb *eventlog;	/* eventlog callbacks */
 	struct sys_cb *sys;		/* system callbacks */
-	struct nvram_cb *nvram;		/* nvram related callbacks */
 	struct eeprom_cb *eeprom;	/* eeprom callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
 	struct ec_cb *pd;		/* pd callbacks */
