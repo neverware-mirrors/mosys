@@ -86,6 +86,4 @@ int cros_ec_pd_chip_info(struct ec_cb *ec, int port);
  */
 char *cros_ec_board_version_str(struct platform_intf *intf);
 
-int cros_ec_get_firmware_rom_size(struct platform_intf *intf);
-
 #endif	/* MOSYS_DRIVERS_EC_GOOGLE__ */
