@@ -6,7 +6,6 @@ if use_cros_config
 else
   subdir('cyclone')
   subdir('mistral')
-  subdir('nyan')
   subdir('pinky')
   subdir('storm')
 endif
