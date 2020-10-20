@@ -13,6 +13,13 @@ option(
 )
 
 option(
+  'use_vpd_file_cache',
+  type: 'boolean',
+  value: 'false',
+  description: 'If set to true, enable usage of the legacy vpd_get_value command to read VPD values.  Otherwise, read from sysfs.',
+)
+
+option(
   'cros_config_data_src',
   type: 'string',
   description: 'cros_config_data source file',

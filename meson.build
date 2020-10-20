@@ -6,6 +6,7 @@ include_common = include_directories(['include'])
 # Config data used for creating a config header and including it
 conf_data = configuration_data()
 
+use_vpd_file_cache = get_option('use_vpd_file_cache') == true
 use_cros_config = get_option('use_cros_config') == true
 if use_cros_config
   conf_data.set('CONFIG_CROS_CONFIG', 1)
