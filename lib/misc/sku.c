@@ -4,9 +4,8 @@
  * found in the LICENSE file.
  */
 
-#include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "mosys/alloc.h"
 #include "mosys/globals.h"
@@ -16,57 +15,7 @@
 #include "lib/file.h"
 #include "lib/sku.h"
 #include "lib/string.h"
-
-/*
- * Strips the "end of line" character (\n) in string.
- */
-static void _strip_eol(char *str)
-{
-	char *newline = strchr(str, '\n');
-	if (newline)
-		*newline = '\0';
-}
-
-/*
- * Reads one stripped line from fp and close file.
- *
- * This is a helper utility for functions reading identifier files.
- */
-static char *_read_close_stripped_line(FILE *fp)
-{
-	char buffer[256];
-
-	if (!fp)
-		return NULL;
-
-	if (!fgets(buffer, sizeof(buffer), fp)) {
-		buffer[0] = '\0';
-	} else {
-		_strip_eol(buffer);
-	}
-	fclose(fp);
-
-	if (!*buffer)
-		return NULL;
-	return mosys_strdup(buffer);
-}
-
-/*
- * Reads and returns a VPD value.
- */
-static char *_get_vpd_value(const char *key_name)
-{
-	char command[PATH_MAX];
-	FILE *fp = NULL;
-	char *value;
-
-	snprintf(command, sizeof(command), "vpd_get_value %s", key_name);
-	command[sizeof(command) - 1] = '\0';
-
-	fp = popen(command, "r");
-	value = _read_close_stripped_line(fp);
-	return value;
-}
+#include "lib/vpd.h"
 
 /*
  * Extracts the SERIES part from VPD "customization_id".
@@ -79,7 +28,7 @@ static char *_extract_customization_id_series_part(void)
 	char *customization_id;
 	char *series = NULL, *dash;
 
-	customization_id = _get_vpd_value("customization_id");
+	customization_id = vpd_get_value("customization_id");
 	if (!customization_id)
 		return NULL;
 
@@ -112,7 +61,7 @@ char *sku_get_brand(struct platform_intf *intf)
 	if (info && info->brand)
 		return mosys_strdup(info->brand);
 
-	return _get_vpd_value("rlz_brand_code");
+	return vpd_get_value("rlz_brand_code");
 }
 
 char *sku_get_chassis(struct platform_intf *intf)
@@ -159,7 +108,7 @@ char *sku_get_vpd_customization(struct platform_intf *intf)
 	char *customization_id;
 
 	/* Look for VPD first before looking into model */
-	customization_id = _get_vpd_value("customization_id");
+	customization_id = vpd_get_value("customization_id");
 	if (customization_id)
 		return customization_id;
 
@@ -178,7 +127,7 @@ char *sku_get_customization(struct platform_intf *intf)
 	if (info && info->customization)
 		return mosys_strdup(info->customization);
 
-	customization_id = _get_vpd_value("customization_id");
+	customization_id = vpd_get_value("customization_id");
 	if (customization_id)
 		return customization_id;
 
@@ -193,7 +142,7 @@ char *sku_get_whitelabel_from_vpd(void)
 {
 	const char *value;
 
-	value = _get_vpd_value("whitelabel_tag");
+	value = vpd_get_value("whitelabel_tag");
 	if (!value)
 		value = "";
 	return mosys_strdup(value);
