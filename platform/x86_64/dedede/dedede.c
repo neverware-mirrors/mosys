@@ -10,7 +10,6 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/memory.h"
 

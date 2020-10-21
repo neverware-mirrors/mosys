@@ -41,7 +41,6 @@
 #include "drivers/google/cros_ec.h"
 
 #include "lib/cros_config.h"
-#include "lib/eeprom.h"
 #include "lib/memory.h"
 #include "lib/smbios.h"
 #include "lib/elog.h"

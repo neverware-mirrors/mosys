@@ -50,7 +50,6 @@
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
-#include <lib/eeprom.h>
 #include "lib/flashrom.h"
 #include "lib/math.h"
 
