@@ -39,7 +39,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
-#include <fmap.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -462,29 +461,13 @@ flashrom_write_exit_0:
 int flashrom_read_host_firmware_region(struct platform_intf *intf,
 							uint8_t **buf)
 {
-	int rc, i;
-	uint8_t *fmap_buf;
+	int rc = -1;
 	const char *regions[] = { "COREBOOT", "BOOT_STUB" };
 
-	rc = flashrom_read_by_name(&fmap_buf, HOST_FIRMWARE, "FMAP");
-	if (rc > 0) {
-		for (i = 0; i < ARRAY_SIZE(regions); i++) {
-			if (fmap_find_area((struct fmap *)fmap_buf, regions[i])) {
-				rc = flashrom_read_by_name(buf,
-						HOST_FIRMWARE, regions[i]);
-				break;
-			}
-		}
-		free(fmap_buf);
-	} else {
-		/* FMAP blob might still be in the ROM but without its own area
-		 * defined. Try looking for the firmware regions directly. */
-		for (i = 0; i < ARRAY_SIZE(regions); i++) {
-			rc = flashrom_read_by_name(buf,
-					HOST_FIRMWARE, regions[i]);
-			if (rc > 0)
-				break;
-		}
+	for (int i = 0; i < ARRAY_SIZE(regions); i++) {
+		rc = flashrom_read_by_name(buf, HOST_FIRMWARE, regions[i]);
+		if (rc > 0)
+			break;
 	}
 
 	return rc;
