@@ -138,11 +138,6 @@ struct eventlog_cb {
 	int (*write)(struct platform_intf *intf, uint8_t *data, size_t length);
 };
 
-/* EEPROM and EEPROM-related callbacks */
-struct eeprom_cb {
-	struct eeprom *eeprom_list;
-};
-
 /* system information callbacks */
 struct sys_cb {
 	/* methods useful for probing */
@@ -180,7 +175,6 @@ struct platform_cb {
 	struct memory_cb *memory;	/* memory callbacks */
 	struct eventlog_cb *eventlog;	/* eventlog callbacks */
 	struct sys_cb *sys;		/* system callbacks */
-	struct eeprom_cb *eeprom;	/* eeprom callbacks */
 	struct ec_cb *ec;		/* ec callbacks */
 	struct ec_cb *pd;		/* pd callbacks */
 	struct ec_cb *fp;		/* fp callbacks */
