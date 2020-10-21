@@ -28,7 +28,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <fmap.h>
+
+#include <errno.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <time.h>
@@ -37,9 +38,9 @@
 #include "intf/mmio.h"
 
 #include "lib/coreboot.h"
-#include "lib/eeprom.h"
 #include "lib/elog.h"
 #include "lib/elog_smbios.h"
+#include "lib/flashrom.h"
 #include "lib/math.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
@@ -1230,41 +1231,7 @@ int elog_fetch_from_smbios(struct platform_intf *intf, uint8_t **data,
 	return 0;
 }
 
-static int elog_find_log_in_flash(struct platform_intf *intf,
-				  struct eeprom **eeprom_p,
-				  struct eeprom_region **region_p)
-{
-	struct eeprom *eeprom;
-	struct eeprom_region *region = NULL;
-	int found = 0;
-
-	for (eeprom = &intf->cb->eeprom->eeprom_list[0];
-			eeprom->name; eeprom++) {
-		for (region = &eeprom->regions[0];
-				region && region->flag; region++) {
-			if (region->flag & EEPROM_FLAG_EVENTLOG) {
-				found = 1;
-				break;
-			}
-		}
-
-		if (found)
-			break;
-	}
-
-	if (!found) {
-		lprintf(LOG_WARNING, "No ROM with eventlog regions found.\n");
-		return -1;
-	}
-
-	/* TODO: for now we assume that the eventlog will be found using fmap */
-	if (!(eeprom->flags & EEPROM_FLAG_FMAP) && region->name)
-		return -1;
-
-	*region_p = region;
-	*eeprom_p = eeprom;
-	return 0;
-}
+#define ELOG_FMAP_REGION "RW_ELOG"
 
 /*
  * elog_fetch_from_flash - fetch the eventlog from the flash.
@@ -1281,15 +1248,10 @@ int elog_fetch_from_flash(struct platform_intf *intf, uint8_t **data,
 			  size_t *length, off_t *header_offset,
 			  off_t *data_offset)
 {
-	struct eeprom *eeprom;
-	struct eeprom_region *region;
 	int bytes_read;
 
-	if (elog_find_log_in_flash(intf, &eeprom, &region))
-		return -1;
-
-	bytes_read = eeprom->device->read_by_name(intf, eeprom,
-						region->name, data);
+	bytes_read =
+		flashrom_read_by_name(data, HOST_FIRMWARE, ELOG_FMAP_REGION);
 	if (bytes_read < 0) {
 		lprintf(LOG_WARNING, "Failed to read event log from flash.\n");
 		return -1;
@@ -1314,16 +1276,10 @@ int elog_fetch_from_flash(struct platform_intf *intf, uint8_t **data,
 int elog_write_to_flash(struct platform_intf *intf, uint8_t *data,
 			size_t length)
 {
-	struct eeprom *eeprom;
-	struct eeprom_region *region;
 	int bytes_written;
 
-	if (elog_find_log_in_flash(intf, &eeprom, &region))
-		return -1;
-
-	bytes_written = eeprom->device->write_by_name(intf, eeprom,
-						      region->name, length,
-						      data);
+	bytes_written = flashrom_write_by_name(length, data, HOST_FIRMWARE,
+					       ELOG_FMAP_REGION);
 	if (bytes_written != length) {
 		lprintf(LOG_WARNING, "Failed to write event log to flash.\n");
 		return -1;
