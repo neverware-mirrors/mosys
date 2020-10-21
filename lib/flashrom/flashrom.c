@@ -54,41 +54,15 @@
 
 #define MAX_ARRAY_SIZE 256
 
-enum pipe_direction {
-	PIPE_IN,
-	PIPE_OUT,
-	PIPE_NONE,
-};
-
-struct pipe {
-	enum pipe_direction direction;
-	int fd;		/* file descriptor to attach to end of pipe */
-	int *pipefd;	/* array of 2 ints that will be passed into pipe() */
-	char *buf;	/* buffer to read/write data */
-	int size;	/* size of buffer */
-};
-
 /*
- * do_cmd - Execute a command and optionally pipe output to/from child process
+ * do_cmd - Execute a command
  *
  * @cmd:	Command to execute.
  * @argv:	Arguments. By convention, argv[0] is cmd.
- * @pipes:	Array of pipes to set up.
- * @num_pipes:	Number of pipes to set up.
- *
- * For pipes where the parent reads and child writes, the caller is responsible
- * for initializing the buffer (e.g. zeroing it out). No terminator will be
- * added by the child since that may alter the content undesirably.
- *
- * When the parent reads from the child, the size member of the pipe struct will
- * be considered a maximum (we may read fewer bytes than specified). When the
- * parent writes to the child, the size member will specify the exact number of
- * bytes which must be written.
  *
  * returns -1 to indicate error, 0 to indicate success
  */
-static int do_cmd(const char *cmd, char *const *argv,
-			struct pipe pipes[], int num_pipes)
+static int do_cmd(const char *cmd, char *const *argv)
 {
 	int rc = 0;
 	int pid = -1;
@@ -99,16 +73,6 @@ static int do_cmd(const char *cmd, char *const *argv,
 	null_fd = open("/dev/null", O_WRONLY);
 	if (null_fd < 0)
 		return -1;
-
-	for (i = 0; i < num_pipes; i++) {
-		if (pipes[i].direction == PIPE_NONE)
-			continue;
-
-		if (pipe(pipes[i].pipefd) < 0) {
-			lperror(LOG_DEBUG, "Failed to create pipe");
-			return -1;
-		}
-	}
 
 	if (argv != NULL) {
 		for (i = 0; argv[i] != NULL; i++) {
@@ -121,42 +85,15 @@ static int do_cmd(const char *cmd, char *const *argv,
 		lprintf(LOG_ERR, "fork() error\n");
 		rc = -1;
 	} else if (pid == 0) { /* child */
-		if (num_pipes > 0) {
-			for (i = 0; i < num_pipes; i++) {
-				if (pipes[i].direction == PIPE_IN) {
-					/* parent reads / child writes */
-					close(pipes[i].pipefd[0]);
-					dup2(pipes[i].pipefd[1], pipes[i].fd);
-				} else if (pipes[i].direction == PIPE_OUT) {
-					/* parent writes / child reads */
-					close(pipes[i].pipefd[1]);
-					dup2(pipes[i].pipefd[0], pipes[i].fd);
-				} else if (pipes[i].direction == PIPE_NONE) {
-					dup2(null_fd, pipes[i].fd);
-				}
-			}
-		} else {
-			/* default: pipe stdio to /dev/null */
-			dup2(null_fd, fileno(stdin));
-			dup2(null_fd, fileno(stdout));
-			dup2(null_fd, fileno(stderr));
-		}
+		dup2(null_fd, fileno(stdin));
+		dup2(null_fd, fileno(stdout));
+		dup2(null_fd, fileno(stderr));
 
 		execvp(cmd, argv);
 
 		lperror(LOG_ERR, "%s: Failed to run %s", __func__, cmd);
 		rc = -1;
 	} else { /* parent */
-		for (i = 0; i < num_pipes; i++) {
-			if (pipes[i].direction == PIPE_IN) {
-				/* parent reads / child writes */
-				close(pipes[i].pipefd[1]);
-			} else if (pipes[i].direction == PIPE_OUT) {
-				/* parent writes / child reads */
-				close(pipes[i].pipefd[0]);
-			}
-		}
-
 		if (waitpid(pid, &status, 0) > 0) {
 			if (WIFEXITED(status)) {
 				if (WEXITSTATUS(status) != 0) {
@@ -173,41 +110,6 @@ static int do_cmd(const char *cmd, char *const *argv,
 		} else {
 			lprintf(LOG_ERR, "waitpid() returned error.\n");
 			rc = -1;
-		}
-
-		for (i = 0; i < num_pipes; i++) {
-			int n;
-
-			errno = 0;
-			if (pipes[i].direction == PIPE_IN) {
-				n = read(pipes[i].pipefd[0], pipes[i].buf,
-							pipes[i].size);
-				if (errno) {
-					lperror(LOG_ERR, "Failed to read %d "
-							"bytes from pipe",
-							pipes[i].size);
-					rc = -1;
-				} else {
-					lprintf(LOG_DEBUG, "%s: Read %d bytes "
-						"from pipe.\n", __func__, n);
-				}
-
-				close(pipes[i].pipefd[0]);
-			} else if (pipes[i].direction == PIPE_OUT) {
-				n = write(pipes[i].pipefd[1], pipes[i].buf,
-							pipes[i].size);
-				if (n != pipes[i].size) {
-					lperror(LOG_ERR, "%s: Failed to write "
-						"%d bytes to pipe", __func__,
-						pipes[i].size);
-					rc = -1;
-				} else {
-					lprintf(LOG_DEBUG, "%s: Wrote %d bytes "
-						"to pipe.\n", __func__, n);
-				}
-
-				close(pipes[i].pipefd[1]);
-			}
 		}
 	}
 
@@ -298,7 +200,7 @@ int flashrom_read(uint8_t *buf, size_t size,
 	args[i++] = strdup(full_filename);
 	args[i++] = NULL;
 
-	if (do_cmd("flashrom", args, NULL, 0) < 0)
+	if (do_cmd("flashrom", args) < 0)
 		goto flashrom_read_exit_1;
 
 	fd = open(full_filename, O_RDONLY);
@@ -362,7 +264,7 @@ int flashrom_read_by_name(uint8_t **buf,
 	args[i++] = strdup("-r");
 	args[i++] = NULL;
 
-	if (do_cmd("flashrom", args, NULL, 0) < 0) {
+	if (do_cmd("flashrom", args) < 0) {
 		lprintf(LOG_DEBUG, "Unable to read region \"%s\"\n", region);
 		goto flashrom_read_exit_2;
 	}
@@ -443,7 +345,7 @@ int flashrom_write_by_name(size_t size, uint8_t *buf,
 	args[i++] = strdup("--fast-verify");
 	args[i++] = NULL;
 
-	if (do_cmd("flashrom", args, NULL, 0) < 0) {
+	if (do_cmd("flashrom", args) < 0) {
 		lprintf(LOG_DEBUG, "Unable to write region \"%s\"\n", region);
 		goto flashrom_write_exit_1;
 	}
