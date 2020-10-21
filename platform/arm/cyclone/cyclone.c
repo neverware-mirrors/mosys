@@ -87,7 +87,6 @@ static struct eventlog_cb cyclone_eventlog_cb = {
 };
 
 static struct platform_cb cyclone_cb = {
-	.eeprom 	= &cyclone_eeprom_cb,
 	.memory		= &cyclone_memory_cb,
 	.eventlog	= &cyclone_eventlog_cb,
 };

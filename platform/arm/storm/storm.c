@@ -96,7 +96,6 @@ static struct eventlog_cb storm_eventlog_cb = {
 };
 
 static struct platform_cb storm_cb = {
-	.eeprom 	= &storm_eeprom_cb,
 	.memory		= &storm_memory_cb,
 	.eventlog	= &storm_eventlog_cb,
 };

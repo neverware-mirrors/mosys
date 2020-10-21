@@ -42,7 +42,6 @@ static struct eventlog_cb trogdor_eventlog_cb = {
 
 static struct platform_cb trogdor_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom 	= &trogdor_eeprom_cb,
 	.memory		= &trogdor_memory_cb,
 	.psu 		= &generic_psu_battery_cb,
 	.sys		= &fdt_sysinfo_cb,

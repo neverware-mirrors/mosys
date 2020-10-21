@@ -9,7 +9,6 @@
 #include "mosys/platform.h"
 
 /* platform callbacks */
-extern struct eeprom_cb asurada_eeprom_cb;
 extern struct memory_cb asurada_memory_cb;
 extern struct sys_cb asurada_sys_cb;
 

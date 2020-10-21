@@ -77,7 +77,6 @@ static struct eventlog_cb kukui_eventlog_cb = {
 
 static struct platform_cb kukui_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom 	= &kukui_eeprom_cb,
 	.memory		= &kukui_memory_cb,
 	.psu		= &generic_psu_battery_cb,
 	.sys		= &fdt_sysinfo_cb,

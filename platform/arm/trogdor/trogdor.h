@@ -11,7 +11,6 @@
 #define TROGDOR_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
 
 /* platform callbacks */
-extern struct eeprom_cb trogdor_eeprom_cb;
 extern struct memory_cb trogdor_memory_cb;
 
 #endif /* GOOGLE_TROGDOR_H */

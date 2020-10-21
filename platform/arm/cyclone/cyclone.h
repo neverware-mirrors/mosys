@@ -38,7 +38,6 @@
 #define CYCLONE_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
 
 /* platform callbacks */
-extern struct eeprom_cb cyclone_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb cyclone_memory_cb;	/* memory.c */
 
 #endif /* GOOGLE_CYCLONE_H */

@@ -39,7 +39,6 @@
 #define SCARLET_DEFAULT_SKU_ID			(6)
 
 /* platform callbacks */
-extern struct eeprom_cb gru_eeprom_cb;
 extern struct memory_cb gru_memory_cb;
 
 #endif /* GOOGLE_GRU_H */

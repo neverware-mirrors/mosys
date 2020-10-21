@@ -46,7 +46,6 @@ static struct eventlog_cb asurada_eventlog_cb = {
 
 static struct platform_cb asurada_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom 	= &asurada_eeprom_cb,
 	.memory		= &asurada_memory_cb,
 	.psu		= &generic_psu_battery_cb,
 	.sys		= &asurada_sys_cb,

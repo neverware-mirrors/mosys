@@ -39,7 +39,6 @@
 #define STORM_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024 * 2)
 
 /* platform callbacks */
-extern struct eeprom_cb storm_eeprom_cb;	/* eeprom.c */
 extern struct memory_cb storm_memory_cb;	/* memory.c */
 
 #endif /* GOOGLE_STORM_H */

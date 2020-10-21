@@ -38,7 +38,6 @@
 #define KUKUI_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
 
 /* platform callbacks */
-extern struct eeprom_cb kukui_eeprom_cb;
 extern struct memory_cb kukui_memory_cb;
 
 #endif /* PLATFORM_OAK_H */

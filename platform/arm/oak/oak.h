@@ -38,7 +38,6 @@
 #define OAK_HOST_FIRMWARE_ROM_SIZE		(4096 * 1024)
 
 /* platform callbacks */
-extern struct eeprom_cb oak_eeprom_cb;
 extern struct memory_cb oak_memory_cb;
 extern struct oak_psu_cb oak_psu_cb;
 extern struct sys_cb oak_sys_cb;

@@ -86,7 +86,6 @@ static struct eventlog_cb mistral_eventlog_cb = {
 };
 
 static struct platform_cb mistral_cb = {
-	.eeprom 	= &mistral_eeprom_cb,
 	.memory		= &mistral_memory_cb,
 	.eventlog	= &mistral_eventlog_cb,
 };

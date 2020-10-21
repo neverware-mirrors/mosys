@@ -130,7 +130,6 @@ static struct eventlog_cb gru_eventlog_cb = {
 
 static struct platform_cb gru_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom 	= &gru_eeprom_cb,
 	.memory		= &gru_memory_cb,
 	.psu 		= &generic_psu_battery_cb,
 	.sys		= &fdt_sysinfo_cb,

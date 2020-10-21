@@ -38,7 +38,6 @@
 #define PINKY_HOST_FIRMWARE_ROM_SIZE		(4096 * 1024)
 
 /* platform callbacks */
-extern struct eeprom_cb pinky_eeprom_cb;
 extern struct memory_cb pinky_memory_cb;
 
 #endif /* GOOGLE_PINKY_H */

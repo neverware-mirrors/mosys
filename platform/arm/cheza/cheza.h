@@ -38,7 +38,6 @@
 #define CHEZA_HOST_FIRMWARE_ROM_SIZE		(8192 * 1024)
 
 /* platform callbacks */
-extern struct eeprom_cb cheza_eeprom_cb;
 extern struct memory_cb cheza_memory_cb;
 
 #endif /* GOOGLE_CHEZA_H */

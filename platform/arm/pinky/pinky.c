@@ -91,7 +91,6 @@ static struct eventlog_cb pinky_eventlog_cb = {
 };
 
 static struct platform_cb pinky_cb = {
-	.eeprom 	= &pinky_eeprom_cb,
 	.memory		= &pinky_memory_cb,
 	.psu		= &generic_psu_ac_only_cb,
 	.sys		= &fdt_sysinfo_cb,

@@ -106,7 +106,6 @@ static struct eventlog_cb oak_eventlog_cb = {
 
 static struct platform_cb oak_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom 	= &oak_eeprom_cb,
 	.memory		= &oak_memory_cb,
 	.pd		= &cros_pd_cb,
 	.psu		= &generic_psu_battery_cb,

@@ -84,7 +84,6 @@ static struct eventlog_cb cheza_eventlog_cb = {
 
 static struct platform_cb cheza_cb = {
 	.ec		= &cros_ec_cb,
-	.eeprom 	= &cheza_eeprom_cb,
 	.memory		= &cheza_memory_cb,
 	.psu 		= &generic_psu_battery_cb,
 	.sys		= &fdt_sysinfo_cb,
