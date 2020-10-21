@@ -8,8 +8,6 @@ is intended to complement other systems software and may overlap in some areas.
 
 Configuration & Building
 ------------------------
-Dependencies:
-  libfmap
 
 Mosys uses meson to build.  To setup the build, use:
 

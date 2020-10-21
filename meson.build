@@ -45,7 +45,6 @@ add_global_arguments('-Wmissing-variable-declarations', language : 'c')
 add_global_arguments('-Wmissing-prototypes', language : 'c')
 
 # External libs used by Mosys
-fmap_dep = dependency('fmap')
 minijail_dep = declare_dependency(link_args: '-lminijail')
 
 libmosys_src = files()
@@ -59,10 +58,7 @@ subdir('intf')
 subdir('lib')
 subdir('platform')
 
-deps = [
-  fmap_dep,
-  minijail_dep,
-]
+deps = [minijail_dep]
 
 # Cros config is a special snowflake.
 if use_cros_config

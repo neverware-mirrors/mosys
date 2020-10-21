@@ -37,16 +37,14 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <valstr.h>
-
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
 #include "mosys/platform.h"
 
 #include "lib/math.h"
 #include "lib/string.h"
-
 #include "lib/spd.h"
+#include "lib/val2str.h"
 
 #include "jedec_id.h"
 

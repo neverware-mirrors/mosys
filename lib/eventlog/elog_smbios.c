@@ -43,7 +43,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
-#include <valstr.h>
 
 #include "mosys/alloc.h"
 #include "mosys/globals.h"
@@ -57,6 +56,7 @@
 
 #include "lib/elog_smbios.h"
 #include "lib/smbios.h"
+#include "lib/val2str.h"
 
 struct smbios_eventlog_iterator {
 	int verbose;

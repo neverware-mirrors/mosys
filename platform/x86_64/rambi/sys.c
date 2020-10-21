@@ -29,10 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <valstr.h>
-
 #include "drivers/google/cros_ec.h"
 #include "lib/smbios.h"
+#include "lib/val2str.h"
 #include "mosys/alloc.h"
 #include "mosys/platform.h"
 

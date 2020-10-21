@@ -35,10 +35,10 @@
 #define LIB_SPD_H__
 
 #include <inttypes.h>
-#include <valstr.h>
 
 #include "intf/i2c.h"
 #include "lib/ddr4.h"
+#include "lib/val2str.h"
 
 #define SPD_READ          0
 #define SPD_WRITE         1

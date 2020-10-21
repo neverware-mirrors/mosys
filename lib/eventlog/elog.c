@@ -33,7 +33,6 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <time.h>
-#include <valstr.h>
 
 #include "intf/mmio.h"
 
@@ -44,6 +43,7 @@
 #include "lib/math.h"
 #include "lib/smbios.h"
 #include "lib/string.h"
+#include "lib/val2str.h"
 
 #include "mosys/alloc.h"
 #include "mosys/kv_pair.h"

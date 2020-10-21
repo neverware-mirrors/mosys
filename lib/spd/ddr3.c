@@ -36,8 +36,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <valstr.h>
-
 #include "mosys/platform.h"
 #include "mosys/kv_pair.h"
 #include "mosys/log.h"
@@ -46,6 +44,7 @@
 
 #include "lib/ddr3.h"
 #include "lib/spd.h"
+#include "lib/val2str.h"
 
 #include "jedec_id.h"
 
