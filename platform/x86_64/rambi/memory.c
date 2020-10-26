@@ -425,7 +425,7 @@ static int rambi_spd_read_cbfs(struct platform_intf *intf,
 	if (first_run) {
 		/* read SPD from CBFS entry located within bootblock region */
 		if (flashrom_read(bootblock, ARRAY_SIZE(bootblock),
-				  INTERNAL_BUS_SPI, "BOOT_STUB") < 0)
+				  HOST_FIRMWARE, "BOOT_STUB") < 0)
 			return -1;
 
 		first_run = 0;

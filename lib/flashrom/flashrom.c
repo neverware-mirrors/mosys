@@ -140,19 +140,10 @@ static int append_programmer_arg(const enum programmer_target target,
 	int slot = first_empty_slot;
 
 	switch(target) {
+	/* TODO(quasisec): deprecate manually specifying bus param. */
 	case INTERNAL_BUS_SPI:
 		prog_arg[slot++] = strdup("-p");
 		prog_arg[slot++] = strdup("internal:bus=spi");
-		ret = 2;
-		break;
-	case INTERNAL_BUS_I2C:
-		prog_arg[slot++] = strdup("-p");
-		prog_arg[slot++] = strdup("internal:bus=i2c");
-		ret = 2;
-		break;
-	case INTERNAL_BUS_LPC:
-		prog_arg[slot++] = strdup("-p");
-		prog_arg[slot++] = strdup("internal:bus=lpc");
 		ret = 2;
 		break;
 	case HOST_FIRMWARE:

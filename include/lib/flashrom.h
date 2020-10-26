@@ -33,8 +33,7 @@
 #define MOSYS_LIB_FLASHROM_H__
 
 enum programmer_target {
-	INTERNAL_BUS_I2C,
-	INTERNAL_BUS_LPC,
+	/* TODO(quasisec): deprecate manually specifying bus param. */
 	INTERNAL_BUS_SPI,
 	HOST_FIRMWARE,
 };
