@@ -1250,8 +1250,7 @@ int elog_fetch_from_flash(struct platform_intf *intf, uint8_t **data,
 {
 	int bytes_read;
 
-	bytes_read =
-		flashrom_read_by_name(data, HOST_FIRMWARE, ELOG_FMAP_REGION);
+	bytes_read = flashrom_read_by_name(data, ELOG_FMAP_REGION);
 	if (bytes_read < 0) {
 		lprintf(LOG_WARNING, "Failed to read event log from flash.\n");
 		return -1;
@@ -1278,8 +1277,7 @@ int elog_write_to_flash(struct platform_intf *intf, uint8_t *data,
 {
 	int bytes_written;
 
-	bytes_written = flashrom_write_by_name(length, data, HOST_FIRMWARE,
-					       ELOG_FMAP_REGION);
+	bytes_written = flashrom_write_by_name(length, data, ELOG_FMAP_REGION);
 	if (bytes_written != length) {
 		lprintf(LOG_WARNING, "Failed to write event log to flash.\n");
 		return -1;

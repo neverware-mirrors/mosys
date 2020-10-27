@@ -117,51 +117,8 @@ static int do_cmd(const char *cmd, char *const *argv)
 	return rc;
 }
 
-/*
-   Populates prog_args with programmer args
-   return -1 on error, otherwise returns # of args
-
-   Inputs:
-     first_empty_slot:  Next empty slot in array
-     programmer_target: target
-
-   Output:
-     prog_arg:          output args
-
-   Return:
-     Number of entries in the array that were allocated
-*/
-
-static int append_programmer_arg(const enum programmer_target target,
-				 const int first_empty_slot,
-				 char **prog_arg)
-{
-	int ret = 0;
-	int slot = first_empty_slot;
-
-	switch(target) {
-	/* TODO(quasisec): deprecate manually specifying bus param. */
-	case INTERNAL_BUS_SPI:
-		prog_arg[slot++] = strdup("-p");
-		prog_arg[slot++] = strdup("internal:bus=spi");
-		ret = 2;
-		break;
-	case HOST_FIRMWARE:
-		prog_arg[slot++] = strdup("-p");
-		prog_arg[slot++] = strdup("host");
-		ret = 2;
-		break;
-	default:
-		lprintf(LOG_DEBUG, "Unsupported target: %d\n", target);
-		ret = -1;
-	}
-
-	return ret;
-}
-
 /* TODO: add arbitrary range support */
-int flashrom_read(uint8_t *buf, size_t size,
-                  enum programmer_target target, const char *region)
+int flashrom_read(uint8_t *buf, size_t size, const char *region)
 {
 	int fd, rc = -1;
 	char filename[] = "flashrom_XXXXXX";
@@ -171,9 +128,8 @@ int flashrom_read(uint8_t *buf, size_t size,
 	int i = 0;
 
 	args[i++] = strdup("flashrom");
-
-	if ((i += append_programmer_arg(target, i, args)) < 0)
-		goto flashrom_read_exit_0;
+	args[i++] = strdup("-p");
+	args[i++] = strdup("host");
 
 	strcpy(full_filename, "/tmp/");
 	strcat(full_filename, filename);
@@ -220,8 +176,7 @@ flashrom_read_exit_0:
 	return rc;
 }
 
-int flashrom_read_by_name(uint8_t **buf,
-                  enum programmer_target target, const char *region)
+int flashrom_read_by_name(uint8_t **buf, const char *region)
 {
 	int fd, rc = -1;
 	struct stat s;
@@ -235,9 +190,8 @@ int flashrom_read_by_name(uint8_t **buf,
 		goto flashrom_read_exit_0;
 
 	args[i++] = strdup("flashrom");
-
-	if ((i += append_programmer_arg(target, i, args)) < 0)
-		goto flashrom_read_exit_1;
+	args[i++] = strdup("-p");
+	args[i++] = strdup("host");
 
 	strcpy(full_filename, "/tmp/");
 	strcat(full_filename, filename);
@@ -283,8 +237,7 @@ flashrom_read_exit_0:
 	return rc;
 }
 
-int flashrom_write_by_name(size_t size, uint8_t *buf,
-                  enum programmer_target target, const char *region)
+int flashrom_write_by_name(size_t size, uint8_t *buf, const char *region)
 {
 	int fd, written, rc = -1;
 	char filename[] = "flashrom_XXXXXX";
@@ -297,9 +250,8 @@ int flashrom_write_by_name(size_t size, uint8_t *buf,
 		goto flashrom_write_exit_0;
 
 	args[i++] = strdup("flashrom");
-
-	if ((i += append_programmer_arg(target, i, args)) < 0)
-		goto flashrom_write_exit_0;
+	args[i++] = strdup("-p");
+	args[i++] = strdup("host");
 
 	strcpy(full_filename, "/tmp/");
 	strcat(full_filename, filename);
@@ -358,7 +310,7 @@ int flashrom_read_host_firmware_region(struct platform_intf *intf,
 	const char *regions[] = { "COREBOOT", "BOOT_STUB" };
 
 	for (int i = 0; i < ARRAY_SIZE(regions); i++) {
-		rc = flashrom_read_by_name(buf, HOST_FIRMWARE, regions[i]);
+		rc = flashrom_read_by_name(buf, regions[i]);
 		if (rc > 0)
 			break;
 	}

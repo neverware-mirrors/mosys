@@ -32,32 +32,23 @@
 #ifndef MOSYS_LIB_FLASHROM_H__
 #define MOSYS_LIB_FLASHROM_H__
 
-enum programmer_target {
-	/* TODO(quasisec): deprecate manually specifying bus param. */
-	INTERNAL_BUS_SPI,
-	HOST_FIRMWARE,
-};
-
 /*
  * flashrom_read - Read ROM using Flashrom utility
  *
  * @buf:	output buffer
  * @size:	(expected) size of ROM
- * @target:	target ROM
  * @region:	region to include with -i (NULL to read entire ROM)
  *
  * This function reads the target ROM by calling Flashrom with appropriate
  * parameters. It will save the ROM to a temporary file and then copy the
  * file into the provided buffer.
  */
-extern int flashrom_read(uint8_t *buf, size_t size,
-                         enum programmer_target target, const char *region);
+extern int flashrom_read(uint8_t *buf, size_t size, const char *region);
 
 /*
  * flashrom_read_by_name - Partial read using Flashrom utility
  *
  * @buf:	double-pointer of buffer to allocate and fill
- * @target:	target ROM
  * @region:	region to include with -i
  *
  * This function reads the target ROM by calling Flashrom with appropriate
@@ -66,15 +57,13 @@ extern int flashrom_read(uint8_t *buf, size_t size,
  * returns number of bytes read from region to indicate success
  * returns <0 to indicate failure
  */
-extern int flashrom_read_by_name(uint8_t **buf,
-                         enum programmer_target target, const char *region);
+extern int flashrom_read_by_name(uint8_t **buf, const char *region);
 
 /*
  * flashrom_write_by_name - Partial write using Flashrom utility
  *
  * @size:	size of the data to write
  * @buf:	pointer to the buffer to write
- * @target:	target ROM
  * @region:	region to include with -i
  *
  * This function reads the target ROM by calling Flashrom with appropriate
@@ -83,8 +72,7 @@ extern int flashrom_read_by_name(uint8_t **buf,
  * returns number of bytes read from region to indicate success
  * returns <0 to indicate failure
  */
-extern int flashrom_write_by_name(size_t size, uint8_t *buf,
-                         enum programmer_target target, const char *region);
+extern int flashrom_write_by_name(size_t size, uint8_t *buf, const char *region);
 
 /*
  * flashrom_read_host_firmware_region - Read firmware region within ROM
