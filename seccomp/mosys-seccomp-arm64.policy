@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 chdir: 1
+clock_getres: 1
 fchown: 1
 faccessat: 1
 newfstatat: 1
