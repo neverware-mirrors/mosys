@@ -28,6 +28,7 @@ static int jecht_probe(struct platform_intf *intf)
 		const char *smbios_name;
 		struct sku_info info;
 	} models[] = {
+		{ "Buddy", { .model = "buddy", .brand = "ACAU" } },
 		{ "Guado", { .model = "guado", .brand = "ASUG" } },
 		{ "Rikku", { .model = "rikku", .brand = "ACAQ" } },
 		{ "Tidus", { .model = "tidus", .brand = "LEAF" } },
