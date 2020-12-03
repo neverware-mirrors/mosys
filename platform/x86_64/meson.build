@@ -12,7 +12,6 @@ if use_cros_config
   subdir('zork')
 else
   subdir('auron')
-  subdir('cyan')
   subdir('glados')
   subdir('jecht')
   subdir('rambi')
